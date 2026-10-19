@@ -37,7 +37,7 @@ export const site = {
   },
   websiteRepo: {
     name: 'vekrun-website',
-    public: false,
+    public: true,
     url: 'https://github.com/thecookieorg/vekrun-website',
   },
   /** Channels that exist today. Null means "not yet published"; pages say so instead of linking. */
