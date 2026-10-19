@@ -1,0 +1,42 @@
+---
+/**
+ * A logo tile for a catalog entry. Uses simple-icons (CC0 SVG paths) where the
+ * vendor is available there; otherwise a monogram. Very dark brand colours are
+ * rendered in the text colour so they stay visible on dark surfaces.
+ */
+import {
+  siClaude, siGooglegemini, siOllama, siLmstudio, siOpenrouter, siLinear, siJira, siAsana, siGithub, siGitlab,
+  siConfluence, siNotion, siSentry, siDatadog, siFigma, siPostgresql, siCloudflare, siSupabase, siStripe, siGit,
+} from 'simple-icons';
+
+interface Props { id: string; name: string; monogram: string; size?: 'md' | 'lg'; class?: string }
+const { id, name, monogram, size = 'md', class: className = '' } = Astro.props;
+
+type Icon = { title: string; hex: string; path: string };
+const map: Record<string, Icon> = {
+  anthropic: siClaude, 'claude-code': siClaude, gemini: siGooglegemini, 'gemini-cli': siGooglegemini,
+  ollama: siOllama, 'lm-studio': siLmstudio, openrouter: siOpenrouter,
+  linear: siLinear, jira: siJira, asana: siAsana, 'github-issues': siGithub, github: siGithub,
+  'gitlab-issues': siGitlab, gitlab: siGitlab, confluence: siConfluence, notion: siNotion,
+  sentry: siSentry, datadog: siDatadog, figma: siFigma, postgres: siPostgresql, cloudflare: siCloudflare,
+  supabase: siSupabase, stripe: siStripe, git: siGit,
+};
+const icon = map[id];
+const luminance = (hex: string) => {
+  const n = parseInt(hex, 16);
+  const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => { const c = v / 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; }) as [number, number, number];
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+const dark = icon ? luminance(icon.hex) < 0.12 : false;
+const fill = icon ? (dark ? 'var(--text)' : `#${icon.hex}`) : undefined;
+const tint = icon && !dark ? `color-mix(in srgb, #${icon.hex} 14%, var(--surface-2))` : 'var(--surface-2)';
+const dims = size === 'lg' ? 'h-12 w-12' : 'h-10 w-10';
+const glyph = size === 'lg' ? 'h-6 w-6' : 'h-5 w-5';
+---
+<span class:list={['inline-flex shrink-0 items-center justify-center rounded-lg border border-border', dims, className]} style={`background:${tint}`} aria-hidden="true" title={name}>
+  {icon ? (
+    <svg viewBox="0 0 24 24" class={glyph} style={`fill:${fill};opacity:.88`} role="img"><path d={icon.path} /></svg>
+  ) : (
+    <span class="font-mono text-[0.8125rem] font-[560] text-text-2">{monogram}</span>
+  )}
+</span>

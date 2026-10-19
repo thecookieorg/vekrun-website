@@ -2,41 +2,54 @@
 import Base from '@/layouts/Base.astro';
 import Section from '@/components/Section.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
+import Button from '@/components/Button.astro';
+import StatusBadge from '@/components/StatusBadge.astro';
 import FeatureHero from '@/components/features/FeatureHero.astro';
-import ReviewInboxMock from '@/components/features/ReviewInboxMock.astro';
+import ReviewDemo from '@/components/home/ReviewDemo.astro';
 import Steps from '@/components/features/Steps.astro';
-import Controls from '@/components/features/Controls.astro';
 import WhereThisStands from '@/components/features/WhereThisStands.astro';
+import { Inbox, ScanSearch, Users, CheckCircle2 } from '@lucide/astro';
 
-const steps = [
-  { title: 'See what is waiting', body: 'Pull requests requested from you, your teammates\' open changes, and your own, in one list.' },
-  { title: 'Ask AI for problems', body: 'Get findings with file and line: correctness, security, missing tests. Each one has the evidence next to it.' },
-  { title: 'Compare opinions', body: 'For a contested change, ask several models and see where they disagree.' },
-  { title: 'Send your feedback', body: 'Accept a finding as a suggestion, dismiss it, or write your own comment. It lands on the pull request.' },
+const benefits = [
+  { icon: Inbox, title: 'One inbox', body: 'Pull requests requested from you and the ones your teammates opened, in one list next to the code.' },
+  { icon: ScanSearch, title: 'AI goes first', body: 'Ask a model to look for security and correctness problems before you read a line. Findings point at file and line.' },
+  { icon: Users, title: 'Compare models', body: 'On a contested change, run a review council and see where Claude, Gemini and a local model agree and disagree.' },
+  { icon: CheckCircle2, title: 'You decide', body: 'Accept or dismiss each finding, leave your comments, approve. Nothing is posted or merged on your behalf.' },
 ];
-const controls = [
-  { title: 'You are the reviewer', body: 'AI proposes; nothing is posted to a pull request until you choose to post it.' },
-  { title: 'Your models', body: 'Reviews run on the providers or local models you already connected. There is no separate review service.' },
-  { title: 'Findings you can check', body: 'Every finding points at lines in the diff. No finding without evidence.' },
-  { title: 'GitHub and GitLab', body: 'Requests, comments and approvals stay in sync with the pull request on your host.' },
+const workflow = [
+  { title: 'Open the request', body: 'The diff, the ticket it came from and the test results, in one view.' },
+  { title: 'Read the findings', body: 'AI findings are suggestions with a location. Each one can be accepted into a comment or dismissed.' },
+  { title: 'Comment and approve', body: 'Your comments go to GitHub or GitLab as yours. Approval is a button you press.' },
 ];
 ---
-<Base title="Code reviews" description="Pull requests awaiting your review, your teammates' changes, AI findings with evidence, and your feedback, all in one place inside Vekrun.">
-  <FeatureHero area="Code reviews" title="Reviews in one place." lede="See the pull requests waiting on you, ask AI what it would flag, compare answers from more than one model, and send your feedback without leaving Vekrun." />
+<Base title="Code reviews" description="Pull requests waiting for you, the diff, AI findings and your comments in one place. Compare findings from several models when it matters, and approve without leaving your workspace.">
+  <FeatureHero area="Code reviews" title="Review where" accent="you write code." lede="Pull requests waiting for you, the diff, AI findings and your comments, side by side. Compare several models when a change is contested. You approve." cta={{ label: 'How AI Teams verify work', href: '/ai-teams/' }} secondary={{ label: 'Review docs', href: '/docs/git/ai-reviews/' }} />
 
-  <Section>
-    <ReviewInboxMock />
+  <Section class="ambient ambient-low overflow-x-clip">
+    <div class="reveal"><ReviewDemo /></div>
   </Section>
 
-  <Section rule tone="elevated">
-    <SectionHeading title="How a review goes" />
-    <Steps steps={steps} columns={4} class="mt-10" />
+  <Section rule tone="elevated" aria-labelledby="why-title">
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-16">
+      <SectionHeading id="why-title" title="Faster reviews, fewer tabs" lede="Reviewing a teammate’s change should not mean leaving the place you understand the code best." class="reveal">
+        <p class="mt-5 flex items-center gap-2 text-[0.8125rem] text-text-3"><StatusBadge status="planned" compact /> Pull-request inbox and GitHub/GitLab sync.</p>
+      </SectionHeading>
+      <ul class="reveal-group grid gap-x-8 gap-y-7 sm:grid-cols-2">
+        {benefits.map((b) => (
+          <li class="flex gap-3.5">
+            <b.icon class="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
+            <div><h3 class="text-[1.0625rem] font-[560] text-text">{b.title}</h3><p class="mt-1 text-[0.9375rem] leading-relaxed text-text-2">{b.body}</p></div>
+          </li>
+        ))}
+      </ul>
+    </div>
   </Section>
 
-  <Section rule>
-    <SectionHeading title="What you control" />
-    <Controls items={controls} class="mt-10" />
+  <Section rule aria-labelledby="flow-title">
+    <SectionHeading id="flow-title" title="A review, start to finish" class="reveal" />
+    <Steps steps={workflow} columns={3} class="reveal-group mt-10" />
+    <div class="mt-10 reveal"><Button href="/features/board/" variant="secondary">Where the pull request came from: the Board</Button></div>
   </Section>
 
-  <WhereThisStands>AI review of a local branch or diff, and comparing findings across models, work in the development build on macOS. The pull-request inbox and GitHub and GitLab sync are planned.</WhereThisStands>
+  <WhereThisStands>AI review of local branches and diffs, and review councils across several models, work in the development build on macOS. The pull-request inbox, inline suggestions and GitHub/GitLab synchronisation are planned.</WhereThisStands>
 </Base>

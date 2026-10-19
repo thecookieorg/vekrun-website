@@ -1,0 +1,101 @@
+---
+/**
+ * Board page centerpiece: a Jira bug arrives, you pick it, Start Work asks how you
+ * want to work, you choose manual, a terminal opens in a fresh working copy, you
+ * push, and the card moves to In review with the pull request linked.
+ */
+import Window from '@/components/mock/Window.astro';
+import Kanban, { type Column } from '@/components/mock/Kanban.astro';
+import DemoControls from '@/components/mock/DemoControls.astro';
+
+const columns: Column[] = [
+  { id: 'todo', name: 'To do', cards: [
+    { id: 'VEK-148', title: 'Rate-limit the webhook endpoint', src: 'Li' },
+    { id: 'WEB-311', title: 'Fix the dark-mode flash on load', src: 'Gh' },
+  ] },
+  { id: 'progress', name: 'In progress', cards: [
+    { id: 'VEK-139', title: 'Paginate the activity feed', src: 'Li', chips: [{ text: 'Agent working', tone: 'warn' }] },
+  ] },
+  { id: 'review', name: 'In review', cards: [
+    { id: 'API-212', title: 'Expired tokens return 500 instead of 401', src: 'Ji', selected: true, chips: [{ text: 'PR #91', tone: 'info' }, { text: 'You', tone: 'ok' }] },
+  ] },
+  { id: 'done', name: 'Done', cards: [
+    { id: 'API-207', title: 'Retry failed provider calls', src: 'Ji', chips: [{ text: 'Merged', tone: 'ok' }] },
+  ] },
+];
+---
+<figure class="tk" data-demo-root="ticket">
+  <Window title="Board" crumbs={['Assigned to you']}>
+    <span slot="status" class="hidden sm:inline-flex items-center gap-1.5"><span class="live-dot" aria-hidden="true"></span><span data-field="phase">Synced to Jira</span></span>
+    <div class="tk-stage" data-stage>
+      <Kanban columns={columns} compact />
+      <div class="tk-sheet" data-sheet hidden>
+        <div class="tk-sheet-head"><span class="kanban-id">API-212</span><strong>Expired tokens return 500 instead of 401</strong></div>
+        <p class="tk-sheet-q">Start Work. How do you want to work on it?</p>
+        <ul class="tk-choices">
+          <li data-choice="manual"><strong>Manually</strong><span>Branch, working copy, terminal. You code.</span></li>
+          <li data-choice="agent"><strong>With an AI agent</strong><span>The ticket becomes the agent’s brief.</span></li>
+          <li data-choice="team"><strong>Delegate to an AI team</strong><span>Plan, parallel agents, a separate check.</span></li>
+        </ul>
+      </div>
+      <div class="tk-ws" data-ws hidden>
+        <div class="window-pane-head"><span>Terminal · fix/api-212-expired-token</span><span>Ticket · API-212</span></div>
+        <pre class="term tk-term" data-term></pre>
+      </div>
+    </div>
+  </Window>
+  <DemoControls notice="Product preview. The Board, Start Work and the three ways of working run in the development build with local tickets; Jira, Linear, Asana, GitHub and GitLab connections and status sync are planned." />
+</figure>
+
+<style is:global>
+  .tk-stage { position: relative; }
+  .tk-stage[data-dim='true'] .kanban { filter: blur(1px) saturate(0.8); opacity: 0.55; transition: filter var(--dur), opacity var(--dur); }
+  .tk-sheet { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(26rem, calc(100% - 2rem)); background: var(--bg-elevated); border: 1px solid var(--border-strong); border-radius: var(--radius-lg); box-shadow: 0 40px 100px -30px rgba(0,0,0,0.8), 0 0 0 1px color-mix(in srgb, var(--accent) 15%, transparent); padding: 1rem 1.1rem 1.1rem; z-index: 3; animation: scale-in 360ms var(--ease-out) both; }
+  .tk-sheet[hidden] { display: none; }
+  .tk-sheet-head { display: flex; align-items: center; gap: 0.6rem; color: var(--text); font-size: 0.875rem; }
+  .tk-sheet-q { color: var(--text-2); font-size: 0.8125rem; margin: 0.6rem 0 0.75rem; }
+  .tk-choices { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+  .tk-choices li { border: 1px solid var(--border); border-radius: 8px; padding: 0.55rem 0.7rem; display: flex; flex-direction: column; gap: 0.1rem; transition: border-color var(--dur-fast), background-color var(--dur-fast); }
+  .tk-choices strong { color: var(--text); font-weight: 560; font-size: 0.8125rem; } .tk-choices span { color: var(--text-3); font-size: 0.75rem; }
+  .tk-choices li.is-hover { border-color: var(--border-strong); background: var(--surface-2); }
+  .tk-choices li.is-chosen { border-color: var(--accent); background: var(--accent-soft); }
+  .tk-ws { position: absolute; inset: 0; z-index: 2; background: var(--surface); display: flex; flex-direction: column; animation: rise 420ms var(--ease-out) both; }
+  .tk-ws[hidden] { display: none; }
+  .tk-term { margin: 0; padding: 0.7rem 0.85rem; flex: 1; overflow: hidden; }
+  @media (prefers-reduced-motion: reduce) { .tk-sheet, .tk-ws { animation: none; } }
+</style>
+
+<script>
+  import { createSequence, appendLine, type Step } from '@/scripts/sequence';
+  const root = document.querySelector<HTMLElement>('[data-demo-root="ticket"]');
+  if (root) {
+    const stage = root.querySelector<HTMLElement>('[data-stage]')!;
+    const card = root.querySelector<HTMLElement>('[data-card="API-212"]')!;
+    const chips = card.querySelector<HTMLElement>('[data-chips]')!;
+    const col = (id: string) => root.querySelector<HTMLElement>(`[data-column="${id}"] .kanban-cards`)!;
+    const sheet = root.querySelector<HTMLElement>('[data-sheet]')!;
+    const ws = root.querySelector<HTMLElement>('[data-ws]')!;
+    const term = root.querySelector<HTMLElement>('[data-term]')!;
+    const phase = root.querySelector<HTMLElement>('[data-field="phase"]')!;
+    const choice = (id: string) => root.querySelector<HTMLElement>(`[data-choice="${id}"]`)!;
+    const counts = () => root.querySelectorAll<HTMLElement>('[data-column]').forEach((c) => { const el = c.querySelector<HTMLElement>('[data-count]'); if (el) el.textContent = String(c.querySelectorAll('.kanban-card:not([hidden])').length); });
+    const reset = () => {
+      ws.hidden = true; sheet.hidden = true; stage.dataset.dim = 'false'; term.innerHTML = '';
+      root.querySelectorAll<HTMLElement>('[data-choice]').forEach((c) => c.classList.remove('is-hover', 'is-chosen'));
+      card.classList.remove('is-selected', 'is-entering'); chips.hidden = true; col('todo').prepend(card); card.hidden = true; phase.textContent = 'Synced to Jira'; counts();
+    };
+    const steps: Step[] = [
+      { t: 300, run: () => { card.hidden = false; card.classList.add('is-entering'); phase.textContent = 'New from Jira'; counts(); } },
+      { t: 1500, run: () => card.classList.add('is-selected') },
+      { t: 2300, run: () => { stage.dataset.dim = 'true'; sheet.hidden = false; } },
+      { t: 3300, run: () => choice('manual').classList.add('is-hover') },
+      { t: 4000, run: () => { choice('manual').classList.remove('is-hover'); choice('manual').classList.add('is-chosen'); } },
+      { t: 4800, run: () => { sheet.hidden = true; stage.dataset.dim = 'false'; col('progress').prepend(card); card.classList.add('is-entering'); phase.textContent = 'In progress · you'; counts(); } },
+      { t: 5700, run: () => { ws.hidden = false; appendLine(term, '<span class="dim">~/code/acme-api/.worktrees/api-212</span> <span class="ok">fix/api-212-expired-token</span>'); appendLine(term, '<span class="dim">$</span> cargo test --test auth'); } },
+      { t: 6800, run: () => { appendLine(term, 'test expired_token_returns_401 ... <span class="ok">ok</span>'); appendLine(term, 'test result: <span class="ok">ok</span>. 9 passed; 0 failed'); } },
+      { t: 7700, run: () => { appendLine(term, '<span class="dim">$</span> git push -u origin fix/api-212-expired-token'); appendLine(term, '<span class="info">remote:</span> Create a pull request: https://github.com/acme/api/pull/91'); } },
+      { t: 9000, run: () => { ws.hidden = true; col('review').prepend(card); card.classList.add('is-entering'); chips.hidden = false; phase.textContent = 'In review · synced to Jira'; counts(); } },
+    ];
+    createSequence(root, steps, { reset });
+  }
+</script>

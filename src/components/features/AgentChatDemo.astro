@@ -1,0 +1,109 @@
+---
+/**
+ * AI coding centerpiece: a question, the agent reads two files, proposes a change
+ * as a diff, you approve, the tests you allowed run, then the next question goes
+ * to a local model. Final state is in the markup; the script replays it.
+ */
+import Window from '@/components/mock/Window.astro';
+import DemoControls from '@/components/mock/DemoControls.astro';
+---
+<figure class="ac" data-demo-root="agent-chat">
+  <Window title="Agents" crumbs={['acme-api', 'Debug']}>
+    <span slot="status" class="inline-flex items-center gap-1.5"><span class="live-dot" aria-hidden="true"></span><span data-field="model">Ollama · local</span></span>
+    <div class="ac-body">
+      <section class="ac-chat" aria-label="Conversation (simulated)">
+        <div class="ac-msg ac-you">
+          <span class="ac-who">You</span>
+          <p><span data-type data-t="300" data-cps="30">Why does /me return 500 when the session token is expired?</span></p>
+        </div>
+        <div class="ac-msg ac-agent" data-t="2900">
+          <span class="ac-who">Agent · Claude</span>
+          <ul class="ac-steps">
+            <li data-t="3000"><span class="ac-ic ac-read"></span>Read <code>src/auth/session.rs</code>, <code>src/routes/me.rs</code></li>
+            <li data-t="4100"><span class="ac-ic ac-read"></span>Found <code>unwrap()</code> on the expired-token path at <code>session.rs:88</code></li>
+            <li data-t="5000"><span class="ac-ic ac-ic-diff"></span>Proposed change · 1 file · +4 −1 · <span class="ac-wait" data-field="approve">Approve?</span></li>
+          </ul>
+        </div>
+        <div class="ac-msg ac-you ac-approve" data-t="7200"><span class="ac-who">You</span><p>Approved. Run the auth tests.</p></div>
+        <div class="ac-msg ac-agent" data-t="8000">
+          <span class="ac-who">Agent · Claude</span>
+          <ul class="ac-steps">
+            <li data-t="8000"><span class="ac-ic ac-run"></span>Ran <code>cargo test --test auth</code> · allowed command</li>
+            <li data-t="9600"><span class="ac-ic ac-ok"></span>9 passed · 1 new: <code>expired_token_returns_401</code></li>
+          </ul>
+        </div>
+        <div class="ac-msg ac-you" data-t="11000">
+          <span class="ac-who">You <span class="ac-switch">switched to Ollama · local</span></span>
+          <p><span data-type data-t="11200" data-cps="30">Summarise what changed for the PR description.</span></p>
+        </div>
+      </section>
+      <aside class="ac-diffpane" aria-label="Proposed change (simulated)" data-t="5000">
+        <div class="window-pane-head"><span>src/auth/session.rs</span><span data-field="diffstate">Applied</span></div>
+        <div class="window-mono ac-diff">
+          <div class="diff-row diff-ctx"><span>86</span><span>pub fn current(&amp;self, token: &amp;str) -&gt; Result&lt;User&gt; &#123;</span></div>
+          <div class="diff-row diff-del"><span>88</span><span>-    let claims = self.decode(token).unwrap();</span></div>
+          <div class="diff-row diff-add"><span>88</span><span>+    let claims = match self.decode(token) &#123;</span></div>
+          <div class="diff-row diff-add"><span>89</span><span>+        Ok(c) =&gt; c,</span></div>
+          <div class="diff-row diff-add"><span>90</span><span>+        Err(Expired) =&gt; return Err(AuthError::Unauthorized),</span></div>
+          <div class="diff-row diff-add"><span>91</span><span>+    &#125;;</span></div>
+          <div class="diff-row diff-ctx"><span>92</span><span>    self.users.by_id(claims.sub)</span></div>
+        </div>
+        <div class="ac-actions" data-t="5000"><span class="ac-btn ac-btn-ok" data-field="applybtn">Approved</span><span class="ac-btn">Reject</span></div>
+      </aside>
+    </div>
+  </Window>
+  <DemoControls notice="Product preview. Agent modes, diffs shown before writes, allowed commands and switching providers per task work in the development build on macOS." />
+</figure>
+
+<style is:global>
+  .ac-body { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--border); min-height: 20rem; }
+  @media (min-width: 48rem) { .ac-body { grid-template-columns: 1fr 1fr; min-height: 22rem; } }
+  .ac-chat { background: var(--surface); padding: 0.85rem 0.95rem; display: flex; flex-direction: column; gap: 0.7rem; min-width: 0; }
+  .ac-msg { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.8125rem; animation: rise-sm 300ms var(--ease-out) both; }
+  .ac-msg[hidden] { display: none; }
+  .ac-who { font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-3); }
+  .ac-you p { color: var(--text); margin: 0; min-height: 1.3em; }
+  .ac-approve p { color: var(--ok); }
+  .ac-switch { color: var(--accent); margin-left: 0.4rem; }
+  .ac-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.3rem; color: var(--text-2); }
+  .ac-steps li { display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap; }
+  .ac-steps li[hidden] { display: none; }
+  .ac-steps code { font-size: 0.72rem; color: var(--text); background: var(--surface-2); border: 1px solid var(--border); border-radius: 4px; padding: 0 0.3rem; }
+  .ac-ic { width: 0.6rem; height: 0.6rem; border-radius: 50%; border: 1.5px solid var(--border-strong); flex-shrink: 0; }
+  .ac-read { border-color: var(--info); } .ac-ic-diff { border-color: var(--warn); background: var(--warn); } .ac-run { border-color: var(--warn); } .ac-ok { border-color: var(--ok); background: var(--ok); }
+  .ac-wait { color: var(--warn); }
+  .ac-diffpane { background: var(--term-bg); display: flex; flex-direction: column; min-width: 0; animation: fade 300ms both; }
+  .ac-diffpane[hidden] { display: none; }
+  .ac-diff { padding: 0.5rem 0.4rem; overflow: hidden; }
+  .ac-actions { display: flex; gap: 0.5rem; padding: 0.6rem 0.85rem; border-top: 1px solid var(--border); margin-top: auto; }
+  .ac-actions[hidden] { display: none; }
+  .ac-btn { font-size: 0.72rem; border: 1px solid var(--border-strong); border-radius: 5px; padding: 0.25rem 0.6rem; color: var(--text-2); }
+  .ac-btn-ok { background: var(--accent); color: var(--accent-ink); border-color: transparent; font-weight: 560; }
+  .ac-btn-ok.is-pending { background: transparent; color: var(--accent); border-color: var(--accent); }
+  @media (max-width: 47.9rem) { .ac-diffpane { max-height: 11rem; } }
+  @media (prefers-reduced-motion: reduce) { .ac-msg, .ac-diffpane { animation: none; } }
+</style>
+
+<script>
+  import { createSequence, typeSteps, type Step } from '@/scripts/sequence';
+  const root = document.querySelector<HTMLElement>('[data-demo-root="agent-chat"]');
+  if (root) {
+    const timed = Array.from(root.querySelectorAll<HTMLElement>('[data-t]:not([data-type])'));
+    const typers = Array.from(root.querySelectorAll<HTMLElement>('[data-type]'));
+    const texts = typers.map((n) => n.textContent ?? '');
+    const f = (n: string) => root.querySelector<HTMLElement>(`[data-field="${n}"]`)!;
+    const reset = () => {
+      timed.forEach((n) => { n.hidden = true; });
+      typers.forEach((n) => { n.textContent = ''; });
+      f('model').textContent = 'Claude · your key'; f('diffstate').textContent = 'Proposed'; f('approve').textContent = 'Approve?';
+      f('applybtn').textContent = 'Approve'; f('applybtn').classList.add('is-pending');
+    };
+    const steps: Step[] = timed.map((n) => ({ t: Number(n.dataset.t), run: () => { n.hidden = false; } }));
+    typers.forEach((n, i) => steps.push(...typeSteps(() => n, texts[i]!, Number(n.dataset.t), Number(n.dataset.cps ?? 28)).steps));
+    steps.push(
+      { t: 7200, run: () => { f('approve').textContent = 'Approved by you'; f('diffstate').textContent = 'Applied'; f('applybtn').textContent = 'Approved'; f('applybtn').classList.remove('is-pending'); } },
+      { t: 11000, run: () => { f('model').textContent = 'Ollama · local'; } },
+    );
+    createSequence(root, steps, { reset });
+  }
+</script>

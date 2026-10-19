@@ -2,49 +2,59 @@
 import Base from '@/layouts/Base.astro';
 import Section from '@/components/Section.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
+import Button from '@/components/Button.astro';
 import FeatureHero from '@/components/features/FeatureHero.astro';
-import TerminalMock from '@/components/features/TerminalMock.astro';
-import Controls from '@/components/features/Controls.astro';
+import TerminalSplitDemo from '@/components/features/TerminalSplitDemo.astro';
+import Steps from '@/components/features/Steps.astro';
 import WhereThisStands from '@/components/features/WhereThisStands.astro';
+import { Columns2, Network, Search, Keyboard, Palette } from '@lucide/astro';
 
-const doing = [
-  { title: 'Tabs and splits', body: 'Open a tab per project and split a pane for logs or tests. ⌘D splits right, ⌘⇧D splits down. Layouts come back after a restart.' },
-  { title: 'Search your scrollback', body: '⌘F finds that error from ten minutes ago, across the whole scrollback.' },
-  { title: 'Know what happened', body: 'Every command shows its exit code and how long it took. Failed commands are marked in the gutter so you can jump back to them.' },
-  { title: 'SSH that stays put', body: 'Open a tab on a remote machine. Host keys are checked and shown before you connect; passwords are asked once.' },
-  { title: 'Your shell, your fonts, your theme', body: 'Bash, Zsh, Fish, PowerShell or WSL. Font, cursor, scrollback and theme are settings, applied live, in dark or light.' },
-  { title: 'Links that tell you where they go', body: 'A URL in output opens only after you see the real address. Nothing writes to your clipboard silently.' },
+const benefits = [
+  { icon: Columns2, title: 'Tabs and splits that keep your shell', body: 'Split with ⌘D, close a pane, drag a divider. A split never restarts the shell inside it.' },
+  { icon: Network, title: 'SSH in a tab', body: 'Remote shells next to local ones. The host key is shown and checked before you connect.' },
+  { icon: Search, title: 'Search everything', body: '⌘F through scrollback. Shell integration marks every command with its exit code and duration.' },
+  { icon: Keyboard, title: 'Keyboard first', body: 'Every pane, tab and search has a shortcut. The mouse is optional.' },
+  { icon: Palette, title: 'Yours to configure', body: 'Font, cursor, scrollback, shell, theme. Settings apply live, no restart.' },
 ];
-const controls = [
-  { title: 'Everything works without AI', body: 'The terminal never waits on a model. Connect one when you want help, or never.' },
-  { title: 'Ask about what is on screen', body: 'Select output and send it to an agent to explain an error or suggest a fix. Nothing leaves your machine until you say so.' },
-  { title: 'Keyboard first', body: 'Tabs, splits, search and the command palette all have shortcuts you can change.' },
-  { title: 'Runs on macOS, Windows and Linux', body: 'One app on all three. Today only macOS has been used by hand.' },
+const workflow = [
+  { title: 'Open the project', body: 'Shells start in the project you have open, on the branch you are on.' },
+  { title: 'Split for the long job', body: '⌘D for a second pane. Run the build on one side, keep working on the other.' },
+  { title: 'Ask about the output', body: 'A failing command? Send its output to the agent with one keystroke. Nothing is sent until you do.' },
+  { title: 'Come back tomorrow', body: 'Close the window. Tabs, panes and scrollback are there when you return, clearly marked as restored.' },
 ];
 ---
-<Base title="Terminal" description="A modern terminal for everyday development: tabs, splits, SSH, search, session restore and themes. Works with or without AI.">
-  <FeatureHero area="Terminal" title="A terminal you can live in." lede="Tabs, splits, SSH and search, with the small things done right: exit codes you can see, sessions that survive a restart, and links that show where they go." />
+<Base title="Terminal" description="A modern terminal with tabs, splits, SSH, search and session restore. It works without any AI connected, and when you want help, the AI reads the output you already have.">
+  <FeatureHero area="Terminal" title="A terminal you can" accent="live in." lede="Tabs, splits, SSH and search, fast and familiar. It works with no AI connected. When you want help, it reads the output you already have." cta={{ label: 'See what works today', href: '#status' }} secondary={{ label: 'Terminal docs', href: '/docs/terminal/tabs-and-panes/' }} />
 
-  <Section>
-    <TerminalMock />
+  <Section class="ambient ambient-low overflow-x-clip">
+    <div class="reveal"><TerminalSplitDemo /></div>
   </Section>
 
-  <Section rule tone="elevated">
-    <SectionHeading title="What you can do" />
-    <ul class="mt-10 grid gap-x-10 gap-y-7 sm:grid-cols-2 lg:grid-cols-3">
-      {doing.map((d) => (
-        <li class="border-t border-border pt-4">
-          <h3 class="text-[1rem] font-[580] text-text">{d.title}</h3>
-          <p class="mt-1.5 text-[0.9rem] leading-relaxed text-text-2">{d.body}</p>
-        </li>
-      ))}
-    </ul>
+  <Section rule tone="elevated" aria-labelledby="why-title">
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-16">
+      <SectionHeading id="why-title" title="Why developers keep it open" lede="Everything a daily terminal must do, done well, before any AI enters the picture." class="reveal" />
+      <ul class="reveal-group grid gap-x-8 gap-y-7 sm:grid-cols-2">
+        {benefits.map((b) => (
+          <li class="flex gap-3.5">
+            <b.icon class="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
+            <div><h3 class="text-[1.0625rem] font-[560] text-text">{b.title}</h3><p class="mt-1 text-[0.9375rem] leading-relaxed text-text-2">{b.body}</p></div>
+          </li>
+        ))}
+      </ul>
+    </div>
   </Section>
 
-  <Section rule>
-    <SectionHeading title="What you control" />
-    <Controls items={controls} class="mt-10" />
+  <Section rule aria-labelledby="flow-title">
+    <SectionHeading id="flow-title" title="A day with it" lede="One realistic workflow, start to finish." class="reveal" />
+    <Steps steps={workflow} columns={4} class="reveal-group mt-10" />
   </Section>
 
-  <WhereThisStands>Tabs, splits, search, session restore, SSH and settings work in the development build on macOS. Remote file editing and transfers are planned.</WhereThisStands>
+  <Section rule tone="elevated" padded="tight">
+    <div class="card card-hover flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
+      <div><h2 class="heading-3">Next: bring your own AI</h2><p class="mt-1 text-[0.9375rem] text-text-2">The same terminal, with Claude, OpenAI, Gemini or a local model one keystroke away.</p></div>
+      <Button href="/features/ai-coding/" variant="secondary" class="shrink-0">AI coding</Button>
+    </div>
+  </Section>
+
+  <div id="status"><WhereThisStands>Tabs, splits, search, session restore, shell integration, SSH and the settings above work in the development build on macOS. Remote file editing and transfers are planned.</WhereThisStands></div>
 </Base>

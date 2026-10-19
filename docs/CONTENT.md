@@ -73,3 +73,29 @@ produces them, and remove the notice at that point.
 ## Open Graph image
 
 `node scripts/og-image.mjs` regenerates `public/og/default.png`.
+
+## Product demonstrations and motion
+
+Every mockup is built from the shared system, never from a screenshot:
+
+- `src/components/mock/Window.astro` is the branded window chrome (dots,
+  breadcrumb, optional tabs, a status slot). `Kanban.astro` is the reusable
+  Board. `DemoControls.astro` adds Play/Pause and Replay plus the preview
+  notice; put it inside the demo root so the runtime finds the buttons.
+- `src/scripts/sequence.ts` runs a scripted demo: `createSequence(root,
+  steps, { reset })`. It starts when the root is 35% visible, pauses when it
+  leaves the viewport or the tab is hidden, exposes play/pause/replay, and
+  jumps to the final state under `prefers-reduced-motion`. Write the final
+  state into the HTML so the page reads correctly without JavaScript, and let
+  `reset()` clear it when the script runs. Never loop a demo.
+- Styles for elements a script creates at runtime must be global
+  (`<style is:global>`), because Astro's scoped selectors only match markup
+  from the template.
+- Terminal text uses the global `.term` classes; diffs use `.diff-row`.
+- Motion utilities live in `src/styles/global.css`: `.enter` / `.enter-scale`
+  (page entrances, staggered with `--i`), `.reveal` and `.reveal-group`
+  (scroll reveals, staggered children), `.card.card-hover`, `.link-slide`,
+  `.icon-nudge`, `.ambient` lights and `.grid-field`. All of them are
+  disabled under reduced motion.
+- Real screenshots or recordings of the application replace a mockup as soon
+  as they exist; remove the preview notice at that point.

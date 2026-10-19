@@ -1,0 +1,29 @@
+---
+/**
+ * The branded product window every mockup shares: traffic dots, a breadcrumb,
+ * optional tabs on the left and a status cluster on the right.
+ */
+interface Props {
+  title?: string;
+  crumbs?: string[];
+  tabs?: { label: string; active?: boolean }[];
+  class?: string;
+  /** Any attributes to put on the root (data-* hooks for demos). */
+  [key: string]: unknown;
+}
+const { title, crumbs = [], tabs = [], class: className = '', ...rest } = Astro.props;
+---
+<div class:list={['window', className]} {...rest}>
+  <div class="window-bar">
+    <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+    {title && <span class="text-text-2">{title}</span>}
+    {crumbs.map((c) => <span class="hidden sm:inline">{c}</span>)}
+    {tabs.length > 0 && (
+      <span class="window-tabs ml-2" data-window-tabs>
+        {tabs.map((t) => <span class:list={['window-tab', t.active && 'is-active']} data-window-tab={t.label}>{t.label}</span>)}
+      </span>
+    )}
+    <span class="ml-auto flex items-center gap-3"><slot name="status" /></span>
+  </div>
+  <slot />
+</div>

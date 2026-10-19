@@ -1,0 +1,118 @@
+---
+/**
+ * "A terminal that does more": a test run with one failure, a tab switch, and a
+ * contextual AI explanation. Final state is in the markup; the script replays it.
+ */
+import Window from '@/components/mock/Window.astro';
+import DemoControls from '@/components/mock/DemoControls.astro';
+---
+<figure class="terminal-demo" data-demo-root="terminal">
+  <Window title="acme-api" tabs={[{ label: 'api', active: true }, { label: 'web' }, { label: 'logs' }]}>
+    <span slot="status" class="hidden sm:inline">feat/rate-limit</span>
+    <span slot="status" class="hidden items-center gap-1.5 md:inline-flex"><span class="live-dot" aria-hidden="true"></span>Claude · your key</span>
+
+    <div class="td-split">
+      <section class="td-pane term" aria-label="Terminal, left pane (simulated)">
+        <div class="td-lines">
+          <span class="term-line"><span class="dim">~/code/acme-api</span> <span class="ok">feat/rate-limit</span></span>
+          <span class="term-line"><span class="dim">$</span> <span data-t="300" data-type data-cps="20">pnpm test</span></span>
+          <span class="term-line" data-t="1100"><span class="dim">&gt; acme-api@0.4.2 test</span></span>
+          <span class="term-line" data-t="1150"><span class="dim">&gt; vitest run</span></span>
+          <span class="term-line" data-t="1700"> </span>
+          <span class="term-line" data-t="1900"> <span class="ok">✓</span> src/auth/session.test.ts <span class="dim">(8)</span></span>
+          <span class="term-line" data-t="2500"> <span class="ok">✓</span> src/api/users.test.ts <span class="dim">(5)</span></span>
+          <span class="term-line" data-t="3300"> <span class="err">✗</span> src/api/export.test.ts <span class="dim">(3)</span></span>
+          <span class="term-line" data-t="3500">   <span class="err">×</span> export returns 429 after the limit</span>
+          <span class="term-line" data-t="3600">     <span class="err">AssertionError:</span> expected 200 to be 429</span>
+          <span class="term-line" data-t="4100"> </span>
+          <span class="term-line" data-t="4200"> Test Files  <span class="err">1 failed</span> | <span class="ok">2 passed</span> <span class="dim">(3)</span></span>
+          <span class="term-line" data-t="4300">      Tests  <span class="err">1 failed</span> | <span class="ok">15 passed</span> <span class="dim">(16)</span></span>
+          <span class="term-line" data-t="4500"><span class="dim">$</span> <span class="term-cursor"></span></span>
+        </div>
+      </section>
+
+      <section class="td-pane term td-right" aria-label="Terminal, right pane (simulated)">
+        <div class="td-lines" data-pane="git">
+          <span class="term-line"><span class="dim">$</span> git status --short</span>
+          <span class="term-line"><span class="warn"> M</span> src/api/export.ts</span>
+          <span class="term-line"><span class="ok">A </span> src/api/rate-limit.ts</span>
+          <span class="term-line"><span class="dim">$</span> <span class="term-cursor"></span></span>
+        </div>
+        <div class="td-lines" data-pane="logs" hidden>
+          <span class="term-line"><span class="dim">12:04:11</span> <span class="info">info</span>  server listening on :3000</span>
+          <span class="term-line"><span class="dim">12:04:19</span> <span class="info">info</span>  GET /v1/export 200 · 41 ms</span>
+          <span class="term-line"><span class="dim">12:04:19</span> <span class="warn">warn</span>  export: limiter not applied to /v1/export</span>
+          <span class="term-line"><span class="dim">12:04:20</span> <span class="info">info</span>  GET /v1/export 200 · 38 ms</span>
+        </div>
+      </section>
+    </div>
+
+    <span class="sr-only" data-t="5600" data-action="tab:logs"></span>
+
+    <div class="td-assist" data-t="6600">
+      <div class="td-assist-head">
+        <span class="td-assist-chip">Explain this failure</span>
+        <span class="text-text-3">from the failing test above</span>
+      </div>
+      <p class="td-assist-body" data-t="7300" data-type data-cps="60">The limiter is registered after the export route, so /v1/export never passes through it. The logs tab shows the same warning on every request.</p>
+      <div class="td-assist-fix" data-t="10200">
+        <span class="text-text-3">Suggested fix</span>
+        <code>app.use(rateLimit()) before router.use('/v1/export')</code>
+      </div>
+    </div>
+  </Window>
+  <DemoControls notice="Product preview. Tabs, splits, shell integration and the read-terminal assist exist in the development build on macOS; the explanation shown here is illustrative." />
+</figure>
+
+<style>
+  .td-split { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--border); }
+  @media (min-width: 48rem) { .td-split { grid-template-columns: 1.3fr 1fr; } }
+  .td-pane { padding: 0.75rem 0.9rem; min-height: 19rem; overflow: hidden; }
+  @media (min-width: 48rem) { .td-pane { max-height: 19rem; } }
+  .td-right { display: none; }
+  @media (min-width: 48rem) { .td-right { display: block; } }
+  .td-lines { display: flex; flex-direction: column; }
+  .terminal-demo [data-t] { transition: opacity var(--dur-fast) linear; }
+  .terminal-demo [data-t][hidden] { display: none; }
+  .td-assist { margin: 0; padding: 0.85rem 0.95rem; border-top: 1px solid var(--border); background: var(--surface-2); min-height: 7.25rem; font-size: 0.8125rem; display: flex; flex-direction: column; gap: 0.5rem; animation: rise-sm 420ms var(--ease-out) both; }
+  .td-assist[hidden] { display: none; }
+  .td-assist-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; font-size: 0.75rem; }
+  .td-assist-chip { display: inline-flex; align-items: center; gap: 0.4rem; border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent); color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 0.2rem 0.6rem; font-weight: 540; }
+  .td-assist-chip::before { content: ''; width: 0.4rem; height: 0.4rem; border-radius: 50%; background: var(--accent); }
+  .td-assist-body { color: var(--text); line-height: 1.5; min-height: 2.6em; max-width: 64ch; margin: 0; }
+  .td-assist-fix { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem; font-size: 0.75rem; }
+  .td-assist-fix code { font-family: var(--font-mono); background: var(--term-bg); color: var(--term-fg); padding: 0.2rem 0.5rem; border-radius: 5px; border: 1px solid var(--border); }
+  @media (prefers-reduced-motion: reduce) { .td-assist { animation: none; } }
+</style>
+
+<script>
+  import { createSequence, typeSteps, type Step } from '@/scripts/sequence';
+
+  const root = document.querySelector<HTMLElement>('[data-demo-root="terminal"]');
+  if (root) {
+    const nodes = Array.from(root.querySelectorAll<HTMLElement>('[data-t]'));
+    const originals = new Map(nodes.map((n) => [n, n.textContent ?? '']));
+    const tabs = Array.from(root.querySelectorAll<HTMLElement>('[data-window-tab]'));
+    const panes = Array.from(root.querySelectorAll<HTMLElement>('[data-pane]'));
+
+    const showPane = (name: string) => {
+      panes.forEach((p) => { p.hidden = p.dataset.pane !== name; });
+      tabs.forEach((t) => t.classList.toggle('is-active', t.dataset.windowTab === (name === 'git' ? 'api' : name)));
+    };
+
+    const reset = () => {
+      nodes.forEach((n) => { n.hidden = true; if (n.dataset.type !== undefined) n.textContent = ''; });
+      showPane('git');
+    };
+
+    const steps: Step[] = [];
+    for (const n of nodes) {
+      const t = Number(n.dataset.t);
+      const action = n.dataset.action;
+      if (action?.startsWith('tab:')) { steps.push({ t, run: () => showPane(action.slice(4)) }); continue; }
+      steps.push({ t, run: () => { n.hidden = false; } });
+      if (n.dataset.type !== undefined) steps.push(...typeSteps(() => n, originals.get(n)!, t, Number(n.dataset.cps ?? 36)).steps);
+    }
+    createSequence(root, steps, { reset });
+  }
+</script>

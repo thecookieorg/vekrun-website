@@ -1,0 +1,135 @@
+---
+/**
+ * "AI teams that build with you": task chips travel Planner → Developer → Tester →
+ * Reviewer → You. Chips are real DOM nodes moved between lanes with a FLIP
+ * transition. Final state is in the markup; the script replays it.
+ */
+import DemoControls from '@/components/mock/DemoControls.astro';
+import Window from '@/components/mock/Window.astro';
+
+const lanes = [
+  { id: 'planner', name: 'Planner', hint: 'reads the project, drafts the plan' },
+  { id: 'developer', name: 'Developer', hint: 'one branch per task' },
+  { id: 'tester', name: 'Tester', hint: 'runs the tests you allow' },
+  { id: 'reviewer', name: 'Reviewer', hint: 'a different agent checks the work' },
+  { id: 'you', name: 'You', hint: 'approve the plan and the merge' },
+];
+---
+<figure class="af" data-demo-root="agents">
+  <Window title="AI Teams" crumbs={['acme-api', 'Add OAuth login']}>
+    <span slot="status" class="hidden sm:inline-flex items-center gap-1.5"><span class="live-dot" aria-hidden="true"></span><span data-field="phase">Merged</span></span>
+
+    <div class="af-lanes">
+      {lanes.map((l, i) => (
+        <section class="af-lane" data-lane={l.id} aria-label={`${l.name} lane`}>
+          <header class="af-lane-head"><span class="af-lane-name">{l.name}</span><span class="af-lane-hint">{l.hint}</span></header>
+          {i === 0 && (
+            <div class="af-plan" data-t="700">
+              <p class="af-plan-title">Plan for “Add OAuth login”</p>
+              <ol class="af-plan-steps">
+                <li data-t="1300">GitHub OAuth callback route</li>
+                <li data-t="1800">Link OAuth identity to existing accounts</li>
+                <li data-t="2300">Tests for state check and token handling</li>
+              </ol>
+              <span class="af-stamp" data-t="3300">Approved by you</span>
+            </div>
+          )}
+          {i === 0 && <div class="af-council" data-t="900"><span>Council</span><span class="af-council-opt">optional</span></div>}
+          <ul class="af-chips" data-chips={l.id}></ul>
+        </section>
+      ))}
+    </div>
+
+    <!-- Chips start here and are moved by the script. Final state (markup only): both merged. -->
+    <ul class="af-pool" hidden aria-hidden="true">
+      <li class="af-chip" data-chip="a"><span class="af-chip-title">OAuth callback</span><span class="af-chip-meta" data-meta>feat/oauth-callback</span></li>
+      <li class="af-chip" data-chip="b"><span class="af-chip-title">Account linking</span><span class="af-chip-meta" data-meta>feat/oauth-linking</span></li>
+    </ul>
+  </Window>
+  <DemoControls notice="Product preview. Plans with approval, parallel agents on separate branches, a separate checking agent and merge approval run in the development build on macOS." />
+</figure>
+
+<style>
+  .af-lanes { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--border); }
+  @media (min-width: 48rem) { .af-lanes { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+  .af-lane { background: var(--surface); padding: 0.75rem; min-width: 0; display: flex; flex-direction: column; gap: 0.6rem; min-height: 6.5rem; }
+  @media (min-width: 48rem) { .af-lane { min-height: 17rem; } }
+  .af-lane[data-lane='you'] { background: color-mix(in srgb, var(--accent) 5%, var(--surface)); }
+  .af-lane-head { display: flex; flex-direction: column; gap: 0.1rem; }
+  .af-lane-name { font-size: 0.8125rem; font-weight: 560; color: var(--text); }
+  .af-lane-hint { font-size: 0.68rem; color: var(--text-3); line-height: 1.3; }
+  .af-plan { border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface-2); padding: 0.55rem 0.65rem; font-size: 0.72rem; display: flex; flex-direction: column; gap: 0.35rem; animation: scale-in 450ms var(--ease-out) both; position: relative; }
+  .af-plan[hidden] { display: none; }
+  .af-plan-title { margin: 0; color: var(--text); font-weight: 540; }
+  .af-plan-steps { margin: 0; padding-left: 1rem; color: var(--text-2); display: flex; flex-direction: column; gap: 0.2rem; }
+  .af-plan-steps li[hidden] { display: none; }
+  .af-stamp { align-self: flex-start; margin-top: 0.2rem; font-size: 0.66rem; color: var(--ok); border: 1px solid color-mix(in srgb, var(--ok) 50%, transparent); border-radius: 999px; padding: 0.1rem 0.45rem; animation: scale-in 350ms var(--ease-spring) both; }
+  .af-stamp[hidden] { display: none; }
+  .af-council { border: 1px dashed var(--border-strong); border-radius: var(--radius-sm); padding: 0.35rem 0.6rem; font-size: 0.7rem; color: var(--text-3); display: flex; justify-content: space-between; animation: fade 400ms both; }
+  .af-council[hidden] { display: none; }
+  .af-council-opt { color: var(--text-3); }
+  .af-chips { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.45rem; }
+  .af-pool { display: none; }
+  .af-chip { display: flex; flex-direction: column; gap: 0.15rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface-2); padding: 0.45rem 0.6rem; font-size: 0.72rem; will-change: transform; }
+  .af-chip.is-moving { transition: transform 620ms var(--ease-spring); }
+  .af-chip.is-working { border-color: color-mix(in srgb, var(--warn) 55%, transparent); }
+  .af-chip.is-ok { border-color: color-mix(in srgb, var(--ok) 55%, transparent); }
+  .af-chip-title { color: var(--text); font-weight: 540; }
+  .af-chip-meta { font-family: var(--font-mono); color: var(--text-3); font-size: 0.66rem; }
+  .af-chip.is-working .af-chip-meta { color: var(--warn); } .af-chip.is-ok .af-chip-meta { color: var(--ok); }
+  @media (prefers-reduced-motion: reduce) { .af-plan, .af-stamp, .af-council { animation: none; } .af-chip.is-moving { transition: none; } }
+</style>
+
+<script>
+  import { createSequence, type Step } from '@/scripts/sequence';
+
+  const root = document.querySelector<HTMLElement>('[data-demo-root="agents"]');
+  if (root) {
+    const pool = root.querySelector<HTMLElement>('.af-pool')!;
+    const chips = { a: root.querySelector<HTMLElement>('[data-chip="a"]')!, b: root.querySelector<HTMLElement>('[data-chip="b"]')! };
+    const lane = (id: string) => root.querySelector<HTMLElement>(`[data-chips="${id}"]`)!;
+    const timed = Array.from(root.querySelectorAll<HTMLElement>('[data-t]'));
+    const phase = root.querySelector<HTMLElement>('[data-field="phase"]')!;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const move = (chip: HTMLElement, to: string, meta?: string, state?: 'working' | 'ok' | '') => {
+      const first = chip.getBoundingClientRect();
+      lane(to).appendChild(chip);
+      if (meta !== undefined) chip.querySelector<HTMLElement>('[data-meta]')!.textContent = meta;
+      if (state !== undefined) { chip.classList.remove('is-working', 'is-ok'); if (state) chip.classList.add(`is-${state}`); }
+      const last = chip.getBoundingClientRect();
+      if (reduce || first.width === 0) return;
+      const dx = first.left - last.left, dy = first.top - last.top;
+      chip.classList.remove('is-moving');
+      chip.style.transform = `translate(${dx}px, ${dy}px)`;
+      void chip.offsetWidth;
+      chip.classList.add('is-moving');
+      chip.style.transform = '';
+      chip.addEventListener('transitionend', () => chip.classList.remove('is-moving'), { once: true });
+    };
+
+    const reset = () => {
+      timed.forEach((n) => { n.hidden = true; });
+      pool.appendChild(chips.a); pool.appendChild(chips.b);
+      [chips.a, chips.b].forEach((c) => { c.classList.remove('is-working', 'is-ok', 'is-moving'); c.style.transform = ''; });
+      chips.a.querySelector<HTMLElement>('[data-meta]')!.textContent = 'feat/oauth-callback';
+      chips.b.querySelector<HTMLElement>('[data-meta]')!.textContent = 'feat/oauth-linking';
+      phase.textContent = 'Planning';
+    };
+
+    const steps: Step[] = timed.map((n) => ({ t: Number(n.dataset.t), run: () => { n.hidden = false; } }));
+    steps.push(
+      { t: 3300, run: () => { phase.textContent = 'Building'; } },
+      { t: 3900, run: () => move(chips.a, 'developer', 'feat/oauth-callback · editing', 'working') },
+      { t: 4300, run: () => move(chips.b, 'developer', 'feat/oauth-linking · editing', 'working') },
+      { t: 6600, run: () => { phase.textContent = 'Testing'; move(chips.a, 'tester', 'running 12 tests', 'working'); } },
+      { t: 7300, run: () => move(chips.b, 'tester', 'running 7 tests', 'working') },
+      { t: 8600, run: () => move(chips.a, 'reviewer', '12 tests ✓ · reviewing', 'working') },
+      { t: 9400, run: () => move(chips.b, 'reviewer', '7 tests ✓ · reviewing', 'working') },
+      { t: 10800, run: () => { phase.textContent = 'Ready for you'; move(chips.a, 'you', 'No findings · ready to merge', 'ok'); } },
+      { t: 11500, run: () => move(chips.b, 'you', '1 note: rate-limit the callback · ready', 'ok') },
+      { t: 13200, run: () => { phase.textContent = 'Merged'; chips.a.querySelector<HTMLElement>('[data-meta]')!.textContent = 'Merged by you ✓'; chips.b.querySelector<HTMLElement>('[data-meta]')!.textContent = 'Merged by you ✓'; } },
+    );
+    createSequence(root, steps, { reset });
+  }
+</script>

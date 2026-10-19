@@ -1,0 +1,25 @@
+---
+/** Play/pause and replay for a scripted demo, plus the preview notice. Pair with createSequence(). */
+import { Pause, Play, RotateCcw } from '@lucide/astro';
+import ConceptNotice from '@/components/ConceptNotice.astro';
+interface Props { notice?: string; class?: string }
+const { notice, class: className = '' } = Astro.props;
+---
+<div class:list={['mt-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between', className]}>
+  <ConceptNotice class="max-w-xl" text={notice} />
+  <div class="flex shrink-0 items-center gap-2" data-demo-controls>
+    <button type="button" class="demo-btn" data-demo-play aria-label="Pause or play the demonstration">
+      <Play class="demo-icon-play h-3.5 w-3.5" aria-hidden="true" />
+      <Pause class="demo-icon-pause h-3.5 w-3.5" aria-hidden="true" />
+      <span class="demo-label-play">Play</span><span class="demo-label-pause">Pause</span>
+    </button>
+    <button type="button" class="demo-btn" data-demo-replay><RotateCcw class="h-3.5 w-3.5" aria-hidden="true" /> Replay</button>
+  </div>
+</div>
+<style>
+  .demo-btn { display: inline-flex; align-items: center; gap: 0.4rem; height: 2rem; padding: 0 0.7rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.8125rem; color: var(--text-2); background: var(--surface); transition: border-color var(--dur-fast), color var(--dur-fast); }
+  .demo-btn:hover { border-color: var(--border-strong); color: var(--text); }
+  .demo-icon-pause, .demo-label-pause { display: none; }
+  :global([data-demo='playing']) .demo-icon-play, :global([data-demo='playing']) .demo-label-play { display: none; }
+  :global([data-demo='playing']) .demo-icon-pause, :global([data-demo='playing']) .demo-label-pause { display: inline; }
+</style>

@@ -8,16 +8,24 @@ interface Props {
   [key: string]: unknown;
 }
 const { href, variant = 'primary', size = 'md', class: className = '', external = false, ...rest } = Astro.props;
-const base =
-  'inline-flex items-center justify-center gap-2 rounded-md font-[540] tracking-[-0.005em] transition-[background-color,border-color,color,transform] duration-150 active:translate-y-px';
+const base = 'btn inline-flex items-center justify-center gap-2 rounded-md font-[540] tracking-[-0.005em]';
 const sizes = { md: 'h-10 px-4 text-[0.9375rem]', lg: 'h-12 px-5 text-base' };
-const variants = {
-  primary: 'bg-accent text-accent-ink hover:bg-accent-strong',
-  secondary: 'border border-border-strong bg-surface text-text hover:border-text-3 hover:bg-surface-2',
-  ghost: 'text-text-2 hover:text-text hover:bg-surface-2',
-};
-const classes = [base, sizes[size], variants[variant], className];
+const variants = { primary: 'btn-primary', secondary: 'btn-secondary', ghost: 'btn-ghost' };
 const Tag = href ? 'a' : 'button';
 const extra = external ? { target: '_blank', rel: 'noopener noreferrer' } : {};
 ---
-<Tag href={href} class:list={classes} {...extra} {...rest}><slot /></Tag>
+<Tag href={href} class:list={[base, sizes[size], variants[variant], className]} {...extra} {...rest}><slot /></Tag>
+
+<style is:global>
+  .btn { position: relative; overflow: hidden; transition: transform var(--dur-fast) var(--ease-out), background-color var(--dur-fast), border-color var(--dur-fast), color var(--dur-fast), box-shadow var(--dur) var(--ease-out); }
+  .btn:active { transform: translateY(1px); }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: 0 0 0 0 transparent; }
+  .btn-primary::after { content: ''; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%); background-size: 200% 100%; opacity: 0; transition: opacity var(--dur-fast); }
+  .btn-primary:hover { background: var(--accent-strong); box-shadow: 0 10px 30px -12px color-mix(in srgb, var(--accent) 70%, transparent); }
+  .btn-primary:hover::after { opacity: 1; animation: shimmer 900ms var(--ease-out) 1; }
+  .btn-secondary { border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); }
+  .btn-secondary:hover { border-color: var(--text-3); background: var(--surface-2); }
+  .btn-ghost { color: var(--text-2); }
+  .btn-ghost:hover { color: var(--text); background: var(--surface-2); }
+  @media (prefers-reduced-motion: reduce) { .btn, .btn-primary::after { transition: none; animation: none; } .btn-primary:hover::after { animation: none; } }
+</style>

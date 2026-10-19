@@ -4,84 +4,51 @@ import Section from '@/components/Section.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import Button from '@/components/Button.astro';
 import FeatureHero from '@/components/features/FeatureHero.astro';
-import CouncilMock from '@/components/features/CouncilMock.astro';
-import Controls from '@/components/features/Controls.astro';
+import TeamRunDemo from '@/components/features/TeamRunDemo.astro';
 import WhereThisStands from '@/components/features/WhereThisStands.astro';
 
-const flow = [
-  { title: 'Idea', body: 'A ticket or a sentence: what should exist when this is done.' },
-  { title: 'Plan', body: 'An agent reads the project and proposes steps, files and tests. You edit and approve.' },
-  { title: 'Review', body: 'Optional. Several models weigh in on the plan and challenge each other.' },
-  { title: 'Build', body: 'Agents take the steps in parallel, each on its own branch.' },
-  { title: 'Test', body: 'A different agent runs the tests and checks the work against the plan.' },
-  { title: 'Deliver', body: 'You see the merge preview and approve it. Or not.' },
-];
 const parts = [
-  { name: 'Plan', title: 'Turn an idea into a plan', body: 'Describe the goal, or start from a ticket. You get steps, the files involved, dependencies and what "done" means. Edit anything, then approve. Nothing is built from a plan you have not approved.' },
-  { name: 'Council', title: 'Get a second, and third, opinion', body: 'For decisions that matter, several models each give an independent view, then critique one another. Disagreements are kept, not voted away. You get a short report and make the call. Three members and two rounds by default, with the cost shown before it starts.' },
-  { name: 'Factory', title: 'Delegate the build', body: 'Approved steps go to coding agents that work in parallel, each in its own working copy. A separate agent checks every result against the plan and reruns the tests. Failures get a bounded number of repair attempts, then come back to you.' },
+  { name: 'Plan', title: 'Turn an idea into a plan', body: 'Describe the goal, or start from a ticket. You get steps, the files involved and what “done” means. Edit anything, then approve. Nothing is built from a plan you have not approved.' },
+  { name: 'Council', title: 'Get a second, and third, opinion', body: 'For decisions that matter, several models give an independent view and then challenge each other. Disagreements are kept, not voted away. Three members and two rounds by default, cost shown before it starts. Optional, never the default.' },
+  { name: 'Factory', title: 'Delegate the build', body: 'Approved steps go to agents that work in parallel on separate branches without interfering. A different agent checks each result against the plan and reruns the tests. Failures get a bounded number of repair attempts, then come back to you.' },
 ];
 const controls = [
-  { title: 'Skip what you do not need', body: 'A small change goes straight to one agent. Council is opt-in and never the default. Plans can be one step long.' },
-  { title: 'Approve the plan, approve the merge', body: 'Work starts only after you approve a plan. Branches merge only after you approve the preview.' },
-  { title: 'Watch any agent', body: 'Every agent shows its diffs, commands and output. Pause, redirect or reassign a task at any time.' },
-  { title: 'Set the limits', body: 'Budgets and limits apply per project and per task, and a task can never raise its own.' },
+  { title: 'Skip what you do not need', body: 'A small change goes to one agent. A plan can be one step long.' },
+  { title: 'Approve the plan and the merge', body: 'Work starts after you approve a plan. Branches merge after you approve the preview.' },
+  { title: 'Watch any agent', body: 'Every agent shows its diffs, commands and output. Pause, redirect or reassign at any time.' },
   { title: 'One inbox', body: 'Approvals, questions and anything blocked wait for you in one list, in priority order.' },
-  { title: 'A separate agent checks the work', body: 'The agent that wrote the code is never the one that signs it off.' },
 ];
 ---
-<Base title="AI Teams" description="Plan a change, get several models to review it, and delegate the build to coordinated coding agents that work on their own branches while a separate agent checks the result.">
-  <FeatureHero area="AI Teams" title="Hand off the work. Keep the decisions." lede="For work bigger than one conversation: an agent plans it, others build and test it on their own branches, a separate one checks the result, and you approve what merges." />
+<Base title="AI Teams" description="Plan a change, let several models review the decision, and delegate the build to coordinated agents that work on separate branches while a different agent checks the result. You approve what merges.">
+  <FeatureHero area="AI Teams" title="Hand off the work." accent="Keep the decisions." lede="For work bigger than one conversation: an agent plans it, others build and test it on their own branches, a separate one checks the result, and you approve what merges." cta={{ label: 'Start from a ticket', href: '/features/board/' }} secondary={{ label: 'AI Teams docs', href: '/docs/ai-teams/factory/' }} />
 
-  <Section>
-    <SectionHeading title="How it flows" lede="Six stages, and you can skip any of them." />
-    <ol class="flow mt-10" aria-label="From idea to delivery, in order">
-      {flow.map((s, i) => (
-        <li class="flow__step">
-          <span class="flow__num" aria-hidden="true">{i + 1}</span>
-          <h3 class="flow__title">{s.title}</h3>
-          <p class="flow__body">{s.body}</p>
-        </li>
-      ))}
-    </ol>
-    <p class="mt-6 text-[0.9375rem] text-text-2 measure-wide">A one-line fix does not need a team. Give it to a single agent and skip straight to Build.</p>
+  <Section class="ambient overflow-x-clip">
+    <div class="reveal"><TeamRunDemo /></div>
   </Section>
 
-  <Section rule tone="elevated">
-    <SectionHeading title="Three capabilities, one story" />
-    <div class="mt-10 divide-y divide-border border-y border-border">
+  <Section rule tone="elevated" aria-labelledby="parts-title">
+    <SectionHeading id="parts-title" title="Three capabilities, one story" class="reveal" />
+    <div class="reveal-group mt-10 divide-y divide-border border-y border-border">
       {parts.map((p) => (
         <div class="grid gap-3 py-8 sm:grid-cols-[9rem_1fr] sm:gap-8">
-          <p class="text-[0.9375rem] font-[560] text-accent">{p.name}</p>
-          <div>
-            <h3 class="heading-3 text-text">{p.title}</h3>
-            <p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2 measure-wide">{p.body}</p>
-          </div>
+          <p class="text-[0.9375rem] font-[560] text-gradient">{p.name}</p>
+          <div><h3 class="heading-3 text-text">{p.title}</h3><p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2 measure-wide">{p.body}</p></div>
         </div>
       ))}
     </div>
   </Section>
 
-  <Section rule>
-    <SectionHeading title="A Council session" lede="Three models, one disagreement, your decision." />
-    <div class="mt-10"><CouncilMock /></div>
-  </Section>
-
-  <Section rule tone="elevated">
-    <SectionHeading title="What you control" />
-    <Controls items={controls} class="mt-10" />
-    <div class="mt-10"><Button href="/features/board/" variant="secondary">Start a team from a ticket</Button></div>
+  <Section rule aria-labelledby="control-title">
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-16">
+      <SectionHeading id="control-title" title="You keep the final say" lede="The agent that wrote the code is never the one that signs it off, and nothing merges without you." class="reveal" />
+      <ul class="reveal-group grid gap-5 sm:grid-cols-2">
+        {controls.map((c) => (
+          <li class="card p-5"><h3 class="text-[1.0625rem] font-[560] text-text">{c.title}</h3><p class="mt-1.5 text-[0.9rem] leading-relaxed text-text-2">{c.body}</p></li>
+        ))}
+      </ul>
+    </div>
+    <div class="mt-10 reveal"><Button href="/features/code-review/" variant="secondary">Then review it without leaving Vekrun</Button></div>
   </Section>
 
   <WhereThisStands>Plans with approval, Council sessions, parallel agents on separate branches, a separate checking agent, repair limits and merge previews work in the development build on macOS. Running agents in the background or on another machine is planned.</WhereThisStands>
 </Base>
-
-<style>
-  .flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-  .flow__step { background: var(--bg); padding: 1.1rem 1rem 1.25rem; position: relative; }
-  .flow__num { font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); }
-  .flow__title { margin-top: 0.35rem; font-size: 1.0625rem; font-weight: 580; color: var(--text); letter-spacing: -0.01em; }
-  .flow__body { margin-top: 0.4rem; font-size: 0.875rem; line-height: 1.5; color: var(--text-2); }
-  @media (max-width: 64rem) { .flow { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-  @media (max-width: 36rem) { .flow { grid-template-columns: 1fr; } }
-</style>

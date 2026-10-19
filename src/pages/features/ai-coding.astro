@@ -2,71 +2,59 @@
 import Base from '@/layouts/Base.astro';
 import Section from '@/components/Section.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
-import ConceptNotice from '@/components/ConceptNotice.astro';
+import Button from '@/components/Button.astro';
+import StatusBadge from '@/components/StatusBadge.astro';
 import FeatureHero from '@/components/features/FeatureHero.astro';
-import Tabs from '@/components/features/Tabs.astro';
-import Mock from '@/components/features/Mock.astro';
-import Controls from '@/components/features/Controls.astro';
+import AgentChatDemo from '@/components/features/AgentChatDemo.astro';
+import ProviderSwitcher from '@/components/home/ProviderSwitcher.astro';
+import Steps from '@/components/features/Steps.astro';
 import WhereThisStands from '@/components/features/WhereThisStands.astro';
 
 const modes = [
-  { id: 'ask', label: 'Ask', what: 'Ask about the code, the error on screen or the project. The agent reads; it never writes.', prompt: 'Why does the callback test need a fixed clock?', reply: 'tests/oauth.rs:41 freezes time so the token expiry in src/auth/oauth.rs:88 is deterministic. Without it the ten-minute window drifts during the run.' },
-  { id: 'plan', label: 'Plan', what: 'Describe what you want and get a plan with steps and acceptance criteria. Nothing runs until you approve it.', prompt: 'Add GitHub as a sign-in provider.', reply: 'Plan: three steps, two files, one new test. Done when the callback exchanges a code for a token and a bad state is rejected. Waiting for your approval.' },
-  { id: 'build', label: 'Build', what: 'The agent edits files and runs the commands you allow. Every write is shown as a diff first.', prompt: 'Implement step 1 of the plan.', reply: 'Diff ready: src/auth/providers/github.rs (+64), src/auth/mod.rs (+3). Approve to apply. A snapshot was taken first.' },
-  { id: 'debug', label: 'Debug', what: 'Point it at a failing test. It runs it, reads the output and proposes a fix as a diff.', prompt: 'oauth::callback fails on CI.', reply: 'Ran the test: it panics on a missing GITHUB_CLIENT_ID. Proposed reading it from settings with a clear error. Diff waiting.' },
-  { id: 'review', label: 'Review', what: 'Review a branch or a diff. You get findings with file and line, and nothing is changed.', prompt: 'Review feat/github-oauth against main.', reply: 'Two findings. (1) github.rs:52 compares the state token with ==, which leaks timing. (2) No test for a denied authorization.' },
+  { name: 'Ask', body: 'Read-only. Questions about the code, the repository and your terminal output.' },
+  { name: 'Plan', body: 'Investigate and propose a plan you can edit before anything runs.' },
+  { name: 'Build', body: 'Create and change files. Every write is a diff you approve.' },
+  { name: 'Debug', body: 'Reproduce, read the failure, propose the fix, run the test you allow.' },
+  { name: 'Review', body: 'Read a branch or a diff and report problems. Nothing is changed.' },
 ];
-const controls = [
-  { title: 'Your provider, your key', body: 'Connect Claude, OpenAI, Gemini or any OpenAI-compatible endpoint with your own key, kept in the system keychain. Or run Ollama or LM Studio and keep everything on your machine. Hosted providers bill you directly.' },
-  { title: 'See what is sent before it is sent', body: 'The first time a project talks to a hosted provider, you see the exact context and press Send. Later turns show what went out, every time.' },
-  { title: 'Approve every change', body: 'Writes arrive as diffs. Commands run only when you allow them. A snapshot is taken before anything risky, and you can roll back.' },
-  { title: 'Switch models mid-conversation', body: 'Change provider or model without starting over. Conversations are saved; resume, fork, search or export them.' },
+const workflow = [
+  { title: 'Pick a model', body: 'Your Anthropic, OpenAI or Google key, any OpenAI-compatible endpoint, or Ollama and LM Studio on your machine.' },
+  { title: 'Ask in the project', body: 'The agent sees the files, the Git state and the terminal output you choose to share.' },
+  { title: 'Approve the change', body: 'Changes arrive as diffs. Commands wait for your yes unless you allowed them.' },
+  { title: 'Keep what matters', body: 'Conversations are saved, searchable and forkable. Memory is scoped to you, the project or a task, and you can delete it.' },
 ];
 ---
-<Base title="AI coding" description="Code with Claude, OpenAI, Gemini or a local model inside your terminal. Five modes, diffs before every write, commands only when you allow them.">
-  <FeatureHero area="AI coding" title="Your favorite model, inside your terminal." lede="Ask about the code, plan a change, build it, debug a failure or review a branch. The agent reads your project and shows you every change before it lands." />
+<Base title="AI coding" description="Code with Claude, OpenAI, Gemini or a local model inside your terminal. Five modes, every change shown as a diff before it lands, commands only when you allow them, and you see what is sent before it is sent.">
+  <FeatureHero area="AI coding" title="Any model." accent="Every change approved." lede="Connect the provider you already pay for, or a model on your machine. Ask, plan, build, debug and review in the project, with every write shown as a diff and every command waiting for your yes." cta={{ label: 'Supported providers', href: '/integrations/?category=ai-models' }} secondary={{ label: 'AI coding docs', href: '/docs/ai-coding/coding-sessions/' }} />
 
-  <Section>
-    <SectionHeading title="Five modes" lede="Pick how much the agent may do. Ask only reads. Build edits and runs what you allow. Select a mode to see it in use." />
-    <div class="mt-10 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] lg:gap-12">
-      <Tabs tabs={modes.map((m) => ({ id: m.id, label: m.label }))} label="Agent modes">
-        {modes.map((m) => (
-          <div data-tab-panel={m.id} class="pt-6">
-            <p class="text-[1rem] leading-relaxed text-text-2 measure">{m.what}</p>
-            <Mock title={`Agents · ${m.label}`} class="mt-6 lg:hidden">
-              <div class="space-y-3 p-4 font-mono text-[0.75rem] leading-relaxed">
-                <p class="text-text"><span class="text-text-3">you</span>  {m.prompt}</p>
-                <p class="text-text-2"><span class="text-accent">agent</span>  {m.reply}</p>
-              </div>
-            </Mock>
-          </div>
-        ))}
-      </Tabs>
-      <div class="hidden lg:block" aria-hidden="true">
-        <Mock title="Agents · Build · feat/github-oauth">
-          <div class="space-y-4 p-5 font-mono text-[0.78rem] leading-relaxed">
-            <p class="text-text"><span class="text-text-3">you</span>  {modes[2]!.prompt}</p>
-            <p class="text-text-2"><span class="text-accent">agent</span>  Reading src/auth/… and the approved plan.</p>
-            <div class="rounded-md border border-border bg-term-bg p-3 text-term-fg">
-              <p class="text-term-dim">src/auth/providers/github.rs</p>
-              <p><span class="text-ok">+</span> pub fn authorize_url(state: &amp;str) -&gt; Url &#123;</p>
-              <p><span class="text-ok">+</span>     let mut url = Url::parse(AUTHORIZE)?;</p>
-              <p><span class="text-ok">+</span>     url.query_pairs_mut().append_pair("state", state);</p>
-              <p class="text-term-dim">… +61 lines</p>
-            </div>
-            <p class="text-text-2"><span class="text-accent">agent</span>  {modes[2]!.reply}</p>
-            <p class="flex gap-2"><span class="rounded bg-accent px-2 py-0.5 text-accent-ink">Approve</span><span class="rounded border border-border px-2 py-0.5 text-text-2">Reject</span><span class="rounded border border-border px-2 py-0.5 text-text-2">Edit</span></p>
-          </div>
-        </Mock>
-      </div>
+  <Section class="ambient overflow-x-clip">
+    <div class="reveal"><AgentChatDemo /></div>
+  </Section>
+
+  <Section rule tone="elevated" aria-labelledby="modes-title">
+    <SectionHeading id="modes-title" title="Five modes, five sets of permissions" lede="Switching mode changes what the agent is allowed to do, not just how it answers." class="reveal" />
+    <ol class="reveal-group mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5" aria-label="Agent modes">
+      {modes.map((m) => (
+        <li class="card p-5"><h3 class="text-[1.0625rem] font-[560] text-text">{m.name}</h3><p class="mt-1.5 text-[0.9rem] leading-relaxed text-text-2">{m.body}</p></li>
+      ))}
+    </ol>
+  </Section>
+
+  <Section rule aria-labelledby="byo-title">
+    <div class="grid items-center gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+      <SectionHeading id="byo-title" title="Switch models per task" lede="A strong hosted model for the hard change, a local model for the summary. Keys stay in your OS keychain, and you see what will be sent before it goes." class="reveal">
+        <p class="mt-5 text-[0.9rem] text-text-3">Hosted providers bill you at their own rates. Local models are free to run.</p>
+        <p class="mt-4 flex items-center gap-2 text-[0.8125rem] text-text-3"><StatusBadge status="planned" compact /> Signing in with a coding-agent subscription you already have.</p>
+      </SectionHeading>
+      <div class="reveal"><ProviderSwitcher /></div>
     </div>
-    <ConceptNotice class="mt-4" />
   </Section>
 
-  <Section rule tone="elevated">
-    <SectionHeading title="What you control" />
-    <Controls items={controls} class="mt-10" />
+  <Section rule tone="elevated" aria-labelledby="flow-title">
+    <SectionHeading id="flow-title" title="From question to approved change" class="reveal" />
+    <Steps steps={workflow} columns={4} class="reveal-group mt-10" />
+    <div class="mt-10 reveal"><Button href="/ai-teams/" variant="secondary">When one agent is not enough: AI Teams</Button></div>
   </Section>
 
-  <WhereThisStands>Hosted providers, local models, all five modes, diff approvals and the send preview work in the development build on macOS. Connecting an existing coding-agent subscription is planned.</WhereThisStands>
+  <WhereThisStands>Anthropic, OpenAI, Gemini and OpenAI-compatible keys, Ollama and LM Studio, the five modes, diff approvals, allowed commands, the egress preview and scoped memory work in the development build on macOS. Downloading local models from inside Vekrun and coding-agent subscriptions are planned.</WhereThisStands>
 </Base>

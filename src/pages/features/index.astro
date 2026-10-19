@@ -3,36 +3,114 @@ import Base from '@/layouts/Base.astro';
 import Section from '@/components/Section.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import Button from '@/components/Button.astro';
+import Window from '@/components/mock/Window.astro';
 import { featurePages, site } from '@/data/site';
 import { ArrowUpRight } from '@lucide/astro';
 
-const stories: Record<string, string> = {
-  terminal: 'Tabs, splits, SSH, search and session restore. A terminal you can live in all day, with or without AI.',
-  'ai-coding': 'Connect Claude, OpenAI, Gemini or a local model. Ask questions, plan, build and debug with every change shown before it lands.',
-  board: 'Your assigned tickets in one Kanban. Pick one, click Start Work, and you have a branch, a terminal and, if you want, an agent.',
-  'ai-teams': 'Hand bigger work to a team: one agent plans, others build and test on their own branches, a separate one checks the result.',
-  'code-review': 'Pull requests waiting on you, your teammates\' changes, and AI findings you can accept or dismiss, in one place.',
+const stories: Record<string, { title: string; body: string; next: string }> = {
+  terminal: { title: 'A terminal you can live in', body: 'Tabs, splits, SSH, search and session restore. It works all day with no AI connected, and when a command fails the agent reads the output you already have.', next: 'The terminal' },
+  'ai-coding': { title: 'Any model, every change approved', body: 'Claude, OpenAI, Gemini, an OpenAI-compatible endpoint or a model on your machine. Ask, plan, build, debug and review with every write shown as a diff first.', next: 'AI coding' },
+  board: { title: 'Your tickets become work', body: 'Assigned tickets in one Kanban. Click Start Work and you have a branch, a working copy and a terminal, with the ticket as context for you or an agent.', next: 'The Board' },
+  'ai-teams': { title: 'Hand off the work, keep the decisions', body: 'A planner drafts the steps, developers build on separate branches, a tester runs the suite, a reviewer checks the result. You approve the plan and the merge.', next: 'AI Teams' },
+  'code-review': { title: 'Review where you write code', body: 'Pull requests waiting for you, the diff, AI findings and your comments in one view. Compare several models when a change is contested.', next: 'Code reviews' },
 };
 ---
 <Base title="Features" description="Vekrun in five parts: a terminal, AI coding with your own models, a Board for your tickets, AI Teams for larger work, and code reviews in one place.">
-  <Section padded="tight" class="pt-16 sm:pt-20">
-    <SectionHeading level="h1" title="Five things Vekrun does" lede="Each works on its own. Together they take a ticket from assigned to merged without leaving the terminal." />
-  </Section>
-  <Section padded="none" class="pb-20 sm:pb-24">
-    <ol class="divide-y divide-border border-y border-border">
-      {featurePages.map((f) => (
-        <li>
-          <a href={f.href} class="group grid gap-3 py-7 sm:grid-cols-[14rem_1fr_auto] sm:items-baseline sm:gap-8">
-            <h2 class="heading-3 text-text">{f.label}</h2>
-            <p class="text-[1rem] leading-relaxed text-text-2 measure-wide">{stories[f.key]}</p>
-            <ArrowUpRight class="hidden h-5 w-5 text-text-3 transition-colors group-hover:text-accent sm:block" aria-hidden="true" />
+  <section class="ambient overflow-hidden border-b border-border">
+    <div class="grid-field pointer-events-none absolute inset-0" aria-hidden="true"></div>
+    <div class="container-site relative py-16 sm:py-20 lg:py-24">
+      <SectionHeading level="h1" title="Five things Vekrun does" lede="Each works on its own. Together they take a ticket from assigned to merged without leaving the terminal." class="enter" />
+    </div>
+  </section>
+
+  <Section padded="none">
+    <ol class="fi-list" aria-label="Features">
+      {featurePages.map((f, i) => (
+        <li class="fi-row reveal">
+          <div class="fi-text">
+            <p class="text-[0.9375rem] font-[540] text-accent">{f.label}</p>
+            <h2 class="heading-2 mt-2 text-text">{stories[f.key]!.title}</h2>
+            <p class="mt-4 text-[1rem] leading-relaxed text-text-2 measure">{stories[f.key]!.body}</p>
+            <a href={f.href} class="group link-slide mt-6 inline-flex items-center gap-1.5 text-[0.9375rem] font-[540] text-accent">{stories[f.key]!.next}<ArrowUpRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a>
+          </div>
+          <a href={f.href} class="fi-visual card card-hover" aria-hidden="true" tabindex="-1">
+            {f.key === 'terminal' && (
+              <Window title="acme-api" tabs={[{ label: 'api', active: true }, { label: 'ssh: staging' }]}>
+                <pre class="term fi-term">{`$ cargo build --release
+   Compiling acme-api v0.4.2
+    Finished release in 38.2s
+$ `}<span class="term-cursor"></span></pre>
+              </Window>
+            )}
+            {f.key === 'ai-coding' && (
+              <Window title="Agents" crumbs={['Debug']}>
+                <span slot="status"><span class="live-dot" aria-hidden="true"></span> Claude · your key</span>
+                <div class="fi-chat window-mono">
+                  <p><span class="dim">You</span> Why does /me return 500 on an expired token?</p>
+                  <p><span class="info">Agent</span> Found <code>unwrap()</code> at session.rs:88. Proposed change · +4 −1 · <span class="warn">Approve?</span></p>
+                </div>
+              </Window>
+            )}
+            {f.key === 'board' && (
+              <Window title="Board" crumbs={['Assigned to you']}>
+                <div class="fi-kanban">
+                  <div><span>To do</span><i>Rate-limit the webhook endpoint</i><i>Fix the dark-mode flash</i></div>
+                  <div><span>In progress</span><i class="is-sel">Add GitHub OAuth login <b>Start Work</b></i></div>
+                  <div><span>In review</span><i>Replace the retry queue</i></div>
+                </div>
+              </Window>
+            )}
+            {f.key === 'ai-teams' && (
+              <Window title="AI Teams" crumbs={['VEK-129']}>
+                <div class="fi-lanes">
+                  {['Planner', 'Developers', 'Tester', 'Reviewer', 'You'].map((l, j) => <div><span>{l}</span>{j === 1 && <><i>feat/retry-worker</i><i>feat/retry-backoff</i></>}{j === 4 && <i class="is-ok">Merge preview · approve?</i>}</div>)}
+                </div>
+              </Window>
+            )}
+            {f.key === 'code-review' && (
+              <Window title="Reviews" crumbs={['#88']}>
+                <div class="fi-diff window-mono">
+                  <div class="diff-row diff-del"><span>42</span><span>- log.debug('oauth token', token);</span></div>
+                  <div class="diff-row diff-add"><span>42</span><span>+ log.debug('oauth exchange ok');</span></div>
+                  <p class="fi-finding"><span class="err">Security</span> token was logged at debug level · github.ts:42</p>
+                </div>
+              </Window>
+            )}
           </a>
         </li>
       ))}
     </ol>
-    <div class="mt-10 flex flex-wrap items-center gap-4">
+  </Section>
+
+  <Section rule tone="elevated" padded="tight">
+    <div class="flex flex-wrap items-center gap-4">
       <Button href="/integrations/" variant="secondary">Browse integrations</Button>
       <p class="text-[0.875rem] text-text-3">{site.status.line} <a href="/roadmap/" class="underline underline-offset-2 hover:text-text">See the roadmap.</a></p>
     </div>
   </Section>
 </Base>
+
+<style>
+  .fi-list { list-style: none; margin: 0; padding: 0; }
+  .fi-row { display: grid; gap: 2rem; padding: 3.5rem 0; border-bottom: 1px solid var(--border); align-items: center; }
+  @media (min-width: 64rem) { .fi-row { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 4rem; padding: 4.5rem 0; } .fi-row:nth-child(even) .fi-text { order: 2; } }
+  .fi-visual { display: block; padding: 1rem; background: color-mix(in srgb, var(--surface-2) 60%, var(--bg)); font-size: 0.75rem; }
+  .fi-visual :global(.window) { box-shadow: none; }
+  .fi-term { margin: 0; padding: 0.7rem 0.85rem; min-height: 6.5rem; }
+  .fi-chat { padding: 0.7rem 0.85rem; display: flex; flex-direction: column; gap: 0.5rem; color: var(--text-2); min-height: 6.5rem; }
+  .fi-chat p { margin: 0; } .fi-chat code { color: var(--text); }
+  .fi-kanban { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--border); min-height: 7rem; }
+  .fi-kanban > div { background: var(--surface); padding: 0.5rem; display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+  .fi-kanban span, .fi-lanes span { font-size: 0.68rem; color: var(--text-3); }
+  .fi-kanban i, .fi-lanes i { font-style: normal; display: flex; flex-direction: column; gap: 0.25rem; background: var(--surface-2); border: 1px solid var(--border); border-radius: 5px; padding: 0.35rem 0.45rem; color: var(--text); font-size: 0.7rem; line-height: 1.3; }
+  .fi-kanban i.is-sel { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .fi-kanban b { align-self: flex-start; background: var(--accent); color: var(--accent-ink); font-weight: 560; border-radius: 4px; padding: 0.12rem 0.4rem; font-size: 0.64rem; }
+  .fi-lanes { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1px; background: var(--border); min-height: 7rem; }
+  .fi-lanes > div { background: var(--surface); padding: 0.5rem; display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+  .fi-lanes i { font-family: var(--font-mono); font-size: 0.62rem; }
+  .fi-lanes i.is-ok { border-color: color-mix(in srgb, var(--ok) 55%, transparent); font-family: var(--font-sans); }
+  .fi-diff { padding: 0.5rem 0.4rem; background: var(--term-bg); min-height: 6.5rem; }
+  .fi-finding { margin: 0.6rem 0.4rem 0; font-family: var(--font-sans); font-size: 0.72rem; color: var(--text-2); }
+  .fi-finding .err { color: var(--danger); }
+  @media (max-width: 40rem) { .fi-lanes { grid-template-columns: repeat(3, minmax(0, 1fr)); } .fi-lanes > div:nth-child(n + 4) { display: none; } }
+</style>

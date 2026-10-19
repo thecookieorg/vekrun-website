@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
-import { Search, ExternalLink, BookOpen } from '@lucide/astro';
+import { Search, ExternalLink, BookOpen, X } from '@lucide/astro';
+import IntegrationLogo from './IntegrationLogo.astro';
 import { availability, integrationCategories, connectionMethods, type IntegrationCategory, type Availability } from '@/data/site';
 
 const entries = await getCollection('integrations');
@@ -19,90 +20,68 @@ const byCategory = categoryOrder
 const searchText = (e: (typeof entries)[number]) =>
   [e.data.name, e.data.enables, ...e.data.connection.map((c) => connectionMethods[c]), e.data.note ?? ''].join(' ').toLowerCase();
 const dot: Record<string, string> = { ok: 'bg-ok', warn: 'bg-warn', muted: 'bg-text-3' };
+/** Connection methods worth a footer line. "Built in" says nothing to a visitor. */
+const footer = (e: (typeof entries)[number]) => e.data.connection.filter((c) => c !== 'built-in').map((c) => connectionMethods[c]);
 ---
 <div data-catalog>
-  <form class="flex flex-col gap-4" role="search" aria-label="Filter integrations" onsubmit="return false">
-    <label class="relative block max-w-xl">
-      <span class="sr-only">Search integrations</span>
-      <Search class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-3" aria-hidden="true" />
-      <input
-        type="search"
-        name="q"
-        placeholder="Search integrations"
-        autocomplete="off"
-        class="h-11 w-full rounded-md border border-border bg-surface pl-10 pr-3 text-[0.9375rem] text-text placeholder:text-text-3 focus:border-border-strong"
-        data-catalog-search
-      />
-    </label>
-
-    <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:gap-8">
-      <fieldset class="min-w-0">
-        <legend class="mb-2 text-[0.8125rem] font-[560] text-text">Category</legend>
-        <div class="flex flex-wrap gap-2">
-          {byCategory.map((c) => (
-            <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border px-3 py-1.5 text-[0.8125rem] text-text-2 has-[:checked]:border-border-strong has-[:checked]:bg-surface-2 has-[:checked]:text-text">
-              <input type="checkbox" name="category" value={c.key} class="h-3.5 w-3.5 accent-[var(--accent)]" data-catalog-category />
-              {c.label}
-            </label>
-          ))}
-        </div>
-      </fieldset>
-      <fieldset class="min-w-0">
-        <legend class="mb-2 text-[0.8125rem] font-[560] text-text">Status</legend>
-        <div class="flex flex-wrap gap-2">
-          {statusOrder.map((s) => (
-            <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border px-3 py-1.5 text-[0.8125rem] text-text-2 has-[:checked]:border-border-strong has-[:checked]:bg-surface-2 has-[:checked]:text-text">
-              <input type="checkbox" name="status" value={s} class="h-3.5 w-3.5 accent-[var(--accent)]" data-catalog-status />
-              {availability[s].label}
-            </label>
-          ))}
-        </div>
-      </fieldset>
+  <form class="catalog-bar" role="search" aria-label="Filter integrations" onsubmit="return false">
+    <div class="container-site flex flex-col gap-3 py-3">
+      <div class="flex flex-col gap-3 md:flex-row md:items-center">
+        <label class="relative block w-full md:max-w-xs">
+          <span class="sr-only">Search integrations</span>
+          <Search class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-3" aria-hidden="true" />
+          <input type="search" name="q" placeholder="Search" autocomplete="off" class="h-10 w-full rounded-md border border-border bg-surface pl-10 pr-3 text-[0.9375rem] text-text placeholder:text-text-3 transition-colors focus:border-accent" data-catalog-search />
+        </label>
+        <fieldset class="min-w-0 md:flex-1">
+          <legend class="sr-only">Category</legend>
+          <div class="flex flex-wrap gap-1.5" data-pills>
+            {byCategory.map((c) => (
+              <label class="pill"><input type="checkbox" name="category" value={c.key} class="sr-only" data-catalog-category />{c.label}</label>
+            ))}
+          </div>
+        </fieldset>
+        <fieldset class="min-w-0">
+          <legend class="sr-only">Status</legend>
+          <div class="flex flex-wrap gap-1.5">
+            {statusOrder.map((s) => (
+              <label class="pill pill-status"><input type="checkbox" name="status" value={s} class="sr-only" data-catalog-status /><span class:list={['h-1.5 w-1.5 rounded-full', dot[availability[s].tone]]} aria-hidden="true"></span>{availability[s].label}</label>
+            ))}
+          </div>
+        </fieldset>
+      </div>
+      <p class="text-[0.8125rem] text-text-3" aria-live="polite" data-catalog-count>Showing all {entries.length} integrations.</p>
     </div>
-
-    <p class="text-[0.875rem] text-text-2" aria-live="polite" data-catalog-count>Showing all {entries.length} integrations.</p>
   </form>
 
-  <div class="mt-10 space-y-12">
+  <div class="container-site mt-10 space-y-14">
     {byCategory.map((c) => (
       <section aria-labelledby={`cat-${c.key}`} data-catalog-group={c.key}>
-        <h2 id={`cat-${c.key}`} class="heading-3">{c.label}</h2>
-        <p class="mt-1 text-[0.9rem] text-text-2">{c.description}</p>
-        <ul class="mt-5 divide-y divide-border border-y border-border" role="list">
+        <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+          <h2 id={`cat-${c.key}`} class="heading-3">{c.label}</h2>
+          <p class="text-[0.9rem] text-text-3">{c.description}</p>
+        </div>
+        <ul class="reveal-group mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3" role="list">
           {c.items.map((e) => (
-            <li
-              class="flex gap-4 py-5"
-              data-catalog-item
-              data-status={e.data.status}
-              data-category={e.data.category}
-              data-text={searchText(e)}
-            >
-              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-border bg-surface-2 font-mono text-[0.8125rem] font-[560] text-text-2" aria-hidden="true">
-                {e.data.monogram}
-              </div>
-              <div class="min-w-0 flex-1">
-                <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <li class="card card-hover group flex flex-col p-4" data-catalog-item data-status={e.data.status} data-category={e.data.category} data-text={searchText(e)}>
+              <div class="flex items-start gap-3">
+                <IntegrationLogo id={e.id} name={e.data.name} monogram={e.data.monogram} />
+                <div class="min-w-0 flex-1">
                   <h3 class="text-[1rem] font-[560] leading-tight text-text">{e.data.name}</h3>
-                  <span class="inline-flex items-center gap-1.5 text-[0.8125rem] text-text-2" title={availability[e.data.status].description}>
-                    <span class:list={['h-1.5 w-1.5 rounded-full', dot[availability[e.data.status].tone]]} aria-hidden="true"></span>
-                    {availability[e.data.status].label}
-                  </span>
+                  <p class="mt-1 inline-flex items-center gap-1.5 text-[0.75rem] text-text-2" title={availability[e.data.status].description}>
+                    <span class:list={['h-1.5 w-1.5 rounded-full', dot[availability[e.data.status].tone]]} aria-hidden="true"></span>{availability[e.data.status].label}
+                  </p>
                 </div>
-                <p class="mt-1 text-[0.9375rem] leading-relaxed text-text-2">{e.data.enables}</p>
-                <p class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[0.8125rem] text-text-3">
-                  <span>{e.data.connection.map((m) => connectionMethods[m]).join(' · ')}</span>
-                  {e.data.note && <span>{e.data.note}</span>}
-                  {e.data.docs && (
-                    <a href={e.data.docs} class="inline-flex items-center gap-1 text-accent hover:underline underline-offset-2">
-                      <BookOpen class="h-3.5 w-3.5" aria-hidden="true" /> Docs
-                    </a>
-                  )}
-                  {e.data.vendorUrl && (
-                    <a href={e.data.vendorUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 hover:text-text">
-                      <ExternalLink class="h-3.5 w-3.5" aria-hidden="true" /> {new URL(e.data.vendorUrl).hostname.replace(/^www\./, '')}
-                    </a>
-                  )}
-                </p>
+              </div>
+              <p class="mt-3 text-[0.9rem] leading-relaxed text-text-2">{e.data.enables}</p>
+              {e.data.note && <p class="mt-1.5 text-[0.8125rem] text-text-3">{e.data.note}</p>}
+              <div class="mt-auto flex items-end justify-between gap-3 pt-4">
+                {footer(e).length > 0 ? <p class="text-[0.75rem] text-text-3">{footer(e).join(' · ')}</p> : <span></span>}
+                {(e.data.docs || e.data.vendorUrl) && (
+                  <p class="flex shrink-0 gap-3 text-[0.8125rem] opacity-70 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+                    {e.data.docs && <a href={e.data.docs} class="inline-flex items-center gap-1 text-accent link-slide"><BookOpen class="h-3.5 w-3.5" aria-hidden="true" /> Docs</a>}
+                    {e.data.vendorUrl && <a href={e.data.vendorUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-text-2 hover:text-text" aria-label={`${e.data.name} website`}><ExternalLink class="h-3.5 w-3.5" aria-hidden="true" /> Site</a>}
+                  </p>
+                )}
               </div>
             </li>
           ))}
@@ -111,14 +90,22 @@ const dot: Record<string, string> = { ok: 'bg-ok', warn: 'bg-warn', muted: 'bg-t
     ))}
   </div>
 
-  <div class="mt-10 hidden rounded-lg border border-border p-8 text-center" data-catalog-empty>
-    <p class="text-[1rem] font-[560] text-text">No integrations match.</p>
-    <p class="mt-1 text-[0.9rem] text-text-2">Try a different word, or clear the filters.</p>
-    <button type="button" class="mt-4 inline-flex h-10 items-center rounded-md border border-border-strong bg-surface px-4 text-[0.9375rem] text-text hover:bg-surface-2" data-catalog-clear>
-      Clear filters
-    </button>
+  <div class="container-site">
+    <div class="card mt-10 hidden p-8 text-center" data-catalog-empty>
+      <p class="text-[1rem] font-[560] text-text">No integrations match.</p>
+      <p class="mt-1 text-[0.9rem] text-text-2">Try a different word, or clear the filters.</p>
+      <button type="button" class="mt-4 inline-flex h-10 items-center gap-2 rounded-md border border-border-strong bg-surface px-4 text-[0.9375rem] text-text hover:bg-surface-2" data-catalog-clear><X class="h-4 w-4" aria-hidden="true" /> Clear filters</button>
+    </div>
   </div>
 </div>
+
+<style>
+  .catalog-bar { position: sticky; top: 4rem; z-index: 20; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+  .pill { display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer; border: 1px solid var(--border); border-radius: 999px; padding: 0.35rem 0.75rem; font-size: 0.8125rem; color: var(--text-2); background: transparent; transition: border-color var(--dur-fast), color var(--dur-fast), background-color var(--dur-fast); user-select: none; }
+  .pill:hover { border-color: var(--border-strong); color: var(--text); }
+  .pill:has(:checked) { border-color: var(--accent); color: var(--text); background: var(--accent-soft); }
+  .pill:has(:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
 
 <script>
   const root = document.querySelector<HTMLElement>('[data-catalog]');
@@ -139,14 +126,15 @@ const dot: Record<string, string> = { ok: 'bg-ok', warn: 'bg-warn', muted: 'bg-t
       const cats = categories.filter((c) => c.checked).map((c) => c.value);
       let shown = 0;
       for (const el of items) {
-        const ok =
-          (!q || (el.dataset.text ?? '').includes(q)) &&
-          (s.length === 0 || s.includes(el.dataset.status ?? '')) &&
-          (cats.length === 0 || cats.includes(el.dataset.category ?? ''));
+        const ok = (!q || (el.dataset.text ?? '').includes(q)) && (s.length === 0 || s.includes(el.dataset.status ?? '')) && (cats.length === 0 || cats.includes(el.dataset.category ?? ''));
         el.hidden = !ok;
         if (ok) shown++;
       }
-      for (const g of groups) g.hidden = g.querySelectorAll('[data-catalog-item]:not([hidden])').length === 0;
+      for (const g of groups) {
+        g.hidden = g.querySelectorAll('[data-catalog-item]:not([hidden])').length === 0;
+        // Revealed groups that were hidden on first paint still need to show.
+        g.querySelector('.reveal-group')?.classList.add('is-visible');
+      }
       empty.classList.toggle('hidden', shown > 0);
       count.textContent = q || s.length || cats.length ? `Showing ${shown} of ${total} integrations.` : `Showing all ${total} integrations.`;
     };
@@ -164,11 +152,6 @@ const dot: Record<string, string> = { ok: 'bg-ok', warn: 'bg-warn', muted: 'bg-t
 
     search.addEventListener('input', apply);
     [...statuses, ...categories].forEach((c) => c.addEventListener('change', apply));
-    clear.addEventListener('click', () => {
-      search.value = '';
-      [...statuses, ...categories].forEach((c) => (c.checked = false));
-      apply();
-      search.focus();
-    });
+    clear.addEventListener('click', () => { search.value = ''; [...statuses, ...categories].forEach((c) => (c.checked = false)); apply(); search.focus(); });
   }
 </script>

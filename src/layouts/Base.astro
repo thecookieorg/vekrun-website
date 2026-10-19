@@ -76,7 +76,7 @@ const ld = structuredData
     <script>
       // One reveal observer for the few blocks that opt in with `.reveal`.
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const items = document.querySelectorAll<HTMLElement>('.reveal');
+      const items = document.querySelectorAll<HTMLElement>('.reveal, .reveal-group');
       if (reduce || !('IntersectionObserver' in window)) {
         items.forEach((el) => el.classList.add('is-visible'));
       } else {

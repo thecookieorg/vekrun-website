@@ -1,10 +1,10 @@
 ---
-import { Menu, X } from '@lucide/astro';
-import GithubMark from './GithubMark.astro';
+import { Menu, X, ChevronDown } from '@lucide/astro';
 import Logo from './Logo.astro';
 import ThemeToggle from './ThemeToggle.astro';
 import Button from './Button.astro';
-import { primaryNav, primaryCta, site } from '@/data/site';
+import GithubMark from './GithubMark.astro';
+import { primaryNav, primaryCta, featurePages, site } from '@/data/site';
 import { hasRelease } from '@/data/releases';
 
 const cta = hasRelease
@@ -12,26 +12,38 @@ const cta = hasRelease
   : { label: primaryCta.label, href: primaryCta.href };
 const path = Astro.url.pathname;
 const isActive = (href: string) => href !== '/' && !href.startsWith('/#') && path.startsWith(href);
+const featuresActive = featurePages.some((f) => path.startsWith(f.href)) || path.startsWith('/features/');
 const nav = site.repo.public ? [...primaryNav, { label: 'GitHub', href: site.repo.url }] : primaryNav;
 ---
-<header class="sticky top-0 z-40 border-b border-border/80 bg-bg/80 backdrop-blur-md supports-[backdrop-filter]:bg-bg/70">
+<header class="site-header sticky top-0 z-40 border-b border-border/70 bg-bg/75 backdrop-blur-xl" data-header>
   <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-md focus:bg-accent focus:px-3 focus:py-2 focus:text-accent-ink">Skip to content</a>
   <div class="container-site flex h-16 items-center justify-between gap-6">
     <a href="/" class="rounded-md" aria-label="Vekrun home"><Logo /></a>
 
     <nav aria-label="Primary" class="hidden lg:block">
       <ul class="flex items-center gap-1">
-        {nav.map((item) => (
+        {nav.map((item) => item.label === 'Features' ? (
+          <li class="relative" data-menu>
+            <button type="button" class:list={['nav-link', featuresActive && 'is-active']} aria-expanded="false" aria-haspopup="true" aria-controls="features-menu" data-menu-button>
+              Features <ChevronDown class="h-3.5 w-3.5 transition-transform duration-200 [[aria-expanded=true]_&]:rotate-180" aria-hidden="true" />
+            </button>
+            <div id="features-menu" class="nav-menu" hidden data-menu-panel>
+              <ul class="grid gap-0.5">
+                {featurePages.map((f) => (
+                  <li>
+                    <a href={f.href} class="nav-menu-item" aria-current={path.startsWith(f.href) ? 'page' : undefined}>
+                      <span class="block text-[0.9375rem] font-[540] text-text">{f.label}</span>
+                      <span class="block text-[0.8125rem] leading-snug text-text-3">{f.description}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              <a href="/features/" class="nav-menu-all">All features</a>
+            </div>
+          </li>
+        ) : (
           <li>
-            <a
-              href={item.href}
-              class:list={[
-                'inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-[0.9375rem] text-text-2 transition-colors hover:bg-surface-2 hover:text-text',
-                isActive(item.href) && 'text-text',
-              ]}
-              aria-current={isActive(item.href) ? 'page' : undefined}
-              {...(item.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-            >
+            <a href={item.href} class:list={['nav-link', isActive(item.href) && 'is-active']} aria-current={isActive(item.href) ? 'page' : undefined} {...(item.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
               {item.label === 'GitHub' && <GithubMark />}
               {item.label}
             </a>
@@ -42,54 +54,93 @@ const nav = site.repo.public ? [...primaryNav, { label: 'GitHub', href: site.rep
 
     <div class="flex items-center gap-2">
       <ThemeToggle />
-      <Button href={cta.href} class="hidden sm:inline-flex">{cta.label}</Button>
-      <button
-        type="button"
-        class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-text-2 hover:text-text lg:hidden"
-        aria-label="Open menu"
-        aria-expanded="false"
-        aria-controls="mobile-nav"
-        data-menu-toggle
-      >
+      <span class="hidden sm:inline-flex"><Button href={cta.href}>{cta.label}</Button></span>
+      <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-text-2 hover:text-text lg:hidden" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav" data-menu-toggle>
         <Menu class="h-4 w-4" data-icon="open" aria-hidden="true" />
         <X class="hidden h-4 w-4" data-icon="close" aria-hidden="true" />
       </button>
     </div>
   </div>
 
-  <div id="mobile-nav" class="hidden border-t border-border bg-bg lg:hidden" data-mobile-nav>
+  <div id="mobile-nav" class="mobile-nav lg:hidden" hidden data-mobile-nav>
     <nav aria-label="Primary, mobile" class="container-site py-3">
       <ul class="flex flex-col">
         {nav.map((item) => (
           <li>
-            <a href={item.href} class="flex h-11 items-center rounded-md px-2 text-base text-text-2 hover:bg-surface-2 hover:text-text" aria-current={isActive(item.href) ? 'page' : undefined}>
-              {item.label}
-            </a>
+            <a href={item.href} class="mobile-link" aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>
+            {item.label === 'Features' && (
+              <ul class="mb-1 ml-3 border-l border-border pl-3">
+                {featurePages.map((f) => <li><a href={f.href} class="mobile-sublink" aria-current={path.startsWith(f.href) ? 'page' : undefined}>{f.label}</a></li>)}
+              </ul>
+            )}
           </li>
         ))}
       </ul>
-      <div class="mt-2 border-t border-border pt-3 sm:hidden">
-        <Button href={cta.href} class="w-full">{cta.label}</Button>
-      </div>
+      <div class="mt-2 border-t border-border pt-3 sm:hidden"><Button href={cta.href} class="w-full">{cta.label}</Button></div>
     </nav>
   </div>
 </header>
 
+<style>
+  .site-header { transition: box-shadow var(--dur) var(--ease-out), background-color var(--dur) var(--ease-out); }
+  .site-header.is-scrolled { box-shadow: 0 10px 30px -20px rgba(0, 0, 0, 0.6); }
+  .nav-link { position: relative; display: inline-flex; align-items: center; gap: 0.35rem; height: 2.25rem; padding: 0 0.75rem; border-radius: 6px; font-size: 0.9375rem; color: var(--text-2); transition: color var(--dur-fast), background-color var(--dur-fast); background: transparent; border: 0; cursor: pointer; }
+  .nav-link:hover, .nav-link[aria-expanded='true'] { color: var(--text); background: var(--surface-2); }
+  .nav-link.is-active { color: var(--text); }
+  .nav-link.is-active::after { content: ''; position: absolute; left: 0.75rem; right: 0.75rem; bottom: -0.05rem; height: 2px; border-radius: 2px; background: var(--accent-gradient); }
+  .nav-menu { position: absolute; left: 0; top: calc(100% + 0.5rem); width: 22rem; padding: 0.5rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--bg-elevated); box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.7), 0 0 0 1px color-mix(in srgb, var(--accent) 10%, transparent); animation: rise-sm 180ms var(--ease-out) both; }
+  .nav-menu-item { display: block; padding: 0.55rem 0.7rem; border-radius: 8px; transition: background-color var(--dur-fast); }
+  .nav-menu-item:hover, .nav-menu-item:focus-visible { background: var(--surface-2); }
+  .nav-menu-all { display: block; margin-top: 0.35rem; padding: 0.55rem 0.7rem; font-size: 0.875rem; color: var(--accent); border-top: 1px solid var(--border); }
+  .mobile-nav { border-top: 1px solid var(--border); background: var(--bg); animation: rise-sm 200ms var(--ease-out) both; }
+  .mobile-link { display: flex; align-items: center; height: 2.75rem; padding: 0 0.5rem; border-radius: 6px; font-size: 1rem; color: var(--text-2); }
+  .mobile-link:hover, .mobile-link[aria-current='page'] { color: var(--text); }
+  .mobile-sublink { display: flex; align-items: center; height: 2.25rem; padding: 0 0.5rem; font-size: 0.9375rem; color: var(--text-3); }
+  .mobile-sublink:hover, .mobile-sublink[aria-current='page'] { color: var(--text); }
+  @media (prefers-reduced-motion: reduce) { .nav-menu, .mobile-nav { animation: none; } }
+</style>
+
 <script>
+  // Shadow when scrolled.
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 8);
+  onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Features dropdown: click or hover to open, Escape or outside click to close, arrow keys move.
+  document.querySelectorAll<HTMLElement>('[data-menu]').forEach((menu) => {
+    const button = menu.querySelector<HTMLButtonElement>('[data-menu-button]')!;
+    const panel = menu.querySelector<HTMLElement>('[data-menu-panel]')!;
+    let closeTimer: number | null = null;
+    const set = (open: boolean) => { panel.hidden = !open; button.setAttribute('aria-expanded', String(open)); };
+    button.addEventListener('click', () => set(panel.hidden));
+    menu.addEventListener('mouseenter', () => { if (closeTimer) clearTimeout(closeTimer); set(true); });
+    menu.addEventListener('mouseleave', () => { closeTimer = window.setTimeout(() => set(false), 120); });
+    menu.addEventListener('keydown', (e) => {
+      const items = Array.from(panel.querySelectorAll<HTMLAnchorElement>('a'));
+      const i = items.indexOf(document.activeElement as HTMLAnchorElement);
+      if (e.key === 'Escape') { set(false); button.focus(); }
+      if (e.key === 'ArrowDown') { e.preventDefault(); set(true); (items[i + 1] ?? items[0])?.focus(); }
+      if (e.key === 'ArrowUp') { e.preventDefault(); (items[i - 1] ?? items[items.length - 1])?.focus(); }
+    });
+    document.addEventListener('click', (e) => { if (!menu.contains(e.target as Node)) set(false); });
+    menu.addEventListener('focusout', (e) => { if (!menu.contains(e.relatedTarget as Node)) set(false); });
+  });
+
+  // Mobile menu.
   const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
   const panel = document.querySelector<HTMLElement>('[data-mobile-nav]');
   if (toggle && panel) {
     const open = toggle.querySelector<HTMLElement>('[data-icon="open"]');
     const close = toggle.querySelector<HTMLElement>('[data-icon="close"]');
     const set = (isOpen: boolean) => {
-      panel.classList.toggle('hidden', !isOpen);
+      panel.hidden = !isOpen;
       toggle.setAttribute('aria-expanded', String(isOpen));
       toggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
       open?.classList.toggle('hidden', isOpen);
       close?.classList.toggle('hidden', !isOpen);
     };
-    toggle.addEventListener('click', () => set(panel.classList.contains('hidden')));
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !panel.classList.contains('hidden')) { set(false); toggle.focus(); } });
+    toggle.addEventListener('click', () => set(panel.hidden));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !panel.hidden) { set(false); toggle.focus(); } });
     panel.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => set(false)));
     window.matchMedia('(min-width: 64rem)').addEventListener('change', (e) => { if (e.matches) set(false); });
   }

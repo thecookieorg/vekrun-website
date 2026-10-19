@@ -15,8 +15,8 @@ with Starlight documentation, deployed to GitHub Pages.
 - GitHub Actions building to GitHub Pages
 
 No framework runtime ships to the browser. Interactive pieces (theme toggle,
-mobile menu, product preview, Factory stages, catalog filters) are small plain
-scripts and every page works without JavaScript.
+menus, the scripted product demonstrations, catalog and roadmap filters) are
+small plain scripts and every page works without JavaScript.
 
 ## Develop
 
@@ -55,7 +55,8 @@ screenshots pages at desktop and phone widths in both themes.
 | `src/content/data/*.json` | Integrations, roadmap entries, milestones, releases. Validated by `src/content.config.ts`. |
 | `src/content/docs/docs/` | Documentation pages (Starlight). The extra `docs/` level mounts them at `/docs/`. |
 | `src/pages/` | Marketing pages |
-| `src/components/` | Shared components; `home/`, `features/`, `catalog/`, `docs/` are page-specific |
+| `src/components/` | Shared components; `mock/` is the product-window system, `home/`, `features/`, `catalog/`, `docs/` are page-specific |
+| `src/scripts/sequence.ts` | Runtime for scripted product demonstrations (play, pause, replay, reduced motion) |
 | `src/styles/global.css` | Design tokens (dark and light), base styles, utilities |
 | `public/` | Static assets, `CNAME`, `robots.txt`, Open Graph image |
 | `scripts/` | Link checker, screenshot helper, Open Graph image generator |

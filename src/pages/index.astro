@@ -4,33 +4,15 @@ import Button from '@/components/Button.astro';
 import Section from '@/components/Section.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import StatusBadge from '@/components/StatusBadge.astro';
-import ProductPreview from '@/components/home/ProductPreview.astro';
+import AppPreview from '@/components/home/AppPreview.astro';
+import TerminalDemo from '@/components/home/TerminalDemo.astro';
+import ProviderSwitcher from '@/components/home/ProviderSwitcher.astro';
 import BoardDemo from '@/components/home/BoardDemo.astro';
-import TeamsFlow from '@/components/home/TeamsFlow.astro';
+import AgentsFlow from '@/components/home/AgentsFlow.astro';
+import ReviewDemo from '@/components/home/ReviewDemo.astro';
 import GithubMark from '@/components/GithubMark.astro';
 import { site, featurePages } from '@/data/site';
-import { Terminal, Columns2, Search, Network, KeyRound, HardDrive, Link2, ArrowUpRight } from '@lucide/astro';
-
-const terminalPoints = [
-  { icon: Columns2, title: 'Tabs and splits', text: 'Arrange shells the way you work. Splits never restart a shell.' },
-  { icon: Network, title: 'SSH built in', text: 'Open remote shells with host keys you have checked.' },
-  { icon: Search, title: 'Search and restore', text: 'Find anything in scrollback. Pick up where you left off after a restart.' },
-  { icon: Terminal, title: 'Your shell, your keys', text: 'Bash, Zsh, Fish, PowerShell or WSL, with themes and keybindings you set.' },
-];
-
-const aiModes = [
-  { icon: KeyRound, title: 'Your API key', text: 'Connect Claude, OpenAI, Gemini or any OpenAI-compatible endpoint. You pay the provider directly, and keys stay in your OS keychain.', providers: ['Anthropic', 'OpenAI', 'Google Gemini', 'OpenAI-compatible'] },
-  { icon: HardDrive, title: 'A local model', text: 'Use Ollama or LM Studio and nothing leaves your machine.', providers: ['Ollama', 'LM Studio'] },
-  { icon: Link2, title: 'A coding-agent account you already pay for', text: 'Planned. Only through each provider’s supported sign-in, and never required.', providers: ['Claude Code', 'Codex', 'Gemini CLI'], planned: true },
-];
-
-const reviewPoints = [
-  'See the pull requests waiting for your review.',
-  'Open a teammate’s changes and read the diff where you code.',
-  'Ask AI to point out problems before you do.',
-  'Compare findings from several models when it matters.',
-  'Leave your feedback without leaving Vekrun.',
-];
+import { ArrowUpRight, Columns2, Network, Search, KeyRound, HardDrive, Eye, ShieldCheck, GitBranch } from '@lucide/astro';
 
 const structuredData = [
   {
@@ -49,161 +31,148 @@ const structuredData = [
 ---
 <Base title={`${site.name}: ${site.headline}`} description={site.description} structuredData={structuredData}>
   <!-- Hero -->
-  <section class="relative overflow-hidden" aria-labelledby="hero-title">
-    <div class="dot-field pointer-events-none absolute inset-0" aria-hidden="true"></div>
-    <div class="container-site relative pt-16 pb-10 sm:pt-24 sm:pb-14 lg:pt-28">
-      <div class="max-w-4xl">
-        <p class="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-surface/60 px-3 py-1.5 text-[0.8125rem] text-text-2">
+  <section class="hero ambient overflow-hidden" aria-labelledby="hero-title">
+    <div class="grid-field pointer-events-none absolute inset-0" aria-hidden="true"></div>
+    <div class="container-site relative pt-14 sm:pt-20 lg:pt-24">
+      <div class="mx-auto max-w-3xl text-center">
+        <p class="enter mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-surface/70 px-3 py-1.5 text-[0.8125rem] text-text-2 backdrop-blur" style="--i: 0">
           <span class="h-1.5 w-1.5 rounded-full bg-warn" aria-hidden="true"></span>
           Free and open source. {site.status.label}, no public release yet.
         </p>
         <h1 id="hero-title" class="display">
-          <span class="block">Your terminal.</span>
-          <span class="block">Your AI.</span>
-          <span class="block text-accent">Your workflow.</span>
+          <span class="enter block" style="--i: 1">Your terminal.</span>
+          <span class="enter block" style="--i: 2">Your AI.</span>
+          <span class="enter block text-gradient" style="--i: 3">Your workflow.</span>
         </h1>
-        <p class="lede mt-7 max-w-2xl">{site.subheading}</p>
-        <div class="mt-9 flex flex-wrap items-center gap-3">
-          <Button href="#board" size="lg">See how it works</Button>
+        <p class="lede enter mx-auto mt-7 max-w-2xl" style="--i: 3">{site.subheading}</p>
+        <div class="enter mt-9 flex flex-wrap items-center justify-center gap-3" style="--i: 4">
+          <Button href="/features/" size="lg">Explore features</Button>
           <Button href="/roadmap/" size="lg" variant="secondary">View roadmap</Button>
           {site.repo.public && <Button href={site.repo.url} size="lg" variant="ghost" external><GithubMark /> GitHub</Button>}
         </div>
       </div>
+      <div class="relative mt-14 sm:mt-16 lg:mt-20">
+        <AppPreview />
+      </div>
     </div>
   </section>
 
-  <!-- Product preview -->
-  <Section padded="none" class="pb-20 sm:pb-24 lg:pb-28">
-    <div class="reveal"><ProductPreview /></div>
-    <p class="measure-wide mt-8 text-[0.9375rem] leading-relaxed text-text-2">
-      A ticket from your Board, taken to a reviewed pull request. The agent plans, you approve, it builds and tests on its own branch, a second agent checks the work, and nothing merges until you say so.
-    </p>
+  <!-- Five stories, introduced -->
+  <Section padded="tight" class="pt-10">
+    <ul class="reveal-group grid gap-x-6 gap-y-3 sm:grid-cols-2 lg:grid-cols-5" aria-label="What Vekrun does">
+      {featurePages.map((f) => (
+        <li>
+          <a href={f.href} class="group flex min-w-0 flex-col gap-1 border-t border-border py-4 transition-colors hover:border-accent">
+            <span class="flex items-center gap-1.5 text-[0.9375rem] font-[560] text-text">{f.label}<ArrowUpRight class="icon-nudge h-3.5 w-3.5 text-text-3" aria-hidden="true" /></span>
+            <span class="text-[0.8125rem] leading-snug text-text-3">{f.description}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
   </Section>
 
-  <!-- A. A better terminal -->
-  <Section rule aria-labelledby="terminal-title">
-    <div class="grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
-      <SectionHeading id="terminal-title" title="A better terminal" lede="A modern terminal for everyday development. It works with no AI connected, and it stays fast when AI is slow.">
-        <a href="/features/terminal/" class="mt-6 inline-flex items-center gap-1.5 text-[0.9375rem] font-[540] text-accent hover:underline hover:underline-offset-4">More about the terminal<ArrowUpRight class="h-4 w-4" aria-hidden="true" /></a>
-      </SectionHeading>
-      <ul class="grid gap-x-8 gap-y-7 sm:grid-cols-2">
-        {terminalPoints.map((p) => (
-          <li class="flex gap-3.5">
-            <p.icon class="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
-            <div>
-              <h3 class="text-[1.0625rem] font-[560] text-text">{p.title}</h3>
-              <p class="mt-1 text-[0.9375rem] leading-relaxed text-text-2">{p.text}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+  <!-- A. A terminal that does more -->
+  <Section rule aria-labelledby="terminal-title" class="ambient ambient-low">
+    <SectionHeading id="terminal-title" title="A terminal that does more" lede="Fast, familiar and yours: tabs, splits, SSH and search. When a command fails, the AI is one keystroke away, and it reads the output you already have." class="reveal" />
+    <div class="reveal mt-10"><TerminalDemo /></div>
+    <ul class="reveal-group mt-10 grid gap-x-8 gap-y-6 sm:grid-cols-3">
+      <li class="flex gap-3"><Columns2 class="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" /><div><h3 class="font-[560] text-text">Tabs and splits</h3><p class="mt-1 text-[0.9375rem] text-text-2">Arrange shells the way you work. A split never restarts a shell.</p></div></li>
+      <li class="flex gap-3"><Network class="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" /><div><h3 class="font-[560] text-text">SSH built in</h3><p class="mt-1 text-[0.9375rem] text-text-2">Remote shells with host keys you have checked, in a tab like any other.</p></div></li>
+      <li class="flex gap-3"><Search class="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" /><div><h3 class="font-[560] text-text">Search and restore</h3><p class="mt-1 text-[0.9375rem] text-text-2">Find anything in scrollback. Pick up where you left off after a restart.</p></div></li>
+    </ul>
+    <a href="/features/terminal/" class="link-slide mt-8 inline-flex items-center gap-1.5 text-[0.9375rem] font-[540] text-accent">More about the terminal</a>
   </Section>
 
   <!-- B. Bring your own AI -->
   <Section rule tone="elevated" aria-labelledby="byo-title">
-    <div class="grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
-      <SectionHeading id="byo-title" title="Bring your own AI" lede="Use the models you already trust. No Vekrun subscription, no lock-in to one provider, and nothing is sent anywhere without you seeing it first.">
-        <p class="mt-5 text-[0.9rem] leading-relaxed text-text-3">Hosted providers bill you at their own rates. Local models are free to run.</p>
-        <a href="/features/ai-coding/" class="mt-5 inline-flex items-center gap-1.5 text-[0.9375rem] font-[540] text-accent hover:underline hover:underline-offset-4">More about AI coding<ArrowUpRight class="h-4 w-4" aria-hidden="true" /></a>
+    <div class="grid items-center gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+      <SectionHeading id="byo-title" title="Bring your own AI" lede="Claude, OpenAI, Gemini, a local model, or any compatible endpoint. Switch per task. No Vekrun subscription, and your keys never leave your machine." class="reveal">
+        <ul class="reveal-group mt-7 space-y-3 text-[0.9375rem] text-text-2">
+          <li class="flex gap-3"><KeyRound class="mt-0.5 h-4.5 w-4.5 shrink-0 text-accent" aria-hidden="true" /><span>Your own key, billed by the provider at their rates.</span></li>
+          <li class="flex gap-3"><HardDrive class="mt-0.5 h-4.5 w-4.5 shrink-0 text-accent" aria-hidden="true" /><span>Or a model on your machine with Ollama or LM Studio, at no cost per token.</span></li>
+          <li class="flex gap-3"><Eye class="mt-0.5 h-4.5 w-4.5 shrink-0 text-accent" aria-hidden="true" /><span>See what will be sent to a provider before it is sent.</span></li>
+        </ul>
+        <a href="/features/ai-coding/" class="link-slide mt-7 inline-flex items-center gap-1.5 text-[0.9375rem] font-[540] text-accent">More about AI coding</a>
       </SectionHeading>
-      <ul class="divide-y divide-border border-y border-border">
-        {aiModes.map((m) => (
-          <li class="flex gap-4 py-6">
-            <m.icon class="mt-1 h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
-            <div class="min-w-0">
-              <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-                <h3 class="text-[1.0625rem] font-[560] text-text">{m.title}</h3>
-                {m.planned && <StatusBadge status="planned" compact />}
-              </div>
-              <p class="mt-1 max-w-xl text-[0.9375rem] leading-relaxed text-text-2">{m.text}</p>
-              <ul class="mt-3 flex flex-wrap gap-2" aria-label="Providers">
-                {m.providers.map((p) => <li class="rounded-md border border-border bg-surface px-2 py-1 text-[0.8125rem] text-text-2">{p}</li>)}
-              </ul>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <div class="reveal"><ProviderSwitcher /></div>
     </div>
   </Section>
 
-  <!-- C. Your tasks, ready to build -->
-  <Section id="board" rule aria-labelledby="board-title">
-    <SectionHeading id="board-title" title="Your tasks, ready to build" lede="Connect Jira, Linear or Asana. See the tickets assigned to you. Click Start Work and you have a branch, a worktree and a terminal, with the ticket as context for you or an agent." />
-    <ol class="mt-8 flex flex-wrap gap-x-2 gap-y-2 text-[0.9375rem] text-text-2" aria-label="The Start Work flow">
-      {['Connect your tracker', 'See your assigned tickets', 'Click Start Work', 'Start coding'].map((s, i, arr) => (
-        <li class="flex items-center gap-2">
-          <span class="font-[540] text-text">{s}</span>
-          {i < arr.length - 1 && <span class="text-text-3" aria-hidden="true">›</span>}
-        </li>
-      ))}
-    </ol>
-    <div class="mt-10 reveal"><BoardDemo /></div>
-    <p class="mt-8 text-[1.0625rem] font-[540] text-text">Your tasks, your terminal, and your AI, all connected.</p>
-    <div class="mt-5"><Button href="/features/board/" variant="secondary">More about the Board</Button></div>
+  <!-- C. Your tickets become work -->
+  <Section id="board" rule aria-labelledby="board-title" class="ambient">
+    <SectionHeading id="board-title" title="Your tickets become work" lede="Connect Jira, Linear or Asana. The tickets assigned to you land on a Board. Pick one, click Start Work, and you have a branch, a working copy and a terminal, with the ticket as context for you or an agent." align="center" class="reveal" />
+    <div class="reveal mt-12"><BoardDemo /></div>
+    <div class="reveal-group mt-10 grid gap-6 sm:grid-cols-3">
+      <div class="card p-5"><h3 class="font-[560] text-text">Work manually</h3><p class="mt-1 text-[0.9375rem] text-text-2">Branch, working copy, terminal. You code; the ticket stays beside you.</p></div>
+      <div class="card p-5"><h3 class="font-[560] text-text">With an AI agent</h3><p class="mt-1 text-[0.9375rem] text-text-2">The ticket becomes the brief. Every diff and command is shown before it runs.</p></div>
+      <div class="card p-5"><h3 class="font-[560] text-text">Delegate to an AI team</h3><p class="mt-1 text-[0.9375rem] text-text-2">A plan you approve, agents in parallel, a separate check, your merge.</p></div>
+    </div>
+    <p class="reveal mt-10 text-center text-[1.125rem] font-[560] text-text">Your tasks, your terminal, and your AI, all connected.</p>
+    <div class="reveal mt-5 flex justify-center"><Button href="/features/board/" variant="secondary">More about the Board</Button></div>
   </Section>
 
-  <!-- D. AI coding teams -->
+  <!-- D. AI teams that build with you -->
   <Section rule tone="elevated" aria-labelledby="teams-title">
-    <SectionHeading id="teams-title" title="AI coding teams" lede="For work that is bigger than one conversation: agents plan it, implement and test it on separate branches, a different agent reviews the result, and you keep the final say." />
-    <div class="mt-10 reveal"><TeamsFlow /></div>
-    <p class="mt-6 max-w-2xl text-[0.9375rem] leading-relaxed text-text-2">
-      Every stage is optional. Small tasks go straight to a single agent, and a plan review by several models is there when a decision matters.
-    </p>
-    <div class="mt-6"><Button href="/ai-teams/" variant="secondary">More about AI Teams</Button></div>
+    <SectionHeading id="teams-title" title="AI teams that build with you" lede="For work bigger than one conversation. A planner drafts the steps, developers build in parallel on their own branches, a tester runs the suite, a reviewer checks the result, and you approve what merges." class="reveal" />
+    <div class="reveal mt-10"><AgentsFlow /></div>
+    <div class="reveal-group mt-10 grid gap-6 md:grid-cols-3">
+      <div><h3 class="font-[560] text-text">Plan</h3><p class="mt-1 text-[0.9375rem] text-text-2">An idea or a ticket becomes steps, files and acceptance criteria you can edit.</p></div>
+      <div><h3 class="font-[560] text-text">Council, when it matters</h3><p class="mt-1 text-[0.9375rem] text-text-2">Several models weigh in on a decision and challenge each other. Optional, never the default.</p></div>
+      <div><h3 class="font-[560] text-text">Factory</h3><p class="mt-1 text-[0.9375rem] text-text-2">Agents work on separate branches without interfering, and a different agent checks the work.</p></div>
+    </div>
+    <a href="/ai-teams/" class="link-slide mt-8 inline-flex items-center gap-1.5 text-[0.9375rem] font-[540] text-accent">How AI Teams work</a>
   </Section>
 
-  <!-- E. Code reviews in one place -->
-  <Section rule aria-labelledby="review-title">
-    <div class="grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
-      <SectionHeading id="review-title" title="Code reviews in one place" lede="Pull requests, AI findings and your feedback, side by side with the code.">
-        <p class="mt-5 flex items-center gap-2 text-[0.875rem] text-text-3"><StatusBadge status="planned" compact /> The pull-request inbox is planned. AI review of local branches works today.</p>
-        <a href="/features/code-review/" class="mt-5 inline-flex items-center gap-1.5 text-[0.9375rem] font-[540] text-accent hover:underline hover:underline-offset-4">More about code reviews<ArrowUpRight class="h-4 w-4" aria-hidden="true" /></a>
+  <!-- E. Review without leaving your workspace -->
+  <Section rule aria-labelledby="review-title" class="ambient ambient-low">
+    <div class="grid items-center gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+      <SectionHeading id="review-title" title="Review without leaving your workspace" lede="Pull requests waiting for you, the diff, AI findings and your comments, in the place you already write code." class="reveal">
+        <ul class="reveal-group mt-7 space-y-3 text-[0.9375rem] text-text-2">
+          <li class="flex gap-3"><GitBranch class="mt-0.5 h-4.5 w-4.5 shrink-0 text-accent" aria-hidden="true" /><span>See what is requested from you and what your teammates opened.</span></li>
+          <li class="flex gap-3"><ShieldCheck class="mt-0.5 h-4.5 w-4.5 shrink-0 text-accent" aria-hidden="true" /><span>Ask AI for problems first, and compare findings from several models when it matters.</span></li>
+          <li class="flex gap-3"><Eye class="mt-0.5 h-4.5 w-4.5 shrink-0 text-accent" aria-hidden="true" /><span>You approve. Nothing is posted or merged on your behalf.</span></li>
+        </ul>
+        <p class="mt-6 flex items-center gap-2 text-[0.8125rem] text-text-3"><StatusBadge status="planned" compact /> Pull-request inbox and GitHub/GitLab sync. AI review of local branches works today.</p>
+        <a href="/features/code-review/" class="link-slide mt-6 inline-flex items-center gap-1.5 text-[0.9375rem] font-[540] text-accent">More about code reviews</a>
       </SectionHeading>
-      <ul class="divide-y divide-border border-y border-border">
-        {reviewPoints.map((p) => <li class="py-3.5 text-[1rem] text-text-2">{p}</li>)}
-      </ul>
+      <div class="reveal"><ReviewDemo /></div>
     </div>
   </Section>
 
-  <!-- Open source, briefly -->
-  <Section rule tone="elevated" padded="tight" aria-labelledby="oss-title">
-    <div class="grid gap-8 md:grid-cols-3">
-      <div>
-        <h2 id="oss-title" class="heading-3">Free and open source</h2>
+  <!-- Why -->
+  <Section rule tone="elevated" padded="tight" aria-labelledby="why-title">
+    <div class="reveal-group grid gap-6 md:grid-cols-3">
+      <div class="card card-hover p-6">
+        <h2 id="why-title" class="heading-3">Free and open source</h2>
         <p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">No account, no subscription, no hosted service in the middle.</p>
       </div>
-      <div>
+      <div class="card card-hover p-6">
         <h3 class="heading-3">Runs on your machine</h3>
-        <p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">Sessions, memory and credentials stay local. You can see what is sent to a provider before it goes.</p>
+        <p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">Sessions, memory and credentials stay local. You see what is sent before it goes.</p>
       </div>
-      <div>
+      <div class="card card-hover p-6">
         <h3 class="heading-3">You set the permissions</h3>
         <p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">Agents write files and run commands only when you allow it. <a href="/open-source/" class="text-accent hover:underline hover:underline-offset-4">Why we build it this way</a>.</p>
       </div>
     </div>
   </Section>
 
-  <!-- Feature index + CTA -->
-  <Section rule aria-labelledby="cta-title">
-    <div class="max-w-3xl">
-      <h2 id="cta-title" class="heading-1">Your development environment should belong to you.</h2>
-      <p class="lede mt-5">One terminal. Any supported model. Your tasks and reviews where you write the code.</p>
-      <div class="mt-8 flex flex-wrap gap-3">
+  <!-- CTA -->
+  <Section rule aria-labelledby="cta-title" class="ambient">
+    <div class="mx-auto max-w-3xl text-center">
+      <h2 id="cta-title" class="heading-1 reveal">Your development environment should belong to you.</h2>
+      <p class="lede reveal mx-auto mt-5">One terminal. Any supported model. Your tasks and reviews where you write the code.</p>
+      <div class="reveal mt-8 flex flex-wrap justify-center gap-3">
         <Button href="/roadmap/" size="lg">See what is ready</Button>
         <Button href="/docs/" size="lg" variant="secondary">Read the docs</Button>
       </div>
+      <p class="mt-10 text-[0.8125rem] text-text-3">{site.status.line} Status as of {site.status.asOf}.</p>
     </div>
-    <ul class="mt-16 grid gap-x-8 sm:grid-cols-2 lg:grid-cols-5">
-      {featurePages.map((f) => (
-        <li>
-          <a href={f.href} class="flex min-w-0 flex-col gap-1 border-t border-border py-4 transition-colors hover:border-border-strong">
-            <span class="text-[0.9375rem] font-[540] text-text">{f.label}</span>
-            <span class="text-[0.8125rem] leading-snug text-text-3">{f.description}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
-    <p class="mt-10 text-[0.8125rem] text-text-3">{site.status.line} Status as of {site.status.asOf}.</p>
   </Section>
 </Base>
+
+<style>
+  .hero { position: relative; }
+  .hero::before { left: 50%; top: -6rem; transform: translateX(-50%); width: 60rem; height: 30rem; }
+  .hero::after { right: 10%; top: 14rem; }
+</style>

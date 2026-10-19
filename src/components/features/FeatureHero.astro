@@ -1,16 +1,27 @@
 ---
-/** Top of every feature page: the area, the claim, one paragraph. Status lives at the bottom of the page, once. */
-interface Props { area: string; title: string; lede: string }
-const { area, title, lede } = Astro.props;
+/** Top of every feature page: ambient light, a label, a gradient-accented headline, one lede, one CTA. */
+import Button from '@/components/Button.astro';
+interface Props { area: string; title: string; accent?: string; lede: string; cta?: { label: string; href: string }; secondary?: { label: string; href: string } }
+const { area, title, accent, lede, cta, secondary } = Astro.props;
 ---
-<section class="relative overflow-hidden border-b border-border">
-  <div class="dot-field pointer-events-none absolute inset-0" aria-hidden="true"></div>
+<section class="fh ambient overflow-hidden border-b border-border">
+  <div class="grid-field pointer-events-none absolute inset-0" aria-hidden="true"></div>
   <div class="container-site relative py-16 sm:py-20 lg:py-24">
     <div class="max-w-3xl">
-      <p class="text-[0.9375rem] text-text-2">{area}</p>
-      <h1 class="heading-1 mt-3 text-text">{title}</h1>
-      <p class="lede mt-5 measure-wide">{lede}</p>
+      <p class="enter text-[0.9375rem] font-[540] text-accent" style="--i: 0">{area}</p>
+      <h1 class="heading-1 enter mt-3 text-text" style="--i: 1">{title}{accent && <> <span class="text-gradient">{accent}</span></>}</h1>
+      <p class="lede enter mt-5 measure-wide" style="--i: 2">{lede}</p>
+      {(cta || secondary) && (
+        <div class="enter mt-8 flex flex-wrap gap-3" style="--i: 3">
+          {cta && <Button href={cta.href}>{cta.label}</Button>}
+          {secondary && <Button href={secondary.href} variant="secondary">{secondary.label}</Button>}
+        </div>
+      )}
     </div>
     <slot />
   </div>
 </section>
+<style>
+  .fh::before { left: -5%; top: -10rem; }
+  .fh::after { right: 0; top: 0; }
+</style>

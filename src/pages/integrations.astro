@@ -1,39 +1,55 @@
 ---
 import Base from '@/layouts/Base.astro';
-import Section from '@/components/Section.astro';
-import SectionHeading from '@/components/SectionHeading.astro';
-import StatusBadge from '@/components/StatusBadge.astro';
 import IntegrationCatalog from '@/components/catalog/IntegrationCatalog.astro';
-import { availability, site, type Availability } from '@/data/site';
+import IntegrationLogo from '@/components/catalog/IntegrationLogo.astro';
+import { site } from '@/data/site';
 
-const statuses = Object.keys(availability) as Availability[];
 const title = 'Integrations';
 const description = 'The AI models, coding tools, project trackers, Git hosts and developer services Vekrun connects to, and what each connection lets you do.';
+const featured = [
+  { id: 'anthropic', name: 'Claude', monogram: 'Cl' },
+  { id: 'openai', name: 'OpenAI', monogram: 'Oa' },
+  { id: 'gemini', name: 'Gemini', monogram: 'Ge' },
+  { id: 'ollama', name: 'Ollama', monogram: 'Ol' },
+  { id: 'linear', name: 'Linear', monogram: 'Li' },
+  { id: 'jira', name: 'Jira', monogram: 'Ji' },
+  { id: 'asana', name: 'Asana', monogram: 'As' },
+  { id: 'github', name: 'GitHub', monogram: 'Gh' },
+  { id: 'gitlab', name: 'GitLab', monogram: 'Gl' },
+  { id: 'sentry', name: 'Sentry', monogram: 'Se' },
+  { id: 'figma', name: 'Figma', monogram: 'Fi' },
+  { id: 'stripe', name: 'Stripe', monogram: 'St' },
+];
 ---
 <Base title={title} description={description}>
-  <Section padded="tight" class="pt-16 sm:pt-20">
-    <SectionHeading level="h1" title="Connect the tools you already use." lede="Your AI provider, your ticket tracker, your Git host and the services your work depends on, each connected with your own account." />
-    <p class="mt-5 max-w-3xl text-[0.9375rem] leading-relaxed text-text-2">
-      Hosted AI providers bill you directly. A consumer chat subscription is not an API key, and Vekrun never presents it as one. Setup steps live in the <a href="/docs/" class="text-accent underline underline-offset-2">documentation</a>.
-    </p>
-  </Section>
+  <section class="ambient relative overflow-hidden border-b border-border" aria-labelledby="int-title">
+    <div class="grid-field pointer-events-none absolute inset-0" aria-hidden="true"></div>
+    <div class="container-site relative pt-16 pb-12 sm:pt-24 sm:pb-16">
+      <div class="grid items-center gap-10 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)]">
+        <div>
+          <h1 id="int-title" class="heading-1 enter">Connect the tools <span class="text-gradient">you already use.</span></h1>
+          <p class="lede enter mt-5 max-w-xl" style="--i:1">Your AI provider, your ticket tracker, your Git host and the services your work depends on, each connected with your own account.</p>
+          <p class="enter mt-5 max-w-xl text-[0.9rem] leading-relaxed text-text-3" style="--i:2">
+            Hosted providers bill you directly, and a consumer chat subscription is not an API key. Setup steps live in the <a href="/docs/settings/providers/" class="text-accent link-slide">documentation</a>. {site.status.line}
+          </p>
+        </div>
+        <ul class="enter-scale grid grid-cols-4 gap-3 sm:grid-cols-6 lg:grid-cols-4" style="--i:2" aria-label="Some of the services in the catalog">
+          {featured.map((f) => (
+            <li class="card card-hover flex flex-col items-center gap-2 p-3">
+              <IntegrationLogo id={f.id} name={f.name} monogram={f.monogram} size="lg" />
+              <span class="text-[0.75rem] text-text-2">{f.name}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <p class="mt-8 text-[0.75rem] text-text-3">Logos are trademarks of their owners and indicate compatibility, not endorsement.</p>
+    </div>
+  </section>
 
-  <Section padded="tight" rule>
-    <ul class="flex flex-wrap gap-x-8 gap-y-3" role="list" aria-label="What the statuses mean">
-      {statuses.map((s) => (
-        <li class="flex items-center gap-3 text-[0.875rem] text-text-2">
-          <StatusBadge status={s} compact />
-          <span>{availability[s].description}</span>
-        </li>
-      ))}
-    </ul>
-    <p class="mt-3 text-[0.8125rem] text-text-3">{site.status.meaning} Reconciled on {site.status.asOf}.</p>
-  </Section>
-
-  <Section rule padded="tight" class="pb-24">
+  <div class="pb-24">
     <IntegrationCatalog />
-    <p class="mt-12 text-[0.9375rem] text-text-2">
-      Connected trackers put your tickets on the <a href="/features/board/" class="text-accent underline underline-offset-2">Board</a>, one click from a branch, a terminal and an agent.
+    <p class="container-site mt-14 text-[0.9375rem] text-text-2">
+      Connected trackers put your tickets on the <a href="/features/board/" class="text-accent link-slide">Board</a>, one click from a branch, a terminal and an agent.
     </p>
-  </Section>
+  </div>
 </Base>

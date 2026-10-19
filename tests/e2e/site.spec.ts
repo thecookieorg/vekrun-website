@@ -18,27 +18,49 @@ test.describe('homepage', () => {
     await noOverflow(page);
   });
 
-  test('product preview reaches its final state and is labelled a concept', async ({ page }) => {
+  test('hero preview reaches its final state, is labelled a preview, and can replay', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/');
-    const preview = page.locator('[data-preview]');
-    await expect(preview.getByText('Product preview', { exact: false })).toBeVisible();
-    await expect(preview.locator('[data-field="review"]')).toContainText('Ready for you');
-    await expect(preview.locator('[data-step="verify"]')).toHaveAttribute('data-state', 'done');
-    await preview.getByRole('button', { name: 'Replay' }).click();
-    await expect(preview.locator('[data-field="review"]')).toContainText('Not started');
+    const app = page.locator('[data-app]');
+    await expect(app).toHaveAttribute('data-demo', 'done');
+    await expect(app.getByText('Product preview', { exact: false })).toBeVisible();
+    await expect(app.locator('[data-status-right]')).toHaveText('Review ready');
+    await app.getByRole('button', { name: 'Replay' }).click();
+    await expect(app).toHaveAttribute('data-demo', /playing|done/);
   });
 
-  test('AI Teams stages are keyboard-operable tabs', async ({ page }) => {
+  test('every homepage demo plays to completion when visible', async ({ page }) => {
+    test.slow();
     await page.goto('/');
-    const tabs = page.getByRole('tablist', { name: 'AI Teams stages' }).getByRole('tab');
-    await expect(tabs).toHaveCount(6);
-    await tabs.nth(0).focus();
+    const roots = page.locator('[data-demo-root]');
+    const n = await roots.count();
+    expect(n).toBeGreaterThanOrEqual(5);
+    for (let i = 0; i < n; i++) {
+      await roots.nth(i).scrollIntoViewIfNeeded();
+      await expect(roots.nth(i)).toHaveAttribute('data-demo', 'done', { timeout: 40_000 });
+    }
+  });
+
+  test('a demo pauses with the pause control and resumes', async ({ page }) => {
+    await page.goto('/');
+    const app = page.locator('[data-app]');
+    await app.scrollIntoViewIfNeeded();
+    await expect(app).toHaveAttribute('data-demo', 'playing');
+    await app.locator('[data-demo-play]').click();
+    await expect(app).toHaveAttribute('data-demo', 'paused');
+    await app.locator('[data-demo-play]').click();
+    await expect(app).toHaveAttribute('data-demo', 'playing');
+  });
+
+  test('the provider switcher is a keyboard-operable radiogroup', async ({ page }) => {
+    await page.goto('/');
+    const radios = page.getByRole('radiogroup').first().getByRole('radio');
+    expect(await radios.count()).toBeGreaterThanOrEqual(5);
+    await radios.nth(0).click();
+    await expect(radios.nth(0)).toHaveAttribute('aria-checked', 'true');
+    await radios.nth(0).focus();
     await page.keyboard.press('ArrowRight');
-    await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
-    await expect(page.getByRole('tabpanel', { name: 'Plan' })).toContainText('drafts a plan');
-    await page.keyboard.press('End');
-    await expect(tabs.nth(5)).toHaveAttribute('aria-selected', 'true');
+    await expect(radios.nth(1)).toHaveAttribute('aria-checked', 'true');
   });
 });
 
@@ -47,7 +69,7 @@ test.describe('navigation and theme', () => {
     test.skip(isMobile, 'desktop navigation only');
     await page.goto('/');
     const links = await page.getByRole('navigation', { name: 'Primary' }).getByRole('link').all();
-    expect(links.length).toBeGreaterThanOrEqual(5);
+    expect(links.length).toBeGreaterThanOrEqual(4);
     for (const l of links) {
       const href = await l.getAttribute('href');
       if (!href || href.startsWith('/#')) continue;
@@ -60,6 +82,7 @@ test.describe('navigation and theme', () => {
     test.skip(!isMobile, 'mobile only');
     await page.goto('/');
     const toggle = page.getByRole('button', { name: 'Open menu' });
+    await expect(page.locator('header .btn').first()).toBeHidden();
     await toggle.click();
     await expect(page.getByRole('navigation', { name: 'Primary, mobile' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Close menu' })).toHaveAttribute('aria-expanded', 'true');
@@ -121,12 +144,16 @@ test.describe('other pages', () => {
     await expect(page).toHaveURL(/\/docs\/ai-teams\/council\/$/);
   });
 
-  test('the Board demo offers three ways to work', async ({ page }) => {
+  test('the Features menu opens with keyboard and closes on Escape', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'desktop navigation only');
     await page.goto('/');
-    const tabs = page.getByRole('tablist', { name: 'Ways to work on a ticket' }).getByRole('tab');
-    await expect(tabs).toHaveCount(3);
-    await tabs.nth(2).click();
-    await expect(page.getByRole('tabpanel', { name: 'Delegate to an AI team' })).toBeVisible();
+    const button = page.getByRole('button', { name: 'Features' });
+    await button.focus();
+    await page.keyboard.press('ArrowDown');
+    await expect(button).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.getByRole('link', { name: /^Terminal/ }).first()).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(button).toHaveAttribute('aria-expanded', 'false');
   });
 
   test('unknown routes serve the custom 404', async ({ page }) => {

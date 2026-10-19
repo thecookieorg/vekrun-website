@@ -1,0 +1,117 @@
+---
+/**
+ * AI Teams centerpiece: a ticket runs through Planner → (Council, optional) →
+ * two Developers on their own branches → Tester → Reviewer → You, with a Council
+ * panel that shows three positions and one recorded disagreement.
+ */
+import Window from '@/components/mock/Window.astro';
+import DemoControls from '@/components/mock/DemoControls.astro';
+const lanes = [
+  { id: 'planner', name: 'Planner' },
+  { id: 'council', name: 'Council', opt: true },
+  { id: 'developer', name: 'Developers' },
+  { id: 'tester', name: 'Tester' },
+  { id: 'reviewer', name: 'Reviewer' },
+  { id: 'you', name: 'You' },
+];
+---
+<figure class="tr" data-demo-root="team-run">
+  <Window title="AI Teams" crumbs={['acme-api', 'VEK-129 Replace the retry queue']}>
+    <span slot="status" class="hidden sm:inline-flex items-center gap-1.5"><span class="live-dot" aria-hidden="true"></span><span data-field="phase">Merged</span></span>
+    <div class="tr-rail" role="list" aria-label="Stages">
+      {lanes.map((l) => (
+        <div class:list={['tr-stage', l.opt && 'is-opt']} role="listitem" data-stage={l.id}>
+          <span class="tr-stage-name">{l.name}{l.opt && <span class="tr-opt"> optional</span>}</span>
+          <ul class="tr-chips" data-chips={l.id}></ul>
+        </div>
+      ))}
+    </div>
+    <ul class="tr-pool" hidden aria-hidden="true">
+      <li class="tr-chip" data-chip="p"><span class="tr-chip-t">Plan · 2 tasks</span><span class="tr-chip-m" data-meta>Approved by you</span></li>
+      <li class="tr-chip" data-chip="a"><span class="tr-chip-t">Queue worker</span><span class="tr-chip-m" data-meta>feat/retry-worker · merged</span></li>
+      <li class="tr-chip" data-chip="b"><span class="tr-chip-t">Backoff policy</span><span class="tr-chip-m" data-meta>feat/retry-backoff · merged</span></li>
+    </ul>
+    <div class="tr-council" data-t="2600">
+      <div class="window-pane-head"><span>Council · where should retries live? · round 2 of 2</span><span>3 members</span></div>
+      <div class="tr-positions">
+        <div class="tr-pos" data-t="2700"><span class="tr-pos-who">Architecture · Claude</span>In the queue worker, with backoff state in the job row.</div>
+        <div class="tr-pos" data-t="3300"><span class="tr-pos-who">Security · local model</span>Agrees, and asks that retry payloads are never logged.</div>
+        <div class="tr-pos tr-pos-dis" data-t="3900"><span class="tr-pos-who">Product · Gemini</span>Disagrees: per-provider limits belong in the gateway, not the queue.</div>
+      </div>
+      <p class="tr-summary" data-t="4600"><strong>Recorded disagreement.</strong> Two of three favour the queue worker. Your decision: queue worker, with a gateway cap as a follow-up.</p>
+    </div>
+  </Window>
+  <DemoControls notice="Product preview. Plans with approval, Council sessions, parallel agents on separate branches, a separate checking agent and merge previews work in the development build on macOS." />
+</figure>
+
+<style is:global>
+  .tr-rail { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--border); }
+  @media (min-width: 48rem) { .tr-rail { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+  .tr-stage { background: var(--surface); padding: 0.65rem 0.7rem; min-height: 5rem; display: flex; flex-direction: column; gap: 0.5rem; min-width: 0; }
+  @media (min-width: 48rem) { .tr-stage { min-height: 11rem; } }
+  .tr-stage.is-opt { background: repeating-linear-gradient(135deg, var(--surface) 0 8px, color-mix(in srgb, var(--surface-2) 60%, var(--surface)) 8px 9px); }
+  .tr-stage[data-stage='you'] { background: color-mix(in srgb, var(--accent) 5%, var(--surface)); }
+  .tr-stage-name { font-size: 0.78rem; font-weight: 560; color: var(--text); }
+  .tr-opt { font-weight: 400; color: var(--text-3); font-size: 0.68rem; }
+  .tr-chips { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+  .tr-pool { display: none; }
+  .tr-chip { display: flex; flex-direction: column; gap: 0.12rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface-2); padding: 0.4rem 0.55rem; font-size: 0.7rem; will-change: transform; }
+  .tr-chip.is-moving { transition: transform 600ms var(--ease-spring); }
+  .tr-chip.is-working { border-color: color-mix(in srgb, var(--warn) 55%, transparent); } .tr-chip.is-ok { border-color: color-mix(in srgb, var(--ok) 55%, transparent); }
+  .tr-chip-t { color: var(--text); font-weight: 540; } .tr-chip-m { font-family: var(--font-mono); color: var(--text-3); font-size: 0.64rem; }
+  .tr-chip.is-working .tr-chip-m { color: var(--warn); } .tr-chip.is-ok .tr-chip-m { color: var(--ok); }
+  .tr-council { border-top: 1px solid var(--border); background: var(--surface); animation: fade 300ms both; }
+  .tr-council[hidden] { display: none; }
+  .tr-positions { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--border); }
+  @media (min-width: 40rem) { .tr-positions { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .tr-pos { background: var(--surface); padding: 0.6rem 0.8rem; font-size: 0.75rem; color: var(--text-2); line-height: 1.45; animation: rise-sm 300ms var(--ease-out) both; }
+  .tr-pos[hidden] { display: none; }
+  .tr-pos-who { display: block; font-family: var(--font-mono); font-size: 0.64rem; color: var(--text-3); margin-bottom: 0.2rem; }
+  .tr-pos-dis { box-shadow: inset 3px 0 0 var(--warn); }
+  .tr-summary { margin: 0; padding: 0.6rem 0.8rem; border-top: 1px solid var(--border); font-size: 0.75rem; color: var(--text-2); }
+  .tr-summary[hidden] { display: none; } .tr-summary strong { color: var(--text); font-weight: 560; }
+  @media (prefers-reduced-motion: reduce) { .tr-council, .tr-pos { animation: none; } .tr-chip.is-moving { transition: none; } }
+</style>
+
+<script>
+  import { createSequence, type Step } from '@/scripts/sequence';
+  const root = document.querySelector<HTMLElement>('[data-demo-root="team-run"]');
+  if (root) {
+    const pool = root.querySelector<HTMLElement>('.tr-pool')!;
+    const chip = (id: string) => root.querySelector<HTMLElement>(`[data-chip="${id}"]`)!;
+    const lane = (id: string) => root.querySelector<HTMLElement>(`[data-chips="${id}"]`)!;
+    const timed = Array.from(root.querySelectorAll<HTMLElement>('[data-t]'));
+    const phase = root.querySelector<HTMLElement>('[data-field="phase"]')!;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const move = (c: HTMLElement, to: string, meta?: string, state?: 'working' | 'ok' | '') => {
+      const first = c.getBoundingClientRect(); lane(to).appendChild(c);
+      if (meta !== undefined) c.querySelector<HTMLElement>('[data-meta]')!.textContent = meta;
+      if (state !== undefined) { c.classList.remove('is-working', 'is-ok'); if (state) c.classList.add(`is-${state}`); }
+      const last = c.getBoundingClientRect(); if (reduce || first.width === 0) return;
+      c.classList.remove('is-moving'); c.style.transform = `translate(${first.left - last.left}px, ${first.top - last.top}px)`; void c.offsetWidth;
+      c.classList.add('is-moving'); c.style.transform = ''; c.addEventListener('transitionend', () => c.classList.remove('is-moving'), { once: true });
+    };
+    const reset = () => {
+      timed.forEach((n) => { n.hidden = true; });
+      ['p', 'a', 'b'].forEach((id) => { const c = chip(id); pool.appendChild(c); c.classList.remove('is-working', 'is-ok', 'is-moving'); c.style.transform = ''; });
+      chip('p').querySelector<HTMLElement>('[data-meta]')!.textContent = 'drafting…'; phase.textContent = 'Planning';
+    };
+    const steps: Step[] = timed.map((n) => ({ t: Number(n.dataset.t), run: () => { n.hidden = false; } }));
+    steps.push(
+      { t: 400, run: () => move(chip('p'), 'planner', 'drafting…', 'working') },
+      { t: 2000, run: () => move(chip('p'), 'planner', '2 tasks · waiting for you', 'working') },
+      { t: 2600, run: () => { phase.textContent = 'Council'; move(chip('p'), 'council', 'under review', 'working'); } },
+      { t: 5400, run: () => { phase.textContent = 'Building'; move(chip('p'), 'you', 'Approved by you', 'ok'); } },
+      { t: 6000, run: () => move(chip('a'), 'developer', 'feat/retry-worker · editing', 'working') },
+      { t: 6400, run: () => move(chip('b'), 'developer', 'feat/retry-backoff · editing', 'working') },
+      { t: 8600, run: () => { phase.textContent = 'Testing'; move(chip('a'), 'tester', 'running 14 tests', 'working'); } },
+      { t: 9200, run: () => move(chip('b'), 'tester', 'running 6 tests', 'working') },
+      { t: 10600, run: () => { phase.textContent = 'Checking'; move(chip('a'), 'reviewer', '14 ✓ · checked against the plan', 'working'); } },
+      { t: 11300, run: () => move(chip('b'), 'reviewer', '6 ✓ · 1 note', 'working') },
+      { t: 12600, run: () => { phase.textContent = 'Ready for you'; move(chip('a'), 'you', 'Merge preview · no conflicts', 'ok'); } },
+      { t: 13200, run: () => move(chip('b'), 'you', 'Merge preview · no conflicts', 'ok') },
+      { t: 14600, run: () => { phase.textContent = 'Merged'; chip('a').querySelector<HTMLElement>('[data-meta]')!.textContent = 'feat/retry-worker · merged'; chip('b').querySelector<HTMLElement>('[data-meta]')!.textContent = 'feat/retry-backoff · merged'; } },
+    );
+    createSequence(root, steps, { reset });
+  }
+</script>

@@ -1,0 +1,63 @@
+---
+/**
+ * A reusable Board mockup. Columns and cards come from props so every page can
+ * tell a slightly different story with the same visual system. Cards carry
+ * data-card ids so a demo script can move or highlight them.
+ */
+export type Card = { id: string; title: string; src: 'Li' | 'Ji' | 'As' | 'Gh' | 'Gl'; chips?: { text: string; tone?: 'ok' | 'warn' | 'info' | 'muted' }[]; selected?: boolean; hidden?: boolean };
+export type Column = { id: string; name: string; cards: Card[] };
+interface Props { columns: Column[]; class?: string; compact?: boolean }
+const { columns, class: className = '', compact = false } = Astro.props;
+const srcName = { Li: 'Linear', Ji: 'Jira', As: 'Asana', Gh: 'GitHub', Gl: 'GitLab' };
+const srcClass = { Li: 'src-li', Ji: 'src-ji', As: 'src-as', Gh: 'src-gh', Gl: 'src-gl' };
+---
+<div class:list={['kanban', compact && 'kanban-compact', className]} data-kanban>
+  {columns.map((col) => (
+    <section class="kanban-col" aria-label={`${col.name} column`} data-column={col.id}>
+      <header class="kanban-col-head"><span>{col.name}</span><span class="kanban-count" data-count>{col.cards.filter((c) => !c.hidden).length}</span></header>
+      <ul class="kanban-cards">
+        {col.cards.map((c) => (
+          <li class:list={['kanban-card', c.selected && 'is-selected']} data-card={c.id} hidden={c.hidden} aria-current={c.selected ? 'true' : undefined}>
+            <div class="kanban-card-top">
+              <span class="kanban-id">{c.id}</span>
+              <span class:list={['kanban-src', srcClass[c.src]]} title={srcName[c.src]} aria-label={srcName[c.src]}>{c.src}</span>
+            </div>
+            <p class="kanban-title">{c.title}</p>
+            {c.chips && c.chips.length > 0 && (
+              <div class="kanban-chips" data-chips>
+                {c.chips.map((ch) => <span class:list={['kanban-chip', ch.tone && `tone-${ch.tone}`]}>{ch.text}</span>)}
+              </div>
+            )}
+            <slot name={`card-${c.id}`} />
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
+</div>
+
+<style>
+  .kanban { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--border); font-size: 0.8rem; }
+  @media (max-width: 47.9rem) { .kanban { grid-template-columns: repeat(4, 14.5rem); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin; } .kanban-col { scroll-snap-align: start; } }
+  .kanban-col { background: var(--surface); min-width: 0; }
+  .kanban-col-head { display: flex; justify-content: space-between; padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--border); color: var(--text-2); font-size: 0.72rem; }
+  .kanban-count { color: var(--text-3); font-family: var(--font-mono); }
+  .kanban-cards { list-style: none; margin: 0; padding: 0.55rem; display: flex; flex-direction: column; gap: 0.5rem; min-height: 15rem; }
+  .kanban-compact .kanban-cards { min-height: 11rem; }
+  .kanban-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.55rem 0.65rem; display: flex; flex-direction: column; gap: 0.35rem; transition: border-color var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out), transform var(--dur-slow) var(--ease-spring), opacity var(--dur) var(--ease-out); }
+  .kanban-card.is-selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 10px 30px -14px color-mix(in srgb, var(--accent) 50%, transparent); }
+  .kanban-card.is-entering { animation: scale-in 500ms var(--ease-out) both; }
+  .kanban-card-top { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+  .kanban-id { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-3); }
+  .kanban-src { font-family: var(--font-mono); font-size: 0.62rem; border-radius: 4px; padding: 0.05rem 0.3rem; border: 1px solid var(--border-strong); color: var(--text-2); }
+  .src-li { color: #8b93e6; border-color: color-mix(in srgb, #5e6ad2 50%, transparent); }
+  .src-ji { color: #6aa0ff; border-color: color-mix(in srgb, #0052cc 55%, transparent); }
+  .src-as { color: #f08c8c; border-color: color-mix(in srgb, #f06a6a 50%, transparent); }
+  .src-gh, .src-gl { color: var(--text-2); }
+  .kanban-title { color: var(--text); font-size: 0.8rem; line-height: 1.35; }
+  .kanban-chips { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+  .kanban-chip { font-size: 0.66rem; color: var(--text-2); border: 1px solid var(--border); border-radius: 999px; padding: 0.08rem 0.45rem; display: inline-flex; align-items: center; gap: 0.3rem; }
+  .kanban-chip::before { content: ''; width: 0.35rem; height: 0.35rem; border-radius: 50%; background: var(--text-3); }
+  .kanban-chip.tone-ok::before { background: var(--ok); } .kanban-chip.tone-warn::before { background: var(--warn); } .kanban-chip.tone-info::before { background: var(--info); }
+  @media (prefers-reduced-motion: reduce) { .kanban-card { transition: none; } .kanban-card.is-entering { animation: none; } }
+</style>
