@@ -3,31 +3,30 @@ import Base from '@/layouts/Base.astro';
 import Section from '@/components/Section.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 const title = 'Privacy';
-const description = 'This website sets no cookies and runs no analytics. The application is local-first and shows you what leaves your machine before it leaves.';
+const description = 'This website sets no cookies and runs no analytics. The application keeps your work on your machine and shows you what it sends to AI providers.';
 ---
 <Base title={title} description={description}>
   <Section padded="tight" class="pt-16 sm:pt-20">
-    <SectionHeading level="h1" title="Nothing on this site watches you." lede="No cookies, no analytics, no trackers, no third-party scripts. The same posture carries into the application." />
+    <SectionHeading level="h1" title="Nothing here watches you." lede="No cookies, no analytics, no trackers. The application follows the same rule." />
   </Section>
   <Section rule padded="tight" class="pb-24">
     <div class="prose-site max-w-3xl text-[1.0625rem] leading-relaxed">
       <h2 class="!mt-0">This website</h2>
       <ul>
-        <li>No cookies are set and no local identifiers are created for tracking. The only stored value is your theme choice, kept in your browser's local storage if you change it.</li>
-        <li>No analytics or advertising scripts are loaded. There is no fingerprinting.</li>
-        <li>Fonts are served from this site's own origin. No request goes to a font network.</li>
-        <li>The documentation search runs entirely in your browser over a static index.</li>
-        <li>The site is hosted on GitHub Pages. GitHub may log requests as described in the <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener noreferrer">GitHub General Privacy Statement</a>. Vekrun does not receive those logs.</li>
+        <li>No cookies and no tracking. The only thing stored in your browser is your theme choice, if you change it.</li>
+        <li>No analytics or advertising scripts.</li>
+        <li>Fonts and search run from this site itself. Nothing is loaded from third parties.</li>
+        <li>The site is hosted on GitHub Pages, so GitHub may log requests under its <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener noreferrer">privacy statement</a>. Vekrun does not see those logs.</li>
       </ul>
-      <p>If analytics are ever introduced, they will be lightweight and privacy-conscious, and this page will describe exactly what is collected before it is enabled.</p>
+      <p>If analytics are ever added, this page will say exactly what is collected before they are turned on.</p>
 
       <h2>The application</h2>
       <ul>
-        <li>There is no Vekrun account and no Vekrun-hosted service your data passes through.</li>
-        <li>Sessions, memories, indexes and task history are stored locally. You can delete them, and you can remove provider keys cleanly.</li>
-        <li>Before anything is sent to a hosted model provider, an egress preview shows what leaves the machine. The first contact with a provider requires an explicit send.</li>
-        <li>Telemetry is opt-in and off by default.</li>
-        <li>Model providers you connect have their own privacy terms; what you send them is governed by those terms.</li>
+        <li>No Vekrun account and no Vekrun server your data passes through.</li>
+        <li>Sessions, memory and history are stored on your machine. You can delete them and remove API keys at any time.</li>
+        <li>Before anything is sent to an AI provider, you can see exactly what will be sent. The first time you use a provider, nothing goes out until you confirm.</li>
+        <li>Usage reporting is off unless you turn it on.</li>
+        <li>What you send to a provider is covered by that provider's terms.</li>
       </ul>
     </div>
   </Section>

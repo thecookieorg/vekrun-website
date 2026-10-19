@@ -1,5 +1,4 @@
 ---
-import { getCollection } from 'astro:content';
 import Base from '@/layouts/Base.astro';
 import Section from '@/components/Section.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
@@ -7,90 +6,31 @@ import StatusBadge from '@/components/StatusBadge.astro';
 import RoadmapBoard from '@/components/catalog/RoadmapBoard.astro';
 import { roadmapStatuses, site, type RoadmapStatus } from '@/data/site';
 
-const milestones = (await getCollection('milestones')).sort((a, b) => a.data.number - b.data.number);
-const legend: Record<RoadmapStatus, string> = {
-  planned: 'On the plan with a milestone. Not started.',
-  'in-progress': 'Being built. Parts are merged, the milestone gate has not passed.',
-  implemented: 'Merged on the main branch with tests. Verified by hand on macOS only.',
-  released: 'Shipped in a public build.',
-};
+const legend: RoadmapStatus[] = ['implemented', 'in-progress', 'planned'];
 const title = 'Roadmap';
-const description = 'The twelve milestones to Vekrun 1.0 and the status of each feature, reconciled with the desktop project on ' + site.status.asOf + '.';
+const description = 'What you can do in Vekrun today, what is being built, and what is planned, grouped by terminal, AI coding, Board, AI Teams, code reviews and releases.';
 ---
 <Base title={title} description={description}>
   <Section padded="tight" class="pt-16 sm:pt-20">
-    <SectionHeading level="h1" title="One complete 1.0, built through twelve milestones." lede="A milestone is done when its gate passes on macOS, Windows and Linux. A screen existing is not a feature existing. This page says what is built, what is in flight and what has not started." />
-    <p class="mt-5 text-[0.875rem] text-text-3">Reconciled with the desktop project on <time datetime={site.status.asOf}>{site.status.asOf}</time>. Nothing here is a release; see <a href="/download/" class="text-accent underline underline-offset-2">downloads</a> for that.</p>
+    <SectionHeading level="h1" title="What works, what is next." lede={site.status.line + ' This page tracks the capabilities you will use, not the engineering behind them.'} />
   </Section>
 
   <Section rule padded="tight">
-    <h2 class="text-[0.9375rem] font-[560] text-text">What the statuses mean</h2>
-    <ul class="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" role="list">
-      {(Object.keys(roadmapStatuses) as RoadmapStatus[]).map((s) => (
-        <li class="flex flex-col gap-2 rounded-md border border-border p-4">
-          <StatusBadge status={s} kind="roadmap" />
-          <p class="text-[0.8125rem] leading-relaxed text-text-2">{legend[s]}</p>
+    <ul class="flex flex-wrap gap-x-8 gap-y-3" role="list" aria-label="What the statuses mean">
+      {legend.map((s) => (
+        <li class="flex items-center gap-3 text-[0.875rem] text-text-2">
+          <StatusBadge status={s} kind="roadmap" compact />
+          <span>{roadmapStatuses[s].description}</span>
         </li>
       ))}
     </ul>
+    <p class="mt-3 text-[0.8125rem] text-text-3">{site.status.meaning} Reconciled on <time datetime={site.status.asOf}>{site.status.asOf}</time>.</p>
   </Section>
 
-  <Section rule padded="tight" aria-labelledby="milestones">
-    <h2 id="milestones" class="heading-2">Milestones</h2>
-    <ol class="ruled-grid mt-6" aria-label="Milestones in order">
-      {milestones.map((m) => (
-        <li class="grid gap-x-6 gap-y-2 p-5 md:grid-cols-[3.5rem_minmax(0,1fr)_auto] md:items-start">
-          <span class="font-mono text-[0.8125rem] text-text-3">M{m.data.number}</span>
-          <div class="min-w-0">
-            <h3 class="text-[1rem] font-[560] text-text">{m.data.title}</h3>
-            <p class="mt-1 text-[0.9rem] leading-relaxed text-text-2">{m.data.summary}</p>
-            {m.data.note && <p class="mt-1.5 text-[0.8125rem] leading-snug text-text-3">{m.data.note}</p>}
-          </div>
-          <div class="flex flex-col items-start gap-1 md:items-end">
-            <StatusBadge status={m.data.status} kind="roadmap" compact />
-            <time datetime={m.data.updated} class="text-[0.75rem] text-text-3">{m.data.updated}</time>
-          </div>
-        </li>
-      ))}
-    </ol>
-
-    <div class="mt-8">
-      <h3 class="text-[0.9375rem] font-[560] text-text">How the milestones depend on each other</h3>
-      <p class="mt-1 text-[0.875rem] text-text-2">The terminal, the provider gateway and the workspace can proceed in parallel once the foundation exists. Everything in the Factory needs single-agent coding and worktrees first.</p>
-      <div class="mt-4 overflow-x-auto rounded-md border border-border bg-surface p-4">
-        <svg viewBox="0 0 760 170" class="h-auto w-full min-w-[640px]" role="img" aria-labelledby="dep-title">
-          <title id="dep-title">Milestone dependency diagram: M1 leads to M2, M3 and M5; M3 leads to M4; M4 and M5 lead to M6; M6 leads to M7; M7 leads to M8 and M9; M8 and M9 lead to M10; M10 leads to M11; M11 leads to M12.</title>
-          <defs>
-            <marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 8 4 0 8z" fill="var(--text-3)" /></marker>
-          </defs>
-          <g fill="none" stroke="var(--border-strong)" stroke-width="1.5" marker-end="url(#arr)">
-            <path d="M68 85 H112 M68 85 C 90 85 90 30 112 30 M68 85 C 90 85 90 140 112 140" />
-            <path d="M178 30 H222" />
-            <path d="M288 30 C 310 30 310 85 332 85 M178 140 C 300 140 300 85 332 85 M178 85 H332" stroke-dasharray="0" />
-            <path d="M398 85 H442" />
-            <path d="M508 85 C 530 85 530 55 552 55 M508 85 C 530 85 530 115 552 115" />
-            <path d="M618 55 C 640 55 640 85 662 85 M618 115 C 640 115 640 85 662 85" />
-          </g>
-          {[
-            [2, 85, 'M1'], [112, 30, 'M3'], [112, 85, 'M2'], [112, 140, 'M5'], [222, 30, 'M4'],
-            [332, 85, 'M6'], [442, 85, 'M7'], [552, 55, 'M8'], [552, 115, 'M9'], [662, 85, 'M10'],
-          ].map(([x, y, label]) => (
-            <g transform={`translate(${x},${Number(y) - 14})`}>
-              <rect width="66" height="28" rx="6" fill="var(--surface-2)" stroke="var(--border-strong)" />
-              <text x="33" y="18" text-anchor="middle" font-family="var(--font-mono)" font-size="12" fill="var(--text)">{label}</text>
-            </g>
-          ))}
-          <text x="380" y="162" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--text-3)">then M11 (polish) and M12 (hardening and release) follow in order</text>
-        </svg>
-      </div>
-    </div>
-  </Section>
-
-  <Section rule aria-labelledby="features" class="pb-24">
-    <h2 id="features" class="heading-2">Features</h2>
-    <p class="lede mt-3 max-w-2xl">Every row is a piece of work with a milestone and a status. Filter by what you care about.</p>
-    <div class="mt-8">
-      <RoadmapBoard />
-    </div>
+  <Section rule padded="tight" class="pb-24">
+    <RoadmapBoard />
+    <p class="mt-12 text-[0.9375rem] text-text-2">
+      Contributors can follow the engineering milestones in <a href="/docs/advanced/progress/" class="text-accent underline underline-offset-2">detailed technical progress</a>.
+    </p>
   </Section>
 </Base>

@@ -3,65 +3,37 @@ import Base from '@/layouts/Base.astro';
 import Section from '@/components/Section.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import StatusBadge from '@/components/StatusBadge.astro';
-import Button from '@/components/Button.astro';
 import IntegrationCatalog from '@/components/catalog/IntegrationCatalog.astro';
 import { availability, site, type Availability } from '@/data/site';
 
 const statuses = Object.keys(availability) as Availability[];
 const title = 'Integrations';
-const description =
-  'Every AI provider, local runtime, ticket source, Git host and MCP server Vekrun connects to, with an honest availability status for each.';
+const description = 'The AI models, coding tools, project trackers, Git hosts and developer services Vekrun connects to, and what each connection lets you do.';
 ---
 <Base title={title} description={description}>
   <Section padded="tight" class="pt-16 sm:pt-20">
-    <SectionHeading level="h1" title="Connect the models and tools you already use." lede="Vekrun is the workspace in the middle: your providers, your runtimes, your ticket tracker and your Git host, each connected with credentials you own." />
+    <SectionHeading level="h1" title="Connect the tools you already use." lede="Your AI provider, your ticket tracker, your Git host and the services your work depends on, each connected with your own account." />
     <p class="mt-5 max-w-3xl text-[0.9375rem] leading-relaxed text-text-2">
-      Each entry says how it connects, what it can do, and whether it exists today. Vendor logos are not shipped on this site; entries carry a plain monogram instead.
+      Hosted AI providers bill you directly. A consumer chat subscription is not an API key, and Vekrun never presents it as one. Setup steps live in the <a href="/docs/" class="text-accent underline underline-offset-2">documentation</a>.
     </p>
   </Section>
 
   <Section padded="tight" rule>
-    <h2 class="text-[0.9375rem] font-[560] text-text">What the statuses mean</h2>
-    <ul class="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" role="list">
+    <ul class="flex flex-wrap gap-x-8 gap-y-3" role="list" aria-label="What the statuses mean">
       {statuses.map((s) => (
-        <li class="flex flex-col gap-2 rounded-md border border-border p-4">
-          <StatusBadge status={s} />
-          <p class="text-[0.8125rem] leading-relaxed text-text-2">{availability[s].description}</p>
+        <li class="flex items-center gap-3 text-[0.875rem] text-text-2">
+          <StatusBadge status={s} compact />
+          <span>{availability[s].description}</span>
         </li>
       ))}
     </ul>
-    <p class="mt-4 max-w-3xl text-[0.8125rem] leading-relaxed text-text-3">
-      Reconciled with the desktop project on {site.status.asOf}. There is no public binary yet; "available" is a statement about the source, not about a download.
-    </p>
+    <p class="mt-3 text-[0.8125rem] text-text-3">{site.status.meaning} Reconciled on {site.status.asOf}.</p>
   </Section>
 
   <Section rule padded="tight" class="pb-24">
     <IntegrationCatalog />
-  </Section>
-
-  <Section rule tone="elevated">
-    <div class="grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-start">
-      <div>
-        <h2 class="heading-2">Tickets become execution.</h2>
-        <p class="lede mt-4">
-          The Board shows the tickets assigned to you across Linear, Jira, Asana, GitHub and GitLab, and gives each one a Start Work action that opens a worktree, a terminal and, if you choose, an agent or a Factory run with the ticket as context.
-        </p>
-        <p class="mt-4 text-[0.9375rem] leading-relaxed text-text-2">
-          The Board with local tickets and Start Work is implemented today. Live providers are planned for milestone 10; until they land, no provider is listed as connected.
-        </p>
-        <div class="mt-6 flex flex-wrap gap-3">
-          <Button href="/features/board/" variant="secondary">How the Board works</Button>
-          <Button href="/roadmap/" variant="ghost">See milestone 10</Button>
-        </div>
-      </div>
-      <ol class="ruled-grid text-[0.9rem]" aria-label="From ticket to delivery">
-        {['Select a ticket', 'Start Work', 'Build', 'Review', 'Deliver'].map((step, i) => (
-          <li class="flex items-center gap-4 px-5 py-3.5">
-            <span class="font-mono text-[0.75rem] text-text-3">{i + 1}</span>
-            <span class="text-text">{step}</span>
-          </li>
-        ))}
-      </ol>
-    </div>
+    <p class="mt-12 text-[0.9375rem] text-text-2">
+      Connected trackers put your tickets on the <a href="/features/board/" class="text-accent underline underline-offset-2">Board</a>, one click from a branch, a terminal and an agent.
+    </p>
   </Section>
 </Base>

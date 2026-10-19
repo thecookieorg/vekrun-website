@@ -5,34 +5,31 @@ import SectionHeading from '@/components/SectionHeading.astro';
 import { site } from '@/data/site';
 
 const commitments = [
-  { title: 'Untrusted by default', body: 'Repository text, logs, model responses, terminal output and tool results are untrusted input. The policy engine, not the prompt, is the control.' },
-  { title: 'Credentials in the keychain', body: 'Secrets live in the operating system keychain, are redacted from logs and the interface, and never cross into the webview or into tools by default.' },
-  { title: 'Deny is the default', body: 'Every side-effecting path goes through the Rust policy engine and produces an audit event in an append-only journal.' },
-  { title: 'Sandbox limits are documented', body: 'Filesystem, process and network isolation differ per platform. Worktrees isolate version control, not security, and the threat model says so.' },
-  { title: 'No blind replays', body: 'A lost lease returns a task to the queue. Non-idempotent shell side effects are never replayed without reconciliation.' },
-  { title: 'Private by default', body: 'Local APIs bind privately. Exposing anything beyond the machine needs explicit configuration, authentication and transport security.' },
+  { title: 'Nothing an agent reads is trusted', body: 'Text in your repository, model replies, tool results and terminal output cannot change what an agent is allowed to do. Your permissions decide, not the prompt.' },
+  { title: 'Keys stay in your keychain', body: 'API keys are stored by your operating system, hidden from logs and the interface, and never handed to tools or remote machines unless you say so.' },
+  { title: 'Deny by default', body: 'An agent can only do what you have allowed. Every action that touches files, commands, Git or the network is recorded.' },
+  { title: 'Limits are stated', body: 'How well an agent is isolated differs by operating system. Vekrun says what each platform can and cannot enforce instead of glossing over it.' },
 ];
 const scope = [
-  'Any way for an agent, extension, MCP server, repository content or terminal output to act outside your permission policy.',
-  'Any exposure of credentials in logs, the interface, the webview, tool inputs or remote hosts.',
-  'Any way for a lost lease or crash to replay a non-idempotent side effect.',
-  'Any bypass of the local API authentication or its private-bind default.',
-  'Supply-chain issues in the build, release or update path.',
+  'Any way for an agent, an integration or content in a repository to act outside your permissions.',
+  'Any exposure of API keys or credentials.',
+  'Any way for an interrupted task to repeat a command that should run once.',
+  'Any way to reach Vekrun from outside your machine without being allowed to.',
+  'Problems in how Vekrun is built, released or updated.',
 ];
 const title = 'Security';
-const description = 'How Vekrun treats untrusted input, credentials and permissions, and how to report a vulnerability.';
+const description = 'How Vekrun handles untrusted input, your API keys and agent permissions, and how to report a vulnerability.';
 ---
 <Base title={title} description={description}>
   <Section padded="tight" class="pt-16 sm:pt-20">
-    <SectionHeading level="h1" title="Security is a design requirement, not a later feature." lede="Vekrun runs shell commands, edits files and calls model providers on your behalf. These are the commitments the architecture is built around." />
+    <SectionHeading level="h1" title="Agents act on your behalf. These are the rules they follow." lede="Vekrun runs commands, edits files and talks to AI providers for you. Four commitments shape how it does that." />
   </Section>
 
-  <Section rule padded="tight" aria-labelledby="commitments">
-    <h2 id="commitments" class="heading-3">Design commitments</h2>
-    <ul class="ruled-grid mt-4 sm:grid-cols-2 lg:grid-cols-3" role="list">
+  <Section rule padded="tight">
+    <ul class="ruled-grid sm:grid-cols-2" role="list">
       {commitments.map((c) => (
         <li class="p-6">
-          <h3 class="text-[1rem] font-[560] text-text">{c.title}</h3>
+          <h2 class="text-[1rem] font-[560] text-text">{c.title}</h2>
           <p class="mt-2 text-[0.9rem] leading-relaxed text-text-2">{c.body}</p>
         </li>
       ))}
@@ -43,21 +40,17 @@ const description = 'How Vekrun treats untrusted input, credentials and permissi
     <div class="grid gap-10 lg:grid-cols-2">
       <div class="prose-site">
         <h2 class="!mt-0">Reporting a vulnerability</h2>
-        <p>Please do not open a public issue for a security problem.</p>
+        <p>Please report security problems privately, never in a public issue.</p>
         {site.contact.securityEmail ? (
-          <p>Email <strong>{site.contact.securityEmail}</strong> with steps to reproduce, the platform and the Vekrun version. You will get an acknowledgement within seven days.</p>
+          <p>Email <strong>{site.contact.securityEmail}</strong> with steps to reproduce, your platform and the Vekrun version. You will hear back within seven days.</p>
         ) : (
-          <p>
-            A dedicated security address will be published on this page before the first public release. Once the source repository is public, GitHub's private vulnerability reporting on the repository is the other channel. Include steps to reproduce, the platform and the Vekrun version; reports are acknowledged within seven days.
-          </p>
+          <p>A security address will be published here before the first public release. Once the source repository is public, GitHub's private vulnerability reporting will also work. Include steps to reproduce, your platform and the Vekrun version; reports are acknowledged within seven days.</p>
         )}
-        <p>Supported versions: there are no releases yet. Once there are, the latest minor release is supported.</p>
+        <p>There are no releases yet. Once there are, the latest release is supported.</p>
       </div>
       <div class="prose-site">
-        <h2 class="!mt-0">What is in scope</h2>
-        <ul>
-          {scope.map((s) => <li>{s}</li>)}
-        </ul>
+        <h2 class="!mt-0">What counts</h2>
+        <ul>{scope.map((s) => <li>{s}</li>)}</ul>
       </div>
     </div>
   </Section>

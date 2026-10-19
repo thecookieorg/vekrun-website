@@ -2,126 +2,71 @@
 import Base from '@/layouts/Base.astro';
 import Section from '@/components/Section.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
-import Button from '@/components/Button.astro';
 import ConceptNotice from '@/components/ConceptNotice.astro';
 import FeatureHero from '@/components/features/FeatureHero.astro';
-import CapabilityGrid, { type Capability } from '@/components/features/CapabilityGrid.astro';
 import Tabs from '@/components/features/Tabs.astro';
 import Mock from '@/components/features/Mock.astro';
+import Controls from '@/components/features/Controls.astro';
 import WhereThisStands from '@/components/features/WhereThisStands.astro';
 
 const modes = [
-  { id: 'ask', label: 'Ask', can: 'Read files, search the repository, read the terminal, explain.', cannot: 'Write, run commands, touch Git.', prompt: 'Why does the callback test need a fixed clock?', reply: 'tests/oauth.rs:41 freezes time so the state token expiry in src/auth/oauth.rs:88 is deterministic. Without it the 10-minute window drifts across the test run.' },
-  { id: 'plan', label: 'Plan', can: 'Everything Ask can, plus propose a structured plan with steps, dependencies and acceptance criteria.', cannot: 'Apply changes. A plan runs only after you approve a revision.', prompt: 'Add GitHub as an OAuth provider.', reply: 'Plan revision 1: three steps, two files, one new test. Acceptance: callback exchanges a code for a token; state mismatch is rejected. Waiting for approval.' },
-  { id: 'build', label: 'Build', can: 'Edit files and run approved commands inside the current worktree.', cannot: 'Write outside the worktree or run a command you have not approved.', prompt: 'Implement step 1 of the approved plan.', reply: 'Diff ready: src/auth/providers/github.rs (+64), src/auth/mod.rs (+3). Review and approve to apply. Checkpoint taken.' },
-  { id: 'debug', label: 'Debug', can: 'Run the failing test, read output, propose a fix as a diff.', cannot: 'Apply the fix silently.', prompt: 'oauth::callback fails on CI.', reply: 'Ran cargo test oauth::callback: panics on missing GITHUB_CLIENT_ID. Proposed: read from settings with a clear error. Diff waiting.' },
-  { id: 'review', label: 'Review', can: 'Read a diff or a branch, run checks, report findings with file and line.', cannot: 'Change code or approve anything on your behalf.', prompt: 'Review feat/github-oauth against main.', reply: '2 findings. (1) src/auth/providers/github.rs:52 state compared with == rather than constant-time. (2) No test for a denied authorization. No blocking issues in the diff.' },
+  { id: 'ask', label: 'Ask', what: 'Ask about the code, the error on screen or the project. The agent reads; it never writes.', prompt: 'Why does the callback test need a fixed clock?', reply: 'tests/oauth.rs:41 freezes time so the token expiry in src/auth/oauth.rs:88 is deterministic. Without it the ten-minute window drifts during the run.' },
+  { id: 'plan', label: 'Plan', what: 'Describe what you want and get a plan with steps and acceptance criteria. Nothing runs until you approve it.', prompt: 'Add GitHub as a sign-in provider.', reply: 'Plan: three steps, two files, one new test. Done when the callback exchanges a code for a token and a bad state is rejected. Waiting for your approval.' },
+  { id: 'build', label: 'Build', what: 'The agent edits files and runs the commands you allow. Every write is shown as a diff first.', prompt: 'Implement step 1 of the plan.', reply: 'Diff ready: src/auth/providers/github.rs (+64), src/auth/mod.rs (+3). Approve to apply. A snapshot was taken first.' },
+  { id: 'debug', label: 'Debug', what: 'Point it at a failing test. It runs it, reads the output and proposes a fix as a diff.', prompt: 'oauth::callback fails on CI.', reply: 'Ran the test: it panics on a missing GITHUB_CLIENT_ID. Proposed reading it from settings with a clear error. Diff waiting.' },
+  { id: 'review', label: 'Review', what: 'Review a branch or a diff. You get findings with file and line, and nothing is changed.', prompt: 'Review feat/github-oauth against main.', reply: 'Two findings. (1) github.rs:52 compares the state token with ==, which leaks timing. (2) No test for a denied authorization.' },
 ];
-
-const capabilities: Capability[] = [
-  { title: 'Provider-agnostic', description: 'Anthropic, OpenAI, Gemini and OpenAI-compatible endpoints through Rust adapters with streaming. Switch providers mid-conversation; Vekrun states what context carries over.', status: 'available' },
-  { title: 'Agent sessions', description: 'Persisted conversations you can resume by replay, fork, search by content, and export as Markdown.', status: 'available' },
-  { title: 'Ask, Plan, Build, Debug and Review', description: 'Modes are policy profiles. Ask cannot write; that is enforced by the policy engine and tested, not by the prompt.', status: 'available' },
-  { title: 'Context-aware', description: 'Project discovery reads marker files, languages, instruction files and Git status into the system prompt as data.', status: 'available', note: 'Full-text and symbol indexing of large repositories is planned for M5.' },
-  { title: 'Diff previews', description: 'Every write is shown as a diff for approval, with a checkpoint before and rollback after.', status: 'available' },
-  { title: 'Test execution', description: 'Agents run tests and other commands as policy-gated tools, each one approved per call until OS-enforced sandboxes exist.', status: 'available', note: 'Per-call approval is mandatory today. There is no auto-approve switch by design.' },
-  { title: 'Permission policies', description: 'Deny by default. Every tool action is a policy decision with an audit event. Supervised, balanced and custom profiles.', status: 'available' },
-  { title: 'Local model support', description: 'Ollama and LM Studio are detected and connected. Models run on your hardware; nothing leaves the machine.', status: 'available', note: 'Guided model downloads with hardware estimates are not built yet.' },
-  { title: 'Egress preview', description: 'See exactly what leaves the machine before it leaves. The first contact with a hosted provider waits for an explicit Send.', status: 'available' },
-  { title: 'Context inspector', description: 'Which files, which terminal output and which memories went to the provider, for every turn.', status: 'available' },
-  { title: 'Scoped memory', description: 'User, project, team, agent, task and council memories with enforced access, provenance and retention.', status: 'available' },
-  { title: 'Retries and cancellation', description: 'Transient provider errors retry with backoff. Cancel stops the loop and its subprocesses.', status: 'available' },
+const controls = [
+  { title: 'Your provider, your key', body: 'Connect Claude, OpenAI, Gemini or any OpenAI-compatible endpoint with your own key, kept in the system keychain. Or run Ollama or LM Studio and keep everything on your machine. Hosted providers bill you directly.' },
+  { title: 'See what is sent before it is sent', body: 'The first time a project talks to a hosted provider, you see the exact context and press Send. Later turns show what went out, every time.' },
+  { title: 'Approve every change', body: 'Writes arrive as diffs. Commands run only when you allow them. A snapshot is taken before anything risky, and you can roll back.' },
+  { title: 'Switch models mid-conversation', body: 'Change provider or model without starting over. Conversations are saved; resume, fork, search or export them.' },
 ];
 ---
-<Base title="AI coding: your models, one permission system" description="Vekrun's native coding agent works with Claude, OpenAI, Gemini, OpenAI-compatible endpoints or local models. Five modes as policy profiles, diffs for approval, an egress preview, and a Rust policy engine that decides what an agent may do.">
-  <FeatureHero
-    area="AI coding"
-    title="One agent, any model, every action approved."
-    lede="Vekrun's coding agent is its own: a Rust model-and-tool loop that runs against the provider you connect. It reads your project, proposes diffs, runs the tests you approve, and shows you what it sent before it sends it."
-    status="available"
-    statusNote="Single-agent coding is implemented on macOS; Windows and Linux verification is pending."
-  />
+<Base title="AI coding" description="Code with Claude, OpenAI, Gemini or a local model inside your terminal. Five modes, diffs before every write, commands only when you allow them.">
+  <FeatureHero area="AI coding" title="Your favorite model, inside your terminal." lede="Ask about the code, plan a change, build it, debug a failure or review a branch. The agent reads your project and shows you every change before it lands." />
 
-  <Section id="modes">
-    <SectionHeading title="Five modes, five permission profiles" lede="Switching mode changes what the agent is allowed to do, not just how it is prompted. Select a mode to see what it can and cannot do." />
-    <div class="mt-10 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:gap-12">
+  <Section>
+    <SectionHeading title="Five modes" lede="Pick how much the agent may do. Ask only reads. Build edits and runs what you allow. Select a mode to see it in use." />
+    <div class="mt-10 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] lg:gap-12">
       <Tabs tabs={modes.map((m) => ({ id: m.id, label: m.label }))} label="Agent modes">
         {modes.map((m) => (
           <div data-tab-panel={m.id} class="pt-6">
-            <dl class="space-y-4 text-[0.9375rem]">
-              <div><dt class="font-[560] text-text">Can</dt><dd class="mt-1 text-text-2">{m.can}</dd></div>
-              <div><dt class="font-[560] text-text">Cannot</dt><dd class="mt-1 text-text-2">{m.cannot}</dd></div>
-            </dl>
-            <Mock title={`agents · ${m.label} · main`} class="mt-6 lg:hidden">
+            <p class="text-[1rem] leading-relaxed text-text-2 measure">{m.what}</p>
+            <Mock title={`Agents · ${m.label}`} class="mt-6 lg:hidden">
               <div class="space-y-3 p-4 font-mono text-[0.75rem] leading-relaxed">
                 <p class="text-text"><span class="text-text-3">you</span>  {m.prompt}</p>
                 <p class="text-text-2"><span class="text-accent">agent</span>  {m.reply}</p>
               </div>
             </Mock>
-            <ConceptNotice class="mt-3 lg:hidden" />
           </div>
         ))}
       </Tabs>
-      <div class="hidden lg:block">
-        <Mock title="agents · main" tabs={['Claude', 'local: qwen2.5-coder', 'Gemini']}>
+      <div class="hidden lg:block" aria-hidden="true">
+        <Mock title="Agents · Build · feat/github-oauth">
           <div class="space-y-4 p-5 font-mono text-[0.78rem] leading-relaxed">
-            {modes.map((m, i) => (
-              <div data-mode-sample={m.id} hidden={i !== 0}>
-                <p class="text-text"><span class="text-text-3">you</span>  {m.prompt}</p>
-                <p class="mt-2 text-text-2"><span class="text-accent">agent · {m.label}</span>  {m.reply}</p>
-              </div>
-            ))}
-            <div class="border-t border-border pt-3 text-text-3">
-              <span>policy: supervised</span> · <span>egress preview: on</span> · <span>checkpoint: taken</span>
+            <p class="text-text"><span class="text-text-3">you</span>  {modes[2]!.prompt}</p>
+            <p class="text-text-2"><span class="text-accent">agent</span>  Reading src/auth/… and the approved plan.</p>
+            <div class="rounded-md border border-border bg-term-bg p-3 text-term-fg">
+              <p class="text-term-dim">src/auth/providers/github.rs</p>
+              <p><span class="text-ok">+</span> pub fn authorize_url(state: &amp;str) -&gt; Url &#123;</p>
+              <p><span class="text-ok">+</span>     let mut url = Url::parse(AUTHORIZE)?;</p>
+              <p><span class="text-ok">+</span>     url.query_pairs_mut().append_pair("state", state);</p>
+              <p class="text-term-dim">… +61 lines</p>
             </div>
+            <p class="text-text-2"><span class="text-accent">agent</span>  {modes[2]!.reply}</p>
+            <p class="flex gap-2"><span class="rounded bg-accent px-2 py-0.5 text-accent-ink">Approve</span><span class="rounded border border-border px-2 py-0.5 text-text-2">Reject</span><span class="rounded border border-border px-2 py-0.5 text-text-2">Edit</span></p>
           </div>
         </Mock>
-        <ConceptNotice class="mt-3" />
       </div>
     </div>
+    <ConceptNotice class="mt-4" />
   </Section>
 
-  <Section id="capabilities" rule tone="elevated">
-    <SectionHeading title="What the agent does" lede="Each capability says whether it exists in the current source today." />
-    <CapabilityGrid items={capabilities} class="mt-10" />
-    <div class="mt-10 flex flex-wrap gap-3">
-      <Button href="/integrations/?category=ai-providers" variant="secondary">Providers you can connect</Button>
-      <Button href="/factory/" variant="ghost">From one agent to a team</Button>
-    </div>
+  <Section rule tone="elevated">
+    <SectionHeading title="What you control" />
+    <Controls items={controls} class="mt-10" />
   </Section>
 
-  <Section id="honesty" rule>
-    <div class="grid gap-10 lg:grid-cols-[1fr_1.3fr] lg:gap-16">
-      <div>
-        <h2 class="heading-2">What you will not see</h2>
-        <p class="lede mt-4">Some absences are deliberate.</p>
-      </div>
-      <ul class="space-y-5 text-[0.9375rem] text-text-2">
-        <li class="border-l-2 border-border pl-4"><span class="text-text">No fabricated reasoning.</span> The timeline shows tool calls and their evidence, not an invented chain of thought.</li>
-        <li class="border-l-2 border-border pl-4"><span class="text-text">No hidden repository upload.</span> Context sharing is explicit and previewed.</li>
-        <li class="border-l-2 border-border pl-4"><span class="text-text">No bundled inference.</span> You bring a key or a local runtime. Vekrun does not resell tokens.</li>
-        <li class="border-l-2 border-border pl-4"><span class="text-text">No overwritten edits.</span> Unsaved human changes are protected; this is tested, not promised.</li>
-      </ul>
-    </div>
-  </Section>
-
-  <WhereThisStands milestones="M3 Provider gateway and local AI, M4 Native single-agent coding, both in progress">
-    <p>Credentials in the OS keychain, the Anthropic, OpenAI-compatible and Gemini adapters, the provider manager with a live test, Ollama and LM Studio detection, routing profiles and budgets are merged. The agent loop, modes as policy profiles, diff approvals with checkpoints, project discovery, persisted conversations, scoped memory, structured plans, the terminal tool and the egress preview are merged.</p>
-    <p>Not built yet: guided local-model downloads, optional connections to existing coding-agent subscriptions, repository indexing for symbol search, and verification of all of the above on Windows and Linux.</p>
-  </WhereThisStands>
-
-  <script>
-    // Keep the desktop sample in step with the selected tab.
-    document.querySelectorAll<HTMLButtonElement>('[role="tab"][data-tab]').forEach((tab) => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll<HTMLElement>('[data-mode-sample]').forEach((s) => { s.hidden = s.dataset.modeSample !== tab.dataset.tab; });
-      });
-    });
-    const observer = new MutationObserver(() => {
-      const selected = document.querySelector<HTMLButtonElement>('[role="tab"][aria-selected="true"]');
-      if (!selected) return;
-      document.querySelectorAll<HTMLElement>('[data-mode-sample]').forEach((s) => { s.hidden = s.dataset.modeSample !== selected.dataset.tab; });
-    });
-    document.querySelectorAll('[role="tablist"]').forEach((tl) => observer.observe(tl, { attributes: true, subtree: true, attributeFilter: ['aria-selected'] }));
-  </script>
+  <WhereThisStands>Hosted providers, local models, all five modes, diff approvals and the send preview work in the development build on macOS. Connecting an existing coding-agent subscription is planned.</WhereThisStands>
 </Base>

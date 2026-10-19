@@ -1,27 +1,16 @@
 ---
-/** Closing block for every feature page. Dated, specific, linked to the roadmap. */
+/** The one status paragraph on a feature page. Short, specific, linked to the roadmap. */
 import Button from '@/components/Button.astro';
 import { site } from '@/data/site';
-interface Props { milestones: string; title?: string }
-const { milestones, title = 'Where this stands' } = Astro.props;
 ---
 <section class="border-t border-border bg-bg-elevated">
-  <div class="container-site py-14 sm:py-16">
-    <div class="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-start">
+  <div class="container-site py-12 sm:py-14">
+    <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
       <div class="max-w-2xl">
-        <h2 class="heading-2">{title}</h2>
-        <p class="mt-2 text-sm text-text-3">As of {site.status.asOf}. Milestones: {milestones}.</p>
-        <div class="prose-site mt-4 text-[0.9375rem]">
-          <slot />
-        </div>
-        <p class="mt-4 text-[0.8125rem] text-text-3">
-          "Available" means implemented in the current source and exercised by tests on macOS. Windows and Linux are covered by the CI matrix, not yet by hand. There is no public build.
-        </p>
+        <h2 class="heading-3">Where this stands</h2>
+        <p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">{site.status.line} <slot /></p>
       </div>
-      <div class="flex flex-wrap gap-3 lg:flex-col">
-        <Button href="/roadmap/" variant="secondary">See the full roadmap</Button>
-        <Button href="/docs/" variant="ghost">Read the docs</Button>
-      </div>
+      <Button href="/roadmap/" variant="secondary" class="shrink-0">See the roadmap</Button>
     </div>
   </div>
 </section>

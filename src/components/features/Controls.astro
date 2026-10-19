@@ -1,0 +1,13 @@
+---
+/** "What you control": short items, no badges. */
+interface Props { items: { title: string; body: string }[]; class?: string }
+const { items, class: className = '' } = Astro.props;
+---
+<dl class:list={['grid gap-x-10 gap-y-6 sm:grid-cols-2', className]}>
+  {items.map((c) => (
+    <div class="border-t border-border pt-4">
+      <dt class="text-[1rem] font-[580] text-text">{c.title}</dt>
+      <dd class="mt-1.5 text-[0.9rem] leading-relaxed text-text-2">{c.body}</dd>
+    </div>
+  ))}
+</dl>

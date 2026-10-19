@@ -2,66 +2,49 @@
 import Base from '@/layouts/Base.astro';
 import Section from '@/components/Section.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
-import Button from '@/components/Button.astro';
 import FeatureHero from '@/components/features/FeatureHero.astro';
-import CapabilityGrid, { type Capability } from '@/components/features/CapabilityGrid.astro';
 import TerminalMock from '@/components/features/TerminalMock.astro';
+import Controls from '@/components/features/Controls.astro';
 import WhereThisStands from '@/components/features/WhereThisStands.astro';
 
-const capabilities: Capability[] = [
-  { title: 'Cross-platform', description: 'macOS, Windows and Linux with the shells each one has: Bash, Zsh, Fish, PowerShell, cmd and WSL through ConPTY.', status: 'in-development', note: 'Verified by hand on macOS. Windows and Linux pass the CI matrix; by-hand runs on those machines are pending.' },
-  { title: 'Tabs and split panes', description: 'Tabs with shortcuts and draggable splits. A split never remounts a shell, so your process keeps running.', status: 'available' },
-  { title: 'PTY-backed shells', description: 'Real pseudo-terminals owned by Rust, with output coalescing and backpressure measured against a raw transport.', status: 'available' },
-  { title: 'Shell integration', description: 'Exit codes, durations, a failed-command gutter and the working directory, from shell integration marks.', status: 'available' },
-  { title: 'SSH and remote development', description: 'Remote shells with strict host-key checking, fingerprint acceptance and one-shot password prompts.', status: 'available', note: 'Remote file browsing, editing and transfers are planned for M5.' },
-  { title: 'Themes and configuration', description: 'Font, cursor, scrollback and shell settings applied live. The terminal palette follows the app theme.', status: 'available' },
-  { title: 'History and search', description: 'Scrollback search, and layout plus scrollback restored across a restart under an honest divider that says the process is new.', status: 'available', note: 'Command bookmarks and cross-session command search are not built yet.' },
-  { title: 'Contextual AI assistance', description: 'Send terminal output to an agent, or let an agent read the terminal through a policy-gated tool. Nothing is sent without your action.', status: 'in-development', note: 'The read-terminal tool exists. Inline command generation and error explanation are not built yet.' },
-  { title: 'Keyboard-first', description: 'Every pane, tab and search is reachable from the keyboard. Keybindings are configurable.', status: 'available' },
-  { title: 'Safe links and clipboard', description: 'Hyperlinks open only after showing the real URL. Clipboard writes from escape sequences are unsupported by design.', status: 'available' },
-  { title: 'Interactive TUIs', description: 'vim, tmux, htop and full-screen programs work as they do in any terminal.', status: 'available', note: 'Part of the scripted by-hand gate per OS.' },
-  { title: 'Works offline, without AI', description: 'The terminal path has no AI on it. No model connection is ever required to open a shell.', status: 'available' },
+const doing = [
+  { title: 'Tabs and splits', body: 'Open a tab per project and split a pane for logs or tests. ⌘D splits right, ⌘⇧D splits down. Layouts come back after a restart.' },
+  { title: 'Search your scrollback', body: '⌘F finds that error from ten minutes ago, across the whole scrollback.' },
+  { title: 'Know what happened', body: 'Every command shows its exit code and how long it took. Failed commands are marked in the gutter so you can jump back to them.' },
+  { title: 'SSH that stays put', body: 'Open a tab on a remote machine. Host keys are checked and shown before you connect; passwords are asked once.' },
+  { title: 'Your shell, your fonts, your theme', body: 'Bash, Zsh, Fish, PowerShell or WSL. Font, cursor, scrollback and theme are settings, applied live, in dark or light.' },
+  { title: 'Links that tell you where they go', body: 'A URL in output opens only after you see the real address. Nothing writes to your clipboard silently.' },
+];
+const controls = [
+  { title: 'Everything works without AI', body: 'The terminal never waits on a model. Connect one when you want help, or never.' },
+  { title: 'Ask about what is on screen', body: 'Select output and send it to an agent to explain an error or suggest a fix. Nothing leaves your machine until you say so.' },
+  { title: 'Keyboard first', body: 'Tabs, splits, search and the command palette all have shortcuts you can change.' },
+  { title: 'Runs on macOS, Windows and Linux', body: 'One app on all three. Today only macOS has been used by hand.' },
 ];
 ---
-<Base title="Terminal: a real terminal first" description="Vekrun starts as a complete, fast desktop terminal: PTY-backed shells, tabs and splits, shell integration, SSH, themes and keyboard-first navigation. AI is optional and never on the terminal path.">
-  <FeatureHero
-    area="Terminal"
-    title="A terminal you would use with AI switched off."
-    lede="Vekrun is a terminal before it is anything else. Rust owns the pseudo-terminals and the process lifecycle; the renderer draws what your shell says. Everything else in Vekrun is layered on top and can be ignored."
-    status="available"
-    statusNote="Most of the production terminal is merged; the milestone gate is still open."
-  >
-    <div class="mt-12 max-w-4xl">
-      <TerminalMock />
-    </div>
-  </FeatureHero>
+<Base title="Terminal" description="A modern terminal for everyday development: tabs, splits, SSH, search, session restore and themes. Works with or without AI.">
+  <FeatureHero area="Terminal" title="A terminal you can live in." lede="Tabs, splits, SSH and search, with the small things done right: exit codes you can see, sessions that survive a restart, and links that show where they go." />
 
-  <Section id="capabilities">
-    <SectionHeading title="What the terminal does" lede="Each capability says whether it exists in the current source today." />
-    <CapabilityGrid items={capabilities} class="mt-10" />
+  <Section>
+    <TerminalMock />
   </Section>
 
-  <Section id="design" rule tone="elevated">
-    <div class="grid gap-10 lg:grid-cols-[1fr_1.3fr] lg:gap-16">
-      <div>
-        <h2 class="heading-2">Decisions that shape it</h2>
-        <p class="lede mt-4">Measured, not assumed.</p>
-      </div>
-      <ul class="space-y-5 text-[0.9375rem] text-text-2">
-        <li class="border-l-2 border-border pl-4"><span class="text-text">Output is coalesced in Rust before it reaches the renderer.</span> The first spike measured a raw channel against coalescing with flow control; the renderer, not the transport, is the ceiling.</li>
-        <li class="border-l-2 border-border pl-4"><span class="text-text">A Rust-side terminal model taps the same stream.</span> It gives agents a policy-gated read of the screen and keeps escape-sequence policy out of the UI.</li>
-        <li class="border-l-2 border-border pl-4"><span class="text-text">Session restore never claims a dead process is alive.</span> Restored layout and scrollback sit under a divider that says a new shell starts here.</li>
-        <li class="border-l-2 border-border pl-4"><span class="text-text">Terminal output is untrusted model input.</span> What an agent reads from the screen is data, never instructions.</li>
-      </ul>
-    </div>
-    <div class="mt-10 flex flex-wrap gap-3">
-      <Button href="/docs/terminal/shell-configuration/" variant="secondary">Terminal docs</Button>
-      <Button href="/features/ai-coding/" variant="ghost">Adding an agent next to it</Button>
-    </div>
+  <Section rule tone="elevated">
+    <SectionHeading title="What you can do" />
+    <ul class="mt-10 grid gap-x-10 gap-y-7 sm:grid-cols-2 lg:grid-cols-3">
+      {doing.map((d) => (
+        <li class="border-t border-border pt-4">
+          <h3 class="text-[1rem] font-[580] text-text">{d.title}</h3>
+          <p class="mt-1.5 text-[0.9rem] leading-relaxed text-text-2">{d.body}</p>
+        </li>
+      ))}
+    </ul>
   </Section>
 
-  <WhereThisStands milestones="M2 Production terminal, in progress">
-    <p>PTY sessions with coalescing and pause/resume, the terminal view, tabs, splits, search, theme, session restore, pane identity, shell integration, terminal settings, link policy, SSH and PowerShell are merged. The Rust terminal tap exists.</p>
-    <p>Still open for the M2 gate: the scripted by-hand day on Windows and Linux machines, a performance re-check against the first budgets, and the gate script itself.</p>
-  </WhereThisStands>
+  <Section rule>
+    <SectionHeading title="What you control" />
+    <Controls items={controls} class="mt-10" />
+  </Section>
+
+  <WhereThisStands>Tabs, splits, search, session restore, SSH and settings work in the development build on macOS. Remote file editing and transfers are planned.</WhereThisStands>
 </Base>

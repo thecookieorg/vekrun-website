@@ -1,14 +1,14 @@
 ---
-/** A Council report, as a concept. Three members, one disagreement, one decision left to the person. */
+/** A Council session as a concept: three models, one disagreement, the decision left to you. */
 import Mock from './Mock.astro';
 import ConceptNotice from '@/components/ConceptNotice.astro';
 const members = [
-  { name: 'Architecture', model: 'Claude', pos: 'Keep sessions in the control plane; the worker only needs a lease id.' },
-  { name: 'Security', model: 'local: qwen2.5', pos: 'Agrees, and asks for session tokens to be hashed at rest.' },
-  { name: 'Product', model: 'Gemini', pos: 'Disagrees: a worker-side cache avoids a round-trip on every tool call.' },
+  { name: 'Architecture', model: 'Claude', pos: 'Keep sign-in sessions server-side; the client only holds an opaque id.' },
+  { name: 'Security', model: 'local model', pos: 'Agrees, and asks that session tokens be hashed before they are stored.' },
+  { name: 'Product', model: 'Gemini', pos: 'Disagrees: a short-lived client cache would avoid a round trip on every request.' },
 ];
 ---
-<Mock title="council · session store design · round 2 of 2" tabs={['Positions', 'Critiques', 'Report']}>
+<Mock title="Council · where to keep sign-in sessions · round 2 of 2" tabs={['Positions', 'Critiques', 'Report']}>
   <div class="grid gap-px bg-border sm:grid-cols-3">
     {members.map((m) => (
       <div class="bg-surface p-4 text-[0.78rem]">
@@ -18,8 +18,8 @@ const members = [
     ))}
   </div>
   <div class="border-t border-border bg-bg-elevated p-4 text-[0.78rem]">
-    <p class="text-text"><span class="text-text-3">Moderator</span>  Two of three favour control-plane ownership. Disagreement recorded: a worker-side cache trades consistency for latency. Evidence cited: crates/vekrun-control-plane/src/lease.rs, read-only.</p>
-    <p class="mt-2 text-text-3">Usage: 3 members · 2 rounds · estimate 41k tokens · limit 60k · your decision is required.</p>
+    <p class="text-text"><span class="text-text-3">Summary</span>  Two of three favour server-side sessions. The disagreement is recorded: a client cache trades consistency for speed. Evidence cited from src/auth/session.rs.</p>
+    <p class="mt-2 text-text-3">3 members · 2 rounds · estimated cost shown before the session · your decision is required.</p>
   </div>
 </Mock>
 <ConceptNotice class="mt-3" />
