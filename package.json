@@ -1,0 +1,40 @@
+{
+  "name": "vekrun-website",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "typecheck": "astro check",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:links": "node scripts/check-links.mjs",
+    "verify": "pnpm check && pnpm test && pnpm build && pnpm test:links",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "3.7.4",
+    "@astrojs/starlight": "0.42.6",
+    "@fontsource-variable/geist": "5.3.0",
+    "@fontsource-variable/geist-mono": "5.3.0",
+    "@lucide/astro": "1.59.0",
+    "@tailwindcss/vite": "4.3.3",
+    "astro": "7.4.1",
+    "sharp": "0.35.5",
+    "tailwindcss": "4.3.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.11",
+    "@playwright/test": "1.64.1",
+    "typescript": "~5.9.3",
+    "vitest": "5.0.5"
+  },
+  "private": true,
+  "description": "The official website for Vekrun, vekrunapp.com",
+  "license": "Apache-2.0"
+}

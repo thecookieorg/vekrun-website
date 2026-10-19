@@ -1,0 +1,16 @@
+---
+import Logo from '@/components/Logo.astro';
+---
+<div class="docs-title">
+  <a href="/" class="docs-site-title" aria-label="Vekrun home">
+    <Logo size={24} />
+  </a>
+  <a href="/docs/" class="docs-site-title__docs">Docs</a>
+</div>
+<style>
+  .docs-title { display: inline-flex; align-items: center; gap: 0.6rem; }
+  .docs-site-title { display: inline-flex; align-items: center; text-decoration: none; color: var(--sl-color-white); }
+  .docs-site-title__docs { font-size: 0.875rem; color: var(--sl-color-gray-2); padding-left: 0.6rem; border-left: 1px solid var(--sl-color-gray-5); line-height: 1; text-decoration: none; }
+  .docs-site-title__docs:hover { color: var(--sl-color-white); }
+  :global(:root) { --surface-2: var(--sl-color-gray-6); --border-strong: var(--sl-color-gray-5); --accent: var(--sl-color-accent); --text: var(--sl-color-white); }
+</style>

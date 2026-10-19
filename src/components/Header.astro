@@ -1,0 +1,96 @@
+---
+import { Menu, X } from '@lucide/astro';
+import GithubMark from './GithubMark.astro';
+import Logo from './Logo.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import Button from './Button.astro';
+import { primaryNav, primaryCta, site } from '@/data/site';
+import { hasRelease } from '@/data/releases';
+
+const cta = hasRelease
+  ? { label: primaryCta.releasedLabel, href: primaryCta.releasedHref }
+  : { label: primaryCta.label, href: primaryCta.href };
+const path = Astro.url.pathname;
+const isActive = (href: string) => href !== '/' && !href.startsWith('/#') && path.startsWith(href);
+const nav = site.repo.public ? [...primaryNav, { label: 'GitHub', href: site.repo.url }] : primaryNav;
+---
+<header class="sticky top-0 z-40 border-b border-border/80 bg-bg/80 backdrop-blur-md supports-[backdrop-filter]:bg-bg/70">
+  <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-md focus:bg-accent focus:px-3 focus:py-2 focus:text-accent-ink">Skip to content</a>
+  <div class="container-site flex h-16 items-center justify-between gap-6">
+    <a href="/" class="rounded-md" aria-label="Vekrun home"><Logo /></a>
+
+    <nav aria-label="Primary" class="hidden lg:block">
+      <ul class="flex items-center gap-1">
+        {nav.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class:list={[
+                'inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-[0.9375rem] text-text-2 transition-colors hover:bg-surface-2 hover:text-text',
+                isActive(item.href) && 'text-text',
+              ]}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+              {...(item.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+            >
+              {item.label === 'GitHub' && <GithubMark />}
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <ThemeToggle />
+      <Button href={cta.href} class="hidden sm:inline-flex">{cta.label}</Button>
+      <button
+        type="button"
+        class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-text-2 hover:text-text lg:hidden"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        data-menu-toggle
+      >
+        <Menu class="h-4 w-4" data-icon="open" aria-hidden="true" />
+        <X class="hidden h-4 w-4" data-icon="close" aria-hidden="true" />
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-nav" class="hidden border-t border-border bg-bg lg:hidden" data-mobile-nav>
+    <nav aria-label="Primary, mobile" class="container-site py-3">
+      <ul class="flex flex-col">
+        {nav.map((item) => (
+          <li>
+            <a href={item.href} class="flex h-11 items-center rounded-md px-2 text-base text-text-2 hover:bg-surface-2 hover:text-text" aria-current={isActive(item.href) ? 'page' : undefined}>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+      <div class="mt-2 border-t border-border pt-3 sm:hidden">
+        <Button href={cta.href} class="w-full">{cta.label}</Button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const panel = document.querySelector<HTMLElement>('[data-mobile-nav]');
+  if (toggle && panel) {
+    const open = toggle.querySelector<HTMLElement>('[data-icon="open"]');
+    const close = toggle.querySelector<HTMLElement>('[data-icon="close"]');
+    const set = (isOpen: boolean) => {
+      panel.classList.toggle('hidden', !isOpen);
+      toggle.setAttribute('aria-expanded', String(isOpen));
+      toggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+      open?.classList.toggle('hidden', isOpen);
+      close?.classList.toggle('hidden', !isOpen);
+    };
+    toggle.addEventListener('click', () => set(panel.classList.contains('hidden')));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !panel.classList.contains('hidden')) { set(false); toggle.focus(); } });
+    panel.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => set(false)));
+    window.matchMedia('(min-width: 64rem)').addEventListener('change', (e) => { if (e.matches) set(false); });
+  }
+</script>

@@ -1,0 +1,41 @@
+---
+/** A one-line command with a copy button. Only used for commands that actually work today. */
+import { Copy, Check } from '@lucide/astro';
+interface Props { code: string; label?: string; class?: string }
+const { code, label = 'Copy command', class: className = '' } = Astro.props;
+---
+<div class:list={['flex items-center gap-2 rounded-md border border-border bg-term-bg pl-3 pr-1.5 py-1.5 font-mono text-[0.8125rem] text-term-fg', className]} data-copy-root>
+  <span class="select-none text-term-dim">$</span>
+  <code class="min-w-0 flex-1 overflow-x-auto whitespace-nowrap py-1" data-copy-text>{code}</code>
+  <button type="button" class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded text-text-3 transition-colors hover:bg-surface-2 hover:text-text" aria-label={label} data-copy-button>
+    <Copy class="h-3.5 w-3.5" data-icon="copy" aria-hidden="true" />
+    <Check class="hidden h-3.5 w-3.5 text-ok" data-icon="check" aria-hidden="true" />
+  </button>
+  <span class="sr-only" aria-live="polite" data-copy-status></span>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-copy-root]').forEach((root) => {
+    const button = root.querySelector<HTMLButtonElement>('[data-copy-button]');
+    const text = root.querySelector<HTMLElement>('[data-copy-text]')?.textContent ?? '';
+    const status = root.querySelector<HTMLElement>('[data-copy-status]');
+    const copyIcon = root.querySelector<HTMLElement>('[data-icon="copy"]');
+    const checkIcon = root.querySelector<HTMLElement>('[data-icon="check"]');
+    if (!button || !navigator.clipboard) { button?.remove(); return; }
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(text);
+        copyIcon?.classList.add('hidden');
+        checkIcon?.classList.remove('hidden');
+        if (status) status.textContent = 'Copied';
+        setTimeout(() => {
+          copyIcon?.classList.remove('hidden');
+          checkIcon?.classList.add('hidden');
+          if (status) status.textContent = '';
+        }, 1600);
+      } catch {
+        if (status) status.textContent = 'Copy failed';
+      }
+    });
+  });
+</script>

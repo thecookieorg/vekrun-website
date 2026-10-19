@@ -1,0 +1,307 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
+
+/* ---------------------------------------------------------------------------
+   Design tokens. Dark is the default identity; light is a full peer.
+   The site is dark-first, so bare :root carries the dark palette and the
+   light palette applies under [data-theme="light"] or when the system asks
+   for light and no explicit choice has been stored.
+   --------------------------------------------------------------------------- */
+:root {
+  color-scheme: dark;
+
+  --bg: #0a0e14;
+  --bg-elevated: #0e141c;
+  --surface: #111820;
+  --surface-2: #18212b;
+  --surface-3: #1f2a36;
+  --border: #223040;
+  --border-strong: #2f4053;
+  --text: #edf1f5;
+  --text-2: #98a6b8;
+  --text-3: #66768a;
+  --accent: #5fd3b5;
+  --accent-strong: #7fe3c8;
+  --accent-ink: #06231c;
+  --accent-soft: rgba(95, 211, 181, 0.12);
+  --accent-ring: rgba(95, 211, 181, 0.45);
+
+  --ok: #5fd3b5;
+  --warn: #e3b24f;
+  --info: #7fa9ee;
+  --muted: #7d8da3;
+  --danger: #ef7a7a;
+
+  --term-bg: #070b10;
+  --term-fg: #d7dee7;
+  --term-dim: #5c6b7d;
+  --term-green: #5fd3b5;
+  --term-yellow: #e3b24f;
+  --term-blue: #7fa9ee;
+  --term-red: #ef7a7a;
+  --term-magenta: #c89bf2;
+
+  --shadow-window: 0 30px 80px -30px rgba(0, 0, 0, 0.7), 0 0 0 1px var(--border);
+
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 14px;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 140ms;
+  --dur: 240ms;
+  --dur-slow: 480ms;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    color-scheme: light;
+    --bg: #f6f8fa;
+    --bg-elevated: #ffffff;
+    --surface: #ffffff;
+    --surface-2: #eef2f6;
+    --surface-3: #e3e9f0;
+    --border: #d8dfe8;
+    --border-strong: #bfc9d6;
+    --text: #0f1720;
+    --text-2: #4a5a6c;
+    --text-3: #76859a;
+    --accent: #0f8f71;
+    --accent-strong: #0b7a60;
+    --accent-ink: #ffffff;
+    --accent-soft: rgba(15, 143, 113, 0.1);
+    --accent-ring: rgba(15, 143, 113, 0.4);
+    --ok: #0f8f71;
+    --warn: #a2690a;
+    --info: #2f66c4;
+    --muted: #6b7a8f;
+    --danger: #c43f3f;
+    --shadow-window: 0 30px 80px -30px rgba(15, 23, 32, 0.35), 0 0 0 1px var(--border);
+  }
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f6f8fa;
+  --bg-elevated: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #eef2f6;
+  --surface-3: #e3e9f0;
+  --border: #d8dfe8;
+  --border-strong: #bfc9d6;
+  --text: #0f1720;
+  --text-2: #4a5a6c;
+  --text-3: #76859a;
+  --accent: #0f8f71;
+  --accent-strong: #0b7a60;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(15, 143, 113, 0.1);
+  --accent-ring: rgba(15, 143, 113, 0.4);
+  --ok: #0f8f71;
+  --warn: #a2690a;
+  --info: #2f66c4;
+  --muted: #6b7a8f;
+  --danger: #c43f3f;
+  --shadow-window: 0 30px 80px -30px rgba(15, 23, 32, 0.35), 0 0 0 1px var(--border);
+}
+
+/* Expose tokens to Tailwind utilities (bg-surface, text-text-2, border-border …). */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-text: var(--text);
+  --color-text-2: var(--text-2);
+  --color-text-3: var(--text-3);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-info: var(--info);
+  --color-muted: var(--muted);
+  --color-danger: var(--danger);
+  --color-term-bg: var(--term-bg);
+  --color-term-fg: var(--term-fg);
+  --color-term-dim: var(--term-dim);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius-lg);
+
+  --breakpoint-xs: 30rem;
+  --breakpoint-3xl: 112rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+   --------------------------------------------------------------------------- */
+@layer base {
+  html {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'ss01', 'cv11';
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--bg);
+    color: var(--text);
+  }
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  a { color: inherit; text-decoration: none; }
+  code, kbd, pre, samp { font-family: var(--font-mono); font-feature-settings: normal; }
+  h1, h2, h3, h4 { letter-spacing: -0.02em; text-wrap: balance; font-weight: 560; line-height: 1.1; }
+  p { text-wrap: pretty; }
+  img, svg { display: block; max-width: 100%; }
+  button { font: inherit; color: inherit; }
+}
+
+/* ---------------------------------------------------------------------------
+   Components and utilities specific to the marketing site
+   --------------------------------------------------------------------------- */
+@utility container-site {
+  width: 100%;
+  max-width: 76rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+  @media (min-width: 40rem) { padding-inline: 2rem; }
+  @media (min-width: 64rem) { padding-inline: 2.5rem; }
+}
+
+@utility measure {
+  max-width: 62ch;
+}
+
+@utility measure-wide {
+  max-width: 72ch;
+}
+
+@utility display {
+  font-size: clamp(2.5rem, 1.6rem + 4vw, 4.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  font-weight: 600;
+}
+
+@utility heading-1 {
+  font-size: clamp(2rem, 1.3rem + 2.6vw, 3.25rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+}
+
+@utility heading-2 {
+  font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.25rem);
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  font-weight: 580;
+}
+
+@utility heading-3 {
+  font-size: 1.25rem;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  font-weight: 560;
+}
+
+@utility lede {
+  font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
+  line-height: 1.55;
+  color: var(--text-2);
+}
+
+/* The ruled grid replaces cards: cells share hairlines, no shadows. */
+@utility ruled-grid {
+  display: grid;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  & > * { background: var(--bg); }
+}
+
+/* Scroll reveal: opt-in, one class, degrades to visible. */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out);
+}
+.reveal.is-visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
+html.no-js .reveal { opacity: 1; transform: none; }
+
+/* Subtle dotted field behind the hero, static, no animation. */
+.dot-field {
+  background-image: radial-gradient(circle at 1px 1px, var(--border-strong) 1px, transparent 0);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 20%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 20%, transparent 70%);
+}
+
+/* Product window chrome shared by every mockup. */
+.window {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-window);
+  overflow: hidden;
+}
+.window-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+.window-dots { display: flex; gap: 6px; }
+.window-dots i { width: 10px; height: 10px; border-radius: 50%; background: var(--border-strong); display: block; }
+
+/* Prose for long-form marketing pages (not docs; Starlight has its own). */
+.prose-site {
+  color: var(--text-2);
+  & h2 { color: var(--text); margin-top: 2.5rem; margin-bottom: 0.75rem; font-size: 1.5rem; }
+  & h3 { color: var(--text); margin-top: 1.75rem; margin-bottom: 0.5rem; font-size: 1.125rem; }
+  & p { margin-bottom: 1rem; }
+  & ul { list-style: disc; padding-left: 1.25rem; margin-bottom: 1rem; }
+  & li { margin-bottom: 0.35rem; }
+  & a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+  & a:hover { text-decoration-color: var(--accent); }
+  & code { font-size: 0.9em; background: var(--surface-2); border: 1px solid var(--border); padding: 0.1em 0.35em; border-radius: 4px; color: var(--text); }
+  & strong { color: var(--text); font-weight: 580; }
+}

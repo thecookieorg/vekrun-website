@@ -1,0 +1,17 @@
+---
+interface Props {
+  id?: string;
+  title: string;
+  lede?: string;
+  class?: string;
+  align?: 'left' | 'center';
+  level?: 'h1' | 'h2';
+}
+const { id, title, lede, class: className = '', align = 'left', level = 'h2' } = Astro.props;
+const Tag = level;
+---
+<div class:list={['max-w-3xl', align === 'center' && 'mx-auto text-center', className]}>
+  <Tag id={id} class={level === 'h1' ? 'heading-1' : 'heading-2'}>{title}</Tag>
+  {lede && <p class:list={['lede mt-4', align === 'center' && 'mx-auto']}>{lede}</p>}
+  <slot />
+</div>

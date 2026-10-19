@@ -1,0 +1,56 @@
+/* Starlight theme bridged to the site tokens. Tailwind is not loaded here;
+   the docs use Starlight's own layout with our palette and fonts. */
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
+
+:root {
+  --sl-font: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  --sl-font-mono: 'Geist Mono Variable', ui-monospace, Menlo, monospace;
+  --sl-content-width: 46rem;
+  --sl-text-code: 0.9rem;
+}
+
+:root[data-theme='dark'] {
+  --sl-color-accent-low: #0f2d27;
+  --sl-color-accent: #5fd3b5;
+  --sl-color-accent-high: #a8ead9;
+  --sl-color-white: #edf1f5;
+  --sl-color-gray-1: #d6dde6;
+  --sl-color-gray-2: #98a6b8;
+  --sl-color-gray-3: #66768a;
+  --sl-color-gray-4: #2f4053;
+  --sl-color-gray-5: #223040;
+  --sl-color-gray-6: #111820;
+  --sl-color-black: #0a0e14;
+  --sl-color-bg-nav: #0e141c;
+  --sl-color-bg-sidebar: #0a0e14;
+  --sl-color-hairline-shade: #223040;
+}
+
+:root[data-theme='light'] {
+  --sl-color-accent-low: #d7f1e8;
+  --sl-color-accent: #0f8f71;
+  --sl-color-accent-high: #0a4a3b;
+  --sl-color-white: #0f1720;
+  --sl-color-gray-1: #1d2834;
+  --sl-color-gray-2: #4a5a6c;
+  --sl-color-gray-3: #76859a;
+  --sl-color-gray-4: #bfc9d6;
+  --sl-color-gray-5: #d8dfe8;
+  --sl-color-gray-6: #eef2f6;
+  --sl-color-gray-7: #f6f8fa;
+  --sl-color-black: #ffffff;
+  --sl-color-bg-nav: #ffffff;
+  --sl-color-bg-sidebar: #f6f8fa;
+}
+
+.sl-markdown-content h1,
+.sl-markdown-content h2,
+.sl-markdown-content h3 {
+  letter-spacing: -0.02em;
+}
+
+/* Status asides used across the docs. */
+.starlight-aside {
+  border-radius: 10px;
+}

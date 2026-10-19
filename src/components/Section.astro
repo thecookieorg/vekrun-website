@@ -1,0 +1,26 @@
+---
+/**
+ * A page section with the site container and consistent vertical rhythm.
+ * `rule` draws a hairline above; `tone` selects background.
+ */
+interface Props {
+  id?: string;
+  class?: string;
+  rule?: boolean;
+  tone?: 'bg' | 'elevated';
+  padded?: 'normal' | 'tight' | 'none';
+  reveal?: boolean;
+  'aria-labelledby'?: string;
+}
+const { id, class: className = '', rule = false, tone = 'bg', padded = 'normal', reveal = false, ...rest } = Astro.props;
+const pad = { normal: 'py-20 sm:py-24 lg:py-28', tight: 'py-12 sm:py-16', none: '' }[padded];
+---
+<section
+  id={id}
+  class:list={[pad, tone === 'elevated' && 'bg-bg-elevated', rule && 'border-t border-border', className]}
+  {...rest}
+>
+  <div class:list={['container-site', reveal && 'reveal']}>
+    <slot />
+  </div>
+</section>

@@ -1,0 +1,39 @@
+---
+/**
+ * Every status carries a shape as well as a colour, so meaning never depends on colour alone.
+ */
+import { availability, roadmapStatuses, type Availability, type RoadmapStatus } from '@/data/site';
+interface Props {
+  status: Availability | RoadmapStatus;
+  kind?: 'availability' | 'roadmap';
+  class?: string;
+  compact?: boolean;
+}
+const { status, kind = 'availability', class: className = '', compact = false } = Astro.props;
+const table = kind === 'roadmap' ? roadmapStatuses : availability;
+const entry = (table as Record<string, { label: string; tone: string }>)[status] ?? { label: status, tone: 'muted' };
+const toneClass: Record<string, string> = {
+  ok: 'text-ok border-ok/40',
+  warn: 'text-warn border-warn/40',
+  info: 'text-info border-info/40',
+  muted: 'text-text-2 border-border-strong',
+};
+const title = kind === 'availability' ? (availability as Record<string, { description: string }>)[status]?.description : undefined;
+---
+<span
+  class:list={[
+    'inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border font-[520] leading-none',
+    compact ? 'px-2 py-1 text-[0.6875rem]' : 'px-2.5 py-1.5 text-xs',
+    toneClass[entry.tone],
+    className,
+  ]}
+  title={title}
+>
+  <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true" class="shrink-0">
+    {entry.tone === 'ok' && <circle cx="4" cy="4" r="3.5" fill="currentColor" />}
+    {entry.tone === 'warn' && <circle cx="4" cy="4" r="3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="3 2" />}
+    {entry.tone === 'info' && <rect x="0.5" y="0.5" width="7" height="7" rx="1.5" fill="currentColor" />}
+    {entry.tone === 'muted' && <circle cx="4" cy="4" r="3" fill="none" stroke="currentColor" stroke-width="1.4" />}
+  </svg>
+  {entry.label}
+</span>

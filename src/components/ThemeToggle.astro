@@ -1,0 +1,41 @@
+---
+import { Sun, Moon } from '@lucide/astro';
+interface Props { class?: string }
+const { class: className = '' } = Astro.props;
+---
+<button
+  type="button"
+  data-theme-toggle
+  class:list={[
+    'inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-text-2 transition-colors duration-150 hover:border-border-strong hover:text-text',
+    className,
+  ]}
+  aria-label="Switch to light theme"
+  title="Switch theme"
+>
+  <Sun class="theme-icon-sun h-4 w-4" aria-hidden="true" />
+  <Moon class="theme-icon-moon h-4 w-4" aria-hidden="true" />
+</button>
+
+<style>
+  :global(:root[data-theme='dark']) .theme-icon-moon { display: none; }
+  :global(:root[data-theme='light']) .theme-icon-sun { display: none; }
+</style>
+
+<script>
+  const KEY = 'starlight-theme';
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]');
+  const label = () => {
+    const dark = document.documentElement.dataset.theme === 'dark';
+    buttons.forEach((b) => b.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme'));
+  };
+  buttons.forEach((b) =>
+    b.addEventListener('click', () => {
+      const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      try { localStorage.setItem(KEY, next); } catch {}
+      label();
+    }),
+  );
+  label();
+</script>
