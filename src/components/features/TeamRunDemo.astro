@@ -22,15 +22,13 @@ const lanes = [
       {lanes.map((l) => (
         <div class:list={['tr-stage', l.opt && 'is-opt']} role="listitem" data-stage={l.id}>
           <span class="tr-stage-name">{l.name}{l.opt && <span class="tr-opt"> optional</span>}</span>
-          <ul class="tr-chips" data-chips={l.id}></ul>
+          <ul class="tr-chips" data-chips={l.id}>{l.id === 'you' && <Fragment set:html={`<li class="tr-chip is-ok" data-chip="p"><span class="tr-chip-t">Plan · 2 tasks</span><span class="tr-chip-m" data-meta>Approved by you</span></li>
+            <li class="tr-chip is-ok" data-chip="a"><span class="tr-chip-t">Queue worker</span><span class="tr-chip-m" data-meta>feat/retry-worker · merged</span></li>
+            <li class="tr-chip is-ok" data-chip="b"><span class="tr-chip-t">Backoff policy</span><span class="tr-chip-m" data-meta>feat/retry-backoff · merged</span></li>`} />}</ul>
         </div>
       ))}
     </div>
-    <ul class="tr-pool" hidden aria-hidden="true">
-      <li class="tr-chip" data-chip="p"><span class="tr-chip-t">Plan · 2 tasks</span><span class="tr-chip-m" data-meta>Approved by you</span></li>
-      <li class="tr-chip" data-chip="a"><span class="tr-chip-t">Queue worker</span><span class="tr-chip-m" data-meta>feat/retry-worker · merged</span></li>
-      <li class="tr-chip" data-chip="b"><span class="tr-chip-t">Backoff policy</span><span class="tr-chip-m" data-meta>feat/retry-backoff · merged</span></li>
-    </ul>
+    <ul class="tr-pool" hidden aria-hidden="true"></ul>
     <div class="tr-council" data-t="2600">
       <div class="window-pane-head"><span>Council · where should retries live? · round 2 of 2</span><span>3 members</span></div>
       <div class="tr-positions">

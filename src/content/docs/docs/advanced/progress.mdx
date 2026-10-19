@@ -7,7 +7,9 @@ sidebar:
 
 import MilestoneTable from '@/components/docs/MilestoneTable.astro';
 
-The public [roadmap](/roadmap/) describes progress by feature. This page is the engineering view: one complete 1.0, delivered through twelve milestones. A milestone is done when its gate passes on macOS, Windows and Linux. A screen existing is not a feature existing.
+The public [roadmap](/roadmap/) describes progress by feature. This page is the engineering view: one complete 1.0, delivered through twelve milestones. A milestone has two states worth separating. **Implemented** means its code is merged on the main branch with tests. **Closed** means its acceptance checklist, the gate, has passed on macOS, Windows and Linux. A milestone can be implemented with its gate still open, and the notes say when that is the case. A screen existing is not a feature existing.
+
+Automated checks ran on all three platforms during the first milestone (October 2026). They are paused at the moment, so work merged since then has been verified by hand on macOS only.
 
 <MilestoneTable />
 

@@ -28,7 +28,7 @@ export const site = {
     /** One sentence, used once per page at most. */
     line: 'Vekrun is in development. There are no public releases yet.',
     /** What the "in development build" status means. Used in legends only. */
-    meaning: 'In development build means the feature works in the current source on macOS. Windows and Linux are not yet verified by hand.',
+    meaning: 'Implemented in development means the feature works in the current source on macOS and is not in any public release. Windows and Linux are not yet verified by hand.',
   },
   repo: {
     org: 'thecookieorg',
@@ -110,7 +110,7 @@ export const footerColumns: { title: string; items: NavItem[] }[] = [
  */
 export const availability = {
   available: {
-    label: 'In development build',
+    label: 'Implemented in development',
     description: 'Works in the current source on macOS. Not yet in a public release.',
     tone: 'ok',
   },

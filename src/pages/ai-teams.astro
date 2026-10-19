@@ -40,7 +40,7 @@ const controls = [
 
   <Section rule aria-labelledby="control-title">
     <div class="grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-16">
-      <SectionHeading id="control-title" title="You keep the final say" lede="The agent that wrote the code is never the one that signs it off, and nothing merges without you." class="reveal" />
+      <SectionHeading id="control-title" title="You keep the final say" lede="The agent that wrote the code is not the one that signs it off, and nothing merges without you." class="reveal" />
       <ul class="reveal-group grid gap-5 sm:grid-cols-2">
         {controls.map((c) => (
           <li class="card p-5"><h3 class="text-[1.0625rem] font-[560] text-text">{c.title}</h3><p class="mt-1.5 text-[0.9rem] leading-relaxed text-text-2">{c.body}</p></li>

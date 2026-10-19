@@ -14,7 +14,7 @@ Vekrun runs your shell, not a replacement for it. Your existing configuration fi
 | macOS and Linux | Bash, Zsh, Fish and any other installed interactive shell |
 | Windows | PowerShell, cmd and WSL distributions |
 
-Windows shells compile and pass their tests in continuous integration but have not yet been used by hand; only macOS has in the development build.
+Windows shells compiled and passed their tests in automated checks early in the project, but they have not been used by hand and those checks are currently paused. Only macOS has been used by hand in the development build.
 
 ## Choose your default shell
 

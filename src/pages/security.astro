@@ -5,8 +5,8 @@ import SectionHeading from '@/components/SectionHeading.astro';
 import { site } from '@/data/site';
 
 const commitments = [
-  { title: 'Nothing an agent reads is trusted', body: 'Text in your repository, model replies, tool results and terminal output cannot change what an agent is allowed to do. Your permissions decide, not the prompt.' },
-  { title: 'Keys stay in your keychain', body: 'API keys are stored by your operating system, hidden from logs and the interface, and never handed to tools or remote machines unless you say so.' },
+  { title: 'Nothing an agent reads is trusted', body: 'Text in your repository, model replies, tool results and terminal output are treated as untrusted input. Your permissions decide what an agent may do, not the prompt.' },
+  { title: 'Keys stay in your keychain', body: 'API keys are stored by your operating system, kept out of logs and the interface by design, and not handed to tools or remote machines unless you say so.' },
   { title: 'Deny by default', body: 'An agent can only do what you have allowed. Every action that touches files, commands, Git or the network is recorded.' },
   { title: 'Limits are stated', body: 'How well an agent is isolated differs by operating system. Vekrun says what each platform can and cannot enforce instead of glossing over it.' },
 ];

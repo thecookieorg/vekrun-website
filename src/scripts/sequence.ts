@@ -86,6 +86,19 @@ export function createSequence(root: HTMLElement, steps: Step[], opts: SequenceO
   // Pause when the tab is hidden; resume on return.
   document.addEventListener('visibilitychange', () => { if (document.hidden && playing) pause(); });
 
+  // The markup carries the final state, so its height is the height to reserve.
+  // Reserving it before reset() clears the content means playing never shifts the page.
+  const reserve = root.offsetHeight;
+  if (reserve > 0) root.style.minHeight = `${reserve}px`;
+  let lastWidth = window.innerWidth;
+  window.addEventListener('resize', () => {
+    // Widths change line wrapping; drop the reservation once the demo is done so the
+    // natural final height wins, and re-measure if it is still idle.
+    if (window.innerWidth === lastWidth) return;
+    lastWidth = window.innerWidth;
+    if (finished) root.style.minHeight = '';
+  }, { passive: true });
+
   opts.reset(); setState('idle');
 
   if (reducedMotion()) { finish(); }

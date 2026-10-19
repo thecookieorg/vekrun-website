@@ -30,6 +30,6 @@ Run the `cargo test` step once before `pnpm dev`; it generates files the desktop
 
 ## Platforms
 
-macOS, Windows and Linux are all targets. Only macOS has been used by hand so far. Windows and Linux builds compile and pass their tests in continuous integration, which is not the same as someone having used the application there.
+macOS, Windows and Linux are all targets. Only macOS has been used by hand so far. Windows and Linux builds compiled and passed their tests in automated checks early in the project (October 2026); those checks are paused at the moment, so later work has not been verified there, and passing automated checks is not the same as someone having used the application.
 
 Contributors will find the full checks and the merge gate under [Contributing](/docs/advanced/contributing/).

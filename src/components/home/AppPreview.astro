@@ -12,7 +12,7 @@ import DemoControls from '@/components/mock/DemoControls.astro';
 <figure class="app-preview enter-scale" style="--i: 4" data-demo-root data-app>
   <Window title="acme-api" crumbs={['feat/vek-142-github-oauth']} class="app-window">
     <span slot="status" class="hidden items-center gap-1.5 md:inline-flex"><span class="live-dot" aria-hidden="true"></span><span data-model>Claude · your key</span></span>
-    <span slot="status" class="hidden sm:inline" data-approvals>0 waiting</span>
+    <span slot="status" class="hidden sm:inline" data-approvals>1 waiting</span>
 
     <div class="app-body">
       <aside class="app-side" aria-label="Project">
@@ -21,23 +21,23 @@ import DemoControls from '@/components/mock/DemoControls.astro';
           <ul class="app-tree">
             <li class="is-dir">src</li>
             <li class="is-nested">auth</li>
-            <li class="is-nested2" data-file="github">github.rs <i class="app-badge" data-file-badge hidden>new</i></li>
-            <li class="is-nested2" data-file="mod">mod.rs <i class="app-badge" data-file-badge hidden>M</i></li>
+            <li class="is-nested2 is-changed" data-file="github">github.rs <i class="app-badge" data-file-badge>new</i></li>
+            <li class="is-nested2 is-changed" data-file="mod">mod.rs <i class="app-badge" data-file-badge>M</i></li>
             <li class="is-nested">routes.rs</li>
             <li class="is-dir">migrations</li>
-            <li class="is-nested" data-file="mig">0007_oauth.sql <i class="app-badge" data-file-badge hidden>new</i></li>
+            <li class="is-nested is-changed" data-file="mig">0007_oauth.sql <i class="app-badge" data-file-badge>new</i></li>
             <li class="is-dir">tests</li>
-            <li class="is-nested" data-file="test">auth_github.rs <i class="app-badge" data-file-badge hidden>new</i></li>
+            <li class="is-nested is-changed" data-file="test">auth_github.rs <i class="app-badge" data-file-badge>new</i></li>
           </ul>
         </div>
         <div class="app-side-group">
           <span class="app-side-title">Task</span>
           <ol class="app-steps" data-steps>
-            <li data-step="plan">Plan</li>
-            <li data-step="build">Build</li>
-            <li data-step="test">Test</li>
-            <li data-step="verify">Verify</li>
-            <li data-step="review">Review</li>
+            <li data-step="plan" data-state="done">Plan</li>
+            <li data-step="build" data-state="done">Build</li>
+            <li data-step="test" data-state="done">Test</li>
+            <li data-step="verify" data-state="done">Verify</li>
+            <li data-step="review" data-state="running">Review</li>
           </ol>
         </div>
       </aside>
@@ -45,10 +45,10 @@ import DemoControls from '@/components/mock/DemoControls.astro';
       <section class="app-main" aria-label="Workspace">
         <div class="app-main-tabs" role="presentation">
           <span class="window-tab is-active" data-main-tab="terminal">Terminal</span>
-          <span class="window-tab" data-main-tab="diff">src/auth/github.rs <i class="app-badge" data-diff-count hidden>+118</i></span>
+          <span class="window-tab" data-main-tab="diff">src/auth/github.rs <i class="app-badge" data-diff-count>+118</i></span>
         </div>
         <div class="app-main-panes">
-          <pre class="term app-term" data-term data-pane="terminal"></pre>
+          <pre class="term app-term" data-term data-pane="terminal"><span class="term-line"><span class="dim">$</span> git worktree add .worktrees/vek-142 -b feat/vek-142-github-oauth</span><span class="term-line">Preparing worktree (new branch 'feat/vek-142-github-oauth')</span><span class="term-line"><span class="dim">$</span> cargo test --test auth_github</span><span class="term-line"><span class="ok">   Compiling</span> acme-api v0.4.2</span><span class="term-line">running 5 tests</span><span class="term-line">test redirect_includes_state ... <span class="ok">ok</span></span><span class="term-line">test callback_rejects_bad_state ... <span class="ok">ok</span></span><span class="term-line">test callback_links_existing_user ... <span class="ok">ok</span></span><span class="term-line">test callback_creates_account ... <span class="ok">ok</span></span><span class="term-line">test token_never_logged ... <span class="ok">ok</span></span><span class="term-line"></span><span class="term-line">test result: <span class="ok">ok</span>. 5 passed; 0 failed</span><span class="term-line"><span class="dim">$</span> cargo test</span><span class="term-line">test result: <span class="ok">ok</span>. 41 passed; 0 failed</span><span class="term-line term-cursor"><span class="dim">$</span> </span></pre>
           <div class="app-diff" data-pane="diff" hidden>
             <div class="diff-row diff-ctx"><span>12</span><span>pub async fn callback(State(app): State&lt;App&gt;, Query(q): Query&lt;Callback&gt;) -&gt; Result&lt;Redirect&gt; &#123;</span></div>
             <div class="diff-row diff-add"><span>13</span><span>+    let expected = app.sessions.take_oauth_state(&amp;q.state).await?;</span></div>
@@ -66,16 +66,25 @@ import DemoControls from '@/components/mock/DemoControls.astro';
         <div class="window-pane-head"><span>Agent</span><span data-mode>Build</span></div>
         <div class="app-ask">
           <span class="app-ask-label">You</span>
-          <p class="app-ask-text"><span data-ask></span><span class="term-cursor" data-ask-cursor></span></p>
+          <p class="app-ask-text"><span data-ask>Add GitHub OAuth login to the API, with tests.</span><span class="term-cursor" data-ask-cursor hidden></span></p>
         </div>
-        <ol class="app-timeline" data-timeline aria-live="polite"></ol>
+        <ol class="app-timeline" data-timeline aria-live="polite">
+          <li data-state="done"><span class="ic" aria-hidden="true"></span><div><strong>Planning</strong> reading the repository<small>axum 0.8 · sqlx · session middleware found</small></div></li>
+          <li data-state="done"><span class="ic" aria-hidden="true"></span><div><strong>Plan ready</strong> 3 steps · 4 files · 1 migration<small>Waiting for your approval</small></div></li>
+          <li data-state="done"><span class="ic" aria-hidden="true"></span><div><strong>Approved by you</strong><small>Branch feat/vek-142-github-oauth, own worktree</small></div></li>
+          <li data-state="done"><span class="ic" aria-hidden="true"></span><div><strong>Reading</strong> src/auth, src/routes.rs, tests/<small>What is sent is shown before it is sent</small></div></li>
+          <li data-state="done"><span class="ic" aria-hidden="true"></span><div><strong>Writing</strong> src/auth/github.rs<small>Shown as a diff before it is written</small></div></li>
+          <li data-state="done"><span class="ic" aria-hidden="true"></span><div><strong>Running tests</strong> cargo test --test auth_github<small>An approved command, in the worktree</small></div></li>
+          <li data-state="done"><span class="ic" aria-hidden="true"></span><div><strong>Independent check</strong> a different agent, same goal<small>Build, full suite, diff read against the acceptance criteria</small></div></li>
+          <li data-state="approval"><span class="ic" aria-hidden="true"></span><div><strong>Ready for your review</strong> 4 files · +212 −2<small>Nothing merges until you approve</small></div></li>
+        </ol>
       </aside>
     </div>
 
     <div class="app-status" aria-label="Status bar">
-      <span data-status-branch>main</span>
-      <span class="hidden sm:inline" data-status-files>No changes</span>
-      <span class="ml-auto" data-status-right>Idle</span>
+      <span data-status-branch>feat/vek-142-github-oauth</span>
+      <span class="hidden sm:inline" data-status-files>4 files · +212 −2</span>
+      <span class="ml-auto is-ok" data-status-right>Review ready</span>
     </div>
   </Window>
   <DemoControls notice="Product preview. A scripted walkthrough of the intended experience, not a recording of the application." />
