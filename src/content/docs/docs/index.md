@@ -1,32 +1,26 @@
 ---
 title: Vekrun documentation
-description: How to build, run and contribute to Vekrun, with honest notes on what exists today and what is still planned.
+description: How to use Vekrun, a free, open-source AI-native terminal, and how to contribute to it.
 ---
 
-Vekrun is an open-source developer workspace: a terminal, AI coding agents that use the models you choose, a Factory of coordinated agent teams with independent verification, and an agent platform you can self-host. It is written Rust-first on Tauri 2.
+Vekrun is a free, open-source AI-native terminal. You code with the AI models you choose, pick up your assigned tickets, review pull requests and hand larger work to coordinated coding agents, all in one application.
 
-## Project status
-
-Vekrun is **pre-release**. There are no public binaries and no installer. The project is being built against a twelve-milestone plan; milestone 1 is implemented and milestones 2 through 7 are in progress as of 2026-10-19. See the [roadmap](/roadmap/) for the current state of every milestone.
-
-Everything described here as working has been merged to the main branch with tests and has been run by hand on macOS only. Windows and Linux builds pass continuous integration but have not been verified by a person. The source repository is not yet public.
+Vekrun is in development. There are no public releases yet; everything described here is what the development build does on macOS.
 
 ## How these docs mark status
 
-Each page tells you which of these applies:
+- Pages without a note describe things that work today in the development build.
+- A page that opens with a **Planned** note describes a feature that is not built yet. It explains the intent and links to the [roadmap](/roadmap/); it never gives steps you cannot follow.
 
-- **Verified on macOS only.** The behaviour exists on main, with tests, and has been exercised on a Mac.
-- **Planned.** The page opens with a note naming the milestone. The text describes design intent, not a procedure you can follow today.
-- **Unverified.** A detail (usually an exact command flag) that the project record names but this site has not confirmed.
-
-Nothing on this site presents a planned feature as a working one. If a page contradicts the application you built from source, the application is right and the page needs a fix.
+If a page and the application disagree, the application is right and the page needs a fix.
 
 ## Sections
 
-- [Getting started](/docs/getting-started/installation/): build from source, first launch, connect a provider, use local models.
-- [Terminal](/docs/terminal/shell-configuration/): shells, tabs and panes, keybindings, SSH, themes.
-- [AI](/docs/ai/providers/): providers, agent modes, permissions, context management.
-- [Factory](/docs/factory/agent-teams/): agent teams, planning, Council, scheduling, verification, worktrees.
-- [Board](/docs/board/integrations/): ticket sources, repository mapping, Start Work, synchronisation.
-- [Advanced](/docs/advanced/self-hosting/): self-hosting, remote workers, the CLI, agent APIs, MCP, extensions.
-- [Contributing](/docs/contributing/build-from-source/): build, architecture, process, testing, security reporting.
+- [Getting started](/docs/getting-started/installation/): install, first launch, connect an AI, open a project.
+- [Terminal](/docs/terminal/shell-configuration/): shells, tabs and splits, SSH, keybindings, customization.
+- [AI coding](/docs/ai-coding/choosing-models/): choosing models, coding sessions, editing code, permissions.
+- [Board and integrations](/docs/board/connecting-a-tracker/): connect a tracker, see your tickets, Start Work, status sync.
+- [AI Teams](/docs/ai-teams/planning/): planning, Council, Factory, running and reviewing agent tasks.
+- [Git and code reviews](/docs/git/branches/): branches, worktrees, pull requests, AI reviews.
+- [Settings and privacy](/docs/settings/providers/): providers, credentials, data storage, permissions.
+- [Advanced](/docs/advanced/architecture/): architecture, internals, agent runtime, MCP, remote workers, APIs, contributing, progress.

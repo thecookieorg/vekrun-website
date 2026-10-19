@@ -1,0 +1,20 @@
+---
+title: Progress
+description: The twelve engineering milestones and where each stands, for contributors.
+sidebar:
+  order: 8
+---
+
+import MilestoneTable from '@/components/docs/MilestoneTable.astro';
+
+The public [roadmap](/roadmap/) describes progress by feature. This page is the engineering view: one complete 1.0, delivered through twelve milestones. A milestone is done when its gate passes on macOS, Windows and Linux. A screen existing is not a feature existing.
+
+<MilestoneTable />
+
+## Dependency order
+
+M1 first. M2 (terminal), M3 (providers) and M5 (workspaces, Git, editor) can proceed in parallel after it. M4 (single-agent coding) needs M3. M6 (Factory) needs M4 and M5. M7 (verification and integration) needs M6. M8 (control plane, workers, APIs) and M9 (routing, budgets, scheduling) need M7. M10 (extensibility and MCP) needs M8 and M9. M11 (polish) needs everything functional, and M12 (hardening and release) needs M11.
+
+## Release gates
+
+Twelve demonstrations must pass with recorded evidence before 1.0: terminal offline; a direct API model; a local model offline; plan, implement, verify, approve; a Factory run where an independent verifier catches a seeded defect; queue and audit surviving a restart without unsafe replay; remote worker reconnect; a user-defined agent API; a scheduled workflow with disclosed requirements; credential and data deletion; malicious repository text unable to override policy; and install, shells and update on all three operating systems.

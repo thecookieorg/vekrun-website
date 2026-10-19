@@ -1,30 +1,28 @@
 ---
-title: Tabs and panes
-description: Multiple shells side by side, with splits that never restart a running shell.
+title: Tabs and splits
+description: Several shells side by side, with splits that never restart a running shell.
 sidebar:
   order: 2
 ---
 
-Verified on macOS only.
-
 ## Tabs
 
-Each tab is an independent shell. Open, close and switch tabs with the keyboard; see [Keybindings](/docs/terminal/keybindings/).
+Each tab is its own shell. Open, close and switch tabs with the keyboard; see [Keybindings](/docs/terminal/keybindings/).
 
 ## Splits
 
-Split the focused pane with `⌘D` (side by side) or `⌘⇧D` (stacked). Drag the divider to resize. A pane keeps its identity through layout changes: splitting, resizing or rearranging never remounts the shell inside it. That rule was established after an early bug and now governs every pane layout Vekrun adds.
+Split the focused pane side by side with `⌘D` or stacked with `⌘⇧D`, then drag the divider to resize. Splitting or resizing never restarts the shell inside a pane.
 
 ## Search
 
 `⌘F` searches the scrollback of the focused pane.
 
-## Session restore
+## Restoring your layout
 
-When you quit, Vekrun saves each tab's layout and scrollback. On the next start the layout is rebuilt and the old scrollback is shown under a divider labelled as restored. Shells start fresh below that divider. Vekrun never shows a process as alive when the operating system process is gone.
+When you quit, Vekrun keeps each tab's layout and scrollback. On the next start the layout comes back, the old output appears under a divider marked as restored, and a fresh shell starts below it. Vekrun never shows a process as still running when it is not.
 
-## Not yet built
+## Coming later
 
 :::note[Planned]
-Dragging tabs to rearrange them, named and pinned sessions, shell profiles, and optional command blocks with command search and bookmarks are part of milestone 2 and not merged yet. See the [roadmap](/roadmap/).
+Dragging tabs to rearrange them, named and pinned sessions, shell profiles, and optional command blocks with command search and bookmarks are planned. See the [roadmap](/roadmap/).
 :::

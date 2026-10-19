@@ -2,14 +2,14 @@
 title: MCP
 description: Vekrun as a Model Context Protocol client and, later, server. What was verified about each vendor's server.
 sidebar:
-  order: 5
+  order: 4
 ---
 
-:::caution[Not built yet]
-The MCP client, the integration catalog in the app, per-server permissions and the Vekrun MCP server are milestone 10 and have not started. This page describes design intent and the verification done so far. See the [roadmap](/roadmap/) and the [integrations catalog](/integrations/).
+:::note[Planned]
+The MCP client, the in-app integration catalog, per-server permissions and the Vekrun MCP server are not built yet. This page records the design and the vendor verification done so far. See the [roadmap](/roadmap/) and the [integrations catalog](/integrations/).
 :::
 
-## Intent
+## Design
 
 - Remote servers over Streamable HTTP and local servers over stdio, with OAuth where required and API keys or bearer tokens where supported.
 - Credentials in the keychain; server capability and tool discovery; resources and prompts where offered; health and reconnection; timeouts and cancellation; validated tool results; an audit record for every tool execution.

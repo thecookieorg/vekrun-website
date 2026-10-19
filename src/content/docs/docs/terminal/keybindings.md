@@ -1,20 +1,20 @@
 ---
 title: Keybindings
-description: The shortcuts the project record confirms, and where the full keymap stands.
+description: The shortcuts available today.
 sidebar:
-  order: 3
+  order: 4
 ---
-
-Verified on macOS only. The full keymap is being documented as milestone 2 closes; only shortcuts the project record names are listed here.
 
 | Action | macOS |
 |---|---|
 | Split pane side by side | `⌘D` |
 | Split pane stacked | `⌘⇧D` |
 | Search scrollback | `⌘F` |
+| Save the file in the editor | `⌘S` |
+| Command palette | `⌘K` |
 
-Tabs open, close and switch with keyboard shortcuts; the exact bindings are unverified on this site until the keymap is published.
+Tabs open, close and switch with keyboard shortcuts too; the full keymap will be published here once it is final.
 
 :::note[Planned]
-Configurable keybindings with import and export are milestone 11. Windows and Linux equivalents will be documented once those platforms are verified by hand. See the [roadmap](/roadmap/).
+Custom keybindings with import and export, and the Windows and Linux equivalents, are planned. See the [roadmap](/roadmap/).
 :::

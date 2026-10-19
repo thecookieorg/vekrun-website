@@ -1,20 +1,18 @@
 ---
 title: Start Work
-description: One action takes a ticket to a worktree, an agent or a Factory run.
+description: One click takes a ticket to a branch, a terminal and, if you want, an agent.
 sidebar:
   order: 3
 ---
 
-Verified on macOS only.
+Select a ticket and press **Start Work**, then choose how you want to work.
 
-Select a ticket, press **Start Work**, choose a mode:
-
-| Mode | What happens |
+| Choice | What happens |
 |---|---|
-| Manual | A branch and worktree are created from the ticket, and a terminal opens there. No AI is involved. |
-| AI Agent | The ticket is framed as data and handed to an agent session that opens in the worktree. The framed content is visible in the [egress preview](/docs/ai/context-management/) before anything is sent. |
-| Factory | A plan is generated with the ticket reference attached, approved, and materialised into Factory tasks. See [Planning](/docs/factory/planning/). |
+| Manual | Vekrun creates a branch and a worktree for the ticket and opens a terminal there. No AI involved. |
+| AI agent | The ticket's text goes to a coding session that opens in the worktree. You see exactly what is sent before it is sent. |
+| AI Team | The ticket becomes a plan for you to approve, and the approved plan becomes tasks for coordinated agents. See [Planning](/docs/ai-teams/planning/). |
 
-The ticket then shows a derived execution status on the Board, built from the worktree, plan, task and agent signals Vekrun has, separate from the provider's own status.
+The card then shows the ticket's progress in Vekrun, separately from its status in your tracker.
 
-Manual work is a first-class path. The Board is usable without any model connected.
+Manual work is a first-class choice. The Board does not need a model connected.

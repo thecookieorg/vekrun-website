@@ -1,22 +1,20 @@
 ---
 title: SSH
-description: Remote shells with strict host-key checking.
+description: Open a shell on another machine with host keys checked every time.
 sidebar:
-  order: 4
+  order: 3
 ---
 
-Verified on macOS only.
+An SSH tab opens a shell on a remote host.
 
-## Opening a remote shell
+## Connecting
 
-An SSH tab opens a shell on a remote host. The connection is made by Vekrun's own Rust SSH client (built on russh), not by shelling out to the `ssh` binary.
+On first contact Vekrun shows the host's key fingerprint and asks you to accept it. A host whose key later changes is refused. If the host asks for a password, you type it once for that connection; Vekrun does not store it.
 
-Host keys are checked strictly. On first contact Vekrun shows the host's key fingerprint and asks you to accept it; a changed key is refused. Password prompts are one-shot: the password is used for the connection and is not stored.
-
-## What is not built
+## Coming later
 
 :::note[Planned]
-Connection profiles, reconnect states, permitted port forwarding, remote file browsing, editing and transfers, and remote Git are later milestone 2 and milestone 5 work. SSH agent forwarding into agent sandboxes will never be automatic. See the [roadmap](/roadmap/).
+Saved connection profiles, automatic reconnection, port forwarding, and browsing, editing and transferring remote files are planned. See the [roadmap](/roadmap/).
 :::
 
-Remote execution workers, which are a different thing from a remote terminal, are described under [Remote workers](/docs/advanced/remote-workers/).
+Running coding agents on another machine is a separate feature; see [Remote workers](/docs/advanced/remote-workers/).

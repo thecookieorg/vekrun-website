@@ -1,0 +1,40 @@
+---
+/** Engineering milestones for the contributor progress page. Reads the milestones collection. */
+import { getCollection } from 'astro:content';
+import { roadmapStatuses, site } from '@/data/site';
+
+const milestones = (await getCollection('milestones')).sort((a, b) => a.data.number - b.data.number);
+---
+<p class="milestone-asof">Reconciled with the desktop project on {site.status.asOf}. {site.status.meaning}</p>
+<table class="milestone-table">
+  <thead>
+    <tr><th scope="col">Milestone</th><th scope="col">Scope</th><th scope="col">Status</th></tr>
+  </thead>
+  <tbody>
+    {milestones.map((m) => {
+      const s = roadmapStatuses[m.data.status];
+      return (
+        <tr>
+          <th scope="row">M{m.data.number} <span class="milestone-title">{m.data.title}</span></th>
+          <td>
+            {m.data.summary}
+            {m.data.note && <span class="milestone-note">{m.data.note}</span>}
+          </td>
+          <td><span class={`milestone-status milestone-status--${s.tone}`}>{s.label}</span></td>
+        </tr>
+      );
+    })}
+  </tbody>
+</table>
+
+<style>
+  .milestone-asof { color: var(--sl-color-gray-2); font-size: 0.9rem; }
+  .milestone-table th[scope='row'] { white-space: nowrap; vertical-align: top; font-weight: 600; }
+  .milestone-title { display: block; font-weight: 400; white-space: normal; color: var(--sl-color-gray-2); font-size: 0.9rem; }
+  .milestone-note { display: block; margin-top: 0.35rem; color: var(--sl-color-gray-3); font-size: 0.85rem; }
+  .milestone-status { display: inline-block; white-space: nowrap; padding: 0.15rem 0.55rem; border-radius: 999px; border: 1px solid currentColor; font-size: 0.8rem; }
+  .milestone-status--ok { color: var(--sl-color-accent); }
+  .milestone-status--warn { color: #e3b24f; }
+  .milestone-status--info { color: #7fa9ee; }
+  .milestone-status--muted { color: var(--sl-color-gray-3); }
+</style>
