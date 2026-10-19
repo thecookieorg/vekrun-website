@@ -1,47 +1,24 @@
 import { defineCollection, z } from 'astro:content';
-import { file, glob } from 'astro/loaders';
+import { file } from 'astro/loaders';
 import { docsLoader, i18nLoader } from '@astrojs/starlight/loaders';
 import { docsSchema, i18nSchema } from '@astrojs/starlight/schema';
 
-const availability = z.enum(['available', 'in-development', 'planned', 'requires-configuration']);
+const availability = z.enum(['available', 'in-development', 'planned']);
 
 const integrations = defineCollection({
   loader: file('./src/content/data/integrations.json'),
   schema: z.object({
     name: z.string(),
-    category: z.enum([
-      'ai-providers',
-      'coding-agents',
-      'local-models',
-      'project-management',
-      'source-control',
-      'developer-tools',
-      'mcp-servers',
-    ]),
-    description: z.string(),
-    connection: z.array(
-      z.enum([
-        'api-key',
-        'oauth',
-        'local-runtime',
-        'cli-account',
-        'mcp-remote',
-        'mcp-stdio',
-        'git',
-        'ssh',
-        'openai-compatible',
-        'built-in',
-      ]),
-    ),
-    capabilities: z.array(z.string()),
+    category: z.enum(['ai-models', 'coding-tools', 'project-management', 'git-hosting', 'developer-services']),
+    /** One sentence: what connecting this lets you do. */
+    enables: z.string(),
+    connection: z.array(z.enum(['api-key', 'oauth', 'local-runtime', 'cli-account', 'mcp', 'git', 'ssh', 'openai-compatible', 'built-in'])),
     status: availability,
-    /** Short honest note shown with the status, e.g. "gated until listed in the vendor catalog". */
+    /** Short honest note, e.g. "needs your own app credentials". */
     note: z.string().optional(),
-    /** Monogram shown in place of a logo. Vendor logos are not shipped. */
     monogram: z.string().max(2),
     docs: z.string().optional(),
     vendorUrl: z.url().optional(),
-    milestone: z.string().optional(),
   }),
 });
 
@@ -51,15 +28,14 @@ const roadmap = defineCollection({
     title: z.string(),
     description: z.string(),
     status: z.enum(['planned', 'in-progress', 'implemented', 'released']),
-    milestone: z.string(),
-    area: z.string(),
+    area: z.enum(['terminal', 'ai-coding', 'board', 'ai-teams', 'code-review', 'releases']),
     updated: z.string(),
-    link: z.url().optional(),
     /** Platforms the work has been verified on by hand. */
     verifiedOn: z.array(z.enum(['macos', 'windows', 'linux'])).default([]),
   }),
 });
 
+/** Engineering milestones. Shown only on the contributor progress page in the docs. */
 const milestones = defineCollection({
   loader: file('./src/content/data/milestones.json'),
   schema: z.object({
