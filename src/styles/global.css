@@ -356,10 +356,10 @@
 
 /* Diff rows. */
 .diff-row { display: grid; grid-template-columns: 2.25rem 1fr; font-family: var(--font-mono); font-size: 0.75rem; line-height: 1.5; }
-.diff-row > span:first-child { color: var(--text-3); text-align: right; padding-right: 0.6rem; user-select: none; }
-.diff-add { background: color-mix(in srgb, var(--ok) 12%, transparent); color: var(--text); }
-.diff-del { background: color-mix(in srgb, var(--danger) 12%, transparent); color: var(--text-2); }
-.diff-ctx { color: var(--text-2); }
+.diff-row > span:first-child { color: var(--term-dim); text-align: right; padding-right: 0.6rem; user-select: none; }
+.diff-add { background: color-mix(in srgb, var(--term-green) 14%, transparent); color: var(--term-fg); }
+.diff-del { background: color-mix(in srgb, var(--term-red) 14%, transparent); color: color-mix(in srgb, var(--term-fg) 75%, var(--term-dim)); }
+.diff-ctx { color: color-mix(in srgb, var(--term-fg) 80%, var(--term-dim)); }
 
 /* Interactive surfaces: cards lift slightly and reveal an accent hairline. */
 .card {
