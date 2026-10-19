@@ -1,7 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
 import { Search, ExternalLink, BookOpen } from '@lucide/astro';
-import StatusBadge from '@/components/StatusBadge.astro';
 import { availability, integrationCategories, connectionMethods, type IntegrationCategory, type Availability } from '@/data/site';
 
 const entries = await getCollection('integrations');
@@ -18,19 +17,18 @@ const byCategory = categoryOrder
   }))
   .filter((c) => c.items.length > 0);
 const searchText = (e: (typeof entries)[number]) =>
-  [e.data.name, e.data.description, ...e.data.capabilities, ...e.data.connection.map((c) => connectionMethods[c]), e.data.note ?? '']
-    .join(' ')
-    .toLowerCase();
+  [e.data.name, e.data.enables, ...e.data.connection.map((c) => connectionMethods[c]), e.data.note ?? ''].join(' ').toLowerCase();
+const dot: Record<string, string> = { ok: 'bg-ok', warn: 'bg-warn', muted: 'bg-text-3' };
 ---
 <div data-catalog>
-  <form class="flex flex-col gap-4" role="search" aria-label="Filter integrations" data-catalog-form onsubmit="return false">
+  <form class="flex flex-col gap-4" role="search" aria-label="Filter integrations" onsubmit="return false">
     <label class="relative block max-w-xl">
       <span class="sr-only">Search integrations</span>
       <Search class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-3" aria-hidden="true" />
       <input
         type="search"
         name="q"
-        placeholder="Search by name, capability or connection method"
+        placeholder="Search integrations"
         autocomplete="off"
         class="h-11 w-full rounded-md border border-border bg-surface pl-10 pr-3 text-[0.9375rem] text-text placeholder:text-text-3 focus:border-border-strong"
         data-catalog-search
@@ -38,17 +36,6 @@ const searchText = (e: (typeof entries)[number]) =>
     </label>
 
     <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:gap-8">
-      <fieldset class="min-w-0">
-        <legend class="mb-2 text-[0.8125rem] font-[560] text-text">Status</legend>
-        <div class="flex flex-wrap gap-2">
-          {statusOrder.map((s) => (
-            <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border px-3 py-1.5 text-[0.8125rem] text-text-2 has-[:checked]:border-border-strong has-[:checked]:bg-surface-2 has-[:checked]:text-text">
-              <input type="checkbox" name="status" value={s} class="h-3.5 w-3.5 accent-[var(--accent)]" data-catalog-status />
-              {availability[s].label}
-            </label>
-          ))}
-        </div>
-      </fieldset>
       <fieldset class="min-w-0">
         <legend class="mb-2 text-[0.8125rem] font-[560] text-text">Category</legend>
         <div class="flex flex-wrap gap-2">
@@ -60,73 +47,62 @@ const searchText = (e: (typeof entries)[number]) =>
           ))}
         </div>
       </fieldset>
+      <fieldset class="min-w-0">
+        <legend class="mb-2 text-[0.8125rem] font-[560] text-text">Status</legend>
+        <div class="flex flex-wrap gap-2">
+          {statusOrder.map((s) => (
+            <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border px-3 py-1.5 text-[0.8125rem] text-text-2 has-[:checked]:border-border-strong has-[:checked]:bg-surface-2 has-[:checked]:text-text">
+              <input type="checkbox" name="status" value={s} class="h-3.5 w-3.5 accent-[var(--accent)]" data-catalog-status />
+              {availability[s].label}
+            </label>
+          ))}
+        </div>
+      </fieldset>
     </div>
 
-    <p class="text-[0.875rem] text-text-2" aria-live="polite" data-catalog-count>
-      Showing all {entries.length} integrations.
-    </p>
+    <p class="text-[0.875rem] text-text-2" aria-live="polite" data-catalog-count>Showing all {entries.length} integrations.</p>
   </form>
 
   <div class="mt-10 space-y-12">
     {byCategory.map((c) => (
       <section aria-labelledby={`cat-${c.key}`} data-catalog-group={c.key}>
-        <div class="mb-4 flex flex-wrap items-baseline justify-between gap-2">
-          <h2 id={`cat-${c.key}`} class="heading-3">{c.label}</h2>
-          <p class="text-[0.875rem] text-text-2">{c.description}</p>
-        </div>
-        <ul class="grid overflow-hidden rounded-lg border-t border-l border-border md:grid-cols-2" role="list" style="border-radius: var(--radius-lg)">
+        <h2 id={`cat-${c.key}`} class="heading-3">{c.label}</h2>
+        <p class="mt-1 text-[0.9rem] text-text-2">{c.description}</p>
+        <ul class="mt-5 divide-y divide-border border-y border-border" role="list">
           {c.items.map((e) => (
             <li
-              class="flex gap-4 border-b border-r border-border p-5"
+              class="flex gap-4 py-5"
               data-catalog-item
-              data-name={e.data.name.toLowerCase()}
               data-status={e.data.status}
               data-category={e.data.category}
               data-text={searchText(e)}
             >
-              <div
-                class="flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-border bg-surface-2 font-mono text-[0.8125rem] font-[560] text-text-2"
-                aria-hidden="true"
-              >
+              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-border bg-surface-2 font-mono text-[0.8125rem] font-[560] text-text-2" aria-hidden="true">
                 {e.data.monogram}
               </div>
               <div class="min-w-0 flex-1">
-                <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+                <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
                   <h3 class="text-[1rem] font-[560] leading-tight text-text">{e.data.name}</h3>
-                  <StatusBadge status={e.data.status} compact />
+                  <span class="inline-flex items-center gap-1.5 text-[0.8125rem] text-text-2" title={availability[e.data.status].description}>
+                    <span class:list={['h-1.5 w-1.5 rounded-full', dot[availability[e.data.status].tone]]} aria-hidden="true"></span>
+                    {availability[e.data.status].label}
+                  </span>
                 </div>
-                <p class="mt-1.5 text-[0.9rem] leading-relaxed text-text-2">{e.data.description}</p>
-                {e.data.note && <p class="mt-1.5 text-[0.8125rem] leading-snug text-text-3">{e.data.note}</p>}
-                <dl class="mt-3 grid gap-x-6 gap-y-1.5 text-[0.8125rem] sm:grid-cols-[auto_1fr]">
-                  <dt class="text-text-3">Connect with</dt>
-                  <dd class="text-text-2">{e.data.connection.map((m) => connectionMethods[m]).join(', ')}</dd>
-                  {e.data.capabilities.length > 0 && (
-                    <>
-                      <dt class="text-text-3">Capabilities</dt>
-                      <dd class="text-text-2">{e.data.capabilities.join(', ')}</dd>
-                    </>
+                <p class="mt-1 text-[0.9375rem] leading-relaxed text-text-2">{e.data.enables}</p>
+                <p class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[0.8125rem] text-text-3">
+                  <span>{e.data.connection.map((m) => connectionMethods[m]).join(' · ')}</span>
+                  {e.data.note && <span>{e.data.note}</span>}
+                  {e.data.docs && (
+                    <a href={e.data.docs} class="inline-flex items-center gap-1 text-accent hover:underline underline-offset-2">
+                      <BookOpen class="h-3.5 w-3.5" aria-hidden="true" /> Docs
+                    </a>
                   )}
-                  {e.data.milestone && (
-                    <>
-                      <dt class="text-text-3">Milestone</dt>
-                      <dd class="text-text-2">{e.data.milestone}</dd>
-                    </>
+                  {e.data.vendorUrl && (
+                    <a href={e.data.vendorUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 hover:text-text">
+                      <ExternalLink class="h-3.5 w-3.5" aria-hidden="true" /> {new URL(e.data.vendorUrl).hostname.replace(/^www\./, '')}
+                    </a>
                   )}
-                </dl>
-                {(e.data.docs || e.data.vendorUrl) && (
-                  <div class="mt-3 flex flex-wrap gap-4 text-[0.8125rem]">
-                    {e.data.docs && (
-                      <a href={e.data.docs} class="inline-flex items-center gap-1.5 text-accent hover:underline underline-offset-2">
-                        <BookOpen class="h-3.5 w-3.5" aria-hidden="true" /> Documentation
-                      </a>
-                    )}
-                    {e.data.vendorUrl && (
-                      <a href={e.data.vendorUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-text-2 hover:text-text">
-                        <ExternalLink class="h-3.5 w-3.5" aria-hidden="true" /> {new URL(e.data.vendorUrl).hostname.replace(/^www\./, '')}
-                      </a>
-                    )}
-                  </div>
-                )}
+                </p>
               </div>
             </li>
           ))}
@@ -137,7 +113,7 @@ const searchText = (e: (typeof entries)[number]) =>
 
   <div class="mt-10 hidden rounded-lg border border-border p-8 text-center" data-catalog-empty>
     <p class="text-[1rem] font-[560] text-text">No integrations match.</p>
-    <p class="mt-1 text-[0.9rem] text-text-2">Try a different word, or clear the filters to see the whole catalog.</p>
+    <p class="mt-1 text-[0.9rem] text-text-2">Try a different word, or clear the filters.</p>
     <button type="button" class="mt-4 inline-flex h-10 items-center rounded-md border border-border-strong bg-surface px-4 text-[0.9375rem] text-text hover:bg-surface-2" data-catalog-clear>
       Clear filters
     </button>
@@ -170,27 +146,20 @@ const searchText = (e: (typeof entries)[number]) =>
         el.hidden = !ok;
         if (ok) shown++;
       }
-      for (const g of groups) {
-        const visible = g.querySelectorAll<HTMLElement>('[data-catalog-item]:not([hidden])').length;
-        g.hidden = visible === 0;
-      }
+      for (const g of groups) g.hidden = g.querySelectorAll('[data-catalog-item]:not([hidden])').length === 0;
       empty.classList.toggle('hidden', shown > 0);
-      const filtered = q || s.length || cats.length;
-      count.textContent = filtered
-        ? `Showing ${shown} of ${total} integrations.`
-        : `Showing all ${total} integrations.`;
+      count.textContent = q || s.length || cats.length ? `Showing ${shown} of ${total} integrations.` : `Showing all ${total} integrations.`;
     };
 
-    // Deep links: /integrations/?category=ai-providers&status=available&q=ollama
+    // Deep links: /integrations/?category=project-management&status=available&q=linear
     const params = new URLSearchParams(location.search);
     const q0 = params.get('q');
     if (q0) search.value = q0;
-    for (const v of params.getAll('category')) categories.find((c) => c.value === v) && (categories.find((c) => c.value === v)!.checked = true);
-    for (const v of params.getAll('status')) statuses.find((c) => c.value === v) && (statuses.find((c) => c.value === v)!.checked = true);
+    for (const v of params.getAll('category')) { const c = categories.find((x) => x.value === v); if (c) c.checked = true; }
+    for (const v of params.getAll('status')) { const c = statuses.find((x) => x.value === v); if (c) c.checked = true; }
     if (q0 || params.has('category') || params.has('status')) {
       apply();
-      const first = root.querySelector<HTMLElement>('[data-catalog-group]:not([hidden])');
-      first?.scrollIntoView({ block: 'start' });
+      root.querySelector<HTMLElement>('[data-catalog-group]:not([hidden])')?.scrollIntoView({ block: 'start' });
     }
 
     search.addEventListener('input', apply);
