@@ -1,0 +1,276 @@
+---
+/**
+ * The hero demonstration: a scripted, data-driven preview of a Vekrun session.
+ * Marked as a product concept. Plays once when scrolled into view, replays on request,
+ * and renders its final state immediately under reduced motion or without JavaScript.
+ */
+import ConceptNotice from '@/components/ConceptNotice.astro';
+import { RotateCcw } from '@lucide/astro';
+---
+<figure class="product-preview" data-preview>
+  <div class="window preview-window">
+    <div class="window-bar justify-between">
+      <div class="flex items-center gap-3">
+        <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="text-text-2">acme-api</span>
+        <span class="hidden sm:inline" data-field="branch">main</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="hidden items-center gap-1.5 md:inline-flex"><span class="h-1.5 w-1.5 rounded-full bg-ok" aria-hidden="true"></span>Claude · your Anthropic key</span>
+        <span class="hidden items-center gap-1.5 sm:inline-flex" data-field="approvals">0 waiting</span>
+      </div>
+    </div>
+
+    <div class="preview-body">
+      <section class="preview-pane preview-terminal" aria-label="Terminal pane (simulated)">
+        <header class="preview-pane-head"><span>Terminal</span><span class="text-text-3" data-field="cwd">~/code/acme-api</span></header>
+        <pre class="preview-term" data-term aria-live="off"></pre>
+      </section>
+
+      <section class="preview-pane preview-agent" aria-label="Agent pane (simulated)">
+        <header class="preview-pane-head"><span>Agent</span><span class="text-text-3" data-field="mode">Build</span></header>
+        <div class="preview-objective">
+          <span class="preview-objective-label">Objective</span>
+          <p data-field="objective" class="text-text">&nbsp;</p>
+        </div>
+        <ol class="preview-timeline" data-timeline aria-live="polite" aria-relevant="additions text"></ol>
+      </section>
+
+      <aside class="preview-strip" aria-label="Task status (simulated)">
+        <div class="preview-strip-cell">
+          <span class="preview-strip-label">Progress</span>
+          <ol class="preview-steps" data-steps>
+            <li data-step="plan">Plan</li>
+            <li data-step="implement">Implement</li>
+            <li data-step="tests">Tests</li>
+            <li data-step="verify">Verify</li>
+            <li data-step="review">Review</li>
+          </ol>
+        </div>
+        <div class="preview-strip-cell">
+          <span class="preview-strip-label">Changes</span>
+          <ul class="preview-files" data-files><li class="text-text-3">No changes yet</li></ul>
+        </div>
+        <div class="preview-strip-cell">
+          <span class="preview-strip-label">Review</span>
+          <p data-field="review" class="text-text-3">Not started</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <figcaption class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+    <ConceptNotice class="max-w-xl" />
+    <button type="button" class="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border border-border px-2.5 text-[0.8125rem] text-text-2 hover:border-border-strong hover:text-text" data-replay>
+      <RotateCcw class="h-3.5 w-3.5" aria-hidden="true" /> Replay
+    </button>
+  </figcaption>
+</figure>
+
+<style>
+  .preview-window { font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.5; }
+  .preview-body {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-areas: 'agent' 'terminal' 'strip';
+    background: var(--border);
+    gap: 1px;
+  }
+  @media (min-width: 48rem) {
+    .preview-body {
+      grid-template-columns: 1.15fr 1fr;
+      grid-template-areas: 'terminal agent' 'strip strip';
+    }
+  }
+  .preview-pane { background: var(--surface); min-width: 0; }
+  .preview-terminal { grid-area: terminal; background: var(--term-bg); color: var(--term-fg); }
+  .preview-agent { grid-area: agent; }
+  .preview-strip { grid-area: strip; }
+  .preview-pane-head {
+    display: flex; justify-content: space-between; gap: 1rem;
+    padding: 0.5rem 0.9rem; border-bottom: 1px solid var(--border);
+    color: var(--text-2); font-size: 0.72rem;
+  }
+  .preview-terminal .preview-pane-head { background: var(--term-bg); }
+  .preview-term {
+    margin: 0; padding: 0.75rem 0.9rem; min-height: 15rem; max-height: 15rem; overflow: hidden;
+    white-space: pre-wrap; word-break: break-word; font: inherit;
+  }
+  @media (min-width: 48rem) { .preview-term { min-height: 21rem; max-height: 21rem; } }
+  .preview-term .dim { color: var(--term-dim); }
+  .preview-term .ok { color: var(--term-green); }
+  .preview-term .warn { color: var(--term-yellow); }
+  .preview-term .info { color: var(--term-blue); }
+  .preview-term .mag { color: var(--term-magenta); }
+  .preview-term .cursor::after { content: ''; display: inline-block; width: 0.55em; height: 1.1em; vertical-align: text-bottom; background: var(--term-fg); margin-left: 1px; animation: blink 1s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .preview-term .cursor::after { animation: none; } }
+
+  .preview-objective { padding: 0.75rem 0.9rem; border-bottom: 1px solid var(--border); }
+  .preview-objective-label { display: block; color: var(--text-3); font-size: 0.68rem; margin-bottom: 0.2rem; }
+  .preview-timeline { list-style: none; margin: 0; padding: 0.5rem 0.9rem 0.75rem; display: flex; flex-direction: column; gap: 0.45rem; min-height: 11rem; }
+  @media (min-width: 48rem) { .preview-timeline { min-height: 17rem; } }
+  .preview-timeline li { display: grid; grid-template-columns: 1rem 1fr; gap: 0.5rem; align-items: start; color: var(--text-2); }
+  .preview-timeline li .ic { width: 0.8rem; height: 0.8rem; margin-top: 0.25rem; border-radius: 50%; border: 1.5px solid var(--border-strong); display: block; }
+  .preview-timeline li[data-state='running'] .ic { border-color: var(--warn); border-top-color: transparent; animation: spin 0.9s linear infinite; }
+  .preview-timeline li[data-state='done'] .ic { border-color: var(--ok); background: var(--ok); box-shadow: inset 0 0 0 2px var(--surface); }
+  .preview-timeline li[data-state='approval'] .ic { border-color: var(--info); background: var(--info); box-shadow: inset 0 0 0 2px var(--surface); border-radius: 2px; }
+  .preview-timeline li strong { color: var(--text); font-weight: 560; }
+  .preview-timeline li small { display: block; color: var(--text-3); font-size: 0.72rem; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .preview-timeline li[data-state='running'] .ic { animation: none; } }
+
+  .preview-strip { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--border); }
+  @media (min-width: 40rem) { .preview-strip { grid-template-columns: 1.2fr 1fr 1fr; } }
+  .preview-strip-cell { background: var(--surface-2); padding: 0.65rem 0.9rem; min-width: 0; }
+  .preview-strip-label { display: block; color: var(--text-3); font-size: 0.68rem; margin-bottom: 0.35rem; }
+  .preview-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.35rem 0.9rem; color: var(--text-3); }
+  .preview-steps li { position: relative; padding-left: 0.9rem; }
+  .preview-steps li::before { content: ''; position: absolute; left: 0; top: 0.42em; width: 0.5rem; height: 0.5rem; border-radius: 50%; border: 1.5px solid currentColor; }
+  .preview-steps li[data-state='running'] { color: var(--warn); }
+  .preview-steps li[data-state='done'] { color: var(--ok); }
+  .preview-steps li[data-state='done']::before { background: currentColor; }
+  .preview-files { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.15rem; color: var(--text-2); }
+  .preview-files li { display: flex; justify-content: space-between; gap: 0.5rem; }
+  .preview-files .add { color: var(--ok); } .preview-files .del { color: var(--danger); }
+</style>
+
+<script>
+  type Ev =
+    | { t: number; k: 'term'; html: string; cursor?: boolean }
+    | { t: number; k: 'objective'; text: string }
+    | { t: number; k: 'item'; id: string; html: string; state: 'running' | 'done' | 'approval' | 'idle' }
+    | { t: number; k: 'state'; id: string; state: 'running' | 'done' | 'approval' | 'idle' }
+    | { t: number; k: 'step'; id: string; state: 'running' | 'done' }
+    | { t: number; k: 'field'; name: string; text: string; tone?: 'ok' | 'warn' | 'muted' }
+    | { t: number; k: 'file'; name: string; add: number; del: number };
+
+  // The scripted session. Times are milliseconds from start.
+  const script: Ev[] = [
+    { t: 0, k: 'term', html: '<span class="dim">~/code/acme-api</span> <span class="ok">main</span>\n<span class="dim">$</span> git status\nOn branch main\nnothing to commit, working tree clean' },
+    { t: 500, k: 'objective', text: 'Add GitHub OAuth login to the API, with tests.' },
+    { t: 900, k: 'item', id: 'plan', html: '<strong>Plan</strong> reading the repository<small>axum 0.8 · sqlx · existing session middleware</small>', state: 'running' },
+    { t: 2300, k: 'state', id: 'plan', state: 'done' },
+    { t: 2300, k: 'item', id: 'plan-out', html: '<strong>Plan ready</strong> 3 steps, 4 files, 1 migration<small>Waiting for your approval</small>', state: 'approval' },
+    { t: 2300, k: 'field', name: 'approvals', text: '1 waiting', tone: 'warn' },
+    { t: 2300, k: 'step', id: 'plan', state: 'running' },
+    { t: 3600, k: 'state', id: 'plan-out', state: 'done' },
+    { t: 3600, k: 'item', id: 'approved', html: '<strong>Approved by you</strong><small>Worktree created: feat/github-oauth</small>', state: 'done' },
+    { t: 3600, k: 'step', id: 'plan', state: 'done' },
+    { t: 3600, k: 'field', name: 'approvals', text: '0 waiting', tone: 'muted' },
+    { t: 3600, k: 'field', name: 'branch', text: 'feat/github-oauth' },
+    { t: 3600, k: 'field', name: 'cwd', text: '~/code/acme-api/.worktrees/github-oauth' },
+    { t: 3900, k: 'step', id: 'implement', state: 'running' },
+    { t: 3900, k: 'item', id: 'impl', html: '<strong>Implement</strong> src/auth/github.rs<small>Diff shown before every write</small>', state: 'running' },
+    { t: 4600, k: 'file', name: 'src/auth/github.rs', add: 118, del: 0 },
+    { t: 5300, k: 'file', name: 'src/auth/mod.rs', add: 14, del: 2 },
+    { t: 6000, k: 'file', name: 'migrations/0007_oauth_accounts.sql', add: 21, del: 0 },
+    { t: 6600, k: 'file', name: 'tests/auth_github.rs', add: 59, del: 0 },
+    { t: 6900, k: 'state', id: 'impl', state: 'done' },
+    { t: 6900, k: 'step', id: 'implement', state: 'done' },
+    { t: 7100, k: 'step', id: 'tests', state: 'running' },
+    { t: 7100, k: 'item', id: 'tests', html: '<strong>Tests</strong> cargo test<small>Approved command, running in the worktree</small>', state: 'running' },
+    { t: 7100, k: 'term', html: '\n<span class="dim">$</span> cargo test --test auth_github\n<span class="ok">   Compiling</span> acme-api v0.4.2' },
+    { t: 8300, k: 'term', html: '<span class="ok">    Finished</span> test profile in 6.21s\n<span class="ok">     Running</span> tests/auth_github.rs\n\nrunning 5 tests\ntest redirect_includes_state ... <span class="ok">ok</span>\ntest callback_rejects_bad_state ... <span class="ok">ok</span>\ntest callback_links_existing_user ... <span class="ok">ok</span>\ntest callback_creates_account ... <span class="ok">ok</span>\ntest token_never_logged ... <span class="ok">ok</span>' },
+    { t: 9700, k: 'term', html: '\ntest result: <span class="ok">ok</span>. 5 passed; 0 failed' },
+    { t: 9700, k: 'state', id: 'tests', state: 'done' },
+    { t: 9700, k: 'step', id: 'tests', state: 'done' },
+    { t: 10100, k: 'step', id: 'verify', state: 'running' },
+    { t: 10100, k: 'item', id: 'verify', html: '<strong>Independent verification</strong> a different agent, same acceptance criteria<small>Builds, runs the suite, reads the diff; the implementer’s claims are not evidence</small>', state: 'running' },
+    { t: 10100, k: 'term', html: '\n<span class="dim">$</span> cargo clippy --all-targets -- -D warnings\n<span class="ok">    Finished</span> dev profile in 3.08s\n<span class="dim">$</span> cargo test\ntest result: <span class="ok">ok</span>. 41 passed; 0 failed' },
+    { t: 12200, k: 'state', id: 'verify', state: 'done' },
+    { t: 12200, k: 'item', id: 'verify-out', html: '<strong>Verified</strong> 41 tests, clippy clean, criteria met<small>Report attached with commands and output</small>', state: 'done' },
+    { t: 12200, k: 'step', id: 'verify', state: 'done' },
+    { t: 12600, k: 'step', id: 'review', state: 'running' },
+    { t: 12600, k: 'item', id: 'review', html: '<strong>Ready for your review</strong> 4 files, +212 −2<small>Merge happens only when you approve</small>', state: 'approval' },
+    { t: 12600, k: 'field', name: 'review', text: 'Ready for you: 4 files, +212 −2', tone: 'ok' },
+    { t: 12600, k: 'field', name: 'approvals', text: '1 waiting', tone: 'warn' },
+    { t: 12600, k: 'term', html: '\n<span class="dim">~/code/acme-api/.worktrees/github-oauth</span> <span class="ok">feat/github-oauth</span>\n<span class="dim">$</span> ', cursor: true },
+  ];
+
+  const roots = document.querySelectorAll<HTMLElement>('[data-preview]');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  roots.forEach((root) => {
+    const term = root.querySelector<HTMLElement>('[data-term]')!;
+    const timeline = root.querySelector<HTMLElement>('[data-timeline]')!;
+    const files = root.querySelector<HTMLElement>('[data-files]')!;
+    const replay = root.querySelector<HTMLButtonElement>('[data-replay]')!;
+    let timers: number[] = [];
+
+    const reset = () => {
+      timers.forEach((id) => clearTimeout(id));
+      timers = [];
+      term.innerHTML = '';
+      timeline.innerHTML = '';
+      files.innerHTML = '<li class="text-text-3">No changes yet</li>';
+      root.querySelectorAll<HTMLElement>('[data-step]').forEach((s) => s.removeAttribute('data-state'));
+      const set = (n: string, v: string) => { const el = root.querySelector<HTMLElement>(`[data-field="${n}"]`); if (el) el.textContent = v; };
+      set('branch', 'main'); set('cwd', '~/code/acme-api'); set('approvals', '0 waiting'); set('review', 'Not started');
+      const obj = root.querySelector<HTMLElement>('[data-field="objective"]'); if (obj) obj.innerHTML = '&nbsp;';
+    };
+
+    const apply = (ev: Ev) => {
+      switch (ev.k) {
+        case 'term': {
+          term.querySelector('.cursor')?.classList.remove('cursor');
+          const span = document.createElement('span');
+          span.innerHTML = ev.html;
+          if (ev.cursor) span.classList.add('cursor');
+          term.appendChild(span);
+          // Keep the last lines visible without a scrollbar.
+          while (term.scrollHeight > term.clientHeight && term.firstChild) {
+            const first = term.firstChild as HTMLElement;
+            const html = first.innerHTML ?? '';
+            const nl = html.indexOf('\n');
+            if (nl === -1) term.removeChild(first); else first.innerHTML = html.slice(nl + 1);
+          }
+          break;
+        }
+        case 'objective': { const el = root.querySelector<HTMLElement>('[data-field="objective"]'); if (el) el.textContent = ev.text; break; }
+        case 'item': {
+          const li = document.createElement('li');
+          li.dataset.id = ev.id; li.dataset.state = ev.state;
+          li.innerHTML = `<span class="ic" aria-hidden="true"></span><div>${ev.html}</div>`;
+          timeline.appendChild(li);
+          break;
+        }
+        case 'state': { const li = timeline.querySelector<HTMLElement>(`[data-id="${ev.id}"]`); if (li) li.dataset.state = ev.state; break; }
+        case 'step': { const s = root.querySelector<HTMLElement>(`[data-step="${ev.id}"]`); if (s) s.dataset.state = ev.state; break; }
+        case 'field': {
+          const el = root.querySelector<HTMLElement>(`[data-field="${ev.name}"]`);
+          if (el) { el.textContent = ev.text; el.classList.remove('text-ok', 'text-warn', 'text-text-3'); if (ev.tone === 'ok') el.classList.add('text-ok'); if (ev.tone === 'warn') el.classList.add('text-warn'); if (ev.tone === 'muted') el.classList.add('text-text-3'); }
+          break;
+        }
+        case 'file': {
+          if (files.firstElementChild?.classList.contains('text-text-3')) files.innerHTML = '';
+          const li = document.createElement('li');
+          li.innerHTML = `<span class="truncate">${ev.name}</span><span class="shrink-0"><span class="add">+${ev.add}</span> <span class="del">−${ev.del}</span></span>`;
+          files.appendChild(li);
+          break;
+        }
+      }
+    };
+
+    const play = (instant: boolean) => {
+      reset();
+      if (instant) { script.forEach(apply); return; }
+      script.forEach((ev) => timers.push(window.setTimeout(() => apply(ev), ev.t)));
+    };
+
+    replay.addEventListener('click', () => play(false));
+
+    if (reduce || !('IntersectionObserver' in window)) { play(true); return; }
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) { play(false); io.disconnect(); }
+    }, { threshold: 0.35 });
+    io.observe(root);
+  });
+</script>
+
+<noscript>
+  <style>
+    /* Without JavaScript the preview cannot animate; show the pane labels and hide the empty surfaces. */
+    .product-preview [data-replay] { display: none; }
+  </style>
+</noscript>

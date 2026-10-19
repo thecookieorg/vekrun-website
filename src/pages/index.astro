@@ -1,0 +1,236 @@
+---
+import Base from '@/layouts/Base.astro';
+import Button from '@/components/Button.astro';
+import Section from '@/components/Section.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import StatusBadge from '@/components/StatusBadge.astro';
+import ProductPreview from '@/components/home/ProductPreview.astro';
+import FactoryFlow from '@/components/home/FactoryFlow.astro';
+import GithubMark from '@/components/GithubMark.astro';
+import { site, featurePages, availability, integrationCategories, type Availability } from '@/data/site';
+import { getCollection } from 'astro:content';
+import { Terminal, Cpu, Users, Workflow, KeyRound, Link2, HardDrive, ArrowUpRight } from '@lucide/astro';
+
+const integrations = await getCollection('integrations');
+const teaserIds = ['linear', 'jira', 'asana', 'github-issues', 'gitlab-issues', 'git', 'mcp-custom', 'anthropic', 'openai', 'gemini', 'ollama', 'lm-studio'];
+const teaser = teaserIds.map((id) => integrations.find((i) => i.id === id)).filter((x): x is NonNullable<typeof x> => Boolean(x));
+
+const pillars = [
+  { icon: Terminal, title: 'Your terminal', text: 'A full-featured desktop terminal designed for everyday development. It works with no model connected and offline.', href: '/features/terminal/', status: 'in-development' as Availability },
+  { icon: Cpu, title: 'Your AI', text: 'Bring Claude, OpenAI, Gemini, compatible provider subscriptions, or local models. Keys stay in your OS keychain.', href: '/features/ai-coding/', status: 'in-development' as Availability },
+  { icon: Users, title: 'Your engineering team', text: 'Delegate complex software work to coordinated agents using Vekrun Factory, with a verifier that is not the implementer.', href: '/factory/', status: 'in-development' as Availability },
+  { icon: Workflow, title: 'Your workflow', text: 'Connect Git, code reviews and project management tools without constantly switching applications.', href: '/features/board/', status: 'planned' as Availability },
+];
+
+const connectionModes = [
+  { icon: KeyRound, title: 'Direct API keys', text: 'Paste a key from Anthropic, OpenAI, Google or any OpenAI-compatible endpoint. Requests go straight to the provider, and you pay the provider directly.', status: 'available' as Availability, providers: ['Anthropic', 'OpenAI', 'Google Gemini', 'OpenAI-compatible'] },
+  { icon: Link2, title: 'Coding-agent accounts you already pay for', text: 'Optional compatibility with existing coding-agent subscriptions, only through documented auth flows. Never required for Vekrun’s own agents.', status: 'planned' as Availability, providers: ['Claude Code', 'Codex', 'Gemini CLI'] },
+  { icon: HardDrive, title: 'Local inference', text: 'Vekrun detects Ollama and LM Studio and reports installed and reachable separately. Models you run yourself cost nothing per token.', status: 'available' as Availability, providers: ['Ollama', 'LM Studio', 'llama.cpp-compatible'] },
+];
+
+const openSourcePoints = [
+  { title: 'No mandatory Vekrun account', text: 'There is nothing to sign up for. The application is the product.' },
+  { title: 'No mandatory hosted control plane', text: 'The control plane runs on your machine, or on a machine you choose. Vekrun never requires its own cloud.' },
+  { title: 'User-controlled model connections', text: 'You decide which providers see which project, and you see what leaves the machine before it leaves.' },
+  { title: 'Transparent source code', text: 'Every core feature is in the open build. There is no proprietary runtime behind a flag.' },
+  { title: 'Local-first data', text: 'Sessions, memory and indexes live in SQLite on disk, and you can delete them.' },
+  { title: 'Optional self-hosted workers', text: 'Run background work on a workstation, VM or server you control, reached over SSH by default.' },
+];
+
+const structuredData = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: site.name,
+    applicationCategory: 'DeveloperApplication',
+    operatingSystem: 'macOS, Windows, Linux',
+    description: site.description,
+    url: site.url,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    license: 'https://www.apache.org/licenses/LICENSE-2.0',
+    softwareHelp: `${site.url}/docs/`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: site.name,
+    url: site.url,
+  },
+];
+---
+<Base title={`${site.name}: ${site.tagline}`} description={site.description} structuredData={structuredData}>
+  <!-- Hero -->
+  <section class="relative overflow-hidden" aria-labelledby="hero-title">
+    <div class="dot-field pointer-events-none absolute inset-0" aria-hidden="true"></div>
+    <div class="container-site relative pt-16 pb-10 sm:pt-24 sm:pb-14 lg:pt-28">
+      <div class="max-w-4xl">
+        <p class="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-surface/60 px-3 py-1.5 text-[0.8125rem] text-text-2">
+          <span class="h-1.5 w-1.5 rounded-full bg-warn" aria-hidden="true"></span>
+          {site.status.label}. {site.status.phase}, built in the open.
+        </p>
+        <h1 id="hero-title" class="display">
+          <span class="block">Your terminal.</span>
+          <span class="block">Your models.</span>
+          <span class="block text-accent">Your rules.</span>
+        </h1>
+        <p class="lede mt-7 max-w-2xl">
+          The open-source developer workspace combining a modern terminal, AI coding agents, and autonomous engineering teams. Use the models you already trust, without another platform subscription.
+        </p>
+        <div class="mt-9 flex flex-wrap items-center gap-3">
+          <Button href="/features/" size="lg">Explore features</Button>
+          <Button href="/roadmap/" size="lg" variant="secondary">View development roadmap</Button>
+          {site.repo.public && (
+            <Button href={site.repo.url} size="lg" variant="ghost" external><GithubMark /> GitHub</Button>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product preview -->
+  <Section id="product" padded="none" class="pb-20 sm:pb-24 lg:pb-28">
+    <div class="reveal">
+      <ProductPreview />
+    </div>
+    <p class="measure-wide mt-8 text-[0.9375rem] leading-relaxed text-text-2">
+      One request: add GitHub OAuth login. Vekrun drafts a plan and waits for approval, implements in a separate worktree, runs the tests you allowed, hands the result to an independent verifier, and presents the review. Every step is visible, and nothing merges until you say so.
+    </p>
+  </Section>
+
+  <!-- Pillars -->
+  <Section rule aria-labelledby="pillars-title">
+    <SectionHeading id="pillars-title" title="One workspace, four things you own" lede="Vekrun is more than a terminal emulator and more than a chat window. Each pillar works on its own; together they cover planning, building, reviewing and delivering." />
+    <div class="ruled-grid mt-12 sm:grid-cols-2 lg:grid-cols-4">
+      {pillars.map((p) => (
+        <a href={p.href} class="group flex flex-col gap-4 p-6 transition-colors hover:bg-surface sm:p-7">
+          <p.icon class="h-5 w-5 text-accent" aria-hidden="true" />
+          <h3 class="heading-3 flex items-center gap-2">{p.title}<ArrowUpRight class="h-4 w-4 text-text-3 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true" /></h3>
+          <p class="text-[0.9375rem] leading-relaxed text-text-2">{p.text}</p>
+          <div class="mt-auto pt-2"><StatusBadge status={p.status} compact /></div>
+        </a>
+      ))}
+    </div>
+  </Section>
+
+  <!-- Bring your own AI -->
+  <Section rule tone="elevated" aria-labelledby="byo-title">
+    <div class="grid gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+      <div>
+        <SectionHeading id="byo-title" title="Bring your own AI" lede="Three ways to connect a model, kept visibly separate. Vekrun itself does not charge a subscription, mark up tokens, or route your requests through its own servers." />
+        <p class="mt-6 text-[0.9375rem] leading-relaxed text-text-2">
+          Hosted providers bill you directly at their own rates. A consumer chat subscription does not include API access. Local models are free to run and may need capable hardware for heavier Factory work.
+        </p>
+        <a href="/integrations/" class="mt-6 inline-flex items-center gap-1.5 text-[0.9375rem] font-[540] text-accent hover:underline hover:underline-offset-4">See every supported provider</a>
+      </div>
+      <ol class="divide-y divide-border border-y border-border">
+        {connectionModes.map((m, i) => (
+          <li class="grid gap-4 py-6 sm:grid-cols-[2rem_1fr] sm:gap-6">
+            <span class="font-mono text-sm text-text-3" aria-hidden="true">{i + 1}</span>
+            <div>
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+                <h3 class="heading-3">{m.title}</h3>
+                <StatusBadge status={m.status} compact />
+              </div>
+              <p class="mt-2 max-w-xl text-[0.9375rem] leading-relaxed text-text-2">{m.text}</p>
+              <ul class="mt-3 flex flex-wrap gap-2" aria-label="Providers">
+                {m.providers.map((p) => <li class="rounded-md border border-border bg-surface px-2 py-1 text-[0.8125rem] text-text-2">{p}</li>)}
+              </ul>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </Section>
+
+  <!-- Factory -->
+  <Section rule aria-labelledby="factory-title">
+    <SectionHeading id="factory-title" title="From one agent to a team you can inspect" lede="A single agent answers questions and edits files while you watch. Vekrun Factory coordinates a team: a manager plans and delegates, workers build in isolated worktrees, and a separate verifier checks the result before anything is merged." />
+    <div class="mt-12 reveal">
+      <FactoryFlow />
+    </div>
+    <div class="mt-10 grid gap-8 md:grid-cols-2">
+      <div>
+        <h3 class="heading-3">Working with one agent</h3>
+        <p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">Ask, Plan, Build, Debug and Review modes in one conversation. Writes appear as diffs for approval, commands run only when allowed, and the context inspector shows exactly what went to the provider.</p>
+      </div>
+      <div>
+        <h3 class="heading-3">Coordinating a team</h3>
+        <p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">Tasks form a dependency graph. Delegation never widens authority or budget. Implementers do not attest to their own correctness, and repairs are bounded and escalate to you.</p>
+      </div>
+    </div>
+    <div class="mt-8"><Button href="/factory/" variant="secondary">How Factory works</Button></div>
+  </Section>
+
+  <!-- Integrations -->
+  <Section rule tone="elevated" aria-labelledby="integrations-title">
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      <SectionHeading id="integrations-title" title="Tickets become execution" lede="The Board shows the tickets assigned to you across Linear, Jira, Asana, GitHub and GitLab, and turns any of them into a branch, a worktree, a terminal and, if you want, an agent." />
+      <Button href="/integrations/" variant="secondary" class="shrink-0">Browse the integration catalog</Button>
+    </div>
+    <ul class="ruled-grid mt-12 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+      {teaser.map((i) => (
+        <li class="flex flex-col gap-3 p-5">
+          <div class="flex items-center gap-3">
+            <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border bg-surface font-mono text-[0.75rem] text-text-2" aria-hidden="true">{i.data.monogram}</span>
+            <span class="truncate text-[0.9375rem] font-[540] text-text">{i.data.name}</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-2 text-[0.75rem] text-text-3">
+            <span>{integrationCategories[i.data.category].label}</span>
+          </div>
+          <div class="mt-auto"><StatusBadge status={i.data.status} compact /></div>
+        </li>
+      ))}
+    </ul>
+    <p class="mt-6 text-[0.8125rem] text-text-3">
+      {availability.available.label}: {availability.available.description} {availability.planned.label}: {availability.planned.description.toLowerCase()} The catalog marks each entry honestly.
+    </p>
+  </Section>
+
+  <!-- Open source -->
+  <Section rule aria-labelledby="oss-title">
+    <SectionHeading id="oss-title" title="Open source, local first, no strings" lede="The whole product is free software. What runs, where it runs and what it is allowed to touch is your decision, enforced in Rust rather than in a prompt." />
+    <dl class="mt-12 grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+      {openSourcePoints.map((p) => (
+        <div class="border-t border-border pt-4">
+          <dt class="text-[1.0625rem] font-[560] text-text">{p.title}</dt>
+          <dd class="mt-1.5 text-[0.9375rem] leading-relaxed text-text-2">{p.text}</dd>
+        </div>
+      ))}
+    </dl>
+    <div class="mt-10 flex flex-wrap gap-3">
+      <Button href="/open-source/" variant="secondary">Why Vekrun is open source</Button>
+      <Button href="/docs/" variant="ghost">Read the documentation</Button>
+    </div>
+    <p class="mt-6 text-[0.8125rem] text-text-3">
+      License: {site.license.name}, {site.license.status}. The source repository is {site.repo.public ? 'public' : 'not yet public'}.
+    </p>
+  </Section>
+
+  <!-- Features index -->
+  <Section rule tone="elevated" aria-labelledby="features-title" padded="tight">
+    <h2 id="features-title" class="heading-3">Explore by feature</h2>
+    <ul class="mt-5 grid gap-x-8 sm:grid-cols-2 lg:grid-cols-3">
+      {featurePages.map((f) => (
+        <li>
+          <a href={f.href} class="group flex min-w-0 flex-col gap-1 border-b border-border py-3 transition-colors hover:border-border-strong">
+            <span class="text-[0.9375rem] font-[540] text-text">{f.label}</span>
+            <span class="text-[0.8125rem] leading-snug text-text-3">{f.description}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <!-- Final CTA -->
+  <Section rule aria-labelledby="cta-title" class="bg-bg">
+    <div class="max-w-3xl">
+      <h2 id="cta-title" class="heading-1">Your development environment should belong to you.</h2>
+      <p class="lede mt-5">One terminal. Any supported model. Complete control over how your software gets built.</p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <Button href="/roadmap/" size="lg">See where the build stands</Button>
+        <Button href="/download/" size="lg" variant="secondary">Releases</Button>
+      </div>
+      <p class="mt-6 text-[0.8125rem] text-text-3">Status as of {site.status.asOf}: {site.status.summary}</p>
+    </div>
+  </Section>
+</Base>

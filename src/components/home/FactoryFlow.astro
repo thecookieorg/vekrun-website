@@ -1,0 +1,109 @@
+---
+/**
+ * The Factory pipeline: Objective → Plan → Council → Agents → Tests → Verification → Delivery.
+ * A real sequence, so the stages are numbered. Selecting a stage shows what you can inspect and control there.
+ */
+interface Stage { id: string; title: string; what: string; inspect: string[]; control: string[]; optional?: boolean }
+const stages: Stage[] = [
+  { id: 'objective', title: 'Objective', what: 'You state the goal and the acceptance criteria. Nothing runs yet.', inspect: ['The objective as the agents will read it', 'Which repository, branch and worktree root apply'], control: ['Edit the criteria before anything starts', 'Choose the model profile and budget'] },
+  { id: 'plan', title: 'Plan', what: 'A manager agent reads the project and proposes a structured plan: steps, files, dependencies, risks and tests.', inspect: ['Every step with its dependency graph', 'A diff between plan revisions'], control: ['Edit any step', 'Approve, or send it back'] },
+  { id: 'council', title: 'Council', what: 'Optional. Several models review the plan independently, then critique each other’s positions. Disagreements are recorded, not voted away.', inspect: ['Each member’s first-round position', 'Critiques, revisions and unresolved disagreements', 'The moderator’s synthesis with cited evidence'], control: ['Members, models, rounds and budget', 'Skip it entirely for routine work'], optional: true },
+  { id: 'agents', title: 'Agents', what: 'Approved steps become Factory tasks. Workers claim them under leases and work in separate Git worktrees.', inspect: ['Every tool call and every diff, per agent', 'What left the machine, before it left'], control: ['Pause, redirect or reassign a task', 'Approve writes and commands per policy'] },
+  { id: 'tests', title: 'Tests', what: 'Approved commands run in the task’s worktree. Output is evidence, not an agent’s summary of it.', inspect: ['Commands, exit codes and full output'], control: ['Which commands are allowed without asking'] },
+  { id: 'verification', title: 'Verification', what: 'A different agent checks the result against the original criteria. A claim without evidence is refused by the contract.', inspect: ['The verification report: commands, outcomes, limitations', 'Bounded repair attempts and why they stopped'], control: ['Repair limits and escalation', 'Accept the report or ask for more'] },
+  { id: 'delivery', title: 'Delivery', what: 'The integrator previews the merge, shows conflicts, and waits. Protected state changes only when you approve.', inspect: ['The merge preview with conflicts', 'The full chain: plan → tasks → evidence → merge'], control: ['Approve the merge, or not'] },
+];
+---
+<div class="factory-flow" data-flow>
+  <div class="factory-rail" role="tablist" aria-label="Factory stages">
+    {stages.map((s, i) => (
+      <button
+        type="button"
+        role="tab"
+        id={`flow-tab-${s.id}`}
+        aria-controls={`flow-panel-${s.id}`}
+        aria-selected={i === 0 ? 'true' : 'false'}
+        tabindex={i === 0 ? 0 : -1}
+        class="factory-stage"
+        data-stage={s.id}
+      >
+        <span class="factory-stage-num" aria-hidden="true">{i + 1}</span>
+        <span class="factory-stage-title">{s.title}{s.optional && <span class="factory-stage-opt"> optional</span>}</span>
+      </button>
+    ))}
+  </div>
+
+  {stages.map((s, i) => (
+    <div
+      role="tabpanel"
+      id={`flow-panel-${s.id}`}
+      aria-labelledby={`flow-tab-${s.id}`}
+      class="factory-panel"
+      hidden={i !== 0}
+    >
+      <p class="factory-what">{s.what}</p>
+      <div class="factory-cols">
+        <div>
+          <h4 class="factory-col-title">You can inspect</h4>
+          <ul class="factory-list">{s.inspect.map((x) => <li>{x}</li>)}</ul>
+        </div>
+        <div>
+          <h4 class="factory-col-title">You control</h4>
+          <ul class="factory-list">{s.control.map((x) => <li>{x}</li>)}</ul>
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .factory-flow { border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); overflow: hidden; }
+  .factory-rail { display: flex; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--border); background: var(--surface-2); }
+  .factory-rail::-webkit-scrollbar { display: none; }
+  .factory-stage {
+    flex: 1 0 auto; display: flex; align-items: center; gap: 0.6rem; padding: 0.85rem 1rem; min-width: 8.5rem;
+    border: 0; border-right: 1px solid var(--border); background: transparent; color: var(--text-2); text-align: left; cursor: pointer;
+    position: relative; transition: color var(--dur-fast), background-color var(--dur-fast);
+  }
+  .factory-stage:last-child { border-right: 0; }
+  .factory-stage:hover { color: var(--text); }
+  .factory-stage[aria-selected='true'] { color: var(--text); background: var(--surface); }
+  .factory-stage[aria-selected='true']::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--accent); }
+  .factory-stage:focus-visible { outline-offset: -3px; border-radius: 0; }
+  .factory-stage-num { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-3); width: 1.25rem; height: 1.25rem; border: 1px solid var(--border-strong); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .factory-stage[aria-selected='true'] .factory-stage-num { border-color: var(--accent); color: var(--accent); }
+  .factory-stage-title { font-size: 0.9375rem; font-weight: 540; white-space: nowrap; }
+  .factory-stage-opt { font-weight: 400; color: var(--text-3); font-size: 0.8rem; }
+  .factory-panel { padding: 1.5rem; }
+  @media (min-width: 48rem) { .factory-panel { padding: 2rem; } }
+  .factory-what { font-size: 1.0625rem; color: var(--text); max-width: 58ch; }
+  .factory-cols { display: grid; gap: 1.5rem; margin-top: 1.5rem; }
+  @media (min-width: 40rem) { .factory-cols { grid-template-columns: 1fr 1fr; gap: 2rem; } }
+  .factory-col-title { font-size: 0.8125rem; font-weight: 560; color: var(--text-3); margin-bottom: 0.5rem; }
+  .factory-list { list-style: none; margin: 0; padding: 0; color: var(--text-2); font-size: 0.9375rem; }
+  .factory-list li { padding: 0.4rem 0 0.4rem 1rem; position: relative; border-top: 1px solid var(--border); }
+  .factory-list li:first-child { border-top: 0; }
+  .factory-list li::before { content: ''; position: absolute; left: 0; top: 1.05em; width: 0.35rem; height: 0.35rem; border-radius: 50%; background: var(--accent); }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-flow]').forEach((root) => {
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[role="tabpanel"]'));
+    const select = (i: number, focus = false) => {
+      tabs.forEach((t, j) => { t.setAttribute('aria-selected', String(i === j)); t.tabIndex = i === j ? 0 : -1; });
+      panels.forEach((p, j) => { p.hidden = i !== j; });
+      if (focus) { tabs[i]?.focus(); tabs[i]?.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(i));
+      t.addEventListener('keydown', (e) => {
+        const n = tabs.length;
+        if (e.key === 'ArrowRight') { e.preventDefault(); select((i + 1) % n, true); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); select((i - 1 + n) % n, true); }
+        if (e.key === 'Home') { e.preventDefault(); select(0, true); }
+        if (e.key === 'End') { e.preventDefault(); select(n - 1, true); }
+      });
+    });
+  });
+</script>
