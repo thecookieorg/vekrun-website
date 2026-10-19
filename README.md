@@ -63,10 +63,13 @@ screenshots pages at desktop and phone widths in both themes.
 
 ## Honesty rules for content
 
-- A status of **Available** means implemented in the desktop project's main
-  branch and exercised by tests on macOS. It does not mean a public build exists.
+- Three statuses everywhere: **In development build** (works in the current
+  source on macOS, not in any public release), **In progress**, **Planned**.
 - Never mark an integration available without a verified implementation.
-- Mockups are product concepts and say so until real recordings exist.
+- Mockups are product previews and say so until real recordings exist.
+- Marketing pages speak in user benefits; implementation detail belongs under
+  `/docs/advanced/`. The unit tests reject engineering jargon in catalog and
+  roadmap data.
 - The download page shows releases only from `releases.json`; keep it empty
   until signed artifacts exist.
 - Reconcile `site.status.asOf` and the roadmap data whenever status changes.

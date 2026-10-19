@@ -8,9 +8,9 @@ const noOverflow = async (page: Page) => {
 test.describe('homepage', () => {
   test('renders the hero, metadata and structured data', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByRole('heading', { level: 1 })).toContainText('Your terminal.');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(/Your terminal\.\s*Your AI\.\s*Your workflow\./);
     await expect(page).toHaveTitle(/Vekrun/);
-    await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /open-source developer workspace/);
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /open-source AI-native terminal/);
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://vekrunapp.com/');
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og\/default\.png$/);
     const ld = await page.locator('script[type="application/ld+json"]').first().textContent();
@@ -22,23 +22,23 @@ test.describe('homepage', () => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/');
     const preview = page.locator('[data-preview]');
-    await expect(preview.getByText('Product concept', { exact: false })).toBeVisible();
+    await expect(preview.getByText('Product preview', { exact: false })).toBeVisible();
     await expect(preview.locator('[data-field="review"]')).toContainText('Ready for you');
     await expect(preview.locator('[data-step="verify"]')).toHaveAttribute('data-state', 'done');
     await preview.getByRole('button', { name: 'Replay' }).click();
     await expect(preview.locator('[data-field="review"]')).toContainText('Not started');
   });
 
-  test('factory stages are keyboard-operable tabs', async ({ page }) => {
+  test('AI Teams stages are keyboard-operable tabs', async ({ page }) => {
     await page.goto('/');
-    const tabs = page.getByRole('tablist', { name: 'Factory stages' }).getByRole('tab');
-    await expect(tabs).toHaveCount(7);
+    const tabs = page.getByRole('tablist', { name: 'AI Teams stages' }).getByRole('tab');
+    await expect(tabs).toHaveCount(6);
     await tabs.nth(0).focus();
     await page.keyboard.press('ArrowRight');
     await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
-    await expect(page.getByRole('tabpanel')).toContainText('manager agent');
+    await expect(page.getByRole('tabpanel', { name: 'Plan' })).toContainText('drafts a plan');
     await page.keyboard.press('End');
-    await expect(tabs.nth(6)).toHaveAttribute('aria-selected', 'true');
+    await expect(tabs.nth(5)).toHaveAttribute('aria-selected', 'true');
   });
 });
 
@@ -47,7 +47,7 @@ test.describe('navigation and theme', () => {
     test.skip(isMobile, 'desktop navigation only');
     await page.goto('/');
     const links = await page.getByRole('navigation', { name: 'Primary' }).getByRole('link').all();
-    expect(links.length).toBeGreaterThanOrEqual(6);
+    expect(links.length).toBeGreaterThanOrEqual(5);
     for (const l of links) {
       const href = await l.getAttribute('href');
       if (!href || href.startsWith('/#')) continue;
@@ -91,7 +91,7 @@ test.describe('navigation and theme', () => {
 });
 
 test.describe('other pages', () => {
-  for (const path of ['/features/', '/factory/', '/integrations/', '/roadmap/', '/download/', '/open-source/', '/docs/', '/security/', '/privacy/', '/contact/']) {
+  for (const path of ['/features/', '/features/terminal/', '/features/ai-coding/', '/features/board/', '/ai-teams/', '/features/code-review/', '/integrations/', '/roadmap/', '/download/', '/open-source/', '/docs/', '/security/', '/privacy/', '/contact/']) {
     test(`${path} renders with one h1 and no overflow`, async ({ page }) => {
       const res = await page.goto(path);
       expect(res?.status()).toBe(200);
@@ -112,6 +112,21 @@ test.describe('other pages', () => {
     const res = await page.request.get('/pagefind/pagefind.js');
     expect(res.status()).toBe(200);
     if (!isMobile) await expect(page.getByRole('link', { name: 'Overview' }).first()).toBeVisible();
+  });
+
+  test('old URLs redirect to their new homes', async ({ page }) => {
+    await page.goto('/factory/');
+    await expect(page).toHaveURL(/\/ai-teams\/$/);
+    await page.goto('/docs/factory/council/');
+    await expect(page).toHaveURL(/\/docs\/ai-teams\/council\/$/);
+  });
+
+  test('the Board demo offers three ways to work', async ({ page }) => {
+    await page.goto('/');
+    const tabs = page.getByRole('tablist', { name: 'Ways to work on a ticket' }).getByRole('tab');
+    await expect(tabs).toHaveCount(3);
+    await tabs.nth(2).click();
+    await expect(page.getByRole('tabpanel', { name: 'Delegate to an AI team' })).toBeVisible();
   });
 
   test('unknown routes serve the custom 404', async ({ page }) => {

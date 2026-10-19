@@ -14,27 +14,36 @@ status string.
 - `site.contact.*` — `null` renders an honest "not published yet"; set a
   string to publish it.
 - `primaryNav`, `footerColumns`, `featurePages` — navigation.
-- `availability` — the four statuses and what they mean. Reused everywhere.
+- `availability` — the three statuses and what they mean. Reused everywhere:
+  `available` renders as "In development build", `in-development` as
+  "In progress", `planned` as "Planned". The roadmap maps `implemented` to
+  the first of these and adds `released` for public builds.
+- `site.headline` / `site.subheading` — homepage copy; `site.tagline` is the brand line.
 
 ## Integrations
 
 `src/content/data/integrations.json`. One object per integration; the schema
-is in `src/content.config.ts`. Statuses:
+is in `src/content.config.ts`. Each entry has a category by purpose
+(`ai-models`, `coding-tools`, `project-management`, `git-hosting`,
+`developer-services`), one `enables` sentence in user language, connection
+methods, a status and an optional note. Keep authentication details in the
+docs, not in the catalog.
 
-- `available` — verified implementation in the desktop project (tests pass).
-- `in-development` — partly on `main`.
-- `planned` — scheduled, with a milestone.
-- `requires-configuration` — works with your own credentials or endpoint.
-
-The unit tests refuse `available` for coding-agent accounts and MCP servers
-until those are implemented; adjust the test when they are.
+The unit tests refuse `available` for coding-agent accounts, MCP-only
+connections, project-management and developer-service entries until those are
+implemented, and reject engineering jargon in `enables`.
 
 ## Roadmap
 
-`milestones.json` (the twelve milestones) and `roadmap.json` (feature-level
-entries). Every entry has a status, a milestone, an `updated` date not later
-than `site.status.asOf`, and `verifiedOn` platforms. `implemented` requires at
-least one verified platform. `released` is only valid once a release exists.
+`roadmap.json` is the public roadmap: user-facing entries grouped by `area`
+(`terminal`, `ai-coding`, `board`, `ai-teams`, `code-review`, `releases`),
+written as what you can do, with no milestone ids or engineering terms (the
+unit tests check). Every entry has a status, an `updated` date not later than
+`site.status.asOf`, and `verifiedOn` platforms; `implemented` requires at
+least one. `released` is only valid once a release exists.
+
+`milestones.json` holds the twelve engineering milestones. It is shown only on
+the contributor progress page at `/docs/advanced/progress/`.
 
 ## Releases
 
@@ -46,11 +55,14 @@ array is non-empty.
 
 ## Documentation
 
-`src/content/docs/docs/<section>/<page>.md` (or `.mdx`). Frontmatter needs
-`title` and `description`; `sidebar.order` controls position. Pages for
-features that are not built open with a `:::caution[Not built yet]` or
-`:::note[Planned]` aside naming the milestone. Do not write setup steps for
-anything that does not run.
+`src/content/docs/docs/<section>/<page>.md` (or `.mdx`). Sections are
+task-oriented: getting-started, terminal, ai-coding, board, ai-teams, git,
+settings, advanced. Frontmatter needs `title` and `description`;
+`sidebar.order` controls position. User guides describe only implemented
+workflows in plain language; a page for something not built opens with one
+`:::note[Planned]` aside. Technical detail (architecture, internals, APIs,
+contributing) lives under `advanced/`. Old URLs are redirected from
+`astro.config.mjs`; add a redirect when you move a page.
 
 ## Mockups
 

@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { availability, connectionMethods, integrationCategories, roadmapStatuses, footerColumns, primaryNav, featurePages, site } from '@/data/site';
+import { availability, connectionMethods, integrationCategories, roadmapAreas, roadmapStatuses, footerColumns, primaryNav, featurePages, site } from '@/data/site';
 
 const read = (p: string) => JSON.parse(readFileSync(new URL(`../../src/content/data/${p}`, import.meta.url), 'utf8'));
 const integrations: any[] = read('integrations.json');
@@ -13,6 +13,7 @@ const milestones: any[] = read('milestones.json');
 const releases: any[] = read('releases.json');
 
 const isoDate = /^\d{4}-\d{2}-\d{2}$/;
+const jargon = /\b(Rust|Tauri|SQLite|PTY|DAG|IPC|lease|state machine|control plane|policy engine)\b/i;
 
 describe('integrations catalog', () => {
   it('has unique ids', () => {
@@ -21,20 +22,26 @@ describe('integrations catalog', () => {
   });
   it('uses only the shared availability, category and connection vocabularies', () => {
     for (const i of integrations) {
-      expect(Object.keys(availability)).toContain(i.status);
-      expect(Object.keys(integrationCategories)).toContain(i.category);
-      for (const c of i.connection) expect(Object.keys(connectionMethods)).toContain(c);
+      expect(Object.keys(availability), i.id).toContain(i.status);
+      expect(Object.keys(integrationCategories), i.id).toContain(i.category);
+      for (const c of i.connection) expect(Object.keys(connectionMethods), i.id).toContain(c);
     }
   });
-  it('never marks a coding-agent account or an MCP server as available (none is implemented)', () => {
-    for (const i of integrations.filter((x) => x.category === 'coding-agents' || x.category === 'mcp-servers')) {
+  it('never marks a coding-agent account or an MCP-only connection as available (none is implemented)', () => {
+    for (const i of integrations) {
+      if (i.connection.includes('cli-account')) expect(i.status, i.id).not.toBe('available');
+      if (i.connection.every((c: string) => c === 'mcp')) expect(i.status, i.id).not.toBe('available');
+    }
+  });
+  it('never marks a project-management or developer-service connection as available until one is built', () => {
+    for (const i of integrations.filter((x) => x.category === 'project-management' || x.category === 'developer-services')) {
       expect(i.status, i.id).not.toBe('available');
     }
   });
-  it('gives every available entry a milestone that is implemented or in progress', () => {
-    const okMilestones = new Set(milestones.filter((m) => m.status !== 'planned').map((m) => `M${m.number}`));
-    for (const i of integrations.filter((x) => x.status === 'available')) {
-      expect(okMilestones.has(i.milestone), `${i.id} claims available in ${i.milestone}`).toBe(true);
+  it('explains each entry in user language, without engineering jargon', () => {
+    for (const i of integrations) {
+      expect(i.enables.length, i.id).toBeGreaterThan(20);
+      expect(i.enables, i.id).not.toMatch(jargon);
     }
   });
   it('only links to internal docs pages with a trailing slash', () => {
@@ -43,22 +50,28 @@ describe('integrations catalog', () => {
 });
 
 describe('roadmap', () => {
-  it('has unique ids and valid statuses and dates', () => {
+  it('has unique ids and valid statuses, areas and dates', () => {
     const ids = roadmap.map((r) => r.id);
     expect(new Set(ids).size).toBe(ids.length);
     for (const r of roadmap) {
-      expect(Object.keys(roadmapStatuses)).toContain(r.status);
-      expect(r.updated).toMatch(isoDate);
-      expect(r.milestone).toMatch(/^M(1[0-2]|[1-9])$/);
+      expect(Object.keys(roadmapStatuses), r.id).toContain(r.status);
+      expect(Object.keys(roadmapAreas), r.id).toContain(r.area);
+      expect(r.updated, r.id).toMatch(isoDate);
     }
   });
-  it('lists twelve milestones in order', () => {
-    expect(milestones.map((m) => m.number)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+  it('covers every public area', () => {
+    for (const area of Object.keys(roadmapAreas)) expect(roadmap.some((r) => r.area === area), area).toBe(true);
+  });
+  it('is written for users, without milestone ids or engineering jargon', () => {
+    for (const r of roadmap) {
+      expect(`${r.title} ${r.description}`, r.id).not.toMatch(jargon);
+      expect(`${r.title} ${r.description}`, r.id).not.toMatch(/\bM(1[0-2]|[1-9])\b/);
+    }
   });
   it('marks nothing as released while there are no releases', () => {
     if (releases.length === 0) {
-      for (const r of roadmap) expect(r.status).not.toBe('released');
-      for (const m of milestones) expect(m.status).not.toBe('released');
+      for (const r of roadmap) expect(r.status, r.id).not.toBe('released');
+      for (const m of milestones) expect(m.status, m.id).not.toBe('released');
     }
   });
   it('only claims implemented work was verified somewhere', () => {
@@ -66,6 +79,9 @@ describe('roadmap', () => {
   });
   it('never dates an entry after the reconciliation date', () => {
     for (const r of roadmap) expect(r.updated <= site.status.asOf, r.id).toBe(true);
+  });
+  it('lists twelve engineering milestones for the contributor page', () => {
+    expect(milestones.map((m) => m.number)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
   });
 });
 
@@ -81,7 +97,7 @@ describe('releases', () => {
   });
 });
 
-describe('navigation', () => {
+describe('navigation and positioning', () => {
   it('uses internal links with trailing slashes', () => {
     const all = [...primaryNav, ...featurePages, ...footerColumns.flatMap((c) => c.items)];
     for (const n of all) {
@@ -89,7 +105,16 @@ describe('navigation', () => {
       expect(n.href, n.label).toMatch(/^\/(#.*|.*\/(#.*)?)?$/);
     }
   });
-  it('does not expose the repository while it is private', () => {
+  it('keeps the navigation compact', () => {
+    expect(primaryNav.length).toBeLessThanOrEqual(6);
+    expect(featurePages.length).toBe(5);
+  });
+  it('does not expose the application repository while it is private', () => {
     if (!site.repo.public) expect(primaryNav.some((n) => n.href.includes('github.com'))).toBe(false);
+  });
+  it('never claims the project is built in the open while the repository is private', () => {
+    if (!site.repo.public) {
+      for (const v of [site.description, site.shortDescription, site.status.line, site.status.meaning]) expect(v).not.toMatch(/built in the open/i);
+    }
   });
 });
