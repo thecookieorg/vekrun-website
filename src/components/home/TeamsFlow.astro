@@ -1,21 +1,20 @@
 ---
 /**
- * The Factory pipeline: Objective → Plan → Council → Agents → Tests → Verification → Delivery.
- * A real sequence, so the stages are numbered. Selecting a stage shows what you can inspect and control there.
+ * AI Teams: Idea → Plan → Review → Build → Test → Deliver. A real sequence, so stages are numbered.
+ * Selecting a stage shows what happens and what you decide there. Review (Council) is optional.
  */
-interface Stage { id: string; title: string; what: string; inspect: string[]; control: string[]; optional?: boolean }
+interface Stage { id: string; title: string; what: string; you: string[]; optional?: boolean }
 const stages: Stage[] = [
-  { id: 'objective', title: 'Objective', what: 'You state the goal and the acceptance criteria. Nothing runs yet.', inspect: ['The objective as the agents will read it', 'Which repository, branch and worktree root apply'], control: ['Edit the criteria before anything starts', 'Choose the model profile and budget'] },
-  { id: 'plan', title: 'Plan', what: 'A manager agent reads the project and proposes a structured plan: steps, files, dependencies, risks and tests.', inspect: ['Every step with its dependency graph', 'A diff between plan revisions'], control: ['Edit any step', 'Approve, or send it back'] },
-  { id: 'council', title: 'Council', what: 'Optional. Several models review the plan independently, then critique each other’s positions. Disagreements are recorded, not voted away.', inspect: ['Each member’s first-round position', 'Critiques, revisions and unresolved disagreements', 'The moderator’s synthesis with cited evidence'], control: ['Members, models, rounds and budget', 'Skip it entirely for routine work'], optional: true },
-  { id: 'agents', title: 'Agents', what: 'Approved steps become Factory tasks. Workers claim them under leases and work in separate Git worktrees.', inspect: ['Every tool call and every diff, per agent', 'What left the machine, before it left'], control: ['Pause, redirect or reassign a task', 'Approve writes and commands per policy'] },
-  { id: 'tests', title: 'Tests', what: 'Approved commands run in the task’s worktree. Output is evidence, not an agent’s summary of it.', inspect: ['Commands, exit codes and full output'], control: ['Which commands are allowed without asking'] },
-  { id: 'verification', title: 'Verification', what: 'A different agent checks the result against the original criteria. A claim without evidence is refused by the contract.', inspect: ['The verification report: commands, outcomes, limitations', 'Bounded repair attempts and why they stopped'], control: ['Repair limits and escalation', 'Accept the report or ask for more'] },
-  { id: 'delivery', title: 'Delivery', what: 'The integrator previews the merge, shows conflicts, and waits. Protected state changes only when you approve.', inspect: ['The merge preview with conflicts', 'The full chain: plan → tasks → evidence → merge'], control: ['Approve the merge, or not'] },
+  { id: 'idea', title: 'Idea', what: 'Start from a ticket on your Board or a sentence of your own. Say what done looks like.', you: ['Edit the goal and acceptance criteria', 'Pick which models to use and how much to spend'] },
+  { id: 'plan', title: 'Plan', what: 'An agent reads the project and drafts a plan: steps, files, dependencies, risks and the tests that will prove it.', you: ['Edit any step', 'Approve the plan, or send it back'] },
+  { id: 'review', title: 'Review', what: 'Optional. Several models evaluate the plan independently and challenge each other’s recommendations. Disagreements are shown, not hidden.', you: ['Choose the members, models and rounds', 'Skip it for routine work'], optional: true },
+  { id: 'build', title: 'Build', what: 'Agents implement the approved steps in parallel, each on its own branch and worktree, so nothing collides.', you: ['Approve diffs and commands as they come', 'Pause, redirect or take over any task'] },
+  { id: 'test', title: 'Test', what: 'The tests you allow run in each worktree. Then a different agent checks the result against the goal, with the commands and output as evidence.', you: ['Decide which commands run without asking', 'Accept the check or ask for more'] },
+  { id: 'deliver', title: 'Deliver', what: 'You see a merge preview with any conflicts. Nothing is merged, pushed or updated on your tracker until you approve.', you: ['Approve the merge, or not'] },
 ];
 ---
 <div class="factory-flow" data-flow>
-  <div class="factory-rail" role="tablist" aria-label="Factory stages">
+  <div class="factory-rail" role="tablist" aria-label="AI Teams stages">
     {stages.map((s, i) => (
       <button
         type="button"
@@ -42,14 +41,10 @@ const stages: Stage[] = [
       hidden={i !== 0}
     >
       <p class="factory-what">{s.what}</p>
-      <div class="factory-cols">
+      <div class="factory-cols factory-cols-one">
         <div>
-          <h4 class="factory-col-title">You can inspect</h4>
-          <ul class="factory-list">{s.inspect.map((x) => <li>{x}</li>)}</ul>
-        </div>
-        <div>
-          <h4 class="factory-col-title">You control</h4>
-          <ul class="factory-list">{s.control.map((x) => <li>{x}</li>)}</ul>
+          <h4 class="factory-col-title">What you decide</h4>
+          <ul class="factory-list">{s.you.map((x) => <li>{x}</li>)}</ul>
         </div>
       </div>
     </div>
@@ -78,7 +73,7 @@ const stages: Stage[] = [
   @media (min-width: 48rem) { .factory-panel { padding: 2rem; } }
   .factory-what { font-size: 1.0625rem; color: var(--text); max-width: 58ch; }
   .factory-cols { display: grid; gap: 1.5rem; margin-top: 1.5rem; }
-  @media (min-width: 40rem) { .factory-cols { grid-template-columns: 1fr 1fr; gap: 2rem; } }
+  .factory-cols-one { grid-template-columns: 1fr; }
   .factory-col-title { font-size: 0.8125rem; font-weight: 560; color: var(--text-3); margin-bottom: 0.5rem; }
   .factory-list { list-style: none; margin: 0; padding: 0; color: var(--text-2); font-size: 0.9375rem; }
   .factory-list li { padding: 0.4rem 0 0.4rem 1rem; position: relative; border-top: 1px solid var(--border); }

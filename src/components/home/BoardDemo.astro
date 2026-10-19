@@ -1,0 +1,140 @@
+---
+/**
+ * The Board story: a realistic Kanban preview with a selected ticket and the Start Work choice.
+ * Static markup, clearly marked as a concept. The three workflow buttons are real tabs that
+ * swap the explanation underneath.
+ */
+import ConceptNotice from '@/components/ConceptNotice.astro';
+
+type Card = { id: string; title: string; src: 'Li' | 'Ji' | 'As' | 'Gh'; agent?: 'agent' | 'team' | 'you'; review?: boolean; tests?: 'running' | 'failed' };
+const columns: { name: string; cards: Card[] }[] = [
+  { name: 'To do', cards: [
+    { id: 'VEK-142', title: 'Add GitHub OAuth login', src: 'Li' },
+    { id: 'API-88', title: 'Rate-limit the export endpoint', src: 'Ji' },
+    { id: 'WEB-311', title: 'Fix the dark-mode flash on load', src: 'Gh' },
+  ] },
+  { name: 'In progress', cards: [
+    { id: 'VEK-137', title: 'Migrate sessions to signed cookies', src: 'Li', agent: 'agent', tests: 'running' },
+    { id: 'OPS-21', title: 'Rotate the staging database password', src: 'As', agent: 'you' },
+  ] },
+  { name: 'In review', cards: [
+    { id: 'VEK-129', title: 'Replace the retry queue', src: 'Li', agent: 'team', review: true },
+  ] },
+  { name: 'Done', cards: [
+    { id: 'API-80', title: 'Return 429 with a Retry-After header', src: 'Ji' },
+  ] },
+];
+const srcLabel = { Li: 'Linear', Ji: 'Jira', As: 'Asana', Gh: 'GitHub' };
+const workflows = [
+  { id: 'manual', label: 'Work manually', text: 'Vekrun creates the branch and worktree and opens a terminal in it. You write the code. The ticket is on your Board; the context is on your machine.' },
+  { id: 'agent', label: 'With an AI agent', text: 'The ticket becomes the agent’s brief. It plans, edits and runs tests in the worktree, showing every diff before it writes and every command before it runs.' },
+  { id: 'team', label: 'Delegate to an AI team', text: 'For larger work, a plan is drafted for your approval, agents implement in parallel on their own branches, a separate agent checks the result, and you approve the merge.' },
+];
+---
+<figure class="board-demo" data-board>
+  <div class="window">
+    <div class="window-bar justify-between">
+      <div class="flex items-center gap-3">
+        <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="text-text-2">Board</span>
+        <span class="hidden sm:inline">Assigned to you</span>
+      </div>
+      <span class="hidden items-center gap-1.5 sm:inline-flex"><span class="h-1.5 w-1.5 rounded-full bg-ok" aria-hidden="true"></span>Linear · Jira · Asana · GitHub</span>
+    </div>
+    <div class="board-columns">
+      {columns.map((col) => (
+        <section class="board-col" aria-label={`${col.name} column`}>
+          <header class="board-col-head"><span>{col.name}</span><span class="text-text-3">{col.cards.length}</span></header>
+          <ul class="board-cards">
+            {col.cards.map((c) => (
+              <li class:list={['board-card', c.id === 'VEK-142' && 'is-selected']} aria-current={c.id === 'VEK-142' ? 'true' : undefined}>
+                <div class="flex items-center justify-between gap-2">
+                  <span class="font-mono text-[0.7rem] text-text-3">{c.id}</span>
+                  <span class="board-src" title={srcLabel[c.src]} aria-label={srcLabel[c.src]}>{c.src}</span>
+                </div>
+                <p class="board-card-title">{c.title}</p>
+                {(c.agent || c.review || c.tests) && (
+                  <div class="board-meta">
+                    {c.agent === 'agent' && <span class="board-chip"><i class="bg-warn"></i>Agent working</span>}
+                    {c.agent === 'team' && <span class="board-chip"><i class="bg-info"></i>AI team</span>}
+                    {c.agent === 'you' && <span class="board-chip"><i class="bg-ok"></i>You</span>}
+                    {c.tests === 'running' && <span class="board-chip">Tests running</span>}
+                    {c.review && <span class="board-chip"><i class="bg-ok"></i>Ready for review</span>}
+                  </div>
+                )}
+                {c.id === 'VEK-142' && (
+                  <div class="board-start" aria-hidden="true">
+                    <span class="board-start-btn">Start Work</span>
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  </div>
+
+  <div class="board-choose">
+    <p class="board-choose-label">After Start Work, choose how to work on VEK-142</p>
+    <div role="tablist" aria-label="Ways to work on a ticket" class="board-tabs">
+      {workflows.map((w, i) => (
+        <button type="button" role="tab" id={`board-tab-${w.id}`} aria-controls={`board-panel-${w.id}`} aria-selected={i === 1 ? 'true' : 'false'} tabindex={i === 1 ? 0 : -1} class="board-tab">{w.label}</button>
+      ))}
+    </div>
+    {workflows.map((w, i) => (
+      <p role="tabpanel" id={`board-panel-${w.id}`} aria-labelledby={`board-tab-${w.id}`} hidden={i !== 1} class="board-panel">{w.text}</p>
+    ))}
+  </div>
+
+  <figcaption class="mt-4"><ConceptNotice text="Product preview. The Board works with local tickets in the development build; connecting Linear, Jira, Asana, GitHub and GitLab is planned." /></figcaption>
+</figure>
+
+<style>
+  .board-demo { font-size: 0.8125rem; }
+  .board-columns { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--border); }
+  @media (max-width: 47.9rem) {
+    .board-columns { grid-template-columns: repeat(4, 15rem); overflow-x: auto; scroll-snap-type: x mandatory; }
+    .board-col { scroll-snap-align: start; }
+  }
+  .board-col { background: var(--surface); min-width: 0; }
+  .board-col-head { display: flex; justify-content: space-between; padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--border); color: var(--text-2); font-size: 0.75rem; }
+  .board-cards { list-style: none; margin: 0; padding: 0.6rem; display: flex; flex-direction: column; gap: 0.5rem; min-height: 16rem; }
+  .board-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.6rem 0.7rem; display: flex; flex-direction: column; gap: 0.35rem; }
+  .board-card.is-selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .board-card-title { color: var(--text); font-size: 0.8125rem; line-height: 1.35; }
+  .board-src { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-2); border: 1px solid var(--border-strong); border-radius: 4px; padding: 0.05rem 0.3rem; }
+  .board-meta { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .board-chip { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.68rem; color: var(--text-2); }
+  .board-chip i { width: 0.4rem; height: 0.4rem; border-radius: 50%; display: inline-block; }
+  .board-start { margin-top: 0.25rem; }
+  .board-start-btn { display: inline-block; background: var(--accent); color: var(--accent-ink); font-weight: 560; font-size: 0.75rem; padding: 0.3rem 0.6rem; border-radius: 5px; }
+
+  .board-choose { margin-top: 1.25rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); padding: 1rem 1.25rem 1.25rem; }
+  .board-choose-label { color: var(--text-3); font-size: 0.8125rem; margin-bottom: 0.75rem; }
+  .board-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .board-tab { border: 1px solid var(--border-strong); background: transparent; color: var(--text-2); border-radius: 999px; padding: 0.4rem 0.85rem; font-size: 0.875rem; cursor: pointer; }
+  .board-tab:hover { color: var(--text); }
+  .board-tab[aria-selected='true'] { background: var(--accent-soft); border-color: var(--accent); color: var(--text); }
+  .board-panel { margin-top: 0.9rem; color: var(--text-2); font-size: 0.9375rem; line-height: 1.55; max-width: 60ch; }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-board]').forEach((root) => {
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[role="tabpanel"]'));
+    const select = (i: number, focus = false) => {
+      tabs.forEach((t, j) => { t.setAttribute('aria-selected', String(i === j)); t.tabIndex = i === j ? 0 : -1; });
+      panels.forEach((p, j) => { p.hidden = i !== j; });
+      if (focus) tabs[i]?.focus();
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(i));
+      t.addEventListener('keydown', (e) => {
+        const n = tabs.length;
+        if (e.key === 'ArrowRight') { e.preventDefault(); select((i + 1) % n, true); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); select((i - 1 + n) % n, true); }
+      });
+    });
+  });
+</script>

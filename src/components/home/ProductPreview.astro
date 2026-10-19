@@ -13,6 +13,7 @@ import { RotateCcw } from '@lucide/astro';
       <div class="flex items-center gap-3">
         <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
         <span class="text-text-2">acme-api</span>
+        <span class="hidden sm:inline text-text-3">VEK-142</span>
         <span class="hidden sm:inline" data-field="branch">main</span>
       </div>
       <div class="flex items-center gap-3">
@@ -148,17 +149,17 @@ import { RotateCcw } from '@lucide/astro';
   // The scripted session. Times are milliseconds from start.
   const script: Ev[] = [
     { t: 0, k: 'term', html: '<span class="dim">~/code/acme-api</span> <span class="ok">main</span>\n<span class="dim">$</span> git status\nOn branch main\nnothing to commit, working tree clean' },
-    { t: 500, k: 'objective', text: 'Add GitHub OAuth login to the API, with tests.' },
+    { t: 500, k: 'objective', text: 'VEK-142 · Add GitHub OAuth login to the API, with tests.' },
     { t: 900, k: 'item', id: 'plan', html: '<strong>Plan</strong> reading the repository<small>axum 0.8 · sqlx · existing session middleware</small>', state: 'running' },
     { t: 2300, k: 'state', id: 'plan', state: 'done' },
     { t: 2300, k: 'item', id: 'plan-out', html: '<strong>Plan ready</strong> 3 steps, 4 files, 1 migration<small>Waiting for your approval</small>', state: 'approval' },
     { t: 2300, k: 'field', name: 'approvals', text: '1 waiting', tone: 'warn' },
     { t: 2300, k: 'step', id: 'plan', state: 'running' },
     { t: 3600, k: 'state', id: 'plan-out', state: 'done' },
-    { t: 3600, k: 'item', id: 'approved', html: '<strong>Approved by you</strong><small>Worktree created: feat/github-oauth</small>', state: 'done' },
+    { t: 3600, k: 'item', id: 'approved', html: '<strong>Approved by you</strong><small>Branch and worktree created: feat/vek-142-github-oauth</small>', state: 'done' },
     { t: 3600, k: 'step', id: 'plan', state: 'done' },
     { t: 3600, k: 'field', name: 'approvals', text: '0 waiting', tone: 'muted' },
-    { t: 3600, k: 'field', name: 'branch', text: 'feat/github-oauth' },
+    { t: 3600, k: 'field', name: 'branch', text: 'feat/vek-142-github-oauth' },
     { t: 3600, k: 'field', name: 'cwd', text: '~/code/acme-api/.worktrees/github-oauth' },
     { t: 3900, k: 'step', id: 'implement', state: 'running' },
     { t: 3900, k: 'item', id: 'impl', html: '<strong>Implement</strong> src/auth/github.rs<small>Diff shown before every write</small>', state: 'running' },
@@ -185,7 +186,7 @@ import { RotateCcw } from '@lucide/astro';
     { t: 12600, k: 'item', id: 'review', html: '<strong>Ready for your review</strong> 4 files, +212 −2<small>Merge happens only when you approve</small>', state: 'approval' },
     { t: 12600, k: 'field', name: 'review', text: 'Ready for you: 4 files, +212 −2', tone: 'ok' },
     { t: 12600, k: 'field', name: 'approvals', text: '1 waiting', tone: 'warn' },
-    { t: 12600, k: 'term', html: '\n<span class="dim">~/code/acme-api/.worktrees/github-oauth</span> <span class="ok">feat/github-oauth</span>\n<span class="dim">$</span> ', cursor: true },
+    { t: 12600, k: 'term', html: '\n<span class="dim">~/code/acme-api/.worktrees/github-oauth</span> <span class="ok">feat/vek-142-github-oauth</span>\n<span class="dim">$</span> ', cursor: true },
   ];
 
   const roots = document.querySelectorAll<HTMLElement>('[data-preview]');
