@@ -1,0 +1,17 @@
+---
+/** Window chrome for product concepts. Always paired with a ConceptNotice by the caller. */
+interface Props { title?: string; class?: string; tabs?: string[] }
+const { title = 'Vekrun', class: className = '', tabs = [] } = Astro.props;
+---
+<div class:list={['window text-[0.8125rem]', className]}>
+  <div class="window-bar">
+    <span class="window-dots"><i></i><i></i><i></i></span>
+    <span class="truncate">{title}</span>
+    {tabs.length > 0 && (
+      <span class="ml-auto hidden gap-3 sm:flex">
+        {tabs.map((t, i) => <span class:list={[i === 0 ? 'text-text' : 'text-text-3']}>{t}</span>)}
+      </span>
+    )}
+  </div>
+  <slot />
+</div>

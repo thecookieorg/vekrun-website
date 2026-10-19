@@ -1,0 +1,28 @@
+---
+/** Top of every feature page: name of the area, the claim, one paragraph, and an overall status. */
+import StatusBadge from '@/components/StatusBadge.astro';
+import type { Availability } from '@/data/site';
+interface Props {
+  area: string;
+  title: string;
+  lede: string;
+  status: Availability;
+  statusNote?: string;
+}
+const { area, title, lede, status, statusNote } = Astro.props;
+---
+<section class="relative overflow-hidden border-b border-border">
+  <div class="dot-field pointer-events-none absolute inset-0" aria-hidden="true"></div>
+  <div class="container-site relative py-16 sm:py-20 lg:py-24">
+    <div class="max-w-3xl">
+      <p class="text-[0.9375rem] text-text-2">{area}</p>
+      <h1 class="heading-1 mt-3 text-text">{title}</h1>
+      <p class="lede mt-5 measure-wide">{lede}</p>
+      <div class="mt-6 flex flex-wrap items-center gap-3">
+        <StatusBadge status={status} />
+        {statusNote && <span class="text-sm text-text-3">{statusNote}</span>}
+      </div>
+    </div>
+    <slot />
+  </div>
+</section>

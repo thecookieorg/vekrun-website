@@ -1,0 +1,29 @@
+---
+/** A split terminal with shell-integration marks. Static concept; the content is plausible, not recorded. */
+import Mock from './Mock.astro';
+import ConceptNotice from '@/components/ConceptNotice.astro';
+---
+<Mock title="vekrun · ~/code/api · main" tabs={['api', 'worker', 'ssh: build-01']}>
+  <div class="grid grid-cols-1 divide-y divide-border bg-term-bg font-mono text-[0.75rem] leading-relaxed text-term-fg sm:grid-cols-[1.3fr_1fr] sm:divide-x sm:divide-y-0">
+    <div class="p-4">
+      <div class="flex items-center gap-2"><span class="text-term-green">$</span><span>cargo test -p api</span><span class="ml-auto text-term-dim">1.8s · exit 0</span></div>
+      <div class="text-term-dim">running 48 tests</div>
+      <div class="text-term-dim">test routes::health ... <span class="text-term-green">ok</span></div>
+      <div class="text-term-dim">test routes::auth::callback ... <span class="text-term-green">ok</span></div>
+      <div class="text-term-dim">test result: <span class="text-term-green">ok</span>. 48 passed; 0 failed</div>
+      <div class="mt-3 flex items-center gap-2 border-l-2 border-danger pl-2"><span class="text-term-green">$</span><span>git push</span><span class="ml-auto text-term-dim">0.4s · exit 128</span></div>
+      <div class="text-danger">fatal: The current branch has no upstream branch.</div>
+      <div class="mt-3 flex items-center gap-2"><span class="text-term-green">$</span><span class="border-r-[6px] border-term-fg pr-px"> </span></div>
+    </div>
+    <div class="p-4">
+      <div class="text-term-dim">ssh build-01 · host key verified</div>
+      <div class="flex items-center gap-2"><span class="text-term-green">$</span><span>htop</span></div>
+      <div class="mt-2 space-y-1">
+        <div class="flex items-center gap-2"><span class="w-9 text-term-dim">cpu</span><span class="h-1.5 flex-1 rounded-sm bg-surface-3"><span class="block h-full w-[62%] rounded-sm bg-term-green"></span></span><span class="text-term-dim">62%</span></div>
+        <div class="flex items-center gap-2"><span class="w-9 text-term-dim">mem</span><span class="h-1.5 flex-1 rounded-sm bg-surface-3"><span class="block h-full w-[41%] rounded-sm bg-term-blue"></span></span><span class="text-term-dim">41%</span></div>
+      </div>
+      <div class="mt-3 text-term-dim">⌘F search · ⌘D split · ⌘T tab</div>
+    </div>
+  </div>
+</Mock>
+<ConceptNotice class="mt-3" />

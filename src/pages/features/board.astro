@@ -1,0 +1,70 @@
+---
+import Base from '@/layouts/Base.astro';
+import Section from '@/components/Section.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import Button from '@/components/Button.astro';
+import FeatureHero from '@/components/features/FeatureHero.astro';
+import CapabilityGrid, { type Capability } from '@/components/features/CapabilityGrid.astro';
+import BoardFlow from '@/components/features/BoardFlow.astro';
+import WhereThisStands from '@/components/features/WhereThisStands.astro';
+
+const capabilities: Capability[] = [
+  { title: 'Unified assigned tickets', description: 'Tickets from every connected provider in one list, each keeping its source identity, original status and a link back.', status: 'in-development', note: 'The Board, its cache and its ticket model exist with a local ticket source. Live providers arrive in M10.' },
+  { title: 'Interactive Kanban', description: 'To Do, In Progress, In Review and Done as Vekrun columns, with configurable mappings from each provider\'s own workflow.', status: 'in-development', note: 'List and four columns exist. Drag-and-drop, saved views and bulk actions are planned for M11.' },
+  { title: 'Linear, Jira and Asana', description: 'Your assigned issues, synchronised on a schedule or on demand, through each vendor\'s documented API.', status: 'planned', note: 'M10. Asana needs a registered OAuth app or your own app credentials.' },
+  { title: 'GitHub and GitLab issues', description: 'Issues assigned to you sit next to tickets from other providers; pull and merge requests link back.', status: 'planned', note: 'M10.' },
+  { title: 'Start Work', description: 'One action creates the branch, the worktree and a terminal in it. The ticket is on your Board; the context is on your machine.', status: 'available' },
+  { title: 'Manual, Agent and Factory execution', description: 'Do it yourself, hand the ticket to one agent as framed data, or let Factory plan it and delegate.', status: 'available' },
+  { title: 'Git worktrees', description: 'Every ticket works in its own worktree, with a branch-name template you control.', status: 'available' },
+  { title: 'Linked pull requests', description: 'The PR appears on the ticket card and the delivery summary posts back to the provider.', status: 'planned', note: 'M10.' },
+  { title: 'Ticket status synchronisation', description: 'Outbound transitions are acknowledged by the provider before they are shown as done. No duplicate tickets, no sync loops.', status: 'planned', note: 'Sync ledger and idempotency keys land in M8; live providers in M10.' },
+  { title: 'Execution tracking', description: 'Each card shows what Vekrun is doing for it: an agent at work, tests running, a review waiting, a blocker.', status: 'available', note: 'Derived from plan, task and agent signals.' },
+  { title: 'Review queue', description: 'Tickets with verification reports move to Ready for Review and Ready for Merge.', status: 'in-development', note: 'M7.' },
+  { title: 'Works without AI', description: 'The Board and Start Work need no model connection. Manual development is a first-class path.', status: 'available' },
+];
+---
+<Base title="Board: your assigned tickets, connected to execution" description="Vekrun Board shows the tickets assigned to you across Linear, Jira, Asana, GitHub and GitLab, and starts the work with one action: branch, worktree, terminal, and optionally an agent or a Factory team.">
+  <FeatureHero
+    area="Vekrun Board"
+    title="See your work. Start your work. Deliver your work."
+    lede="The Board is not another project tracker. Linear, Jira and Asana stay the systems of record. Vekrun is the execution layer that connects a ticket to a branch, a worktree, a terminal, and, when you want it, an agent or a Factory team."
+    status="in-development"
+    statusNote="Works today with local tickets. Live providers are planned for the extensibility milestone."
+  />
+
+  <Section id="flow">
+    <SectionHeading title="From ticket to delivery" lede="Five steps. The first two happen in one click. The last two never happen without you." />
+    <div class="mt-10">
+      <BoardFlow />
+    </div>
+  </Section>
+
+  <Section id="principles" rule tone="elevated">
+    <div class="grid gap-10 lg:grid-cols-[1fr_1.3fr] lg:gap-16">
+      <div>
+        <h2 class="heading-2">Rules the Board keeps</h2>
+        <p class="lede mt-4">Written down before the first provider was connected, so they survive the second one.</p>
+      </div>
+      <dl class="ruled-grid sm:grid-cols-2">
+        <div class="p-5"><dt class="font-[560] text-text">Provider neutral</dt><dd class="mt-1.5 text-[0.9rem] text-text-2">No vendor is favoured. Filter by provider or see everything at once. Several accounts from one provider can be connected.</dd></div>
+        <div class="p-5"><dt class="font-[560] text-text">Local first</dt><dd class="mt-1.5 text-[0.9rem] text-text-2">Vekrun owns the cache, the normalised model and the execution state. Offline, cached data is marked as cached.</dd></div>
+        <div class="p-5"><dt class="font-[560] text-text">No simulated actions</dt><dd class="mt-1.5 text-[0.9rem] text-text-2">Only actions the connected provider and your account allow are enabled. Unsupported actions are disabled with the reason.</dd></div>
+        <div class="p-5"><dt class="font-[560] text-text">Ticket text is untrusted</dt><dd class="mt-1.5 text-[0.9rem] text-text-2">A ticket description reaches an agent as data inside a framed block, visible in the egress preview. It cannot change the policy.</dd></div>
+      </dl>
+    </div>
+  </Section>
+
+  <Section id="capabilities" rule>
+    <SectionHeading title="What the Board does" lede="Statuses reflect the current source, not the plan." />
+    <CapabilityGrid items={capabilities} class="mt-10" />
+    <div class="mt-10 flex flex-wrap gap-3">
+      <Button href="/integrations/?category=project-management" variant="secondary">Project management integrations</Button>
+      <Button href="/factory/" variant="ghost">What Factory does with a ticket</Button>
+    </div>
+  </Section>
+
+  <WhereThisStands milestones="M5 foundation (in progress), M7 review queue, M8 sync engine, M10 live providers, M11 full Kanban">
+    <p>The Board is real on macOS with a local ticket source: tickets, repositories, Start Work into a worktree terminal, Start Work with an AI agent, and Start Work with a Factory plan that materialises into tasks. Execution status is derived from plan, task and agent signals.</p>
+    <p>No live provider is connected yet. Linear, Jira, Asana, GitHub and GitLab adapters, pull-request link-back, status synchronisation and notifications belong to M10. Drag-and-drop, saved views, bulk actions and a team board belong to M11.</p>
+  </WhereThisStands>
+</Base>

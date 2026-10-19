@@ -1,0 +1,65 @@
+---
+import Base from '@/layouts/Base.astro';
+import Section from '@/components/Section.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import Button from '@/components/Button.astro';
+import FeatureHero from '@/components/features/FeatureHero.astro';
+import CapabilityGrid, { type Capability } from '@/components/features/CapabilityGrid.astro';
+import ReviewInboxMock from '@/components/features/ReviewInboxMock.astro';
+import WhereThisStands from '@/components/features/WhereThisStands.astro';
+
+const capabilities: Capability[] = [
+  { title: 'PR review inbox', description: 'Pull and merge requests that need you, in one list, sorted by what is waiting longest.', status: 'planned', note: 'M10, with the GitHub and GitLab adapters.' },
+  { title: 'Reviews requested from you', description: 'Requests addressed to you first, with the branch, the repository and how long they have waited.', status: 'planned', note: 'M10.' },
+  { title: 'Teammates\' pull requests', description: 'What your team has open, so you can review before being asked.', status: 'planned', note: 'M10.' },
+  { title: 'Native AI review engine', description: 'Review mode reads a diff or a branch, runs the checks you allow, and reports findings with file and line. It never edits code.', status: 'available', note: 'Shipped as a single-agent mode. Running it over a hosted PR needs the M10 adapters.' },
+  { title: 'Inline suggestions', description: 'A finding carries a proposed change as a diff you can post as a suggestion or dismiss.', status: 'in-development' },
+  { title: 'Security and correctness analysis', description: 'Findings categorised by what they are: correctness, security, simplification. No benchmark claims, only evidence.', status: 'in-development' },
+  { title: 'Independent Review Council', description: 'Escalate a contested review to a Council of several models with different roles. Disagreements stay visible.', status: 'in-development', note: 'Council orchestration exists; the review preset is being built.' },
+  { title: 'Human approval', description: 'Nothing is posted to a provider and nothing merges without your action. The review engine recommends; you decide.', status: 'available' },
+  { title: 'GitHub and GitLab synchronisation', description: 'Comments, suggestions and approvals synchronised through each provider\'s API, acknowledged before shown as done.', status: 'planned', note: 'M10.' },
+  { title: 'Local branch review', description: 'Review any local branch against any other, with no hosting provider involved.', status: 'available' },
+];
+---
+<Base title="Code review: a review inbox with a native review engine" description="Vekrun collects the pull requests that need you, runs a native AI review engine that reports findings with evidence, and escalates contested reviews to an independent Council. No hosted review bot is required.">
+  <FeatureHero
+    area="Code review"
+    title="Reviews that come to you, with evidence attached."
+    lede="A review inbox for everything that needs your eyes, a native review engine that reads the diff and runs the checks, and a Council for the calls that deserve a second and third opinion. Every finding names a file and a line. Every decision is yours."
+    status="in-development"
+    statusNote="Review mode and Council exist today. The hosted-PR inbox and provider sync belong to the extensibility milestone."
+  >
+    <div class="mt-12 max-w-4xl">
+      <ReviewInboxMock />
+    </div>
+  </FeatureHero>
+
+  <Section id="no-bot">
+    <div class="grid gap-10 lg:grid-cols-[1fr_1.3fr] lg:gap-16">
+      <div>
+        <h2 class="heading-2">No mandatory hosted review bot</h2>
+        <p class="lede mt-4">The review engine runs where Vekrun runs: on your machine or on a worker you control, against the model you chose.</p>
+      </div>
+      <ul class="space-y-5 text-[0.9375rem] text-text-2">
+        <li class="border-l-2 border-border pl-4"><span class="text-text">Your code goes only to the provider you connected</span>, and the egress preview shows what is sent.</li>
+        <li class="border-l-2 border-border pl-4"><span class="text-text">Nothing is installed on your GitHub or GitLab organisation</span> to use it. Synchronising comments back is a per-account permission you grant.</li>
+        <li class="border-l-2 border-border pl-4"><span class="text-text">A local model can review a local branch</span> with no network at all.</li>
+        <li class="border-l-2 border-border pl-4"><span class="text-text">Findings carry evidence, not confidence scores.</span> A claim the engine cannot support is labelled as a claim.</li>
+      </ul>
+    </div>
+  </Section>
+
+  <Section id="capabilities" rule tone="elevated">
+    <SectionHeading title="What code review does" lede="Each capability says whether it exists in the current source today." />
+    <CapabilityGrid items={capabilities} class="mt-10" />
+    <div class="mt-10 flex flex-wrap gap-3">
+      <Button href="/features/planning/#council" variant="secondary">How a Council works</Button>
+      <Button href="/integrations/?category=source-control" variant="ghost">Source control integrations</Button>
+    </div>
+  </Section>
+
+  <WhereThisStands milestones="M4 Review mode (in progress), M6 Council (in progress), M10 PR inbox and provider sync">
+    <p>Review is one of the five agent modes and runs today over local branches and diffs as a read-only policy profile. Council orchestration is merged, so a contested review can already be deliberated by several models.</p>
+    <p>Not built yet: the hosted pull-request inbox, teammates' PR views, inline suggestions posted to GitHub or GitLab, and the synchronisation of comments and approvals. Those depend on the M10 adapters and the credential flows shared with MCP.</p>
+  </WhereThisStands>
+</Base>

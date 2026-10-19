@@ -1,0 +1,98 @@
+---
+import Base from '@/layouts/Base.astro';
+import Section from '@/components/Section.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import Button from '@/components/Button.astro';
+import FeatureHero from '@/components/features/FeatureHero.astro';
+import CapabilityGrid, { type Capability } from '@/components/features/CapabilityGrid.astro';
+import FactoryDiagram from '@/components/features/FactoryDiagram.astro';
+import TaskLifecycle from '@/components/features/TaskLifecycle.astro';
+import WhereThisStands from '@/components/features/WhereThisStands.astro';
+
+const capabilities: Capability[] = [
+  { title: 'Native Rust orchestration', description: 'The task graph, leases, scheduling and state transitions live in Rust crates, not in a prompt or a plugin. The UI only renders what the control plane decides.', status: 'available' },
+  { title: 'Manager agents', description: 'A manager reads the project, proposes a plan, splits it into tasks with dependencies and waits for your approval before anything runs.', status: 'available' },
+  { title: 'Specialised agents', description: 'Developer, debugger, tester, reviewer, security reviewer, documentation and integrator roles, plus your own role templates.', status: 'in-development', note: 'Manager and worker roles exist. The full role catalogue and user-defined templates are still being built.' },
+  { title: 'Task decomposition', description: 'Approved plans become Factory tasks with acceptance criteria and a dependency graph. Cycles are rejected; a dependent task cannot start early.', status: 'available' },
+  { title: 'Parallel work', description: 'Independent tasks run concurrently under a cap you set, each as a leased unit of work with its own audit trail.', status: 'available' },
+  { title: 'Worktree isolation', description: 'Every concurrent task gets its own Git worktree by default, so agents never edit the same checkout.', status: 'available', note: 'Worktree isolation is version-control isolation, not a security sandbox. OS-level isolation is separate and documented per platform.' },
+  { title: 'Independent verification', description: 'A different agent checks the work against the objective and acceptance criteria, runs the tests, and must show evidence.', status: 'available' },
+  { title: 'Repair loops', description: 'A failed verification opens a bounded repair task, then re-verification. When the bound is exhausted, the task escalates to you.', status: 'available' },
+  { title: 'Local workers', description: 'Tasks run on your machine today, inside the app process under a lease. A background daemon that outlives the window comes with the control-plane milestone.', status: 'in-development' },
+  { title: 'Remote workers', description: 'First-party Rust workers on a machine you control, reached over SSH port-forwarding by default, with reconnect and reconciliation.', status: 'planned' },
+  { title: 'Human approval', description: 'One Agent Inbox collects approvals, escalations, conflicts and review requests across every running session, in priority order.', status: 'available' },
+  { title: 'Snapshots before risky steps', description: 'Uncommitted state is captured before risky turns and before integration. Restore is previewed, selective and undoable.', status: 'available' },
+];
+---
+<Base title="Factory: coordinated agent teams with independent verification" description="Vekrun Factory runs teams of coding agents in isolated worktrees under a manager, verifies their work independently, and asks you before anything merges. Native Rust orchestration, no hosted service.">
+  <FeatureHero
+    area="Vekrun Factory"
+    title="Delegate the work. Keep the decisions."
+    lede="Factory turns an objective into a plan, the plan into tasks, and the tasks into verified changes. Agents work in parallel in separate worktrees. A different agent checks each result with evidence. You approve the merge."
+    status="in-development"
+    statusNote="Orchestration, verification and the Agent Inbox are implemented; background and remote workers are not."
+  />
+
+  <Section id="how-it-works">
+    <SectionHeading title="How a Factory run moves" lede="Six stages, each inspectable and each stoppable. Select a stage to read what it does and what it is not allowed to do." />
+    <div class="mt-10">
+      <FactoryDiagram />
+    </div>
+  </Section>
+
+  <Section id="one-agent-vs-team" rule tone="elevated">
+    <div class="grid gap-10 lg:grid-cols-2 lg:gap-16">
+      <div>
+        <h2 class="heading-2">One agent or a team</h2>
+        <p class="lede mt-4">Both run on the same runtime and the same permission system. The difference is who coordinates, and how much you want to check by hand.</p>
+      </div>
+      <div class="ruled-grid">
+        <div class="p-6">
+          <h3 class="heading-3">Agent mode</h3>
+          <p class="mt-2 text-[0.9375rem] text-text-2">One assistant in your current worktree. You read every diff and approve every write. Right for a change you could describe in one sentence and want to watch.</p>
+        </div>
+        <div class="p-6">
+          <h3 class="heading-3">Factory mode</h3>
+          <p class="mt-2 text-[0.9375rem] text-text-2">A manager plans and delegates. Workers run in parallel in their own worktrees. An independent verifier checks each task; you approve the plan up front and the merge at the end. Right for work with several moving parts.</p>
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <Section id="capabilities" rule>
+    <SectionHeading title="What Factory does" lede="Each capability says whether it exists in the current source today." />
+    <CapabilityGrid items={capabilities} class="mt-10" />
+  </Section>
+
+  <Section id="task-lifecycle" rule tone="elevated">
+    <SectionHeading title="One state machine per task" lede="Every task moves through explicit, durable states. The legal transitions are a single table, every change is a journal row written in the same transaction, and nothing in the UI can move a task on its own." />
+    <div class="mt-10">
+      <TaskLifecycle />
+    </div>
+    <p class="mt-6 max-w-2xl text-[0.9375rem] text-text-2">A lost lease returns the task to the queue rather than replaying it. Shell commands with side effects are never re-run blindly; reconciliation is the worker's job, under a documented per-tool policy.</p>
+  </Section>
+
+  <Section id="controls" rule>
+    <div class="grid gap-10 lg:grid-cols-[1fr_1.2fr] lg:gap-16">
+      <div>
+        <h2 class="heading-2">Budgets and limits that cannot widen</h2>
+        <p class="lede mt-4">Limits are inherited down the hierarchy: global, then project, then team, then agent, then task. A child can tighten them, never loosen them.</p>
+      </div>
+      <ul class="space-y-4 text-[0.9375rem] text-text-2">
+        <li class="border-l-2 border-border pl-4"><span class="text-text">Token, time, tool-call and concurrency caps</span> apply per task and roll up to the run.</li>
+        <li class="border-l-2 border-border pl-4"><span class="text-text">Threshold actions</span>: warn, pause, require approval or stop.</li>
+        <li class="border-l-2 border-border pl-4"><span class="text-text">Provider fallbacks only when your policy allows</span>. Private context is never sent to a new provider quietly.</li>
+        <li class="border-l-2 border-border pl-4"><span class="text-text">Estimated cost is an estimate.</span> A local cap cannot enforce a provider's actual bill unless the provider offers compatible controls, and Vekrun says so.</li>
+      </ul>
+    </div>
+    <div class="mt-10 flex flex-wrap gap-3">
+      <Button href="/features/planning/" variant="secondary">Plan and Council, the stages before Factory</Button>
+      <Button href="/features/agent-platform/" variant="ghost">The platform underneath</Button>
+    </div>
+  </Section>
+
+  <WhereThisStands milestones="M6 Native Factory orchestration, M7 Verification, recovery and integration, both in progress">
+    <p>Plan materialisation, leased task runs, the manager and worker hierarchy with authority that never widens, Council orchestration and the Agent Inbox are merged. Independent verification with bounded repairs, the integrator with conflict preview, and snapshots with undoable restore are merged. Everything above was verified on macOS.</p>
+    <p>Not built yet: the background daemon that lets a run outlive the window (M8), remote workers (M8), the scheduler (M9), and the full specialised-role catalogue. The release gate for Factory is the seeded-defect demonstration: a manager delegates, the verifier catches a planted bug, a bounded repair fixes it, and integration asks for approval, recorded on all three platforms.</p>
+  </WhereThisStands>
+</Base>

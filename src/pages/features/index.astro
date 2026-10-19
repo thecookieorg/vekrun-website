@@ -1,0 +1,60 @@
+---
+import Base from '@/layouts/Base.astro';
+import Section from '@/components/Section.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import StatusBadge from '@/components/StatusBadge.astro';
+import Button from '@/components/Button.astro';
+import { featurePages, site, type Availability } from '@/data/site';
+
+/** Overall status per area, kept in step with each feature page's hero. */
+const status: Record<string, Availability> = {
+  terminal: 'available',
+  'ai-coding': 'available',
+  factory: 'in-development',
+  planning: 'available',
+  board: 'in-development',
+  'code-review': 'in-development',
+  'agent-platform': 'in-development',
+};
+const detail: Record<string, string> = {
+  terminal: 'PTY shells, tabs and splits, shell integration, search, restore, SSH, themes. Works offline, without AI.',
+  'ai-coding': 'Ask, Plan, Build, Debug and Review as policy profiles. Diffs for approval, egress preview, local models.',
+  factory: 'Manager and worker agents in isolated worktrees, independent verification, bounded repairs, one Agent Inbox.',
+  planning: 'Structured plan revisions that become Factory tasks. A Council of several models for the decisions that deserve it.',
+  board: 'Your assigned tickets in one Kanban. Start Work creates the branch, the worktree and the terminal.',
+  'code-review': 'A native review engine over local branches today; a pull-request inbox with provider sync to come.',
+  'agent-platform': 'One state machine per task, a deny-by-default policy engine, scoped memory, routing, a headless CLI.',
+};
+---
+<Base title="Features" description="Everything Vekrun does, by area: terminal, AI coding, Factory, planning and Council, Board, code review and the agent platform, each with its current status.">
+  <section class="relative overflow-hidden border-b border-border">
+    <div class="dot-field pointer-events-none absolute inset-0" aria-hidden="true"></div>
+    <div class="container-site relative py-16 sm:py-20 lg:py-24">
+      <div class="max-w-3xl">
+        <h1 class="heading-1">Seven areas, one workspace.</h1>
+        <p class="lede mt-5 measure-wide">Vekrun grows outward from a terminal: an agent next to it, a team behind it, a board in front of it, and a platform underneath. Each area says what exists today.</p>
+        <p class="mt-6 text-sm text-text-3">Status as of {site.status.asOf}. "Available" means implemented in the current source and tested on macOS; there is no public build yet.</p>
+      </div>
+    </div>
+  </section>
+
+  <Section>
+    <ul class="ruled-grid sm:grid-cols-2">
+      {featurePages.map((f) => (
+        <li>
+          <a href={f.href} class="group flex h-full flex-col gap-3 p-6 transition-colors hover:bg-surface sm:p-7">
+            <div class="flex items-start justify-between gap-3">
+              <h2 class="heading-3 text-text group-hover:text-accent">{f.label}</h2>
+              <StatusBadge status={status[f.key] ?? 'planned'} compact class="mt-0.5" />
+            </div>
+            <p class="text-[0.9375rem] leading-relaxed text-text-2">{detail[f.key]}</p>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <div class="mt-10 flex flex-wrap gap-3">
+      <Button href="/roadmap/" variant="secondary">The roadmap behind the statuses</Button>
+      <Button href="/integrations/" variant="ghost">Integrations</Button>
+    </div>
+  </Section>
+</Base>
