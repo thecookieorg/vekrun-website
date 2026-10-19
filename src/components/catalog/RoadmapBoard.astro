@@ -1,0 +1,107 @@
+---
+import { getCollection } from 'astro:content';
+import { ExternalLink } from '@lucide/astro';
+import StatusBadge from '@/components/StatusBadge.astro';
+import { roadmapStatuses, type RoadmapStatus } from '@/data/site';
+
+const entries = (await getCollection('roadmap')).sort((a, b) => {
+  const m = (s: string) => Number(s.replace(/\D/g, ''));
+  return m(a.data.milestone) - m(b.data.milestone) || a.data.title.localeCompare(b.data.title);
+});
+const statusOrder = Object.keys(roadmapStatuses) as RoadmapStatus[];
+const areas = Array.from(new Set(entries.map((e) => e.data.area))).sort();
+const platformLabel: Record<string, string> = { macos: 'macOS', windows: 'Windows', linux: 'Linux' };
+const allPlatforms = ['macos', 'windows', 'linux'];
+---
+<div data-roadmap>
+  <form class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-8" aria-label="Filter roadmap entries" onsubmit="return false">
+    <fieldset>
+      <legend class="mb-2 text-[0.8125rem] font-[560] text-text">Status</legend>
+      <div class="flex flex-wrap gap-2">
+        {statusOrder.map((s) => (
+          <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border px-3 py-1.5 text-[0.8125rem] text-text-2 has-[:checked]:border-border-strong has-[:checked]:bg-surface-2 has-[:checked]:text-text">
+            <input type="checkbox" name="status" value={s} class="h-3.5 w-3.5 accent-[var(--accent)]" data-roadmap-status />
+            {roadmapStatuses[s].label}
+          </label>
+        ))}
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend class="mb-2 text-[0.8125rem] font-[560] text-text">Area</legend>
+      <div class="flex flex-wrap gap-2">
+        {areas.map((a) => (
+          <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border px-3 py-1.5 text-[0.8125rem] text-text-2 has-[:checked]:border-border-strong has-[:checked]:bg-surface-2 has-[:checked]:text-text">
+            <input type="checkbox" name="area" value={a} class="h-3.5 w-3.5 accent-[var(--accent)]" data-roadmap-area />
+            {a}
+          </label>
+        ))}
+      </div>
+    </fieldset>
+    <p class="w-full text-[0.875rem] text-text-2" aria-live="polite" data-roadmap-count>Showing all {entries.length} entries.</p>
+  </form>
+
+  <ul class="ruled-grid mt-6" role="list">
+    {entries.map((e) => {
+      const missing = allPlatforms.filter((p) => !e.data.verifiedOn.includes(p as never));
+      return (
+        <li class="grid gap-x-6 gap-y-3 p-5 md:grid-cols-[minmax(0,1fr)_14rem]" data-roadmap-item data-status={e.data.status} data-area={e.data.area}>
+          <div class="min-w-0">
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <h3 class="text-[1rem] font-[560] leading-tight text-text">{e.data.title}</h3>
+              <StatusBadge status={e.data.status} kind="roadmap" compact />
+            </div>
+            <p class="mt-1.5 text-[0.9rem] leading-relaxed text-text-2">{e.data.description}</p>
+            {e.data.link && (
+              <a href={e.data.link} target="_blank" rel="noopener noreferrer" class="mt-2 inline-flex items-center gap-1.5 text-[0.8125rem] text-accent hover:underline underline-offset-2">
+                <ExternalLink class="h-3.5 w-3.5" aria-hidden="true" /> Discussion
+              </a>
+            )}
+          </div>
+          <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-[0.8125rem] md:border-l md:border-border md:pl-5">
+            <dt class="text-text-3">Milestone</dt><dd class="text-text-2">{e.data.milestone}</dd>
+            <dt class="text-text-3">Area</dt><dd class="text-text-2">{e.data.area}</dd>
+            <dt class="text-text-3">Updated</dt><dd class="text-text-2"><time datetime={e.data.updated}>{e.data.updated}</time></dd>
+            <dt class="text-text-3">Verified on</dt>
+            <dd class="text-text-2">
+              {e.data.verifiedOn.length > 0 ? e.data.verifiedOn.map((p) => platformLabel[p]).join(', ') : 'Not yet'}
+              {e.data.verifiedOn.length > 0 && missing.length > 0 && (
+                <span class="block text-text-3">{missing.map((p) => platformLabel[p]).join(' and ')} by hand pending</span>
+              )}
+            </dd>
+          </dl>
+        </li>
+      );
+    })}
+  </ul>
+
+  <div class="mt-6 hidden rounded-lg border border-border p-8 text-center" data-roadmap-empty>
+    <p class="text-[1rem] font-[560] text-text">No entries match those filters.</p>
+    <button type="button" class="mt-4 inline-flex h-10 items-center rounded-md border border-border-strong bg-surface px-4 text-[0.9375rem] text-text hover:bg-surface-2" data-roadmap-clear>Clear filters</button>
+  </div>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-roadmap]');
+  if (root) {
+    const statuses = Array.from(root.querySelectorAll<HTMLInputElement>('[data-roadmap-status]'));
+    const areas = Array.from(root.querySelectorAll<HTMLInputElement>('[data-roadmap-area]'));
+    const items = Array.from(root.querySelectorAll<HTMLElement>('[data-roadmap-item]'));
+    const count = root.querySelector<HTMLElement>('[data-roadmap-count]')!;
+    const empty = root.querySelector<HTMLElement>('[data-roadmap-empty]')!;
+    const clear = root.querySelector<HTMLButtonElement>('[data-roadmap-clear]')!;
+    const apply = () => {
+      const s = statuses.filter((c) => c.checked).map((c) => c.value);
+      const a = areas.filter((c) => c.checked).map((c) => c.value);
+      let shown = 0;
+      for (const el of items) {
+        const ok = (s.length === 0 || s.includes(el.dataset.status ?? '')) && (a.length === 0 || a.includes(el.dataset.area ?? ''));
+        el.hidden = !ok;
+        if (ok) shown++;
+      }
+      empty.classList.toggle('hidden', shown > 0);
+      count.textContent = s.length || a.length ? `Showing ${shown} of ${items.length} entries.` : `Showing all ${items.length} entries.`;
+    };
+    [...statuses, ...areas].forEach((c) => c.addEventListener('change', apply));
+    clear.addEventListener('click', () => { [...statuses, ...areas].forEach((c) => (c.checked = false)); apply(); });
+  }
+</script>

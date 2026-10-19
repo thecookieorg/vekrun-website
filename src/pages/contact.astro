@@ -1,0 +1,47 @@
+---
+import Base from '@/layouts/Base.astro';
+import Section from '@/components/Section.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import Button from '@/components/Button.astro';
+import { site } from '@/data/site';
+const title = 'Contact';
+const description = 'How to reach the Vekrun project, and which channels exist today.';
+const hasAny = Boolean(site.contact.generalEmail || site.contact.discussionsUrl || site.repo.public);
+---
+<Base title={title} description={description}>
+  <Section padded="tight" class="pt-16 sm:pt-20">
+    <SectionHeading level="h1" title="Reach the project." lede="Vekrun is pre-release and its public channels are opening with the source. This page lists only what exists." />
+  </Section>
+  <Section rule padded="tight" class="pb-24">
+    <ul class="ruled-grid max-w-3xl" role="list">
+      <li class="p-6">
+        <h2 class="text-[1rem] font-[560] text-text">Issues and discussions</h2>
+        {site.repo.public ? (
+          <p class="mt-2 text-[0.9rem] leading-relaxed text-text-2">
+            Bugs and feature requests go to <a href={`${site.repo.url}/issues`} class="text-accent underline underline-offset-2" target="_blank" rel="noopener noreferrer">GitHub issues</a>.
+            {site.contact.discussionsUrl && <> Questions go to <a href={site.contact.discussionsUrl} class="text-accent underline underline-offset-2" target="_blank" rel="noopener noreferrer">discussions</a>.</>}
+          </p>
+        ) : (
+          <p class="mt-2 text-[0.9rem] leading-relaxed text-text-2">Open once the source repository is public. The link will appear here that day.</p>
+        )}
+      </li>
+      <li class="p-6">
+        <h2 class="text-[1rem] font-[560] text-text">General enquiries</h2>
+        {site.contact.generalEmail ? (
+          <p class="mt-2 text-[0.9rem] leading-relaxed text-text-2">Email <strong class="text-text">{site.contact.generalEmail}</strong>.</p>
+        ) : (
+          <p class="mt-2 text-[0.9rem] leading-relaxed text-text-2">No public address yet. One will be published before the first release.</p>
+        )}
+      </li>
+      <li class="p-6">
+        <h2 class="text-[1rem] font-[560] text-text">Security reports</h2>
+        <p class="mt-2 text-[0.9rem] leading-relaxed text-text-2">Never in a public issue. See the <a href="/security/" class="text-accent underline underline-offset-2">security page</a> for the reporting process.</p>
+      </li>
+    </ul>
+    {!hasAny && (
+      <div class="mt-8 flex flex-wrap gap-3">
+        <Button href="/roadmap/" variant="secondary">Follow the roadmap</Button>
+      </div>
+    )}
+  </Section>
+</Base>

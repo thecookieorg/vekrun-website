@@ -1,0 +1,93 @@
+---
+import Base from '@/layouts/Base.astro';
+import Section from '@/components/Section.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import Button from '@/components/Button.astro';
+import { site } from '@/data/site';
+
+const commitments = [
+  { title: 'No Vekrun account', body: 'Nothing in the application asks you to sign up. There is no login, no hosted control plane you must use, and no feature behind a Vekrun identity.' },
+  { title: 'No Vekrun subscription', body: 'Every feature ships in the free, open-source build. There are no tiers, no credits and no trial that expires.' },
+  { title: 'Your model connections', body: 'You bring an API key, a coding-agent account you already have, or a local runtime. Credentials stay in your operating system keychain and never cross into the interface layer.' },
+  { title: 'Local-first data', body: 'Sessions, memories, indexes and task history live in a local database you can inspect and delete. What leaves your machine is shown before it leaves.' },
+  { title: 'Infrastructure you control', body: 'Background workers run on your machine or on a machine you own, reached over SSH. Nothing requires a Vekrun-hosted service.' },
+  { title: 'Transparent source', body: 'The architecture, threat model, decision records and roadmap are published alongside the code. A screen is not a feature until its behaviour is tested.' },
+];
+const title = 'Open source';
+const description = 'Why Vekrun exists, what it refuses to require of you, and the licence it will be published under.';
+---
+<Base title={title} description={description}>
+  <Section padded="tight" class="pt-16 sm:pt-20">
+    <SectionHeading level="h1" title="Your development environment should belong to you." lede="Vekrun exists because the tools that run your code should not decide which models you may use, where your work is stored, or what you must pay to keep working." />
+  </Section>
+
+  <Section rule padded="tight">
+    <div class="prose-site max-w-3xl text-[1.0625rem] leading-relaxed">
+      <h2>Why the project exists</h2>
+      <p>
+        AI coding tools arrived bundled with a platform: an account, a subscription, a hosted runtime, and a single model vendor chosen for you. The result is a workspace that is useful right up to the point where the vendor changes its pricing, its model, or its terms.
+      </p>
+      <p>
+        Vekrun separates the two. It is a terminal and a coding workspace that work with no AI at all, and when you want AI, it orchestrates the models you choose. The orchestration, the agents, the verification and the control plane are Vekrun's own and run on your hardware. The intelligence is whichever provider or local model you connect.
+      </p>
+
+      <h2>Freedom from provider lock-in</h2>
+      <p>
+        Anthropic, OpenAI and Google models connect with your own key. OpenAI-compatible endpoints connect by URL. Ollama and LM Studio are detected on your machine. Switching providers is a setting, and the capability registry tells you what each model can and cannot do rather than pretending every model is equivalent.
+      </p>
+      <p>
+        Third-party inference costs money. Vekrun does not hide that: you pay your provider directly, usage is shown per project and task where the provider reports it, and a consumer chat subscription is never presented as API access.
+      </p>
+    </div>
+  </Section>
+
+  <Section rule padded="tight" aria-labelledby="commitments">
+    <h2 id="commitments" class="heading-2">What Vekrun refuses to require</h2>
+    <ul class="ruled-grid mt-6 sm:grid-cols-2 lg:grid-cols-3" role="list">
+      {commitments.map((c) => (
+        <li class="p-6">
+          <h3 class="text-[1rem] font-[560] text-text">{c.title}</h3>
+          <p class="mt-2 text-[0.9rem] leading-relaxed text-text-2">{c.body}</p>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <Section rule padded="tight">
+    <div class="prose-site max-w-3xl text-[1.0625rem] leading-relaxed">
+      <h2>Open-source development</h2>
+      <p>
+        The project is built against a public specification with twelve milestones, each with its own gate. Work is tracked as requirements with tests, and the <a href="/roadmap/">roadmap</a> says what has passed, what is in flight and what has not started. Platform claims carry evidence: implemented means merged with tests and verified by hand on macOS, and Windows and Linux are named as unverified until they are not.
+      </p>
+
+      <h2>Security and transparent engineering</h2>
+      <p>
+        Repository text, logs, model responses and tool results are untrusted input. A Rust policy engine, not a prompt, decides what an agent may do, and every decision writes an audit record. Deny is the default. Sandboxing differs by operating system and the differences are documented rather than smoothed over. The full commitments are on the <a href="/security/">security page</a>.
+      </p>
+
+      <h2>Contributing</h2>
+      <p>
+        The most useful contributions today are review of the architecture and contracts, platform testing on Windows and Linux, and issues that name a specific requirement. The <a href="/docs/contributing/contribution-process/">contribution process</a> describes the branch convention, the checks to run and the pull-request template.
+      </p>
+
+      <h2 id="license">License</h2>
+      <p>
+        Vekrun will be published under the <strong>{site.license.name}</strong>. The licence is {site.license.status}, pending a compatibility check of every dependency. All core features, including the Factory, Plan, Council, Board and the MCP platform, are part of that open build; there is no proprietary runtime.
+      </p>
+      {site.repo.public ? (
+        <p>The licence text is in the <a href={`${site.repo.url}/blob/main/LICENSE`} target="_blank" rel="noopener noreferrer">repository</a>.</p>
+      ) : (
+        <p>The source repository is not yet public, so there is no licence file to link to today. It will be linked here the day the repository opens.</p>
+      )}
+
+      <h2>Costs that are not Vekrun's</h2>
+      <p>
+        Vekrun is free. Model providers charge for inference, coding-agent subscriptions have their own terms, and any machine you run a remote worker on is yours to pay for. Local models run on your own hardware; heavier Factory workflows may need more capable hardware or a paid provider, and the application says so rather than implying everything is free.
+      </p>
+    </div>
+    <div class="mt-10 flex flex-wrap gap-3">
+      <Button href="/roadmap/">See the roadmap</Button>
+      <Button href="/docs/contributing/build-from-source/" variant="secondary">Build from source</Button>
+    </div>
+  </Section>
+</Base>

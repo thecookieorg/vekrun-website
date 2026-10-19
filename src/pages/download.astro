@@ -1,0 +1,134 @@
+---
+import { releases } from '@/data/releases';
+import { Copy } from '@lucide/astro';
+import Base from '@/layouts/Base.astro';
+import Section from '@/components/Section.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import Button from '@/components/Button.astro';
+import StatusBadge from '@/components/StatusBadge.astro';
+import { site } from '@/data/site';
+
+const platformLabel: Record<string, string> = { macos: 'macOS', windows: 'Windows', linux: 'Linux' };
+const archLabel: Record<string, string> = { arm64: 'Apple Silicon / ARM64', x64: 'Intel / x64' };
+const targets = [
+  { name: 'macOS', detail: 'Apple Silicon first. Intel if the toolchain and signing support it at release time.' },
+  { name: 'Windows', detail: 'Signed installer. PowerShell, cmd and WSL through ConPTY.' },
+  { name: 'Linux', detail: 'Package format to be chosen before the first release.' },
+];
+const columns = ['Version', 'Release date', 'Platform', 'Architecture', 'Package format', 'Download size', 'SHA-256 checksum', 'Signing or notarisation', 'Release notes', 'GitHub release'];
+const title = 'Download';
+const description = releases.length
+  ? 'Download Vekrun for macOS, Windows and Linux. Signed builds with checksums and release notes.'
+  : 'There is no public Vekrun release yet. This page shows what the first release will look like and how to build from source today.';
+---
+<Base title={title} description={description}>
+  <Section padded="tight" class="pt-16 sm:pt-20">
+    {releases.length === 0 ? (
+      <>
+        <div class="flex flex-wrap items-center gap-3">
+          <StatusBadge status="in-development" />
+          <span class="text-[0.8125rem] text-text-3">as of {site.status.asOf}</span>
+        </div>
+        <SectionHeading level="h1" class="mt-5" title="No public release yet." lede="Vekrun is being built in the open against a twelve-milestone plan. Downloads appear on this page when signed builds exist, and not before. Nothing here is a placeholder for a download count or a fake version." />
+        <div class="mt-8 flex flex-wrap gap-3">
+          <Button href="/roadmap/">See where the build stands</Button>
+          <Button href="/docs/getting-started/installation/" variant="secondary">Build from source</Button>
+        </div>
+      </>
+    ) : (
+      <SectionHeading level="h1" title="Download Vekrun." lede="Signed builds for macOS, Windows and Linux, each with a checksum and release notes." />
+    )}
+  </Section>
+
+  {releases.length === 0 && (
+    <>
+      <Section rule padded="tight" aria-labelledby="targets">
+        <h2 id="targets" class="heading-3">Platforms the first release targets</h2>
+        <ul class="ruled-grid mt-4 sm:grid-cols-3" role="list">
+          {targets.map((t) => (
+            <li class="p-5">
+              <h3 class="text-[1rem] font-[560] text-text">{t.name}</h3>
+              <p class="mt-1 text-[0.875rem] leading-relaxed text-text-2">{t.detail}</p>
+            </li>
+          ))}
+        </ul>
+        <p class="mt-4 max-w-3xl text-[0.875rem] leading-relaxed text-text-3">
+          A release ships only when the twelve release demonstrations pass with recorded evidence on all three platforms, including signed installers and a working update path.
+        </p>
+      </Section>
+
+      <Section rule padded="tight" class="pb-24" aria-labelledby="shape">
+        <h2 id="shape" class="heading-3">What every release row will show</h2>
+        <p class="mt-2 max-w-2xl text-[0.9rem] text-text-2">The page is wired to a releases file. When the first entry lands, each build is listed with these fields.</p>
+        <ul class="mt-4 flex flex-wrap gap-2" role="list">
+          {columns.map((c) => <li class="rounded-full border border-border px-3 py-1.5 text-[0.8125rem] text-text-2">{c}</li>)}
+        </ul>
+      </Section>
+    </>
+  )}
+
+  {releases.map((r) => (
+    <Section rule padded="tight" aria-labelledby={`rel-${r.id}`}>
+      <div class="flex flex-wrap items-baseline justify-between gap-3">
+        <h2 id={`rel-${r.id}`} class="heading-2">Vekrun {r.data.version}</h2>
+        <p class="text-[0.875rem] text-text-2">
+          Released <time datetime={r.data.date}>{r.data.date}</time>.
+          <a href={r.data.notes} class="ml-2 text-accent underline underline-offset-2" target="_blank" rel="noopener noreferrer">Release notes</a>
+          <a href={r.data.githubRelease} class="ml-2 text-accent underline underline-offset-2" target="_blank" rel="noopener noreferrer">GitHub release</a>
+        </p>
+      </div>
+      <div class="mt-6 overflow-x-auto rounded-lg border border-border">
+        <table class="w-full min-w-[56rem] text-left text-[0.875rem]">
+          <thead class="bg-surface-2 text-text-2">
+            <tr>
+              <th scope="col" class="px-4 py-3 font-[560]">Platform</th>
+              <th scope="col" class="px-4 py-3 font-[560]">Architecture</th>
+              <th scope="col" class="px-4 py-3 font-[560]">Format</th>
+              <th scope="col" class="px-4 py-3 font-[560]">Size</th>
+              <th scope="col" class="px-4 py-3 font-[560]">Signing</th>
+              <th scope="col" class="px-4 py-3 font-[560]">SHA-256</th>
+              <th scope="col" class="px-4 py-3 font-[560]"><span class="sr-only">Download</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            {r.data.artifacts.map((a) => (
+              <tr class="border-t border-border">
+                <td class="px-4 py-3 text-text">{platformLabel[a.platform]}</td>
+                <td class="px-4 py-3 text-text-2">{archLabel[a.arch]}</td>
+                <td class="px-4 py-3 text-text-2">{a.format}</td>
+                <td class="px-4 py-3 text-text-2">{a.size}</td>
+                <td class="px-4 py-3 text-text-2">{a.signing}</td>
+                <td class="px-4 py-3">
+                  <span class="inline-flex items-center gap-2 font-mono text-[0.75rem] text-text-2" data-hash-root>
+                    <code class="max-w-[12rem] truncate" title={a.sha256} data-hash>{a.sha256}</code>
+                    <button type="button" class="inline-flex h-6 w-6 items-center justify-center rounded text-text-3 hover:bg-surface-2 hover:text-text" aria-label="Copy checksum" data-hash-copy>
+                      <Copy class="h-3.5 w-3.5" aria-hidden="true" />
+                    </button>
+                    <span class="sr-only" aria-live="polite" data-hash-status></span>
+                  </span>
+                </td>
+                <td class="px-4 py-3"><Button href={a.url} size="md">Download</Button></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Section>
+  ))}
+
+  {releases.length > 0 && (
+    <script>
+      document.querySelectorAll<HTMLElement>('[data-hash-root]').forEach((root) => {
+        const btn = root.querySelector<HTMLButtonElement>('[data-hash-copy]');
+        const hash = root.querySelector<HTMLElement>('[data-hash]')?.textContent ?? '';
+        const status = root.querySelector<HTMLElement>('[data-hash-status]');
+        if (!btn || !navigator.clipboard) { btn?.remove(); return; }
+        btn.addEventListener('click', async () => {
+          try { await navigator.clipboard.writeText(hash); if (status) status.textContent = 'Checksum copied'; }
+          catch { if (status) status.textContent = 'Copy failed'; }
+          setTimeout(() => { if (status) status.textContent = ''; }, 1600);
+        });
+      });
+    </script>
+  )}
+</Base>
