@@ -63,6 +63,7 @@ export default defineConfig({
         { label: 'Board and integrations', items: [{ autogenerate: { directory: 'docs/board' } }] },
         { label: 'AI Teams', items: [{ autogenerate: { directory: 'docs/ai-teams' } }] },
         { label: 'Git and code reviews', items: [{ autogenerate: { directory: 'docs/git' } }] },
+        { label: 'Insights', items: [{ autogenerate: { directory: 'docs/insights' } }] },
         { label: 'Settings and privacy', items: [{ autogenerate: { directory: 'docs/settings' } }] },
         { label: 'Advanced', items: [{ autogenerate: { directory: 'docs/advanced' } }] },
       ],

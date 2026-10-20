@@ -114,7 +114,7 @@ test.describe('navigation and theme', () => {
 });
 
 test.describe('other pages', () => {
-  for (const path of ['/features/', '/features/terminal/', '/features/ai-coding/', '/features/board/', '/ai-teams/', '/features/code-review/', '/integrations/', '/roadmap/', '/download/', '/open-source/', '/docs/', '/security/', '/privacy/', '/contact/']) {
+  for (const path of ['/features/', '/features/terminal/', '/features/ai-coding/', '/features/board/', '/ai-teams/', '/features/code-review/', '/features/insights/', '/integrations/', '/roadmap/', '/download/', '/open-source/', '/docs/', '/security/', '/privacy/', '/contact/']) {
     test(`${path} renders with one h1 and no overflow`, async ({ page }) => {
       const res = await page.goto(path);
       expect(res?.status()).toBe(200);

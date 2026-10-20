@@ -4,12 +4,12 @@
  * tell a slightly different story with the same visual system. Cards carry
  * data-card ids so a demo script can move or highlight them.
  */
-export type Card = { id: string; title: string; src: 'Li' | 'Ji' | 'As' | 'Gh' | 'Gl'; chips?: { text: string; tone?: 'ok' | 'warn' | 'info' | 'muted' }[]; selected?: boolean; hidden?: boolean };
+export type Card = { id: string; title: string; src: 'Li' | 'Ji' | 'As' | 'Gh' | 'Gl' | 'Hb' | 'Se' | 'Dd' | 'Ap'; chips?: { text: string; tone?: 'ok' | 'warn' | 'info' | 'muted' }[]; selected?: boolean; hidden?: boolean };
 export type Column = { id: string; name: string; cards: Card[] };
 interface Props { columns: Column[]; class?: string; compact?: boolean }
 const { columns, class: className = '', compact = false } = Astro.props;
-const srcName = { Li: 'Linear', Ji: 'Jira', As: 'Asana', Gh: 'GitHub', Gl: 'GitLab' };
-const srcClass = { Li: 'src-li', Ji: 'src-ji', As: 'src-as', Gh: 'src-gh', Gl: 'src-gl' };
+const srcName = { Li: 'Linear', Ji: 'Jira', As: 'Asana', Gh: 'GitHub', Gl: 'GitLab', Hb: 'Honeybadger', Se: 'Sentry', Dd: 'Datadog', Ap: 'AppSignal' };
+const srcClass = { Li: 'src-li', Ji: 'src-ji', As: 'src-as', Gh: 'src-gh', Gl: 'src-gl', Hb: 'src-mon', Se: 'src-mon', Dd: 'src-mon', Ap: 'src-mon' };
 ---
 <div class:list={['kanban', compact && 'kanban-compact', className]} data-kanban>
   {columns.map((col) => (
@@ -54,6 +54,7 @@ const srcClass = { Li: 'src-li', Ji: 'src-ji', As: 'src-as', Gh: 'src-gh', Gl: '
   .src-ji { color: #6aa0ff; border-color: color-mix(in srgb, #0052cc 55%, transparent); }
   .src-as { color: #f08c8c; border-color: color-mix(in srgb, #f06a6a 50%, transparent); }
   .src-gh, .src-gl { color: var(--text-2); }
+  .src-mon { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 50%, transparent); }
   .kanban-title { color: var(--text); font-size: 0.8rem; line-height: 1.35; }
   .kanban-chips { display: flex; flex-wrap: wrap; gap: 0.3rem; }
   .kanban-chip { font-size: 0.66rem; color: var(--text-2); border: 1px solid var(--border); border-radius: 999px; padding: 0.08rem 0.45rem; display: inline-flex; align-items: center; gap: 0.3rem; }

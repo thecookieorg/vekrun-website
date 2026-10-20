@@ -1,6 +1,6 @@
 ---
 /**
- * The public roadmap: seven groups, each with a segmented rail of counts by
+ * The public roadmap: eight groups, each with a segmented rail of counts by
  * status and compact rows. Counts come from the data; nothing is estimated.
  */
 import { getCollection } from 'astro:content';
@@ -17,6 +17,7 @@ const groups: Group[] = [
   { key: 'board', label: 'Board', items: entries.filter((e) => e.data.area === 'board' && !integrationIds.has(e.id)) },
   { key: 'ai-teams', label: 'AI Teams', items: entries.filter((e) => e.data.area === 'ai-teams') },
   { key: 'code-review', label: 'Code reviews', items: entries.filter((e) => e.data.area === 'code-review') },
+  { key: 'insights', label: 'Insights', items: entries.filter((e) => e.data.area === 'insights') },
   { key: 'integrations', label: 'Integrations', items: entries.filter((e) => integrationIds.has(e.id)) },
   { key: 'release', label: 'Release', items: entries.filter((e) => e.data.area === 'releases') },
 ].filter((g) => g.items.length > 0);

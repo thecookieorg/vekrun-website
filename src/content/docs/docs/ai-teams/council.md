@@ -14,6 +14,10 @@ A Council is for decisions that deserve a second and third opinion: an architect
 3. A moderator writes a report that separates evidence, assumptions, recommendations, open uncertainties and unresolved risks, and records where members disagree.
 4. You decide. Agreement among members is never treated as proof.
 
+## Incident Council
+
+A production issue in Insights can convene a council with investigator, architect, performance, security and challenger roles, working from the same redacted evidence. See [Investigate & Fix](/docs/insights/investigate-and-fix/#convene-council).
+
 ## Limits you set
 
 The default is three members and two rounds. Each session shows an estimate before it starts and stops at the member count, round limit, budget and timeout you set. Cancel at any time. Each member can use a different provider.

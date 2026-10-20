@@ -11,6 +11,8 @@ The Board shows your tickets in four columns: To Do, In Progress, In Review and 
 
 A card shows the ticket's identifier, title, priority and status, plus what Vekrun is doing with it: a worktree opened, an agent at work, tests running, changes waiting for review.
 
+A ticket that was created from a monitoring issue shows its origin and the investigation stage on the card, and opens the issue in [Insights](/docs/insights/creating-tickets/).
+
 ## Ticket details
 
 Select a card to read the full description, acceptance criteria and links, and to see the branch, worktree and sessions attached to it.

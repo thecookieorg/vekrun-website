@@ -7,7 +7,7 @@
 import {
   siClaude, siGooglegemini, siOllama, siLmstudio, siOpenrouter, siLinear, siJira, siAsana, siGithub, siGitlab,
   siConfluence, siNotion, siSentry, siDatadog, siFigma, siPostgresql, siCloudflare, siSupabase, siStripe, siGit,
-} from 'simple-icons';
+ siHoneybadger, siAppsignal } from 'simple-icons';
 
 interface Props { id: string; name: string; monogram: string; size?: 'md' | 'lg'; class?: string }
 const { id, name, monogram, size = 'md', class: className = '' } = Astro.props;
@@ -18,7 +18,7 @@ const map: Record<string, Icon> = {
   ollama: siOllama, 'lm-studio': siLmstudio, openrouter: siOpenrouter,
   linear: siLinear, jira: siJira, asana: siAsana, 'github-issues': siGithub, github: siGithub,
   'gitlab-issues': siGitlab, gitlab: siGitlab, confluence: siConfluence, notion: siNotion,
-  sentry: siSentry, datadog: siDatadog, figma: siFigma, postgres: siPostgresql, cloudflare: siCloudflare,
+  sentry: siSentry, datadog: siDatadog, honeybadger: siHoneybadger, appsignal: siAppsignal, figma: siFigma, postgres: siPostgresql, cloudflare: siCloudflare,
   supabase: siSupabase, stripe: siStripe, git: siGit,
 };
 const icon = map[id];

@@ -22,6 +22,10 @@ Factory runs an approved plan with a team of agents.
 - Approve commands and writes as you would in a single session.
 - Set how deep delegation can go, how many agents run at once, and the budget. A delegated task can never hold more permission or budget than the task that created it.
 
+## From a production issue
+
+A monitoring issue in Insights can be delegated to Factory as a whole. The built-in incident workflow investigates, reproduces, plans, implements, tests, verifies and reviews, and stops before deployment. See [delegating to Factory](/docs/insights/delegating-to-factory/).
+
 ## Keep it light
 
 Factory is for work worth splitting up. For a small change, a single agent is faster. Council review is never required.

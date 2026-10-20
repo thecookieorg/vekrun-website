@@ -12,14 +12,15 @@ const stories: Record<string, { title: string; body: string; next: string }> = {
   'ai-coding': { title: 'Any model, every change approved', body: 'Claude, OpenAI, Gemini, an OpenAI-compatible endpoint or a model on your machine. Ask, plan, build, debug and review with every write shown as a diff first.', next: 'AI coding' },
   board: { title: 'Your tickets become work', body: 'Assigned tickets in one Kanban. Click Start Work and you have a branch, a working copy and a terminal, with the ticket as context for you or an agent.', next: 'The Board' },
   'ai-teams': { title: 'Hand off the work, keep the decisions', body: 'A planner drafts the steps, developers build on separate branches, a tester runs the suite, a reviewer checks the result. You approve the plan and the merge.', next: 'AI Teams' },
+  insights: { title: 'From production error to verified fix', body: 'Connect Honeybadger, Sentry, Datadog or AppSignal. See errors and slow requests, let an agent investigate, then create a ticket, generate a plan or hand the fix to a team, and check production afterwards.', next: 'Insights' },
   'code-review': { title: 'Review where you write code', body: 'Pull requests waiting for you, the diff, AI findings and your comments in one view. Compare several models when a change is contested.', next: 'Code reviews' },
 };
 ---
-<Base title="Features" description="Vekrun in five parts: a terminal, AI coding with your own models, a Board for your tickets, AI Teams for larger work, and code reviews in one place.">
+<Base title="Features" description="Vekrun in six parts: a terminal, AI coding with your own models, a Board for your tickets, AI Teams for larger work, code reviews in one place, and Insights from production error to verified fix.">
   <section class="ambient overflow-hidden border-b border-border">
     <div class="grid-field pointer-events-none absolute inset-0" aria-hidden="true"></div>
     <div class="container-site relative py-16 sm:py-20 lg:py-24">
-      <SectionHeading level="h1" title="Five things Vekrun does" lede="Each works on its own. Together they take a ticket from assigned to merged without leaving the terminal." class="enter" />
+      <SectionHeading level="h1" title="Six things Vekrun does" lede="Each works on its own. Together they take a ticket, or a production error, from assigned to merged without leaving the terminal." class="enter" />
     </div>
   </section>
 
@@ -64,6 +65,15 @@ $ `}<span class="term-cursor"></span></pre>
               <Window title="AI Teams" crumbs={['VEK-129']}>
                 <div class="fi-lanes">
                   {['Planner', 'Developers', 'Tester', 'Reviewer', 'You'].map((l, j) => <div><span>{l}</span>{j === 1 && <><i>feat/retry-worker</i><i>feat/retry-backoff</i></>}{j === 4 && <i class="is-ok">Merge preview · approve?</i>}</div>)}
+                </div>
+              </Window>
+            )}
+            {f.key === 'insights' && (
+              <Window title="Insights" crumbs={['acme-api', 'Errors']}>
+                <div class="fi-insight window-mono">
+                  <p class="fi-insight-row"><span class="fi-src">Hb</span><span class="fi-insight-title">NoMethodError in ExportsController#create</span><span class="dim">142 · 24h</span></p>
+                  <p class="fi-insight-row fi-insight-sub"><span class="warn">Likely cause 0.8</span> <span>rows is nil when a filter matches nothing · exports_controller.rb:48</span></p>
+                  <p class="fi-insight-row fi-insight-sub"><span class="ok">After deploy</span> <span>0 occurrences in 24h · improved</span></p>
                 </div>
               </Window>
             )}
@@ -113,4 +123,12 @@ $ `}<span class="term-cursor"></span></pre>
   .fi-finding { margin: 0.6rem 0.4rem 0; font-family: var(--font-sans); font-size: 0.72rem; color: var(--text-2); }
   .fi-finding .err { color: var(--danger); }
   @media (max-width: 40rem) { .fi-lanes { grid-template-columns: repeat(3, minmax(0, 1fr)); } .fi-lanes > div:nth-child(n + 4) { display: none; } }
+  .fi-row > * { min-width: 0; }
+  .fi-insight { padding: 0.6rem 0.75rem; display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.72rem; color: var(--text-2); min-width: 0; overflow: hidden; }
+  .fi-insight-row { display: flex; align-items: center; gap: 0.5rem; margin: 0; min-width: 0; }
+  .fi-insight-row > span { min-width: 0; }
+  .fi-insight-title { color: var(--text); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .fi-insight-sub { padding-left: 2rem; flex-wrap: wrap; }
+  .fi-src { font-size: 0.62rem; border: 1px solid color-mix(in srgb, var(--warn) 50%, transparent); color: var(--warn); border-radius: 4px; padding: 0 0.3rem; }
+  .fi-insight .dim { color: var(--text-3); } .fi-insight .warn { color: var(--warn); } .fi-insight .ok { color: var(--ok); }
 </style>

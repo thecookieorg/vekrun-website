@@ -11,6 +11,8 @@ API keys live in your operating system's keychain. Vekrun's own files keep only 
 
 SSH passwords are used for one connection and not stored.
 
+Monitoring provider tokens are keychain items too. Each monitoring connection is read-only unless you turn on its separate write switch; see [Insights security](/docs/insights/security/).
+
 Removing a provider deletes its key.
 
 ## Reporting a vulnerability

@@ -27,14 +27,13 @@ describe('integrations catalog', () => {
       for (const c of i.connection) expect(Object.keys(connectionMethods), i.id).toContain(c);
     }
   });
-  it('never marks a coding-agent account or an MCP-only connection as available (none is implemented)', () => {
+  it('never marks a coding-agent account as available (none is implemented)', () => {
     for (const i of integrations) {
       if (i.connection.includes('cli-account')) expect(i.status, i.id).not.toBe('available');
-      if (i.connection.every((c: string) => c === 'mcp')) expect(i.status, i.id).not.toBe('available');
     }
   });
-  it('never marks a project-management or developer-service connection as available until one is built', () => {
-    for (const i of integrations.filter((x) => x.category === 'project-management' || x.category === 'developer-services')) {
+  it('never marks a tracker, monitoring or developer-service connection as available until it has run against the live service', () => {
+    for (const i of integrations.filter((x) => ['project-management', 'developer-services', 'monitoring'].includes(x.category))) {
       expect(i.status, i.id).not.toBe('available');
     }
   });
@@ -107,7 +106,7 @@ describe('navigation and positioning', () => {
   });
   it('keeps the navigation compact', () => {
     expect(primaryNav.length).toBeLessThanOrEqual(6);
-    expect(featurePages.length).toBe(5);
+    expect(featurePages.length).toBe(6);
   });
   it('does not expose the application repository while it is private', () => {
     if (!site.repo.public) expect(primaryNav.some((n) => n.href.includes('github.com'))).toBe(false);

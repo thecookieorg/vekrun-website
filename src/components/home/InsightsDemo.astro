@@ -1,0 +1,178 @@
+---
+/**
+ * Insights: a production error becomes a verified fix.
+ * Issue list → details and stack trace → Investigate & Fix → AI report →
+ * choose Create ticket / Generate plan / Delegate to Factory → reviewable diff → post-deploy check.
+ * Final state is in the markup; the script replays it from the start.
+ */
+import Window from '@/components/mock/Window.astro';
+import DemoControls from '@/components/mock/DemoControls.astro';
+interface Props { notice?: string; compact?: boolean }
+const { notice = 'Product preview. Insights, the four providers, investigations, tickets, plans, the incident workflow and deployment observation exist in the development build on macOS; the providers are tested against recorded responses, not yet against live accounts. Demo data is illustrative.', compact = false } = Astro.props;
+const issues = [
+  { id: 'hb-2381', src: 'Hb', title: 'NoMethodError: undefined method `each\' for nil', where: 'ExportsController#create', count: '142', env: 'production', selected: true },
+  { id: 'se-9120', src: 'Se', title: 'TimeoutError: Net::ReadTimeout', where: 'ProviderClient#fetch', count: '38', env: 'production' },
+  { id: 'ap-77', src: 'Ap', title: 'Slow request: GET /v1/reports (p95 4.1 s)', where: 'ReportsController#index', count: 'p95 4.1 s', env: 'production' },
+];
+---
+<figure class:list={['ins', compact && 'ins-compact']} data-demo-root="insights" data-insights>
+  <Window title="Insights" crumbs={['acme-api']} tabs={[{ label: 'Errors', active: true }, { label: 'Performance' }, { label: 'Investigations' }]}>
+    <span slot="status" class="hidden items-center gap-1.5 sm:inline-flex"><span class="live-dot" aria-hidden="true"></span><span data-field="phase">Verified in production</span></span>
+    <div class="ins-body">
+      <ul class="ins-list" aria-label="Issues (simulated)">
+        {issues.map((i) => (
+          <li class:list={['ins-issue', i.selected && 'is-selected']} data-issue={i.id} aria-current={i.selected ? 'true' : undefined}>
+            <span class={`ins-src src-${i.src.toLowerCase()}`}>{i.src}</span>
+            <span class="ins-issue-main"><span class="ins-issue-title">{i.title}</span><span class="ins-issue-where">{i.where}</span></span>
+            <span class="ins-issue-meta"><span>{i.count}</span><span class="dim">{i.env}</span></span>
+          </li>
+        ))}
+      </ul>
+
+      <section class="ins-detail" aria-label="Issue detail (simulated)">
+        <header class="ins-detail-head">
+          <div>
+            <p class="ins-detail-title">NoMethodError: undefined method `each' for nil</p>
+            <p class="ins-detail-sub">Honeybadger · production · 142 occurrences in 24 h · first seen 2 days ago</p>
+          </div>
+          <button type="button" class="ins-fix" data-stage="fix-btn" tabindex="-1" aria-hidden="true">Investigate &amp; Fix</button>
+        </header>
+
+        <pre class="ins-trace term" data-stage="trace">app/controllers/exports_controller.rb:48:in `create'
+  <span class="dim">rows = Export.filtered(params).rows</span>
+  <span class="err">rows.each &#123; |r| csv &lt;&lt; r &#125;</span>
+app/models/export.rb:31:in `filtered'
+lib/csv_writer.rb:12:in `write'</pre>
+
+        <div class="ins-report" data-stage="report">
+          <p class="ins-report-head"><span class="ins-ic ins-ic-ok"></span>Investigation report · read-only · Claude</p>
+          <dl class="ins-report-grid">
+            <dt>Symptoms</dt><dd>500 on export when a filter matches no rows. 142 occurrences, 3 users.</dd>
+            <dt>Likely cause</dt><dd><span class="ins-conf">0.8</span> <code>Export.filtered</code> returns <code>nil</code> instead of an empty relation when the filter matches nothing (<code>export.rb:31</code>).</dd>
+            <dt>Evidence</dt><dd>Every occurrence has <code>filter[status]</code> set; the model's <code>filtered</code> uses <code>find_by</code>, not <code>where</code>.</dd>
+            <dt>Suggested fix</dt><dd>Return <code>where(...)</code> and add a test for the empty case.</dd>
+          </dl>
+        </div>
+
+        <div class="ins-choices" data-stage="choices" role="presentation">
+          <span class="ins-choice" data-choice="ticket">Create ticket</span>
+          <span class="ins-choice" data-choice="plan">Generate plan</span>
+          <span class="ins-choice is-chosen" data-choice="factory">Delegate to Factory</span>
+        </div>
+
+        <div class="ins-run" data-stage="run">
+          <ol class="ins-steps" aria-label="Incident workflow">
+            {['Investigate', 'Reproduce', 'Plan', 'Implement', 'Test', 'Verify', 'Review'].map((s, i) => <li data-step={i} data-state={i < 6 ? 'done' : 'current'}>{s}</li>)}
+          </ol>
+          <div class="ins-diff window-mono" data-stage="diff">
+            <div class="diff-row diff-ctx"><span>30</span><span>def self.filtered(params)</span></div>
+            <div class="diff-row diff-del"><span>31</span><span>-  find_by(status: params[:status])</span></div>
+            <div class="diff-row diff-add"><span>31</span><span>+  where(status: params[:status])</span></div>
+            <div class="diff-row diff-ctx"><span>32</span><span>end</span></div>
+          </div>
+          <p class="ins-run-foot" data-stage="review"><span class="ins-ic ins-ic-info"></span>Ready for your review · 2 files · +9 −1 · 4 tests passed · a different agent checked it</p>
+        </div>
+
+        <div class="ins-verify" data-stage="verify">
+          <span class="ins-ic ins-ic-ok"></span>
+          <p><strong>After deploy</strong> 0 occurrences in 24 h, down from 142 in the same window before. Verdict: improved. The Honeybadger issue stays open until you resolve it.</p>
+        </div>
+      </section>
+    </div>
+  </Window>
+  <DemoControls notice={notice} />
+</figure>
+
+<style is:global>
+  .ins { font-size: 0.78rem; }
+  .ins-body { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--border); }
+  @media (min-width: 48rem) { .ins-body { grid-template-columns: 17rem 1fr; } }
+  .ins-list { list-style: none; margin: 0; padding: 0.5rem; background: var(--surface-2); display: flex; flex-direction: column; gap: 0.35rem; }
+  @media (max-width: 47.9rem) { .ins-list { flex-direction: row; overflow-x: auto; scrollbar-width: none; } .ins-issue { min-width: 15rem; } }
+  .ins-issue { display: grid; grid-template-columns: auto 1fr auto; gap: 0.5rem; align-items: start; padding: 0.5rem 0.6rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); transition: border-color var(--dur), box-shadow var(--dur); }
+  .ins-issue.is-selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .ins-src { font-family: var(--font-mono); font-size: 0.62rem; border-radius: 4px; padding: 0.05rem 0.3rem; border: 1px solid var(--border-strong); color: var(--text-2); margin-top: 0.1rem; }
+  .ins-src.src-hb { color: #f2a93b; border-color: color-mix(in srgb, #f2a93b 55%, transparent); }
+  .ins-src.src-se { color: #c8a8ff; border-color: color-mix(in srgb, #7c5cff 55%, transparent); }
+  .ins-src.src-ap { color: #8ad2ff; border-color: color-mix(in srgb, #3a9bff 55%, transparent); }
+  .ins-issue-main { display: flex; flex-direction: column; min-width: 0; }
+  .ins-issue-title { color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-mono); font-size: 0.72rem; }
+  .ins-issue-where { color: var(--text-3); font-size: 0.7rem; }
+  .ins-issue-meta { display: flex; flex-direction: column; align-items: flex-end; font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-2); }
+  .ins-issue-meta .dim { color: var(--text-3); }
+  .ins-detail { background: var(--surface); padding: 0.85rem 0.95rem; display: flex; flex-direction: column; gap: 0.7rem; min-width: 0; }
+  .ins-detail-head { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start; }
+  .ins-detail-title { color: var(--text); font-family: var(--font-mono); font-size: 0.8rem; margin: 0; }
+  .ins-detail-sub { color: var(--text-3); font-size: 0.72rem; margin: 0.2rem 0 0; }
+  .ins-fix { flex-shrink: 0; border: 1px solid var(--accent); color: var(--accent); background: transparent; border-radius: 6px; padding: 0.35rem 0.7rem; font-size: 0.78rem; font-weight: 560; transition: background-color var(--dur), color var(--dur); }
+  .ins-fix.is-active { background: var(--accent); color: var(--accent-ink); }
+  .ins-trace { margin: 0; padding: 0.55rem 0.7rem; border-radius: var(--radius-sm); font-size: 0.72rem; }
+  .ins-report { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.6rem 0.75rem; background: var(--surface-2); animation: rise-sm 300ms var(--ease-out) both; }
+  .ins-report-head { margin: 0 0 0.45rem; color: var(--text); font-size: 0.75rem; display: flex; align-items: center; gap: 0.4rem; }
+  .ins-report-grid { margin: 0; display: grid; grid-template-columns: 6.5rem 1fr; gap: 0.25rem 0.75rem; font-size: 0.75rem; }
+  .ins-report-grid dt { color: var(--text-3); } .ins-report-grid dd { margin: 0; color: var(--text-2); }
+  .ins-report-grid code { font-size: 0.7rem; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 0 0.25rem; }
+  .ins-conf { font-family: var(--font-mono); color: var(--warn); border: 1px solid color-mix(in srgb, var(--warn) 50%, transparent); border-radius: 4px; padding: 0 0.3rem; font-size: 0.68rem; }
+  .ins-choices { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .ins-choice { border: 1px solid var(--border-strong); border-radius: 999px; padding: 0.3rem 0.7rem; color: var(--text-2); font-size: 0.75rem; transition: border-color var(--dur-fast), background-color var(--dur-fast), color var(--dur-fast); }
+  .ins-choice.is-hover { color: var(--text); border-color: var(--text-3); }
+  .ins-choice.is-chosen { background: var(--accent-soft); border-color: var(--accent); color: var(--text); }
+  .ins-run { display: flex; flex-direction: column; gap: 0.55rem; }
+  .ins-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.3rem 0.8rem; font-size: 0.72rem; color: var(--text-3); }
+  .ins-steps li { position: relative; padding-left: 0.9rem; }
+  .ins-steps li::before { content: ''; position: absolute; left: 0; top: 0.42em; width: 0.45rem; height: 0.45rem; border-radius: 50%; border: 1.5px solid currentColor; }
+  .ins-steps li[data-state='done'] { color: var(--ok); } .ins-steps li[data-state='done']::before { background: currentColor; }
+  .ins-steps li[data-state='current'] { color: var(--warn); } .ins-steps li[data-state='current']::before { border-top-color: transparent; animation: spin 0.9s linear infinite; }
+  .ins-diff { background: var(--term-bg); border-radius: var(--radius-sm); padding: 0.4rem 0.3rem; }
+  .ins-run-foot { margin: 0; color: var(--text-2); font-size: 0.75rem; display: flex; align-items: center; gap: 0.4rem; }
+  .ins-verify { display: flex; gap: 0.5rem; align-items: flex-start; border: 1px solid color-mix(in srgb, var(--ok) 40%, var(--border)); background: color-mix(in srgb, var(--ok) 8%, var(--surface)); border-radius: var(--radius-sm); padding: 0.6rem 0.75rem; font-size: 0.78rem; color: var(--text-2); animation: rise-sm 300ms var(--ease-out) both; }
+  .ins-verify p { margin: 0; } .ins-verify strong { color: var(--text); font-weight: 560; }
+  .ins-ic { width: 0.7rem; height: 0.7rem; border-radius: 50%; display: inline-block; flex-shrink: 0; margin-top: 0.15rem; }
+  .ins-ic-ok { background: var(--ok); } .ins-ic-info { background: var(--info); border-radius: 2px; }
+  .ins [data-stage][hidden] { display: none; }
+  .ins-compact .ins-trace { display: none; }
+  @media (prefers-reduced-motion: reduce) { .ins-report, .ins-verify { animation: none; } .ins-steps li[data-state='current']::before { animation: none; } }
+</style>
+
+<script>
+  import { createSequence, type Step } from '@/scripts/sequence';
+
+  document.querySelectorAll<HTMLElement>('[data-insights]').forEach((root) => {
+    const stage = (n: string) => root.querySelector<HTMLElement>(`[data-stage="${n}"]`)!;
+    const phase = root.querySelector<HTMLElement>('[data-field="phase"]');
+    const issue = root.querySelector<HTMLElement>('[data-issue="hb-2381"]')!;
+    const choice = (n: string) => root.querySelector<HTMLElement>(`[data-choice="${n}"]`)!;
+    const steps = Array.from(root.querySelectorAll<HTMLElement>('[data-step]'));
+    const setPhase = (t: string) => { if (phase) phase.textContent = t; };
+    const setStep = (n: number) => steps.forEach((s, i) => { s.dataset.state = i < n ? 'done' : i === n ? 'current' : ''; });
+
+    const script: Step[] = [
+      { t: 400, run: () => { issue.classList.add('is-selected'); stage('trace').hidden = false; setPhase('142 occurrences · 24 h'); } },
+      { t: 1600, run: () => stage('fix-btn').classList.add('is-active') },
+      { t: 2300, run: () => { stage('fix-btn').classList.remove('is-active'); stage('report').hidden = false; setPhase('Investigating · read-only'); } },
+      { t: 4600, run: () => { stage('choices').hidden = false; setPhase('Report ready'); } },
+      { t: 5400, run: () => choice('ticket').classList.add('is-hover') },
+      { t: 5900, run: () => { choice('ticket').classList.remove('is-hover'); choice('plan').classList.add('is-hover'); } },
+      { t: 6500, run: () => { choice('plan').classList.remove('is-hover'); choice('factory').classList.add('is-chosen'); } },
+      { t: 7200, run: () => { stage('run').hidden = false; stage('diff').hidden = true; stage('review').hidden = true; setStep(0); setPhase('Incident workflow · investigate'); } },
+      { t: 8000, run: () => { setStep(1); setPhase('Incident workflow · reproduce'); } },
+      { t: 8800, run: () => { setStep(2); setPhase('Incident workflow · plan'); } },
+      { t: 9600, run: () => { setStep(3); stage('diff').hidden = false; setPhase('Incident workflow · implement'); } },
+      { t: 10600, run: () => { setStep(4); setPhase('Incident workflow · test'); } },
+      { t: 11400, run: () => { setStep(5); setPhase('Incident workflow · verify'); } },
+      { t: 12200, run: () => { setStep(6); stage('review').hidden = false; setPhase('Ready for your review'); } },
+      { t: 13800, run: () => { stage('verify').hidden = false; setPhase('Verified in production'); } },
+    ];
+
+    createSequence(root, script, {
+      reset: () => {
+        ['trace', 'report', 'choices', 'run', 'diff', 'review', 'verify'].forEach((n) => { stage(n).hidden = true; });
+        stage('fix-btn').classList.remove('is-active');
+        issue.classList.remove('is-selected');
+        ['ticket', 'plan', 'factory'].forEach((n) => choice(n).classList.remove('is-hover', 'is-chosen'));
+        steps.forEach((s) => { s.dataset.state = ''; });
+        setPhase('Errors · 3 open');
+      },
+    });
+  });
+</script>

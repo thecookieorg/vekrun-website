@@ -10,7 +10,7 @@ import WhereThisStands from '@/components/features/WhereThisStands.astro';
 const parts = [
   { name: 'Plan', title: 'Turn an idea into a plan', body: 'Describe the goal, or start from a ticket. You get steps, the files involved and what “done” means. Edit anything, then approve. Nothing is built from a plan you have not approved.' },
   { name: 'Council', title: 'Get a second, and third, opinion', body: 'For decisions that matter, several models give an independent view and then challenge each other. Disagreements are kept, not voted away. Three members and two rounds by default, cost shown before it starts. Optional, never the default.' },
-  { name: 'Factory', title: 'Delegate the build', body: 'Approved steps go to agents that work in parallel on separate branches without interfering. A different agent checks each result against the plan and reruns the tests. Failures get a bounded number of repair attempts, then come back to you.' },
+  { name: 'Factory', title: 'Delegate the build', body: 'Approved steps go to agents that work in parallel on separate branches without interfering. A production error from Insights can start the same workflow: investigate, reproduce, plan, implement, test, verify, review. A different agent checks each result against the plan and reruns the tests. Failures get a bounded number of repair attempts, then come back to you.' },
 ];
 const controls = [
   { title: 'Skip what you do not need', body: 'A small change goes to one agent. A plan can be one step long.' },
@@ -50,5 +50,5 @@ const controls = [
     <div class="mt-10 reveal"><Button href="/features/code-review/" variant="secondary">Then review it without leaving Vekrun</Button></div>
   </Section>
 
-  <WhereThisStands>Plans with approval, Council sessions, parallel agents on separate branches, a separate checking agent, repair limits and merge previews work in the development build on macOS. Running agents in the background or on another machine is planned.</WhereThisStands>
+  <WhereThisStands>Plans with approval, Council sessions, parallel agents on separate branches, a separate checking agent, repair limits, merge previews, budgets, built-in workflows, schedules, mid-flight steering and a headless worker that keeps running after you close the window work in the development build on macOS. The incident workflow from <a href="/features/insights/" class="text-accent underline underline-offset-2">Insights</a> runs on the same team. Running agents in the background or on another machine is planned.</WhereThisStands>
 </Base>

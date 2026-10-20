@@ -3,7 +3,7 @@ title: Vekrun documentation
 description: How to use Vekrun, a free, open-source AI-native terminal, and how to contribute to it.
 ---
 
-Vekrun is a free, open-source AI-native terminal. You code with the AI models you choose, pick up your assigned tickets, review pull requests and hand larger work to coordinated coding agents, all in one application.
+Vekrun is a free, open-source AI-native terminal. You code with the AI models you choose, pick up your assigned tickets, review pull requests, hand larger work to coordinated coding agents and turn production errors into verified fixes, all in one application.
 
 Vekrun is in development. There are no public releases yet; everything described here is what the development build does on macOS.
 
@@ -22,5 +22,6 @@ If a page and the application disagree, the application is right and the page ne
 - [Board and integrations](/docs/board/connecting-a-tracker/): connect a tracker, see your tickets, Start Work, status sync.
 - [AI Teams](/docs/ai-teams/planning/): planning, Council, Factory, running and reviewing agent tasks.
 - [Git and code reviews](/docs/git/branches/): branches, worktrees, pull requests, AI reviews.
+- [Insights](/docs/insights/overview/): connect monitoring tools, view errors, investigate, create tickets and plans, delegate fixes, verify in production.
 - [Settings and privacy](/docs/settings/providers/): providers, credentials, data storage, permissions.
 - [Advanced](/docs/advanced/architecture/): architecture, internals, agent runtime, MCP, remote workers, APIs, contributing, progress.

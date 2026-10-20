@@ -13,7 +13,7 @@ export const site = {
   headline: 'Your terminal. Your AI. Your workflow.',
   subheading: 'Code with your favorite AI, manage tasks, review pull requests, and run coding agents, all in one terminal.',
   description:
-    'Vekrun is a free, open-source AI-native terminal. Use your preferred AI models, write code, manage tickets, review pull requests and coordinate AI coding teams in one application.',
+    'Vekrun is a free, open-source AI-native terminal and developer workspace. Use your preferred AI models, write code, manage tickets, review pull requests, coordinate AI coding teams and turn production errors into verified fixes, in one application.',
   shortDescription: 'A free, open-source AI-native terminal. Your models, your tasks, your code reviews, in one place.',
   license: {
     name: 'Apache License 2.0',
@@ -24,7 +24,7 @@ export const site = {
   status: {
     label: 'In development',
     /** Last date the roadmap and availability data were reconciled with the desktop project. */
-    asOf: '2026-10-19',
+    asOf: '2026-10-20',
     /** One sentence, used once per page at most. */
     line: 'Vekrun is in development. There are no public releases yet.',
     /** What the "in development build" status means. Used in legends only. */
@@ -73,6 +73,7 @@ export const featurePages: (NavItem & { key: string })[] = [
   { key: 'board', label: 'Board', href: '/features/board/', description: 'Your assigned tickets, one click from a branch, a terminal and an agent.' },
   { key: 'ai-teams', label: 'AI Teams', href: '/ai-teams/', description: 'Plan, build, test and verify larger work with coordinated agents.' },
   { key: 'code-review', label: 'Code reviews', href: '/features/code-review/', description: 'Pull requests, AI findings and your feedback in one place.' },
+  { key: 'insights', label: 'Insights', href: '/features/insights/', description: 'From a production error to a verified fix, with your monitoring tools connected.' },
 ];
 
 export const footerColumns: { title: string; items: NavItem[] }[] = [
@@ -145,6 +146,7 @@ export const roadmapAreas = {
   board: 'Board and integrations',
   'ai-teams': 'AI Teams',
   'code-review': 'Code reviews',
+  insights: 'Insights',
   releases: 'Desktop releases',
 } as const;
 
@@ -156,6 +158,7 @@ export const integrationCategories = {
   'coding-tools': { label: 'Coding tools', description: 'Accounts, machines and tools your coding sessions can use.' },
   'project-management': { label: 'Project management', description: 'Where your tickets live. Connect one and they appear on the Board.' },
   'git-hosting': { label: 'Git and code hosting', description: 'Branches, pull requests and the link between a ticket and its changes.' },
+  monitoring: { label: 'Monitoring and observability', description: 'Error tracking and performance tools. Connect one and production problems become work you can investigate and fix.' },
   'developer-services': { label: 'Developer services', description: 'Other services an agent can read from or act on, with your permission.' },
 } as const;
 

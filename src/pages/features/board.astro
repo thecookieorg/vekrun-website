@@ -9,7 +9,7 @@ import Steps from '@/components/features/Steps.astro';
 import WhereThisStands from '@/components/features/WhereThisStands.astro';
 
 const steps = [
-  { title: 'Connect your tracker', body: 'Jira, Linear, Asana, GitHub or GitLab. Several accounts if you have them.' },
+  { title: 'Connect your tracker', body: 'Jira, Linear, Asana, GitHub or GitLab. Several accounts if you have them. Production errors from Insights can land here too.' },
   { title: 'See your tickets', body: 'Everything assigned to you in one Kanban, each card linked to the original.' },
   { title: 'Click Start Work', body: 'A branch, a separate working copy and a terminal in it. One click.' },
   { title: 'Choose who does the work', body: 'You, an AI agent with the ticket as its brief, or an AI team.' },
@@ -55,5 +55,5 @@ const ways = [
     <div class="mt-8 reveal"><Button href="/ai-teams/" variant="secondary">Hand a bigger ticket to an AI team</Button></div>
   </Section>
 
-  <WhereThisStands>The Board, Start Work and all three ways of working run in the development build on macOS with local tickets. Connecting Jira, Linear, Asana, GitHub or GitLab, pull-request links and status updates are planned.</WhereThisStands>
+  <WhereThisStands>The Board, Start Work and all three ways of working run in the development build on macOS. Adapters for Jira, Linear, Asana, GitHub and GitLab exist and are tested against recorded responses, and a ticket created from a monitoring issue shows its investigation stage on its card. Running the trackers against live services, pull-request links and status updates are planned.</WhereThisStands>
 </Base>

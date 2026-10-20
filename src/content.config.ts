@@ -9,7 +9,7 @@ const integrations = defineCollection({
   loader: file('./src/content/data/integrations.json'),
   schema: z.object({
     name: z.string(),
-    category: z.enum(['ai-models', 'coding-tools', 'project-management', 'git-hosting', 'developer-services']),
+    category: z.enum(['ai-models', 'coding-tools', 'project-management', 'git-hosting', 'monitoring', 'developer-services']),
     /** One sentence: what connecting this lets you do. */
     enables: z.string(),
     connection: z.array(z.enum(['api-key', 'oauth', 'local-runtime', 'cli-account', 'mcp', 'git', 'ssh', 'openai-compatible', 'built-in'])),
@@ -28,7 +28,7 @@ const roadmap = defineCollection({
     title: z.string(),
     description: z.string(),
     status: z.enum(['planned', 'in-progress', 'implemented', 'released']),
-    area: z.enum(['terminal', 'ai-coding', 'board', 'ai-teams', 'code-review', 'releases']),
+    area: z.enum(['terminal', 'ai-coding', 'board', 'ai-teams', 'code-review', 'insights', 'releases']),
     updated: z.string(),
     /** Platforms the work has been verified on by hand. */
     verifiedOn: z.array(z.enum(['macos', 'windows', 'linux'])).default([]),

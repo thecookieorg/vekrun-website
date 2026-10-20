@@ -10,9 +10,10 @@ import ProviderSwitcher from '@/components/home/ProviderSwitcher.astro';
 import BoardDemo from '@/components/home/BoardDemo.astro';
 import AgentsFlow from '@/components/home/AgentsFlow.astro';
 import ReviewDemo from '@/components/home/ReviewDemo.astro';
+import InsightsDemo from '@/components/home/InsightsDemo.astro';
 import GithubMark from '@/components/GithubMark.astro';
 import { site, featurePages } from '@/data/site';
-import { ArrowUpRight, Columns2, Network, Search, KeyRound, HardDrive, Eye, ShieldCheck, GitBranch } from '@lucide/astro';
+import { ArrowUpRight, Columns2, Network, Search, KeyRound, HardDrive, Eye, ShieldCheck, GitBranch, Activity } from '@lucide/astro';
 
 const structuredData = [
   {
@@ -59,7 +60,7 @@ const structuredData = [
 
   <!-- Five stories, introduced -->
   <Section padded="tight" class="pt-10">
-    <ul class="reveal-group grid gap-x-6 gap-y-3 sm:grid-cols-2 lg:grid-cols-5" aria-label="What Vekrun does">
+    <ul class="reveal-group grid gap-x-6 gap-y-3 sm:grid-cols-2 lg:grid-cols-6" aria-label="What Vekrun does">
       {featurePages.map((f) => (
         <li>
           <a href={f.href} class="group flex min-w-0 flex-col gap-1 border-t border-border py-4 transition-colors hover:border-accent">
@@ -139,8 +140,20 @@ const structuredData = [
     </div>
   </Section>
 
+  <!-- F. From production error to verified fix -->
+  <Section rule tone="elevated" aria-labelledby="insights-title">
+    <SectionHeading id="insights-title" title="From production error to verified fix" lede="Connect Honeybadger, Sentry, Datadog or AppSignal. See the error, let an agent investigate, then create a ticket, generate a plan or hand the fix to a team. After you deploy, Vekrun checks whether it worked." align="center" class="reveal" />
+    <div class="reveal mt-12"><InsightsDemo compact /></div>
+    <ul class="reveal-group mt-10 grid gap-x-8 gap-y-6 sm:grid-cols-3">
+      <li class="flex gap-3"><Activity class="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" /><div><h3 class="font-[560] text-text">Your monitoring, not ours</h3><p class="mt-1 text-[0.9375rem] text-text-2">The provider stays the source of truth. Connections are read-only unless you say otherwise.</p></div></li>
+      <li class="flex gap-3"><Search class="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" /><div><h3 class="font-[560] text-text">Evidence, not guesses</h3><p class="mt-1 text-[0.9375rem] text-text-2">Likely causes come with a confidence and the frames, files and occurrences behind them.</p></div></li>
+      <li class="flex gap-3"><ShieldCheck class="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" /><div><h3 class="font-[560] text-text">Sensitive by default</h3><p class="mt-1 text-[0.9375rem] text-text-2">Tokens, headers and emails are redacted on arrival, and nothing reaches a model before you see it.</p></div></li>
+    </ul>
+    <div class="reveal mt-8 flex justify-center"><Button href="/features/insights/" variant="secondary">More about Insights</Button></div>
+  </Section>
+
   <!-- Why -->
-  <Section rule tone="elevated" padded="tight" aria-labelledby="why-title">
+  <Section rule padded="tight" aria-labelledby="why-title">
     <div class="reveal-group grid gap-6 md:grid-cols-3">
       <div class="card card-hover p-6">
         <h2 id="why-title" class="heading-3">Free and open source</h2>
