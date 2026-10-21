@@ -6,6 +6,7 @@ import Button from '@/components/Button.astro';
 import FeatureHero from '@/components/features/FeatureHero.astro';
 import TeamRunDemo from '@/components/features/TeamRunDemo.astro';
 import WhereThisStands from '@/components/features/WhereThisStands.astro';
+import CloudCallout from '@/components/cloud/CloudCallout.astro';
 
 const parts = [
   { name: 'Plan', title: 'Turn an idea into a plan', body: 'Describe the goal, or start from a ticket. You get steps, the files involved and what “done” means. Edit anything, then approve. Nothing is built from a plan you have not approved.' },
@@ -49,6 +50,8 @@ const controls = [
     </div>
     <div class="mt-10 reveal"><Button href="/features/code-review/" variant="secondary">Then review it without leaving Vekrun</Button></div>
   </Section>
+
+  <CloudCallout class="pb-12 sm:pb-14" text="Shared Factory queues, approved workers and team approvals, so a manager can create work and a lead can approve it." />
 
   <WhereThisStands>Plans with approval, Council sessions, parallel agents on separate branches, a separate checking agent, repair limits, merge previews, budgets, built-in workflows, schedules, mid-flight steering and a headless worker that keeps running after you close the window work in the development build on macOS. The incident workflow from <a href="/features/insights/" class="text-accent underline underline-offset-2">Insights</a> runs on the same team. Running agents in the background or on another machine is planned.</WhereThisStands>
 </Base>

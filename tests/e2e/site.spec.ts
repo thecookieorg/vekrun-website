@@ -114,7 +114,7 @@ test.describe('navigation and theme', () => {
 });
 
 test.describe('other pages', () => {
-  for (const path of ['/features/', '/features/terminal/', '/features/ai-coding/', '/features/board/', '/ai-teams/', '/features/code-review/', '/features/insights/', '/integrations/', '/roadmap/', '/download/', '/open-source/', '/docs/', '/security/', '/privacy/', '/contact/']) {
+  for (const path of ['/features/', '/features/terminal/', '/features/ai-coding/', '/features/board/', '/ai-teams/', '/features/code-review/', '/features/insights/', '/cloud/', '/integrations/', '/roadmap/', '/download/', '/open-source/', '/docs/', '/security/', '/privacy/', '/contact/']) {
     test(`${path} renders with one h1 and no overflow`, async ({ page }) => {
       const res = await page.goto(path);
       expect(res?.status()).toBe(200);
@@ -122,6 +122,49 @@ test.describe('other pages', () => {
       await noOverflow(page);
     });
   }
+
+  test('the Cloud page plays every demonstration, labels them conceptual, and offers no sign-up', async ({ page }) => {
+    test.setTimeout(300_000);
+    await page.goto('/cloud/');
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('One connected workspace');
+    await expect(page.getByText('In development').first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /sign up|start trial|subscribe|buy/i })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /sign up|start trial|subscribe|buy/i })).toHaveCount(0);
+    const roots = page.locator('[data-demo-root]');
+    expect(await roots.count()).toBe(5);
+    for (let i = 0; i < 5; i++) {
+      await roots.nth(i).scrollIntoViewIfNeeded();
+      await expect(roots.nth(i)).toHaveAttribute('data-demo', 'done', { timeout: 60_000 });
+      await expect(roots.nth(i).getByText(/Conceptual preview/)).toBeVisible();
+    }
+    await expect(page.getByText('Demonstration data').first()).toBeVisible();
+  });
+
+  test('the Cloud dashboard and organization tabs are keyboard-operable', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/cloud/');
+    const dash = page.locator('[data-dashboard]');
+    const org = page.locator('[data-org]');
+    const overview = dash.getByRole('tab', { name: 'Overview' });
+    await overview.scrollIntoViewIfNeeded();
+    await overview.focus();
+    await page.keyboard.press('ArrowDown');
+    await expect(dash.getByRole('tab', { name: 'Projects' })).toHaveAttribute('aria-selected', 'true');
+    await expect(dash.getByRole('tabpanel', { name: 'Projects' })).toBeVisible();
+    await dash.getByRole('tab', { name: 'Reports' }).click();
+    await expect(dash.getByRole('tabpanel', { name: 'Reports' })).toBeVisible();
+    await org.getByRole('tab', { name: 'Policies' }).click();
+    await expect(org.getByRole('tabpanel', { name: 'Policies' })).toContainText('Source code and credentials stay local');
+  });
+
+  test('the Cloud roadmap group exists and holds only planned work', async ({ page }) => {
+    await page.goto('/roadmap/#cloud');
+    const group = page.locator('#cloud');
+    await expect(group.getByRole('heading', { name: 'Vekrun Cloud' })).toBeVisible();
+    const items = group.locator('[data-roadmap-item]');
+    expect(await items.count()).toBeGreaterThanOrEqual(8);
+    for (const s of await items.evaluateAll((els) => els.map((e) => e.getAttribute('data-status')))) expect(s).toBe('planned');
+  });
 
   test('download page shows the in-development state when there are no releases', async ({ page }) => {
     await page.goto('/download/');

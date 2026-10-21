@@ -1,0 +1,21 @@
+---
+/** One line on a feature page pointing at Vekrun Cloud. Never more than this. */
+import { cloud } from '@/data/site';
+import { ArrowUpRight } from '@lucide/astro';
+interface Props { text: string; class?: string }
+const { text, class: className = '' } = Astro.props;
+---
+<div class:list={['container-site', className]}>
+  <p class="cloud-callout">
+    <span class="cloud-callout-k">For your whole team</span>
+    <span class="cloud-callout-t">{text}</span>
+    <a href={cloud.href} class="group cloud-callout-a link-slide">Explore {cloud.name}<ArrowUpRight class="icon-nudge h-3.5 w-3.5" aria-hidden="true" /></a>
+  </p>
+</div>
+
+<style>
+  .cloud-callout { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.35rem 1rem; padding: 0.9rem 1.1rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: color-mix(in srgb, var(--accent) 4%, var(--surface)); font-size: 0.9rem; }
+  .cloud-callout-k { font-weight: 560; color: var(--text); }
+  .cloud-callout-t { color: var(--text-2); flex: 1 1 24rem; min-width: 0; }
+  .cloud-callout-a { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--accent); font-weight: 540; white-space: nowrap; }
+</style>

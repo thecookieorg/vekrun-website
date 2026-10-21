@@ -8,6 +8,7 @@ import FeatureHero from '@/components/features/FeatureHero.astro';
 import ReviewDemo from '@/components/home/ReviewDemo.astro';
 import Steps from '@/components/features/Steps.astro';
 import WhereThisStands from '@/components/features/WhereThisStands.astro';
+import CloudCallout from '@/components/cloud/CloudCallout.astro';
 import { Inbox, ScanSearch, Users, CheckCircle2 } from '@lucide/astro';
 
 const intended: { text: string; status: 'available' | 'planned' }[] = [
@@ -75,6 +76,8 @@ const workflow = [
     <Steps steps={workflow} columns={3} class="reveal-group mt-10" />
     <div class="mt-10 reveal"><Button href="/features/board/" variant="secondary">Where the pull request came from: the Board</Button></div>
   </Section>
+
+  <CloudCallout class="pb-12 sm:pb-14" text="Review requests routed to the right teammate, with AI findings beside the diff and project status updated when it merges." />
 
   <WhereThisStands>AI review of local branches and diffs, and review councils across several models, work in the development build on macOS. The Review Inbox for GitHub pull requests and GitLab merge requests, Review with AI on a pull request, inline comments and submitting a verdict through the provider are planned and high priority; none has started in source. GitHub and GitLab stay the source of truth for submitted reviews.</WhereThisStands>
 </Base>

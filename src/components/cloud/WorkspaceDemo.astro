@@ -1,0 +1,153 @@
+---
+/**
+ * "Your Vekrun. Now connected." One desktop window, two moments: the first-run
+ * choice (continue alone, or join an organization) and the workspace switcher
+ * (Personal · Acme Engineering · Northwind Labs). The switcher is a real
+ * radiogroup, so after the demo the reader can change workspaces themselves.
+ * Final state in markup: Acme Engineering selected. Conceptual.
+ */
+import Window from '@/components/mock/Window.astro';
+import DemoControls from '@/components/mock/DemoControls.astro';
+
+const spaces = [
+  { id: 'personal', name: 'Personal', sub: 'this machine, no account', projects: [{ n: 'side-project', m: 'local · 2 sessions' }, { n: 'dotfiles', m: 'local' }, { n: 'notes', m: 'local · memory on' }] },
+  { id: 'acme', name: 'Acme Engineering', sub: 'organization · 5 members', projects: [{ n: 'acme-api', m: 'shared · 3 plans · Factory queue' }, { n: 'acme-web', m: 'shared · 4 open reviews' }, { n: 'infra', m: 'shared · approval required for production' }] },
+  { id: 'northwind', name: 'Northwind Labs', sub: 'organization · 12 members', projects: [{ n: 'nw-platform', m: 'shared · 1 investigation' }, { n: 'nw-mobile', m: 'shared' }] },
+];
+---
+<figure class="ws" data-demo-root="workspace" data-workspace>
+  <Window title="Vekrun" class="ws-win">
+    <span slot="status" class="hidden sm:inline" data-ws-status>Personal projects stay on this machine</span>
+
+    <!-- First run -->
+    <div class="ws-welcome" data-screen="welcome" hidden>
+      <p class="ws-welcome-title">Welcome to Vekrun</p>
+      <div class="ws-choices">
+        <div class="ws-choice" data-choice="continue"><span class="ws-choice-t">Continue with Vekrun</span><span class="ws-choice-s">No account required. Your terminal, your models, your projects.</span></div>
+        <div class="ws-choice" data-choice="join"><span class="ws-choice-t">Join your organization</span><span class="ws-choice-s">Connect to your team’s Vekrun Cloud workspace. You can also do this later.</span></div>
+      </div>
+    </div>
+
+    <!-- The app, with the switcher -->
+    <div class="ws-app" data-screen="app">
+      <aside class="ws-side">
+        <div class="ws-switch" data-switch>
+          <button type="button" class="ws-switch-btn" aria-expanded="false" aria-controls="ws-menu" data-switch-btn>
+            <span class="ws-dot" aria-hidden="true"></span>
+            <span class="ws-switch-name" data-switch-name>Acme Engineering</span>
+            <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+          </button>
+          <div id="ws-menu" class="ws-menu" role="radiogroup" aria-label="Workspace" data-switch-menu hidden>
+            {spaces.map((s) => (
+              <label class="ws-opt" data-opt={s.id}><input type="radio" name="ws-space" value={s.id} class="sr-only" checked={s.id === 'acme'} data-space-radio /><span class="ws-opt-name">{s.name}</span><span class="ws-opt-sub">{s.sub}</span></label>
+            ))}
+            <p class="ws-menu-note">Joining an organization never moves your personal projects.</p>
+          </div>
+        </div>
+        <ul class="ws-nav" aria-hidden="true"><li class="is-on">Projects</li><li>Board</li><li>Agents</li><li>Reviews</li><li>Insights</li></ul>
+      </aside>
+      <div class="ws-main">
+        {spaces.map((s) => (
+          <ul class="ws-projects" data-space-panel={s.id} hidden={s.id !== 'acme'}>
+            {s.projects.map((p) => <li><span class="ws-proj">{p.n}</span><span class="ws-proj-m">{p.m}</span></li>)}
+          </ul>
+        ))}
+        <div class="ws-toast" data-toast hidden><span>Invitation · <strong>Acme Engineering</strong> wants you on the Platform team</span><span class="ws-toast-btn">Join</span></div>
+      </div>
+    </div>
+  </Window>
+  <DemoControls notice="Conceptual preview. The organization choice at first run and the workspace switcher are planned Cloud capabilities; today the desktop app has only a personal workspace." />
+</figure>
+
+<style>
+  .ws { margin: 0; }
+  .ws-win { font-size: 0.78rem; }
+  .ws-welcome { min-height: 16rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.1rem; padding: 1.5rem; animation: fade 240ms both; }
+  .ws-welcome[hidden] { display: none; }
+  .ws-welcome-title { margin: 0; font-size: 1.05rem; font-weight: 560; color: var(--text); letter-spacing: -0.01em; }
+  .ws-choices { display: grid; gap: 0.6rem; width: 100%; max-width: 30rem; }
+  @media (min-width: 40rem) { .ws-choices { grid-template-columns: 1fr 1fr; } }
+  .ws-choice { display: flex; flex-direction: column; gap: 0.25rem; padding: 0.8rem 0.9rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-2); transition: border-color var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out); }
+  .ws-choice.is-hot { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .ws-choice-t { color: var(--text); font-weight: 560; }
+  .ws-choice-s { color: var(--text-3); font-size: 0.72rem; line-height: 1.4; }
+  .ws-app { display: grid; grid-template-columns: 12rem minmax(0, 1fr); min-height: 16rem; animation: fade 240ms both; }
+  .ws-app[hidden] { display: none; }
+  @media (max-width: 40rem) { .ws-app { grid-template-columns: 1fr; } }
+  .ws-side { border-right: 1px solid var(--border); background: var(--bg-elevated); padding: 0.6rem; display: flex; flex-direction: column; gap: 0.7rem; min-width: 0; }
+  @media (max-width: 40rem) { .ws-side { border-right: 0; border-bottom: 1px solid var(--border); } .ws-nav { display: none !important; } }
+  .ws-switch { position: relative; }
+  .ws-switch-btn { width: 100%; display: flex; align-items: center; gap: 0.45rem; padding: 0.45rem 0.6rem; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); font-size: 0.8rem; cursor: pointer; text-align: left; }
+  .ws-switch-btn[aria-expanded='true'] { border-color: var(--accent); }
+  .ws-switch-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 540; }
+  .ws-dot { width: 0.55rem; height: 0.55rem; border-radius: 3px; background: var(--accent-gradient); flex: 0 0 auto; }
+  .ws-menu { position: absolute; left: 0; right: 0; top: calc(100% + 0.35rem); z-index: 3; padding: 0.35rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elevated); box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.7); animation: rise-sm 180ms var(--ease-out) both; }
+  .ws-menu[hidden] { display: none; }
+  .ws-opt { display: flex; flex-direction: column; gap: 0.05rem; padding: 0.45rem 0.6rem; border-radius: 6px; cursor: pointer; }
+  .ws-opt:hover { background: var(--surface-2); }
+  .ws-opt:has(:checked) { background: var(--accent-soft); }
+  .ws-opt:has(:focus-visible) { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .ws-opt-name { color: var(--text); font-weight: 540; }
+  .ws-opt-sub { color: var(--text-3); font-size: 0.68rem; }
+  .ws-menu-note { margin: 0.3rem 0 0; padding: 0.4rem 0.6rem 0.2rem; border-top: 1px solid var(--border); color: var(--text-3); font-size: 0.66rem; line-height: 1.35; }
+  .ws-nav { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.1rem; }
+  .ws-nav li { padding: 0.3rem 0.6rem; border-radius: 6px; color: var(--text-3); font-size: 0.78rem; }
+  .ws-nav li.is-on { background: var(--surface-2); color: var(--text); }
+  .ws-main { position: relative; padding: 0.8rem; min-width: 0; }
+  .ws-projects { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; animation: fade 240ms both; }
+  .ws-projects[hidden] { display: none; }
+  .ws-projects li { display: flex; flex-direction: column; gap: 0.1rem; padding: 0.55rem 0.7rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface-2); }
+  .ws-proj { font-family: var(--font-mono); color: var(--text); font-size: 0.76rem; }
+  .ws-proj-m { color: var(--text-3); font-size: 0.68rem; }
+  .ws-toast { position: absolute; right: 0.8rem; bottom: 0.8rem; left: 0.8rem; display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; padding: 0.55rem 0.7rem; border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border)); border-radius: var(--radius-sm); background: var(--bg-elevated); color: var(--text-2); font-size: 0.74rem; box-shadow: 0 16px 40px -20px rgba(0, 0, 0, 0.7); animation: rise-sm 300ms var(--ease-out) both; }
+  .ws-toast[hidden] { display: none; }
+  .ws-toast strong { color: var(--text); font-weight: 560; }
+  .ws-toast-btn { flex: 0 0 auto; background: var(--accent); color: var(--accent-ink); border-radius: 4px; padding: 0.15rem 0.5rem; font-weight: 560; font-size: 0.7rem; }
+  @media (prefers-reduced-motion: reduce) { .ws-welcome, .ws-app, .ws-menu, .ws-projects, .ws-toast { animation: none; } .ws-choice { transition: none; } }
+</style>
+
+<script>
+  import { createSequence, type Step } from '@/scripts/sequence';
+
+  const root = document.querySelector<HTMLElement>('[data-workspace]');
+  if (root) {
+    const welcome = root.querySelector<HTMLElement>('[data-screen="welcome"]')!;
+    const app = root.querySelector<HTMLElement>('[data-screen="app"]')!;
+    const choice = (id: string) => root.querySelector<HTMLElement>(`[data-choice="${id}"]`)!;
+    const btn = root.querySelector<HTMLButtonElement>('[data-switch-btn]')!;
+    const menu = root.querySelector<HTMLElement>('[data-switch-menu]')!;
+    const name = root.querySelector<HTMLElement>('[data-switch-name]')!;
+    const radios = Array.from(root.querySelectorAll<HTMLInputElement>('[data-space-radio]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-space-panel]'));
+    const toast = root.querySelector<HTMLElement>('[data-toast]')!;
+    const status = root.querySelector<HTMLElement>('[data-ws-status]')!;
+    const labels: Record<string, string> = { personal: 'Personal', acme: 'Acme Engineering', northwind: 'Northwind Labs' };
+
+    const openMenu = (open: boolean) => { menu.hidden = !open; btn.setAttribute('aria-expanded', String(open)); };
+    const choose = (id: string) => {
+      radios.forEach((r) => { r.checked = r.value === id; });
+      panels.forEach((p) => { p.hidden = p.dataset.spacePanel !== id; });
+      name.textContent = labels[id] ?? id;
+      status.textContent = id === 'personal' ? 'No account. Everything on this machine.' : 'Personal projects stay on this machine';
+    };
+    btn.addEventListener('click', () => openMenu(menu.hidden));
+    radios.forEach((r) => r.addEventListener('change', () => { choose(r.value); setTimeout(() => openMenu(false), 250); }));
+    document.addEventListener('click', (e) => { if (!root.contains(e.target as Node)) openMenu(false); });
+    root.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { openMenu(false); btn.focus(); } });
+
+    const reset = () => {
+      welcome.hidden = false; app.hidden = true; toast.hidden = true; openMenu(false);
+      choice('continue').classList.remove('is-hot'); choice('join').classList.remove('is-hot');
+      choose('personal');
+    };
+    const steps: Step[] = [
+      { t: 900, run: () => choice('continue').classList.add('is-hot') },
+      { t: 1900, run: () => { welcome.hidden = true; app.hidden = false; } },
+      { t: 3800, run: () => { toast.hidden = false; } },
+      { t: 5400, run: () => { toast.hidden = true; openMenu(true); } },
+      { t: 6300, run: () => choose('acme') },
+      { t: 7300, run: () => openMenu(false) },
+    ];
+    createSequence(root, steps, { reset });
+  }
+</script>

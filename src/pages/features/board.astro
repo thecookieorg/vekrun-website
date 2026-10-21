@@ -7,6 +7,7 @@ import FeatureHero from '@/components/features/FeatureHero.astro';
 import TicketDemo from '@/components/features/TicketDemo.astro';
 import Steps from '@/components/features/Steps.astro';
 import WhereThisStands from '@/components/features/WhereThisStands.astro';
+import CloudCallout from '@/components/cloud/CloudCallout.astro';
 
 const steps = [
   { title: 'Connect your tracker', body: 'Jira, Linear, Asana, GitHub or GitLab. Several accounts if you have them. Production errors from Insights can land here too.' },
@@ -54,6 +55,8 @@ const ways = [
     </div>
     <div class="mt-8 reveal"><Button href="/ai-teams/" variant="secondary">Hand a bigger ticket to an AI team</Button></div>
   </Section>
+
+  <CloudCallout class="pb-12 sm:pb-14" text="A shared Board across your organization, with assignments and plans every developer on the project can see." />
 
   <WhereThisStands>The Board, Start Work and all three ways of working run in the development build on macOS. Adapters for Jira, Linear, Asana, GitHub and GitLab exist and are tested against recorded responses, and a ticket created from a monitoring issue shows its investigation stage on its card. Running the trackers against live services, pull-request links and status updates are planned.</WhereThisStands>
 </Base>

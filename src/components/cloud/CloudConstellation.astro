@@ -1,0 +1,207 @@
+---
+/**
+ * The Cloud hero: three desktops and a browser dashboard around one organization
+ * workspace. Packets travel the wires as one piece of work moves through the team:
+ *   1 a manager assigns a ticket in the browser · 2 it lands on Alex's Board ·
+ *   3 Alex starts work, a Factory worker finishes it and opens a pull request ·
+ *   4 Priya gets the review request and approves · 5 the dashboard shows it delivered.
+ * Conceptual: nothing here is a recording. Final state is in the markup.
+ */
+import Window from '@/components/mock/Window.astro';
+import DemoControls from '@/components/mock/DemoControls.astro';
+---
+<figure class="cc enter-scale" style="--i: 4" data-demo-root="cloud-hero" data-cloud-hero>
+  <div class="cc-grid">
+    <!-- Desktops -->
+    <div class="cc-desks">
+      <div class="cc-row">
+        <Window title="Alex · Vekrun" crumbs={['Board']} class="cc-win">
+          <span slot="status" class="cc-who">macOS</span>
+          <div class="cc-board">
+            <div class="cc-colm"><span class="cc-colm-head">To do</span>
+              <div class="cc-card"><span class="cc-id">VEK-128</span>Fix the dark-mode flash</div>
+            </div>
+            <div class="cc-colm" data-col="progress"><span class="cc-colm-head">In progress</span>
+              <div class="cc-card is-hot" data-t="1500" data-card="task"><span class="cc-id">VEK-131 <i class="cc-src">Ji</i></span>Rate-limit the webhook endpoint<span class="cc-chip" data-chip>merged · #214</span></div>
+            </div>
+          </div>
+        </Window>
+        <span class="cc-wire" aria-hidden="true"><i class="cc-packet" data-packet="alex"></i></span>
+      </div>
+
+      <div class="cc-row">
+        <Window title="Factory worker" crumbs={['acme-api']} class="cc-win">
+          <span slot="status" class="cc-who">build machine</span>
+          <pre class="term cc-term"><span class="term-line" data-t="4400"><span class="dim">›</span> job <span class="info">VEK-131</span> · worker <span class="mag">build-2</span> · budget $4 of $40</span><span class="term-line" data-t="5200">running 12 tests … <span class="ok">12 passed</span></span><span class="term-line" data-t="6200">verified against the plan · <span class="ok">ok</span></span><span class="term-line" data-t="6900">pull request <span class="info">#214</span> opened · review requested</span></pre>
+        </Window>
+        <span class="cc-wire" aria-hidden="true"><i class="cc-packet" data-packet="worker"></i></span>
+      </div>
+
+      <div class="cc-row">
+        <Window title="Priya · Vekrun" crumbs={['Reviews']} class="cc-win">
+          <span slot="status" class="cc-who">Windows</span>
+          <ul class="cc-list">
+            <li class="cc-review" data-t="7800"><span><span class="cc-id">#214</span> Rate-limit the webhook endpoint</span><span class="cc-meta">from Alex · AI findings: none</span><span class="cc-stamp" data-t="9800">Approved by Priya</span></li>
+            <li class="cc-review is-quiet"><span><span class="cc-id">#209</span> Replace the retry queue</span><span class="cc-meta">from Sam · 2 notes</span></li>
+          </ul>
+        </Window>
+        <span class="cc-wire" aria-hidden="true"><i class="cc-packet" data-packet="priya"></i></span>
+      </div>
+    </div>
+
+    <!-- The organization -->
+    <div class="cc-hub-col">
+      <span class="cc-bus" aria-hidden="true"></span>
+      <div class="cc-hub" data-hub>
+        <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" class="cc-mark"><path d="M5 7h5.2l5.8 13.4L21.8 7H27L18.1 27h-4.2Z" fill="currentColor"/></svg>
+        <span class="cc-hub-name">Acme Engineering</span>
+        <span class="cc-hub-sub">Vekrun Cloud</span>
+        <span class="cc-hub-state"><span class="live-dot" aria-hidden="true"></span><span data-hub-state>Up to date</span></span>
+      </div>
+    </div>
+
+    <!-- Browser dashboard -->
+    <div class="cc-dash">
+      <span class="cc-wire" aria-hidden="true"><i class="cc-packet" data-packet="dash"></i></span>
+      <Window title="Dashboard" crumbs={['Acme Engineering']} class="cc-win cc-win-dash">
+        <span slot="status" class="cc-who">browser · Dana, project manager</span>
+        <div class="cc-stats">
+          <div><span class="cc-stat-n" data-stat="progress">4</span><span class="cc-stat-l">In progress</span></div>
+          <div><span class="cc-stat-n" data-stat="review">0</span><span class="cc-stat-l">Ready for review</span></div>
+          <div><span class="cc-stat-n" data-stat="done">4</span><span class="cc-stat-l">Delivered this week</span></div>
+        </div>
+        <ul class="cc-feed" data-feed>
+          <li data-t="10600"><span class="ok">Merged</span> #214 Rate-limit the webhook endpoint · approved by Priya</li>
+          <li data-t="7400"><span class="info">Review</span> #214 requested from Priya · 12 tests passed</li>
+          <li data-t="3900"><span class="warn">Started</span> VEK-131 by Alex · branch feat/webhook-rate-limit</li>
+          <li data-t="300"><span class="dim">Assigned</span> VEK-131 to Alex by Dana</li>
+        </ul>
+      </Window>
+    </div>
+  </div>
+  <DemoControls notice="Conceptual preview. Vekrun Cloud is in development; this illustrates the intended experience and is not a recording of the application." />
+</figure>
+
+<style>
+  .cc { margin: 0; }
+  .cc-grid { display: grid; gap: 1.25rem; }
+  @media (min-width: 64rem) { .cc-grid { grid-template-columns: minmax(0, 7fr) 13rem minmax(0, 6fr); gap: 0; align-items: stretch; } }
+  .cc-win { font-size: 0.74rem; box-shadow: var(--shadow-window); }
+  .cc-desks { display: grid; gap: 0.9rem; }
+  .cc-row { display: flex; align-items: center; min-width: 0; }
+  .cc-row > :global(.window) { flex: 1 1 auto; min-width: 0; }
+  .cc-wire { display: none; }
+  .cc-dash { display: flex; align-items: center; min-width: 0; }
+  .cc-dash > :global(.window) { flex: 1 1 auto; min-width: 0; }
+  .cc-hub-col { position: relative; display: flex; align-items: center; justify-content: center; padding: 0.5rem 0; }
+  .cc-bus { display: none; }
+  @media (min-width: 64rem) {
+    .cc-wire { display: block; position: relative; flex: 0 0 2.75rem; height: 1px; background: linear-gradient(90deg, var(--border-strong), color-mix(in srgb, var(--accent) 45%, var(--border-strong))); }
+    .cc-dash .cc-wire { background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 45%, var(--border-strong)), var(--border-strong)); }
+    .cc-bus { display: block; position: absolute; left: 0; top: 4.3rem; bottom: 4.3rem; width: 1px; background: color-mix(in srgb, var(--accent) 45%, var(--border-strong)); }
+    .cc-hub-col::before, .cc-hub-col::after { content: ''; position: absolute; top: 50%; width: 1.5rem; height: 1px; background: color-mix(in srgb, var(--accent) 45%, var(--border-strong)); }
+    .cc-hub-col::before { left: 0; } .cc-hub-col::after { right: 0; }
+  }
+  .cc-packet { position: absolute; top: -3px; left: 0; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px 2px color-mix(in srgb, var(--accent) 60%, transparent); opacity: 0; }
+  .cc-packet.is-out { animation: cc-out 620ms var(--ease-out) both; }
+  .cc-packet.is-in { animation: cc-in 620ms var(--ease-out) both; }
+  @keyframes cc-out { from { opacity: 1; left: 0; } to { opacity: 1; left: calc(100% - 7px); } }
+  @keyframes cc-in { from { opacity: 1; left: calc(100% - 7px); } to { opacity: 1; left: 0; } }
+  .cc-hub { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 0.15rem; padding: 1rem 1.1rem; border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--border)); border-radius: var(--radius-lg); background: color-mix(in srgb, var(--accent) 6%, var(--surface)); box-shadow: var(--glow); text-align: center; min-width: 10rem; transition: box-shadow var(--dur) var(--ease-out), border-color var(--dur) var(--ease-out); }
+  .cc-hub.is-sync { border-color: var(--accent); box-shadow: var(--glow), 0 0 0 6px color-mix(in srgb, var(--accent) 12%, transparent); }
+  .cc-mark { color: var(--accent); margin-bottom: 0.25rem; }
+  .cc-hub-name { font-size: 0.8125rem; font-weight: 560; color: var(--text); }
+  .cc-hub-sub { font-size: 0.7rem; color: var(--text-3); }
+  .cc-hub-state { margin-top: 0.4rem; display: inline-flex; align-items: center; gap: 0.35rem; font-family: var(--font-mono); font-size: 0.64rem; color: var(--text-2); }
+  .cc-who { font-family: var(--font-mono); }
+  .cc-board { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); min-height: 6.4rem; }
+  .cc-colm { background: var(--surface); padding: 0.45rem; display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+  .cc-colm-head { font-size: 0.64rem; color: var(--text-3); }
+  .cc-card { display: flex; flex-direction: column; gap: 0.2rem; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.4rem 0.5rem; color: var(--text); font-size: 0.72rem; line-height: 1.3; }
+  .cc-card[hidden] { display: none; }
+  .cc-card.is-hot { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .cc-card.is-entering { animation: scale-in 450ms var(--ease-out) both; }
+  .cc-id { font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-3); display: flex; align-items: center; gap: 0.3rem; }
+  .cc-src { font-style: normal; border: 1px solid color-mix(in srgb, #0052cc 55%, transparent); color: #6aa0ff; border-radius: 4px; padding: 0 0.25rem; font-size: 0.58rem; }
+  .cc-chip { align-self: flex-start; font-family: var(--font-mono); font-size: 0.6rem; color: var(--warn); border: 1px solid color-mix(in srgb, var(--warn) 50%, transparent); border-radius: 999px; padding: 0.05rem 0.4rem; }
+  .cc-chip[hidden] { display: none; }
+  .cc-term { margin: 0; padding: 0.55rem 0.7rem; min-height: 6.4rem; font-size: 0.7rem; }
+  .cc-term .term-line[hidden] { display: none; }
+  .cc-list { list-style: none; margin: 0; padding: 0.45rem; display: flex; flex-direction: column; gap: 0.4rem; min-height: 6.4rem; }
+  .cc-review { display: flex; flex-direction: column; gap: 0.15rem; border: 1px solid color-mix(in srgb, var(--info) 45%, transparent); border-radius: var(--radius-sm); background: var(--surface-2); padding: 0.4rem 0.5rem; font-size: 0.72rem; color: var(--text); animation: scale-in 450ms var(--ease-out) both; }
+  .cc-review[hidden] { display: none; }
+  .cc-review.is-quiet { border-color: var(--border); animation: none; }
+  .cc-meta { font-size: 0.64rem; color: var(--text-3); }
+  .cc-stamp { align-self: flex-start; margin-top: 0.1rem; font-size: 0.62rem; color: var(--ok); border: 1px solid color-mix(in srgb, var(--ok) 50%, transparent); border-radius: 999px; padding: 0.05rem 0.4rem; animation: scale-in 350ms var(--ease-spring) both; }
+  .cc-stamp[hidden] { display: none; }
+  .cc-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--border); border-bottom: 1px solid var(--border); }
+  .cc-stats > div { background: var(--surface); padding: 0.6rem 0.7rem; display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+  .cc-stat-n { font-size: 1.35rem; font-weight: 600; letter-spacing: -0.02em; color: var(--text); line-height: 1.1; font-variant-numeric: tabular-nums; transition: color var(--dur-fast); }
+  .cc-stat-n.is-bump { color: var(--accent); }
+  .cc-stat-l { font-size: 0.64rem; color: var(--text-3); }
+  .cc-feed { list-style: none; margin: 0; padding: 0.5rem 0.7rem; display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.7rem; color: var(--text-2); min-height: 6.2rem; }
+  .cc-feed li { animation: rise-sm 400ms var(--ease-out) both; }
+  .cc-feed li[hidden] { display: none; }
+  .cc-feed .ok { color: var(--ok); } .cc-feed .info { color: var(--info); } .cc-feed .warn { color: var(--warn); } .cc-feed .dim { color: var(--text-3); }
+  @media (prefers-reduced-motion: reduce) { .cc-packet, .cc-card.is-entering, .cc-review, .cc-stamp, .cc-feed li { animation: none !important; } .cc-hub { transition: none; } }
+</style>
+
+<script>
+  import { createSequence, reducedMotion, type Step } from '@/scripts/sequence';
+
+  const root = document.querySelector<HTMLElement>('[data-cloud-hero]');
+  if (root) {
+    const timed = Array.from(root.querySelectorAll<HTMLElement>('[data-t]'));
+    const hub = root.querySelector<HTMLElement>('[data-hub]')!;
+    const hubState = root.querySelector<HTMLElement>('[data-hub-state]')!;
+    const chip = root.querySelector<HTMLElement>('[data-chip]')!;
+    const task = root.querySelector<HTMLElement>('[data-card="task"]')!;
+    const progressCol = root.querySelector<HTMLElement>('[data-col="progress"]')!;
+    const todoCol = progressCol.previousElementSibling as HTMLElement;
+    const stat = (k: string) => root.querySelector<HTMLElement>(`[data-stat="${k}"]`)!;
+    const packet = (k: string) => root.querySelector<HTMLElement>(`[data-packet="${k}"]`)!;
+    const reduce = reducedMotion();
+
+    const send = (k: string, dir: 'out' | 'in') => {
+      if (reduce) return;
+      const p = packet(k);
+      p.classList.remove('is-out', 'is-in'); void p.offsetWidth; p.classList.add(`is-${dir}`);
+    };
+    const sync = (on: boolean) => { hub.classList.toggle('is-sync', on); hubState.textContent = on ? 'Syncing' : 'Up to date'; };
+    const set = (k: string, v: number) => { const el = stat(k); el.textContent = String(v); if (!reduce) { el.classList.add('is-bump'); setTimeout(() => el.classList.remove('is-bump'), 700); } };
+
+    const reset = () => {
+      timed.forEach((n) => { n.hidden = true; });
+      chip.hidden = true;
+      task.classList.remove('is-entering');
+      todoCol.appendChild(task);
+      root.querySelectorAll('.cc-packet').forEach((p) => p.classList.remove('is-out', 'is-in'));
+      sync(false);
+      stat('progress').textContent = '4'; stat('review').textContent = '0'; stat('done').textContent = '3';
+    };
+
+    const show = (n: HTMLElement) => { n.hidden = false; };
+    const steps: Step[] = [
+      // 1. The manager assigns a ticket in the browser; it travels to the organization, then to Alex.
+      { t: 300, run: () => { show(timed.find((n) => n.dataset.t === '300')!); send('dash', 'in'); sync(true); } },
+      { t: 900, run: () => send('alex', 'in') },
+      { t: 1500, run: () => { task.hidden = false; task.classList.add('is-entering'); sync(false); } },
+      // 2. Alex starts work: the card moves and the organization learns about it.
+      { t: 3300, run: () => { progressCol.appendChild(task); chip.hidden = false; send('alex', 'out'); sync(true); } },
+      { t: 3900, run: () => { send('dash', 'out'); show(timed.find((n) => n.dataset.t === '3900')!); set('progress', 5); } },
+      { t: 4400, run: () => { sync(false); show(timed.find((n) => n.dataset.t === '4400')!); } },
+      // 3. A Factory worker finishes the job and opens a pull request.
+      { t: 5200, run: () => show(timed.find((n) => n.dataset.t === '5200')!) },
+      { t: 6200, run: () => show(timed.find((n) => n.dataset.t === '6200')!) },
+      { t: 6900, run: () => { show(timed.find((n) => n.dataset.t === '6900')!); send('worker', 'out'); sync(true); } },
+      { t: 7400, run: () => { send('dash', 'out'); show(timed.find((n) => n.dataset.t === '7400')!); set('review', 1); } },
+      { t: 7800, run: () => { send('priya', 'in'); show(timed.find((n) => n.dataset.t === '7800')!); } },
+      { t: 8400, run: () => sync(false) },
+      // 4. Priya approves; the dashboard shows it delivered.
+      { t: 9800, run: () => { show(timed.find((n) => n.dataset.t === '9800')!); send('priya', 'out'); sync(true); } },
+      { t: 10600, run: () => { send('dash', 'out'); show(timed.find((n) => n.dataset.t === '10600')!); set('review', 0); set('progress', 4); set('done', 4); chip.textContent = 'merged · #214'; } },
+      { t: 11400, run: () => sync(false) },
+    ];
+    createSequence(root, steps, { reset: () => { reset(); chip.textContent = 'feat/webhook-rate-limit'; } });
+  }
+</script>

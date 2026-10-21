@@ -6,6 +6,7 @@ import Button from '@/components/Button.astro';
 import FeatureHero from '@/components/features/FeatureHero.astro';
 import Steps from '@/components/features/Steps.astro';
 import WhereThisStands from '@/components/features/WhereThisStands.astro';
+import CloudCallout from '@/components/cloud/CloudCallout.astro';
 import InsightsDemo from '@/components/home/InsightsDemo.astro';
 import IntegrationLogo from '@/components/catalog/IntegrationLogo.astro';
 import { getCollection } from 'astro:content';
@@ -94,6 +95,8 @@ const controls = [
     </ul>
     <div class="mt-8"><Button href="/docs/insights/security/" variant="secondary">How monitoring data is handled</Button></div>
   </Section>
+
+  <CloudCallout class="pb-12 sm:pb-14" text="Investigations and fix plans shared with the team, and production checks the whole organization can see." />
 
   <WhereThisStands>Insights, the four provider connections, investigations with structured reports, tickets with a duplicate check, fix plans, the incident workflow on Factory, the incident Council and deployment observation exist in the development build on macOS. The providers are tested against recorded responses and have not yet been run against live accounts, and the hosted sign-in for Honeybadger and AppSignal is not built. Automation is off by default; supervised triage can start an investigation on its own but never creates tickets or changes code without you.</WhereThisStands>
 </Base>

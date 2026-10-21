@@ -28,7 +28,7 @@ const roadmap = defineCollection({
     title: z.string(),
     description: z.string(),
     status: z.enum(['planned', 'in-progress', 'implemented', 'proposed', 'released']),
-    area: z.enum(['terminal', 'ai-coding', 'board', 'ai-teams', 'code-review', 'insights', 'ci-cd', 'deployment', 'security', 'integrations', 'releases']),
+    area: z.enum(['terminal', 'ai-coding', 'board', 'ai-teams', 'code-review', 'insights', 'ci-cd', 'deployment', 'security', 'integrations', 'cloud', 'releases']),
     /** Optional one-line priority or capability note shown with the entry. */
     note: z.string().optional(),
     updated: z.string(),

@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { availability, connectionMethods, integrationCategories, roadmapAreas, roadmapStatuses, footerColumns, primaryNav, featurePages, site } from '@/data/site';
+import { availability, connectionMethods, integrationCategories, roadmapAreas, roadmapStatuses, footerColumns, primaryNav, featurePages, site, cloud } from '@/data/site';
 
 const read = (p: string) => JSON.parse(readFileSync(new URL(`../../src/content/data/${p}`, import.meta.url), 'utf8'));
 const integrations: any[] = read('integrations.json');
@@ -82,6 +82,13 @@ describe('roadmap', () => {
   it('never dates an entry after the reconciliation date', () => {
     for (const r of roadmap) expect(r.updated <= site.status.asOf, r.id).toBe(true);
   });
+  it('never claims Cloud work beyond the product status set in site.ts', () => {
+    const order = ['planned', 'in-progress', 'implemented', 'released'];
+    for (const r of roadmap.filter((x) => x.area === 'cloud')) {
+      expect(order.indexOf(r.status), r.id).toBeLessThanOrEqual(order.indexOf(cloud.status));
+      if (cloud.status === 'planned') expect((r.verifiedOn ?? []).length, r.id).toBe(0);
+    }
+  });
   it('lists twelve engineering milestones for the contributor page', () => {
     expect(milestones.map((m) => m.number)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
   });
@@ -110,6 +117,13 @@ describe('navigation and positioning', () => {
   it('keeps the navigation compact', () => {
     expect(primaryNav.length).toBeLessThanOrEqual(6);
     expect(featurePages.length).toBe(6);
+  });
+  it('keeps Cloud as one destination: a top-level link, a footer link, no subproduct links', () => {
+    expect(primaryNav.filter((n) => n.href === cloud.href)).toHaveLength(1);
+    expect(primaryNav.some((n) => n.label === 'AI Teams')).toBe(false);
+    const product = footerColumns.find((c) => c.title === 'Product')!;
+    expect(product.items.filter((i) => i.href.startsWith('/cloud'))).toHaveLength(1);
+    expect(cloud.tiers.map((t) => t.price).join(' ')).not.toMatch(/\$\s?\d/);
   });
   it('does not expose the application repository while it is private', () => {
     if (!site.repo.public) expect(primaryNav.some((n) => n.href.includes('github.com'))).toBe(false);

@@ -1,0 +1,133 @@
+---
+/**
+ * "AI teams that work across your organization": one piece of work travels
+ * Project manager → Engineering lead → Factory → Developer → Delivered, beside
+ * the organization's Factory queue. The chip is a real node moved between lanes
+ * with a FLIP transition (same technique as the AI Teams demo). Final state in
+ * markup: delivered. Conceptual, demonstration data.
+ */
+import Window from '@/components/mock/Window.astro';
+import DemoControls from '@/components/mock/DemoControls.astro';
+
+const lanes = [
+  { id: 'pm', name: 'Project manager', hint: 'creates the work in the browser' },
+  { id: 'lead', name: 'Engineering lead', hint: 'approves the plan and the budget' },
+  { id: 'factory', name: 'Factory', hint: 'an approved worker builds and tests' },
+  { id: 'dev', name: 'Developer', hint: 'reviews the result' },
+  { id: 'done', name: 'Delivered', hint: 'the manager sees it land' },
+];
+const queue = [
+  { id: 'VEK-140', t: 'Retry failed exports', w: 'build-2', s: 'running · tests', tone: 'info' },
+  { id: 'VEK-145', t: 'Payment webhooks', w: 'build-2', s: 'merged', tone: 'ok' },
+  { id: 'VEK-147', t: 'Nightly dependency check', w: 'Alex’s machine', s: 'waiting for approval', tone: 'warn' },
+  { id: 'VEK-151', t: 'Audit log pagination', w: '—', s: 'queued', tone: 'muted' },
+];
+---
+<figure class="ff" data-demo-root="factory-flow" data-factory-flow>
+  <Window title="Factory" crumbs={['Acme Engineering', 'Organization queue']} class="ff-win">
+    <span slot="status" class="hidden sm:inline-flex items-center gap-1.5"><span class="live-dot" aria-hidden="true"></span><span data-ff-phase>Delivered</span></span>
+    <span slot="status" class="hidden md:inline">$84 of $400 this week</span>
+    <div class="ff-body">
+      <div class="ff-lanes">
+        {lanes.map((l) => (
+          <section class="ff-lane" data-lane={l.id} aria-label={`${l.name} lane`}>
+            <header class="ff-lane-head"><span class="ff-lane-name">{l.name}</span><span class="ff-lane-hint">{l.hint}</span></header>
+            <ul class="ff-chips" data-chips={l.id}>
+              {l.id === 'done' && <li class="ff-chip is-ok" data-chip><span class="ff-chip-title">VEK-145 Payment webhooks</span><span class="ff-chip-meta" data-meta>Merged · Dana notified · 18 tests passed</span></li>}
+            </ul>
+          </section>
+        ))}
+      </div>
+      <aside class="ff-queue" aria-label="Organization queue">
+        <p class="ff-queue-head">Organization queue</p>
+        <ul class="ff-rows">
+          {queue.map((q) => <li data-queue={q.id}><span class="ff-id">{q.id}</span><span class="ff-row-t">{q.t}</span><span class="ff-row-w">{q.w}</span><span class:list={['ff-tag', `is-${q.tone}`]} data-queue-state>{q.s}</span></li>)}
+        </ul>
+        <p class="ff-queue-foot">Shared workers: build-2 · Alex’s machine · Priya’s machine</p>
+      </aside>
+    </div>
+  </Window>
+  <DemoControls notice="Conceptual preview with demonstration data. Shared queues, team approvals and shared workers are planned Cloud capabilities; today Factory runs locally or on machines you own." />
+</figure>
+
+<style>
+  .ff { margin: 0; }
+  .ff-win { font-size: 0.78rem; }
+  .ff-body { display: grid; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 64rem) { .ff-body { grid-template-columns: minmax(0, 1fr) 17rem; } }
+  .ff-lanes { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--border); }
+  @media (min-width: 40rem) { .ff-lanes { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+  .ff-lane { background: var(--surface); padding: 0.7rem; min-width: 0; display: flex; flex-direction: column; gap: 0.55rem; min-height: 5rem; }
+  @media (min-width: 40rem) { .ff-lane { min-height: 13rem; } }
+  .ff-lane[data-lane='done'] { background: color-mix(in srgb, var(--accent) 5%, var(--surface)); }
+  .ff-lane-head { display: flex; flex-direction: column; gap: 0.1rem; }
+  .ff-lane-name { font-size: 0.78rem; font-weight: 560; color: var(--text); }
+  .ff-lane-hint { font-size: 0.66rem; color: var(--text-3); line-height: 1.3; }
+  .ff-chips { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+  .ff-chip { display: flex; flex-direction: column; gap: 0.15rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface-2); padding: 0.45rem 0.6rem; font-size: 0.72rem; will-change: transform; }
+  .ff-chip.is-moving { transition: transform 620ms var(--ease-spring); }
+  .ff-chip.is-working { border-color: color-mix(in srgb, var(--warn) 55%, transparent); }
+  .ff-chip.is-ok { border-color: color-mix(in srgb, var(--ok) 55%, transparent); }
+  .ff-chip-title { color: var(--text); font-weight: 540; }
+  .ff-chip-meta { font-family: var(--font-mono); color: var(--text-3); font-size: 0.64rem; line-height: 1.4; }
+  .ff-chip.is-working .ff-chip-meta { color: var(--warn); } .ff-chip.is-ok .ff-chip-meta { color: var(--ok); }
+  .ff-queue { border-top: 1px solid var(--border); background: var(--bg-elevated); padding: 0.7rem; min-width: 0; }
+  @media (min-width: 64rem) { .ff-queue { border-top: 0; border-left: 1px solid var(--border); } }
+  .ff-queue-head { margin: 0 0 0.5rem; font-size: 0.7rem; font-weight: 540; color: var(--text-3); }
+  .ff-rows { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+  .ff-rows li { display: grid; grid-template-columns: 4.6rem minmax(0, 1fr); grid-template-areas: 'id t' 'w s'; column-gap: 0.5rem; row-gap: 0.15rem; background: var(--surface); padding: 0.45rem 0.6rem; align-items: center; }
+  .ff-id { grid-area: id; font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-3); }
+  .ff-row-t { grid-area: t; color: var(--text); font-size: 0.74rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ff-row-w { grid-area: w; font-size: 0.64rem; color: var(--text-3); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ff-tag { grid-area: s; justify-self: start; font-family: var(--font-mono); font-size: 0.6rem; border-radius: 4px; padding: 0.05rem 0.35rem; border: 1px solid var(--border-strong); color: var(--text-2); }
+  .ff-tag.is-ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 50%, transparent); }
+  .ff-tag.is-warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 50%, transparent); }
+  .ff-tag.is-info { color: var(--info); border-color: color-mix(in srgb, var(--info) 50%, transparent); }
+  .ff-tag.is-muted { color: var(--text-3); }
+  .ff-queue-foot { margin: 0.6rem 0 0; font-size: 0.66rem; color: var(--text-3); line-height: 1.4; }
+  @media (prefers-reduced-motion: reduce) { .ff-chip.is-moving { transition: none; } }
+</style>
+
+<script>
+  import { createSequence, reducedMotion, type Step } from '@/scripts/sequence';
+
+  const root = document.querySelector<HTMLElement>('[data-factory-flow]');
+  if (root) {
+    const chip = root.querySelector<HTMLElement>('[data-chip]')!;
+    const meta = chip.querySelector<HTMLElement>('[data-meta]')!;
+    const lane = (id: string) => root.querySelector<HTMLElement>(`[data-chips="${id}"]`)!;
+    const phase = root.querySelector<HTMLElement>('[data-ff-phase]')!;
+    const q145 = root.querySelector<HTMLElement>('[data-queue="VEK-145"] [data-queue-state]')!;
+    const reduce = reducedMotion();
+
+    const move = (to: string, text: string, state: 'working' | 'ok' | '') => {
+      const first = chip.getBoundingClientRect();
+      lane(to).appendChild(chip);
+      meta.textContent = text;
+      chip.classList.remove('is-working', 'is-ok'); if (state) chip.classList.add(`is-${state}`);
+      const last = chip.getBoundingClientRect();
+      if (reduce || first.width === 0) return;
+      chip.classList.remove('is-moving');
+      chip.style.transform = `translate(${first.left - last.left}px, ${first.top - last.top}px)`;
+      void chip.offsetWidth;
+      chip.classList.add('is-moving'); chip.style.transform = '';
+      chip.addEventListener('transitionend', () => chip.classList.remove('is-moving'), { once: true });
+    };
+    const setQueue = (text: string, tone: string) => { q145.textContent = text; q145.classList.remove('is-ok', 'is-warn', 'is-info', 'is-muted'); q145.classList.add(`is-${tone}`); };
+
+    const reset = () => {
+      lane('pm').appendChild(chip);
+      chip.classList.remove('is-working', 'is-ok', 'is-moving'); chip.style.transform = '';
+      meta.textContent = 'Created from the dashboard · plan requested';
+      phase.textContent = 'Waiting for a plan'; setQueue('queued', 'muted');
+    };
+    const steps: Step[] = [
+      { t: 1600, run: () => { move('lead', 'Plan: 4 steps · estimated $12 · approved by Sam', 'ok'); phase.textContent = 'Approved'; setQueue('waiting for approval', 'warn'); } },
+      { t: 3400, run: () => { move('factory', 'worker build-2 · step 1 of 4 · editing', 'working'); phase.textContent = 'Building'; setQueue('running', 'info'); } },
+      { t: 5000, run: () => { meta.textContent = 'worker build-2 · 18 tests passed · verified by a second agent'; } },
+      { t: 6400, run: () => { move('dev', 'Review requested from Alex · AI findings: 1 note', 'working'); phase.textContent = 'In review'; setQueue('in review', 'info'); } },
+      { t: 8300, run: () => { move('done', 'Merged · Dana notified · 18 tests passed', 'ok'); phase.textContent = 'Delivered'; setQueue('merged', 'ok'); } },
+    ];
+    createSequence(root, steps, { reset });
+  }
+</script>

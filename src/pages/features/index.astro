@@ -4,7 +4,7 @@ import Section from '@/components/Section.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import Button from '@/components/Button.astro';
 import Window from '@/components/mock/Window.astro';
-import { featurePages, site } from '@/data/site';
+import { featurePages, site, cloud } from '@/data/site';
 import { ArrowUpRight } from '@lucide/astro';
 
 const stories: Record<string, { title: string; body: string; next: string }> = {
@@ -95,6 +95,7 @@ $ `}<span class="term-cursor"></span></pre>
   <Section rule tone="elevated" padded="tight">
     <div class="flex flex-wrap items-center gap-4">
       <Button href="/integrations/" variant="secondary">Browse integrations</Button>
+      <Button href={cloud.href} variant="secondary">For teams: {cloud.name}</Button>
       <p class="text-[0.875rem] text-text-3">{site.status.line} <a href="/roadmap/" class="underline underline-offset-2 hover:text-text">See the roadmap.</a></p>
     </div>
   </Section>

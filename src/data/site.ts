@@ -49,10 +49,35 @@ export const site = {
   },
 } as const;
 
+/**
+ * Vekrun Cloud: the optional, paid collaboration layer for organisations. The desktop
+ * application stays free and complete without it. Nothing here is built yet; the
+ * `status` drives every badge and every roadmap guard, so it changes in one place.
+ */
+export const cloud = {
+  name: 'Vekrun Cloud',
+  href: '/cloud/',
+  headline: 'Your entire engineering team. One connected workspace.',
+  description: 'Connect your developers, AI agents, projects and engineering workflows in one shared workspace. Coordinate work, track progress, manage approvals and keep everyone aligned.',
+  secondary: 'Everything you love about Vekrun, connected across your organization.',
+  /** The one promise every Cloud mention repeats. */
+  promise: 'You never need Vekrun Cloud to use Vekrun.',
+  /** Roadmap status of the whole product. 'planned' until the first Cloud code exists. */
+  status: 'planned' as 'planned' | 'in-progress' | 'implemented' | 'released',
+  statusLabel: 'In development',
+  roadmapHref: '/roadmap/#cloud',
+  tiers: [
+    { name: 'Community', price: 'Free forever', body: 'The full personal desktop experience: terminal, AI coding with your own models, Board, AI Teams, code reviews and Insights.', note: 'No account. No subscription.' },
+    { name: 'Vekrun Teams', price: 'Pricing to be announced', body: 'Organization collaboration, shared workflows, project dashboards, shared Factory coordination and team policies.', note: 'Per-organization pricing will be published before anything is sold.' },
+    { name: 'Vekrun Enterprise', price: 'Contact us, coming later', body: 'Advanced governance, enterprise identity, private deployment options and support.', note: 'Follows Teams.' },
+  ],
+} as const;
+
 export type NavItem = { label: string; href: string; description?: string };
 
 export const primaryNav: NavItem[] = [
   { label: 'Features', href: '/features/' },
+  { label: 'Cloud', href: '/cloud/' },
   { label: 'Integrations', href: '/integrations/' },
   { label: 'Docs', href: '/docs/' },
   { label: 'Roadmap', href: '/roadmap/' },
@@ -80,6 +105,7 @@ export const footerColumns: { title: string; items: NavItem[] }[] = [
     title: 'Product',
     items: [
       ...featurePages.map(({ label, href }) => ({ label, href })),
+      { label: 'Vekrun Cloud', href: '/cloud/' },
       { label: 'Integrations', href: '/integrations/' },
       { label: 'Download', href: '/download/' },
     ],
@@ -156,6 +182,7 @@ export const roadmapAreas = {
   deployment: 'Deployment and verification',
   security: 'Security and quality',
   integrations: 'Integrations and automation',
+  cloud: 'Vekrun Cloud',
   releases: 'Desktop release',
 } as const;
 

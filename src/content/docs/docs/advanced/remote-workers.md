@@ -1,6 +1,6 @@
 ---
 title: Remote workers and self-hosting
-description: Run agent tasks on machines you control. Nothing requires a Vekrun-hosted service.
+description: Run agent tasks on machines you control. No hosted service is required.
 sidebar:
   order: 5
 ---
