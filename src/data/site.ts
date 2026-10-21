@@ -53,7 +53,6 @@ export type NavItem = { label: string; href: string; description?: string };
 
 export const primaryNav: NavItem[] = [
   { label: 'Features', href: '/features/' },
-  { label: 'AI Teams', href: '/ai-teams/' },
   { label: 'Integrations', href: '/integrations/' },
   { label: 'Docs', href: '/docs/' },
   { label: 'Roadmap', href: '/roadmap/' },

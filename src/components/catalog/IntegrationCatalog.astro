@@ -27,21 +27,13 @@ const footer = (e: (typeof entries)[number]) => e.data.connection.filter((c) => 
 ---
 <div data-catalog>
   <form class="catalog-bar" role="search" aria-label="Filter integrations" onsubmit="return false">
-    <div class="container-site flex flex-col gap-3 py-3">
-      <div class="flex flex-col gap-3 md:flex-row md:items-center">
-        <label class="relative block w-full md:max-w-xs">
+    <div class="container-site py-3">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <label class="relative block w-full sm:max-w-xs">
           <span class="sr-only">Search integrations</span>
           <Search class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-3" aria-hidden="true" />
-          <input type="search" name="q" placeholder="Search" autocomplete="off" class="h-10 w-full rounded-md border border-border bg-surface pl-10 pr-3 text-[0.9375rem] text-text placeholder:text-text-3 transition-colors focus:border-accent" data-catalog-search />
+          <input type="search" name="q" placeholder="Search integrations" autocomplete="off" class="h-10 w-full rounded-md border border-border bg-surface pl-10 pr-3 text-[0.9375rem] text-text placeholder:text-text-3 transition-colors focus:border-accent" data-catalog-search />
         </label>
-        <fieldset class="min-w-0 md:flex-1">
-          <legend class="sr-only">Category</legend>
-          <div class="flex flex-wrap gap-1.5" data-pills>
-            {byCategory.map((c) => (
-              <label class="pill"><input type="checkbox" name="category" value={c.key} class="sr-only" data-catalog-category />{c.label}</label>
-            ))}
-          </div>
-        </fieldset>
         <fieldset class="min-w-0">
           <legend class="sr-only">Status</legend>
           <div class="flex flex-wrap gap-1.5">
@@ -51,7 +43,16 @@ const footer = (e: (typeof entries)[number]) => e.data.connection.filter((c) => 
           </div>
         </fieldset>
       </div>
-      <p class="text-[0.8125rem] text-text-3" aria-live="polite" data-catalog-count>Showing all {entries.length} integrations.</p>
+      <fieldset class="mt-3 min-w-0">
+        <legend class="sr-only">Category</legend>
+        <div class="catalog-cats" data-pills>
+          <label class="pill pill-cat"><input type="radio" name="category" value="" class="sr-only" data-catalog-category-all checked />All</label>
+          {byCategory.map((c) => (
+            <label class="pill pill-cat"><input type="radio" name="category" value={c.key} class="sr-only" data-catalog-category />{c.label}</label>
+          ))}
+        </div>
+      </fieldset>
+      <p class="mt-2 text-[0.8125rem] text-text-3" aria-live="polite" data-catalog-count>Showing all {entries.length} integrations.</p>
     </div>
   </form>
 
@@ -120,6 +121,12 @@ const footer = (e: (typeof entries)[number]) => e.data.connection.filter((c) => 
   .pill:hover { border-color: var(--border-strong); color: var(--text); }
   .pill:has(:checked) { border-color: var(--accent); color: var(--text); background: var(--accent-soft); }
   .pill:has(:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+  /* Fieldsets refuse to shrink below their content; let the category row scroll instead. */
+  .catalog-bar fieldset { min-width: 0; min-inline-size: 0; max-width: 100%; }
+  /* One scrollable row of categories; never a tall stack inside the sticky bar. */
+  .catalog-cats { position: relative; display: flex; max-width: 100%; gap: 0.375rem; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; -webkit-overflow-scrolling: touch; mask-image: linear-gradient(90deg, black 92%, transparent); -webkit-mask-image: linear-gradient(90deg, black 92%, transparent); }
+  .catalog-cats::-webkit-scrollbar { display: none; }
+  .pill-cat { flex: 0 0 auto; white-space: nowrap; }
 </style>
 
 <script>
@@ -128,6 +135,7 @@ const footer = (e: (typeof entries)[number]) => e.data.connection.filter((c) => 
     const search = root.querySelector<HTMLInputElement>('[data-catalog-search]')!;
     const statuses = Array.from(root.querySelectorAll<HTMLInputElement>('[data-catalog-status]'));
     const categories = Array.from(root.querySelectorAll<HTMLInputElement>('[data-catalog-category]'));
+    const categoryAll = root.querySelector<HTMLInputElement>('[data-catalog-category-all]');
     const items = Array.from(root.querySelectorAll<HTMLElement>('[data-catalog-item]'));
     const groups = Array.from(root.querySelectorAll<HTMLElement>('[data-catalog-group]'));
     const count = root.querySelector<HTMLElement>('[data-catalog-count]')!;
@@ -158,7 +166,7 @@ const footer = (e: (typeof entries)[number]) => e.data.connection.filter((c) => 
     const params = new URLSearchParams(location.search);
     const q0 = params.get('q');
     if (q0) search.value = q0;
-    for (const v of params.getAll('category')) { const c = categories.find((x) => x.value === v); if (c) c.checked = true; }
+    for (const v of params.getAll('category')) { const c = categories.find((x) => x.value === v); if (c) { c.checked = true; c.parentElement?.scrollIntoView({ block: 'nearest', inline: 'center' }); } }
     for (const v of params.getAll('status')) { const c = statuses.find((x) => x.value === v); if (c) c.checked = true; }
     if (q0 || params.has('category') || params.has('status')) {
       apply();
@@ -167,6 +175,7 @@ const footer = (e: (typeof entries)[number]) => e.data.connection.filter((c) => 
 
     search.addEventListener('input', apply);
     [...statuses, ...categories].forEach((c) => c.addEventListener('change', apply));
-    clear.addEventListener('click', () => { search.value = ''; [...statuses, ...categories].forEach((c) => (c.checked = false)); apply(); search.focus(); });
+    categoryAll?.addEventListener('change', apply);
+    clear.addEventListener('click', () => { search.value = ''; [...statuses, ...categories].forEach((c) => (c.checked = false)); if (categoryAll) categoryAll.checked = true; apply(); search.focus(); });
   }
 </script>

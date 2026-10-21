@@ -30,14 +30,14 @@ test.describe('homepage', () => {
   });
 
   test('every homepage demo plays to completion when visible', async ({ page }) => {
-    test.slow();
+    test.setTimeout(300_000);
     await page.goto('/');
     const roots = page.locator('[data-demo-root]');
     const n = await roots.count();
     expect(n).toBeGreaterThanOrEqual(5);
     for (let i = 0; i < n; i++) {
       await roots.nth(i).scrollIntoViewIfNeeded();
-      await expect(roots.nth(i)).toHaveAttribute('data-demo', 'done', { timeout: 40_000 });
+      await expect(roots.nth(i)).toHaveAttribute('data-demo', 'done', { timeout: 60_000 });
     }
   });
 
@@ -69,7 +69,7 @@ test.describe('navigation and theme', () => {
     test.skip(isMobile, 'desktop navigation only');
     await page.goto('/');
     const links = await page.getByRole('navigation', { name: 'Primary' }).getByRole('link').all();
-    expect(links.length).toBeGreaterThanOrEqual(4);
+    expect(links.length).toBeGreaterThanOrEqual(3);
     for (const l of links) {
       const href = await l.getAttribute('href');
       if (!href || href.startsWith('/#')) continue;

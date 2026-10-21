@@ -19,7 +19,7 @@ export default defineConfig({
     { name: 'phone', use: { ...devices['Pixel 7'], defaultBrowserType: 'chromium' } },
   ],
   webServer: {
-    command: 'pnpm preview --port 4329',
+    command: 'node scripts/serve-dist.mjs 4329',
     url: 'http://localhost:4329',
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,
