@@ -2,7 +2,7 @@
 title: AI reviews
 description: Ask a model to find problems in a change, and have several models check each other.
 sidebar:
-  order: 4
+  order: 5
 ---
 
 ## Review a change
@@ -18,5 +18,5 @@ For a change that matters, convene a [Council](/docs/ai-teams/council/): several
 Findings are suggestions. Nothing is posted, merged or changed on your behalf.
 
 :::note[Planned]
-Inline suggestions on a pull request, findings grouped by category such as security and correctness, and posting a review to GitHub or GitLab are planned. See the [roadmap](/roadmap/).
+Inline suggestions on a pull request, findings grouped by category such as security and correctness, and posting a review to GitHub or GitLab are planned as part of the [Review inbox](/docs/git/review-inbox/). See the [roadmap](/roadmap/).
 :::

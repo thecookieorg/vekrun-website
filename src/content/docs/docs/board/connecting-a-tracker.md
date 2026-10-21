@@ -21,3 +21,5 @@ Your tracker stays the system of record. Vekrun connects to it, shows the ticket
 - Only actions your account can actually perform are offered; anything else is shown disabled with the reason.
 - When you are offline, cached tickets are marked as cached.
 - Tickets can also be created from production issues in [Insights](/docs/insights/creating-tickets/), with a duplicate check first.
+
+GitHub and GitLab issues have their own page: [GitHub and GitLab issues](/docs/board/github-and-gitlab-issues/).

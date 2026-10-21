@@ -33,7 +33,7 @@ describe('integrations catalog', () => {
     }
   });
   it('never marks a tracker, monitoring or developer-service connection as available until it has run against the live service', () => {
-    for (const i of integrations.filter((x) => ['project-management', 'developer-services', 'monitoring'].includes(x.category))) {
+    for (const i of integrations.filter((x) => ['project-management', 'developer-services', 'monitoring', 'ci-cd', 'deployment', 'security', 'flags-analytics'].includes(x.category))) {
       expect(i.status, i.id).not.toBe('available');
     }
   });
@@ -72,6 +72,9 @@ describe('roadmap', () => {
       for (const r of roadmap) expect(r.status, r.id).not.toBe('released');
       for (const m of milestones) expect(m.status, m.id).not.toBe('released');
     }
+  });
+  it('keeps proposed entries out of implemented or in-progress states', () => {
+    for (const r of roadmap.filter((x) => x.status === 'proposed')) expect((r.verifiedOn ?? []).length, r.id).toBe(0);
   });
   it('only claims implemented work was verified somewhere', () => {
     for (const r of roadmap.filter((x) => x.status === 'implemented')) expect(r.verifiedOn.length, r.id).toBeGreaterThan(0);

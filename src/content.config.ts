@@ -3,13 +3,13 @@ import { file } from 'astro/loaders';
 import { docsLoader, i18nLoader } from '@astrojs/starlight/loaders';
 import { docsSchema, i18nSchema } from '@astrojs/starlight/schema';
 
-const availability = z.enum(['available', 'in-development', 'planned']);
+const availability = z.enum(['available', 'in-development', 'planned', 'proposed']);
 
 const integrations = defineCollection({
   loader: file('./src/content/data/integrations.json'),
   schema: z.object({
     name: z.string(),
-    category: z.enum(['ai-models', 'coding-tools', 'project-management', 'git-hosting', 'monitoring', 'developer-services']),
+    category: z.enum(['ai-models', 'coding-tools', 'project-management', 'git-hosting', 'monitoring', 'ci-cd', 'deployment', 'security', 'flags-analytics', 'developer-services']),
     /** One sentence: what connecting this lets you do. */
     enables: z.string(),
     connection: z.array(z.enum(['api-key', 'oauth', 'local-runtime', 'cli-account', 'mcp', 'git', 'ssh', 'openai-compatible', 'built-in'])),
@@ -27,8 +27,10 @@ const roadmap = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    status: z.enum(['planned', 'in-progress', 'implemented', 'released']),
-    area: z.enum(['terminal', 'ai-coding', 'board', 'ai-teams', 'code-review', 'insights', 'releases']),
+    status: z.enum(['planned', 'in-progress', 'implemented', 'proposed', 'released']),
+    area: z.enum(['terminal', 'ai-coding', 'board', 'ai-teams', 'code-review', 'insights', 'ci-cd', 'deployment', 'security', 'integrations', 'releases']),
+    /** Optional one-line priority or capability note shown with the entry. */
+    note: z.string().optional(),
     updated: z.string(),
     /** Platforms the work has been verified on by hand. */
     verifiedOn: z.array(z.enum(['macos', 'windows', 'linux'])).default([]),

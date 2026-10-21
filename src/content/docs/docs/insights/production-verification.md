@@ -28,3 +28,5 @@ Verification moves the investigation to verified, or back to open. **Resolved** 
 :::note[Planned]
 Using the provider's own release or deploy records as the deployment signal is not built; today you mark the deploy yourself.
 :::
+
+Deployment platforms that will supply the deploy signal directly are described under [Deployment verification](/docs/pipelines/deployment-verification/).

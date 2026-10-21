@@ -2,7 +2,7 @@
 title: Pull requests
 description: The pull requests waiting for you, and your teammates' changes, in one inbox.
 sidebar:
-  order: 3
+  order: 4
 ---
 
 :::note[Planned]
@@ -16,4 +16,4 @@ The pull-request inbox and GitHub and GitLab sync are not built yet. See the [ro
 - Ask an AI for findings, compare findings from several models, and submit your review without leaving Vekrun.
 - A ticket started from the Board links to its pull request automatically.
 
-What works today: reviewing local branches and diffs with the Review mode in a [coding session](/docs/ai-coding/coding-sessions/).
+The inbox itself is described on [Review inbox](/docs/git/review-inbox/). What works today: reviewing local branches and diffs with the Review mode in a [coding session](/docs/ai-coding/coding-sessions/).

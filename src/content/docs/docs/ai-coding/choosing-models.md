@@ -34,3 +34,5 @@ Downloading models from inside Vekrun, with hardware and license guidance, is pl
 - Vekrun never switches to a different provider on its own. Private data does not go anywhere you did not choose.
 - Where a provider does not publish a model's context size or price, Vekrun shows "unknown" instead of guessing.
 - A failed request is retried, and you can see the retry in the session.
+
+OpenRouter works through the OpenAI-compatible connection today; the dedicated integration is planned. See [OpenRouter](/docs/ai-coding/openrouter/).

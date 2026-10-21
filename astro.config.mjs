@@ -64,6 +64,7 @@ export default defineConfig({
         { label: 'AI Teams', items: [{ autogenerate: { directory: 'docs/ai-teams' } }] },
         { label: 'Git and code reviews', items: [{ autogenerate: { directory: 'docs/git' } }] },
         { label: 'Insights', items: [{ autogenerate: { directory: 'docs/insights' } }] },
+        { label: 'Build, deploy and security', items: [{ autogenerate: { directory: 'docs/pipelines' } }] },
         { label: 'Settings and privacy', items: [{ autogenerate: { directory: 'docs/settings' } }] },
         { label: 'Advanced', items: [{ autogenerate: { directory: 'docs/advanced' } }] },
       ],

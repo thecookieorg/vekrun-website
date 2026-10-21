@@ -9,7 +9,7 @@ import {
   siConfluence, siNotion, siSentry, siDatadog, siFigma, siPostgresql, siCloudflare, siSupabase, siStripe, siGit,
  siHoneybadger, siAppsignal } from 'simple-icons';
 
-interface Props { id: string; name: string; monogram: string; size?: 'md' | 'lg'; class?: string }
+interface Props { id: string; name: string; monogram: string; size?: 'sm' | 'md' | 'lg'; class?: string }
 const { id, name, monogram, size = 'md', class: className = '' } = Astro.props;
 
 type Icon = { title: string; hex: string; path: string };
@@ -30,8 +30,8 @@ const luminance = (hex: string) => {
 const dark = icon ? luminance(icon.hex) < 0.12 : false;
 const fill = icon ? (dark ? 'var(--text)' : `#${icon.hex}`) : undefined;
 const tint = icon && !dark ? `color-mix(in srgb, #${icon.hex} 14%, var(--surface-2))` : 'var(--surface-2)';
-const dims = size === 'lg' ? 'h-12 w-12' : 'h-10 w-10';
-const glyph = size === 'lg' ? 'h-6 w-6' : 'h-5 w-5';
+const dims = size === 'lg' ? 'h-12 w-12' : size === 'sm' ? 'h-6 w-6' : 'h-10 w-10';
+const glyph = size === 'lg' ? 'h-6 w-6' : size === 'sm' ? 'h-3.5 w-3.5' : 'h-5 w-5';
 ---
 <span class:list={['inline-flex shrink-0 items-center justify-center rounded-lg border border-border', dims, className]} style={`background:${tint}`} aria-hidden="true" title={name}>
   {icon ? (

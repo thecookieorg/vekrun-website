@@ -18,10 +18,11 @@ If a page and the application disagree, the application is right and the page ne
 
 - [Getting started](/docs/getting-started/installation/): install, first launch, connect an AI, open a project.
 - [Terminal](/docs/terminal/shell-configuration/): shells, tabs and splits, SSH, keybindings, customization.
-- [AI coding](/docs/ai-coding/choosing-models/): choosing models, coding sessions, editing code, permissions.
-- [Board and integrations](/docs/board/connecting-a-tracker/): connect a tracker, see your tickets, Start Work, status sync.
+- [AI coding](/docs/ai-coding/choosing-models/): choosing models, coding sessions, editing code, permissions, OpenRouter.
+- [Board and integrations](/docs/board/connecting-a-tracker/): connect a tracker, see your tickets, Start Work, status sync, GitHub and GitLab issues.
 - [AI Teams](/docs/ai-teams/planning/): planning, Council, Factory, running and reviewing agent tasks.
-- [Git and code reviews](/docs/git/branches/): branches, worktrees, pull requests, AI reviews.
+- [Git and code reviews](/docs/git/branches/): branches, worktrees, the review inbox, pull requests, AI reviews.
 - [Insights](/docs/insights/overview/): connect monitoring tools, view errors, investigate, create tickets and plans, delegate fixes, verify in production.
+- [Build, deploy and security](/docs/pipelines/overview/): CI/CD, local testing, deployment verification, security findings, incidents and feature flags. All planned.
 - [Settings and privacy](/docs/settings/providers/): providers, credentials, data storage, permissions.
 - [Advanced](/docs/advanced/architecture/): architecture, internals, agent runtime, MCP, remote workers, APIs, contributing, progress.

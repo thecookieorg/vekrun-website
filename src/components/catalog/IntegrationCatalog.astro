@@ -13,13 +13,15 @@ const byCategory = categoryOrder
     key,
     ...integrationCategories[key],
     items: entries
-      .filter((e) => e.data.category === key)
+      .filter((e) => e.data.category === key && e.data.status !== 'proposed')
       .sort((a, b) => rank(a.data.status) - rank(b.data.status) || a.data.name.localeCompare(b.data.name)),
+    /** Candidates that are not approved or scheduled. Listed compactly so they never look like committed support. */
+    proposed: entries.filter((e) => e.data.category === key && e.data.status === 'proposed').sort((a, b) => a.data.name.localeCompare(b.data.name)),
   }))
-  .filter((c) => c.items.length > 0);
+  .filter((c) => c.items.length > 0 || c.proposed.length > 0);
 const searchText = (e: (typeof entries)[number]) =>
   [e.data.name, e.data.enables, ...e.data.connection.map((c) => connectionMethods[c]), e.data.note ?? ''].join(' ').toLowerCase();
-const dot: Record<string, string> = { ok: 'bg-ok', warn: 'bg-warn', muted: 'bg-text-3' };
+const dot: Record<string, string> = { ok: 'bg-ok', warn: 'bg-warn', muted: 'bg-text-3', faint: 'bg-border-strong' };
 /** Connection methods worth a footer line. "Built in" says nothing to a visitor. */
 const footer = (e: (typeof entries)[number]) => e.data.connection.filter((c) => c !== 'built-in').map((c) => connectionMethods[c]);
 ---
@@ -86,6 +88,19 @@ const footer = (e: (typeof entries)[number]) => e.data.connection.filter((c) => 
             </li>
           ))}
         </ul>
+        {c.proposed.length > 0 && (
+          <div class="mt-5 rounded-lg border border-dashed border-border px-4 py-3" data-catalog-proposed>
+            <p class="text-[0.8125rem] text-text-3">Under consideration, not yet approved or scheduled:</p>
+            <ul class="mt-2 flex flex-wrap gap-2" role="list">
+              {c.proposed.map((e) => (
+                <li class="inline-flex items-center gap-2 rounded-md border border-border bg-surface px-2.5 py-1.5 text-[0.8125rem] text-text-2" data-catalog-item data-status={e.data.status} data-category={e.data.category} data-text={searchText(e)} title={e.data.enables}>
+                  <IntegrationLogo id={e.id} name={e.data.name} monogram={e.data.monogram} size="sm" />
+                  {e.data.name}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </section>
     ))}
   </div>

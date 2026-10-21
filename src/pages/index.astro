@@ -72,6 +72,31 @@ const structuredData = [
     </ul>
   </Section>
 
+  <!-- Three journeys -->
+  <Section padded="tight" rule aria-labelledby="journeys-title">
+    <h2 id="journeys-title" class="sr-only">Three journeys</h2>
+    <ul class="reveal-group grid gap-4 md:grid-cols-3" aria-label="Where work starts and where it ends">
+      <li class="card card-hover p-5">
+        <p class="text-[0.8125rem] text-text-3">Start from a ticket</p>
+        <p class="mt-1 text-[1.0625rem] font-[560] text-text">From ticket to pull request.</p>
+        <p class="mt-2 text-[0.9rem] leading-relaxed text-text-2">Board → Start Work → code, alone or with agents → tests → a reviewable change.</p>
+        <a href="/features/board/" class="link-slide mt-3 inline-block text-[0.875rem] font-[540] text-accent">How the Board works</a>
+      </li>
+      <li class="card card-hover p-5">
+        <p class="text-[0.8125rem] text-text-3">Start from a production error</p>
+        <p class="mt-1 text-[1.0625rem] font-[560] text-text">From production error to verified fix.</p>
+        <p class="mt-2 text-[0.9rem] leading-relaxed text-text-2">Insights → investigate → ticket, plan or team → review → check production after the deploy.</p>
+        <a href="/features/insights/" class="link-slide mt-3 inline-block text-[0.875rem] font-[540] text-accent">How Insights works</a>
+      </li>
+      <li class="card card-hover p-5">
+        <p class="flex items-center gap-2 text-[0.8125rem] text-text-3">Start from a failed build <StatusBadge status="planned" compact /></p>
+        <p class="mt-1 text-[1.0625rem] font-[560] text-text">From failed build to working code.</p>
+        <p class="mt-2 text-[0.9rem] leading-relaxed text-text-2">A failed CI run → what broke → a repair → local tests → the next green run.</p>
+        <a href="/roadmap/#ci-cd" class="link-slide mt-3 inline-block text-[0.875rem] font-[540] text-accent">On the roadmap</a>
+      </li>
+    </ul>
+  </Section>
+
   <!-- A. A terminal that does more -->
   <Section rule aria-labelledby="terminal-title" class="ambient ambient-low">
     <SectionHeading id="terminal-title" title="A terminal that does more" lede="Fast, familiar and yours: tabs, splits, SSH and search. When a command fails, the AI is one keystroke away, and it reads the output you already have." class="reveal" />

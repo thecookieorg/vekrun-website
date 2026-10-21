@@ -24,7 +24,7 @@ export const site = {
   status: {
     label: 'In development',
     /** Last date the roadmap and availability data were reconciled with the desktop project. */
-    asOf: '2026-10-20',
+    asOf: '2026-10-21',
     /** One sentence, used once per page at most. */
     line: 'Vekrun is in development. There are no public releases yet.',
     /** What the "in development build" status means. Used in legends only. */
@@ -112,18 +112,23 @@ export const footerColumns: { title: string; items: NavItem[] }[] = [
 export const availability = {
   available: {
     label: 'Implemented in development',
-    description: 'Works in the current source on macOS. Not yet in a public release.',
+    description: 'Works in a development build with verification evidence. Not in a public release.',
     tone: 'ok',
   },
   'in-development': {
     label: 'In progress',
-    description: 'Being built now. Parts work, the feature is not complete.',
+    description: 'Implementation exists or is under way, but the full advertised workflow or its verification is outstanding.',
     tone: 'warn',
   },
   planned: {
     label: 'Planned',
-    description: 'On the roadmap. Not started.',
+    description: 'Approved scope with no complete implementation yet.',
     tone: 'muted',
+  },
+  proposed: {
+    label: 'Proposed',
+    description: 'A possible future integration, not yet approved or scheduled.',
+    tone: 'faint',
   },
 } as const;
 
@@ -134,7 +139,8 @@ export const roadmapStatuses = {
   implemented: availability.available,
   'in-progress': availability['in-development'],
   planned: availability.planned,
-  released: { label: 'Released', description: 'Available in a public release.', tone: 'info' },
+  proposed: availability.proposed,
+  released: { label: 'Released', description: 'Available and verified in a public Vekrun release.', tone: 'info' },
 } as const;
 
 export type RoadmapStatus = keyof typeof roadmapStatuses;
@@ -142,12 +148,16 @@ export type RoadmapStatus = keyof typeof roadmapStatuses;
 /** Roadmap areas, in display order. */
 export const roadmapAreas = {
   terminal: 'Terminal',
-  'ai-coding': 'AI coding',
-  board: 'Board and integrations',
+  'ai-coding': 'AI coding and models',
+  board: 'Board and issue tracking',
   'ai-teams': 'AI Teams',
   'code-review': 'Code reviews',
-  insights: 'Insights',
-  releases: 'Desktop releases',
+  insights: 'Insights and monitoring',
+  'ci-cd': 'CI/CD and testing',
+  deployment: 'Deployment and verification',
+  security: 'Security and quality',
+  integrations: 'Integrations and automation',
+  releases: 'Desktop release',
 } as const;
 
 export type RoadmapArea = keyof typeof roadmapAreas;
@@ -158,7 +168,11 @@ export const integrationCategories = {
   'coding-tools': { label: 'Coding tools', description: 'Accounts, machines and tools your coding sessions can use.' },
   'project-management': { label: 'Project management', description: 'Where your tickets live. Connect one and they appear on the Board.' },
   'git-hosting': { label: 'Git and code hosting', description: 'Branches, pull requests and the link between a ticket and its changes.' },
-  monitoring: { label: 'Monitoring and observability', description: 'Error tracking and performance tools. Connect one and production problems become work you can investigate and fix.' },
+  monitoring: { label: 'Monitoring and incidents', description: 'Error tracking, performance and incident tools. Connect one and production problems become work you can investigate and fix.' },
+  'ci-cd': { label: 'CI/CD and testing', description: 'Build pipelines and test frameworks. Open a failed run, see what broke, and repair it where you code.' },
+  deployment: { label: 'Deployment and hosting', description: 'Know what happened after a deploy: link a release to its change and watch the production signals.' },
+  security: { label: 'Security and code quality', description: 'Scanner findings become investigations and reviewable fixes. Nothing is remediated in production automatically.' },
+  'flags-analytics': { label: 'Feature flags and analytics', description: 'Correlate rollouts and product changes with errors and performance. Vekrun never changes a production flag.' },
   'developer-services': { label: 'Developer services', description: 'Other services an agent can read from or act on, with your permission.' },
 } as const;
 
