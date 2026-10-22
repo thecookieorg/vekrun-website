@@ -1,4 +1,9 @@
 ---
+/**
+ * The one global header. Sticky, translucent, with a gradient hairline once the
+ * page scrolls. Active pages carry an underline; the Features menu opens on hover
+ * or click and is fully keyboard-operable; the phone menu animates its rows in.
+ */
 import { Menu, X, ChevronDown } from '@lucide/astro';
 import Logo from './Logo.astro';
 import ThemeToggle from './ThemeToggle.astro';
@@ -18,13 +23,13 @@ const isActive = (href: string) => href !== '/' && !href.startsWith('/#') && pat
 const featuresActive = featurePages.some((f) => path.startsWith(f.href)) || path.startsWith('/features/');
 const nav = site.repo.public ? [...primaryNav, { label: 'GitHub', href: site.repo.url }] : primaryNav;
 ---
-<header class="site-header sticky top-0 z-40 border-b border-border/70 bg-bg/75 backdrop-blur-xl" data-header>
+<header class="site-header sticky top-0 z-40" data-header>
   <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-md focus:bg-accent focus:px-3 focus:py-2 focus:text-accent-ink">Skip to content</a>
   <div class="container-site flex h-16 items-center justify-between gap-6">
     <a href="/" class="rounded-md" aria-label="Vekrun home"><Logo /></a>
 
     <nav aria-label="Primary" class="hidden lg:block">
-      <ul class="flex items-center gap-1">
+      <ul class="flex items-center gap-0.5">
         {nav.map((item) => item.label === 'Features' ? (
           <li class="relative" data-menu>
             <button type="button" class:list={['nav-link', featuresActive && 'is-active']} aria-expanded="false" aria-haspopup="true" aria-controls="features-menu" data-menu-button>
@@ -35,8 +40,8 @@ const nav = site.repo.public ? [...primaryNav, { label: 'GitHub', href: site.rep
                 {featurePages.map((f) => (
                   <li>
                     <a href={f.href} class="nav-menu-item" aria-current={path.startsWith(f.href) ? 'page' : undefined}>
-                      <span class="block text-[0.9375rem] font-[540] text-text">{f.label}</span>
-                      <span class="block text-[0.8125rem] leading-snug text-text-3">{f.description}</span>
+                      <span class="nav-menu-title">{f.label}</span>
+                      <span class="nav-menu-desc">{f.description}</span>
                     </a>
                   </li>
                 ))}
@@ -46,7 +51,7 @@ const nav = site.repo.public ? [...primaryNav, { label: 'GitHub', href: site.rep
           </li>
         ) : (
           <li>
-            <a href={item.href} class:list={['nav-link', isActive(item.href) && 'is-active']} aria-current={isActive(item.href) ? 'page' : undefined} {...(item.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+            <a href={item.href} class:list={['nav-link', item.label === 'Cloud' && 'is-cloud', isActive(item.href) && 'is-active']} aria-current={isActive(item.href) ? 'page' : undefined} {...(item.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
               {item.label === 'GitHub' && <GithubMark />}
               {item.label}
             </a>
@@ -58,7 +63,7 @@ const nav = site.repo.public ? [...primaryNav, { label: 'GitHub', href: site.rep
     <div class="flex items-center gap-2">
       {themeToggle && <ThemeToggle />}
       <span class="hidden sm:inline-flex"><Button href={cta.href}>{cta.label}</Button></span>
-      <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-text-2 hover:text-text lg:hidden" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav" data-menu-toggle>
+      <button type="button" class="menu-toggle lg:hidden" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav" data-menu-toggle>
         <Menu class="h-4 w-4" data-icon="open" aria-hidden="true" />
         <X class="hidden h-4 w-4" data-icon="close" aria-hidden="true" />
       </button>
@@ -68,8 +73,8 @@ const nav = site.repo.public ? [...primaryNav, { label: 'GitHub', href: site.rep
   <div id="mobile-nav" class="mobile-nav lg:hidden" hidden data-mobile-nav>
     <nav aria-label="Primary, mobile" class="container-site py-3">
       <ul class="flex flex-col">
-        {nav.map((item) => (
-          <li>
+        {nav.map((item, i) => (
+          <li class="mobile-row" style={`--i: ${i}`}>
             <a href={item.href} class="mobile-link" aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>
             {item.label === 'Features' && (
               <ul class="mb-1 ml-3 border-l border-border pl-3">
@@ -79,32 +84,43 @@ const nav = site.repo.public ? [...primaryNav, { label: 'GitHub', href: site.rep
           </li>
         ))}
       </ul>
-      <div class="mt-2 border-t border-border pt-3 sm:hidden"><Button href={cta.href} class="w-full">{cta.label}</Button></div>
+      <div class="mobile-row mt-2 border-t border-border pt-3 sm:hidden" style="--i: 6"><Button href={cta.href} class="w-full">{cta.label}</Button></div>
     </nav>
   </div>
 </header>
 
 <style>
-  .site-header { transition: box-shadow var(--dur) var(--ease-out), background-color var(--dur) var(--ease-out); }
-  .site-header.is-scrolled { box-shadow: 0 10px 30px -20px rgba(0, 0, 0, 0.6); }
-  .nav-link { position: relative; display: inline-flex; align-items: center; gap: 0.35rem; height: 2.25rem; padding: 0 0.75rem; border-radius: 6px; font-size: 0.9375rem; color: var(--text-2); transition: color var(--dur-fast), background-color var(--dur-fast); background: transparent; border: 0; cursor: pointer; }
-  .nav-link:hover, .nav-link[aria-expanded='true'] { color: var(--text); background: var(--surface-2); }
+  .site-header { position: sticky; background: color-mix(in srgb, var(--bg) 72%, transparent); backdrop-filter: blur(18px) saturate(1.3); -webkit-backdrop-filter: blur(18px) saturate(1.3); border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent); transition: box-shadow var(--dur) var(--ease-out), background-color var(--dur) var(--ease-out), border-color var(--dur) var(--ease-out); }
+  .site-header::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 55%, transparent) 35%, color-mix(in srgb, var(--accent-2) 55%, transparent) 65%, transparent); opacity: 0; transition: opacity var(--dur-slow) var(--ease-out); pointer-events: none; }
+  .site-header.is-scrolled { box-shadow: 0 10px 30px -20px rgba(0, 0, 0, 0.7); background: color-mix(in srgb, var(--bg) 84%, transparent); }
+  .site-header.is-scrolled::after { opacity: 1; }
+  .nav-link { position: relative; display: inline-flex; align-items: center; gap: 0.35rem; height: 2.25rem; padding: 0 0.8rem; border-radius: 8px; font-size: 0.9375rem; color: var(--text-2); transition: color var(--dur-fast), background-color var(--dur-fast); background: transparent; border: 0; cursor: pointer; }
+  .nav-link:hover, .nav-link[aria-expanded='true'] { color: var(--text); background: color-mix(in srgb, var(--surface-2) 80%, transparent); }
   .nav-link.is-active { color: var(--text); }
-  .nav-link.is-active::after { content: ''; position: absolute; left: 0.75rem; right: 0.75rem; bottom: -0.05rem; height: 2px; border-radius: 2px; background: var(--accent-gradient); }
-  .nav-menu { position: absolute; left: 0; top: calc(100% + 0.5rem); width: 22rem; padding: 0.5rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--bg-elevated); box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.7), 0 0 0 1px color-mix(in srgb, var(--accent) 10%, transparent); animation: rise-sm 180ms var(--ease-out) both; }
+  .nav-link.is-active::after { content: ''; position: absolute; left: 0.8rem; right: 0.8rem; bottom: -0.1rem; height: 2px; border-radius: 2px; background: var(--accent-gradient); }
+  .nav-link.is-cloud::before { content: ''; width: 0.4rem; height: 0.4rem; border-radius: 50%; background: var(--cloud); box-shadow: 0 0 0 3px var(--cloud-soft); }
+  .nav-menu { position: absolute; left: 0; top: calc(100% + 0.6rem); width: 23rem; padding: 0.5rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: color-mix(in srgb, var(--bg-elevated) 92%, transparent); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.7), 0 0 0 1px color-mix(in srgb, var(--accent) 10%, transparent); animation: rise-sm 200ms var(--ease-out) both; }
+  .nav-menu::before { content: ''; position: absolute; left: 1.25rem; right: 1.25rem; top: 0; height: 1px; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 60%, transparent), transparent); }
   .nav-menu-item { display: block; padding: 0.55rem 0.7rem; border-radius: 8px; transition: background-color var(--dur-fast); }
   .nav-menu-item:hover, .nav-menu-item:focus-visible { background: var(--surface-2); }
+  .nav-menu-item[aria-current='page'] .nav-menu-title { color: var(--accent); }
+  .nav-menu-title { display: block; font-size: 0.9375rem; font-weight: 540; color: var(--text); }
+  .nav-menu-desc { display: block; font-size: 0.8125rem; line-height: 1.35; color: var(--text-3); }
   .nav-menu-all { display: block; margin-top: 0.35rem; padding: 0.55rem 0.7rem; font-size: 0.875rem; color: var(--accent); border-top: 1px solid var(--border); }
-  .mobile-nav { border-top: 1px solid var(--border); background: var(--bg); animation: rise-sm 200ms var(--ease-out) both; }
-  .mobile-link { display: flex; align-items: center; height: 2.75rem; padding: 0 0.5rem; border-radius: 6px; font-size: 1rem; color: var(--text-2); }
+  .menu-toggle { display: inline-flex; height: 2.25rem; width: 2.25rem; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid var(--border); color: var(--text-2); background: transparent; }
+  .menu-toggle:hover { color: var(--text); border-color: var(--border-strong); }
+  .mobile-nav { border-top: 1px solid var(--border); background: var(--bg); }
+  .mobile-row { animation: rise-sm 260ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 40ms); }
+  .mobile-link { display: flex; align-items: center; height: 2.75rem; padding: 0 0.5rem; border-radius: 8px; font-size: 1.0625rem; color: var(--text-2); }
   .mobile-link:hover, .mobile-link[aria-current='page'] { color: var(--text); }
+  .mobile-link[aria-current='page'] { background: var(--surface); }
   .mobile-sublink { display: flex; align-items: center; height: 2.25rem; padding: 0 0.5rem; font-size: 0.9375rem; color: var(--text-3); }
   .mobile-sublink:hover, .mobile-sublink[aria-current='page'] { color: var(--text); }
-  @media (prefers-reduced-motion: reduce) { .nav-menu, .mobile-nav { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .nav-menu, .mobile-row { animation: none; } }
 </style>
 
 <script>
-  // Shadow when scrolled.
+  // Shadow and hairline once scrolled.
   const header = document.querySelector<HTMLElement>('[data-header]');
   const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 8);
   onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
@@ -129,7 +145,7 @@ const nav = site.repo.public ? [...primaryNav, { label: 'GitHub', href: site.rep
     menu.addEventListener('focusout', (e) => { if (!menu.contains(e.relatedTarget as Node)) set(false); });
   });
 
-  // Mobile menu.
+  // Phone menu.
   const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
   const panel = document.querySelector<HTMLElement>('[data-mobile-nav]');
   if (toggle && panel) {

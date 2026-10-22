@@ -1,17 +1,22 @@
 ---
+/** A section introduction: kicker, heading, one lede. Left by default, centred on request. */
 interface Props {
   id?: string;
   title: string;
+  kicker?: string;
   lede?: string;
   class?: string;
   align?: 'left' | 'center';
   level?: 'h1' | 'h2';
+  /** Wrap the last `accentWords` words of the title in the brand gradient. */
+  accent?: string;
 }
-const { id, title, lede, class: className = '', align = 'left', level = 'h2' } = Astro.props;
+const { id, title, kicker, lede, accent, class: className = '', align = 'left', level = 'h2' } = Astro.props;
 const Tag = level;
 ---
 <div class:list={['max-w-3xl', align === 'center' && 'mx-auto text-center', className]}>
-  <Tag id={id} class={level === 'h1' ? 'heading-1' : 'heading-2'}>{title}</Tag>
+  {kicker && <p class="kicker">{kicker}</p>}
+  <Tag id={id} class:list={[level === 'h1' ? 'heading-1' : 'heading-2', kicker && 'mt-3', 'text-text']}>{title}{accent && <> <span class="text-gradient">{accent}</span></>}</Tag>
   {lede && <p class:list={['lede mt-4', align === 'center' && 'mx-auto']}>{lede}</p>}
   <slot />
 </div>

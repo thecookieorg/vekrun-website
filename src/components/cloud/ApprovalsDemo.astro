@@ -27,7 +27,7 @@ const reqs: Req[] = [
       <div class="ap-list" role="tablist" aria-orientation="vertical" aria-label="Approval requests">
         {reqs.map((r, i) => (
           <button type="button" role="tab" id={`ap-tab-${r.id}`} aria-controls={`ap-panel-${r.id}`} aria-selected={i === 1 ? 'true' : 'false'} tabindex={i === 1 ? 0 : -1} class="ap-item" data-ap-item={r.id}>
-            <span class="ap-item-top"><span class:list={['cl-pill', `is-${r.tone}`]}>{r.kind}</span><span class="ap-item-state" data-ap-state={r.id}>{r.id === 'migration' ? 'approved' : r.report ? 'done' : 'pending'}</span></span>
+            <span class="ap-item-top"><span class:list={['pill', `is-${r.tone}`]}>{r.kind}</span><span class="ap-item-state" data-ap-state={r.id}>{r.id === 'migration' ? 'approved' : r.report ? 'done' : 'pending'}</span></span>
             <span class="ap-item-t">{r.title}</span>
             <span class="ap-item-from">{r.from}</span>
           </button>
@@ -35,15 +35,15 @@ const reqs: Req[] = [
       </div>
       {reqs.map((r, i) => (
         <section role="tabpanel" id={`ap-panel-${r.id}`} aria-labelledby={`ap-tab-${r.id}`} class="ap-panel" data-ap-panel={r.id} hidden={i !== 1}>
-          <header class="ap-head"><span class:list={['cl-pill', `is-${r.tone}`]}>{r.kind}</span><h4>{r.title}</h4><p>{r.from}</p></header>
+          <header class="ap-head"><span class:list={['pill', `is-${r.tone}`]}>{r.kind}</span><h4>{r.title}</h4><p>{r.from}</p></header>
           <dl class="ap-dl">
             <div><dt>Requested operation</dt><dd>{r.op}</dd></div>
             <div><dt>Affected repository</dt><dd class="ap-mono">{r.repo}</dd></div>
             <div><dt>Context</dt><dd>{r.ctx}</dd></div>
-            <div class="ap-dl-row"><div><dt>Expected cost</dt><dd>{r.cost}</dd></div><div><dt>Risk level</dt><dd><span class:list={['cl-pill', `is-${r.riskTone}`]}>{r.risk}</span></dd></div><div><dt>Decides</dt><dd class="ap-who"><Avatar who={r.who} size="sm" />{r.who === 'sam' ? 'Sam, lead' : r.who === 'alex' ? 'Alex, developer' : 'Dana, manager'}</dd></div></div>
+            <div class="ap-dl-row"><div><dt>Expected cost</dt><dd>{r.cost}</dd></div><div><dt>Risk level</dt><dd><span class:list={['pill', `is-${r.riskTone}`]}>{r.risk}</span></dd></div><div><dt>Decides</dt><dd class="ap-who"><Avatar who={r.who} size="sm" />{r.who === 'sam' ? 'Sam, lead' : r.who === 'alex' ? 'Alex, developer' : 'Dana, manager'}</dd></div></div>
           </dl>
           {r.report ? (
-            <p class="ap-done"><span class="cl-pill is-ok">Verified</span>Kept for the record. Reports do not need a decision.</p>
+            <p class="ap-done"><span class="pill is-ok">Verified</span>Kept for the record. Reports do not need a decision.</p>
           ) : (
             <div class="ap-actions">
               <button type="button" class="ap-btn is-approve" data-approve={r.id}>Approve</button>

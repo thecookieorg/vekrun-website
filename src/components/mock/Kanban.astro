@@ -2,14 +2,16 @@
 /**
  * A reusable Board mockup. Columns and cards come from props so every page can
  * tell a slightly different story with the same visual system. Cards carry
- * data-card ids so a demo script can move or highlight them.
+ * data-card ids so a demo script can move or highlight them. With `interactive`,
+ * each card is a real button a visitor can select.
  */
 export type Card = { id: string; title: string; src: 'Li' | 'Ji' | 'As' | 'Gh' | 'Gl' | 'Hb' | 'Se' | 'Dd' | 'Ap'; chips?: { text: string; tone?: 'ok' | 'warn' | 'info' | 'muted' }[]; selected?: boolean; hidden?: boolean };
 export type Column = { id: string; name: string; cards: Card[] };
-interface Props { columns: Column[]; class?: string; compact?: boolean }
-const { columns, class: className = '', compact = false } = Astro.props;
+interface Props { columns: Column[]; class?: string; compact?: boolean; interactive?: boolean }
+const { columns, class: className = '', compact = false, interactive = false } = Astro.props;
 const srcName = { Li: 'Linear', Ji: 'Jira', As: 'Asana', Gh: 'GitHub', Gl: 'GitLab', Hb: 'Honeybadger', Se: 'Sentry', Dd: 'Datadog', Ap: 'AppSignal' };
 const srcClass = { Li: 'src-li', Ji: 'src-ji', As: 'src-as', Gh: 'src-gh', Gl: 'src-gl', Hb: 'src-mon', Se: 'src-mon', Dd: 'src-mon', Ap: 'src-mon' };
+const Inner = interactive ? 'button' : 'div';
 ---
 <div class:list={['kanban', compact && 'kanban-compact', className]} data-kanban>
   {columns.map((col) => (
@@ -17,17 +19,17 @@ const srcClass = { Li: 'src-li', Ji: 'src-ji', As: 'src-as', Gh: 'src-gh', Gl: '
       <header class="kanban-col-head"><span>{col.name}</span><span class="kanban-count" data-count>{col.cards.filter((c) => !c.hidden).length}</span></header>
       <ul class="kanban-cards">
         {col.cards.map((c) => (
-          <li class:list={['kanban-card', c.selected && 'is-selected']} data-card={c.id} hidden={c.hidden} aria-current={c.selected ? 'true' : undefined}>
-            <div class="kanban-card-top">
-              <span class="kanban-id">{c.id}</span>
-              <span class:list={['kanban-src', srcClass[c.src]]} title={srcName[c.src]} aria-label={srcName[c.src]}>{c.src}</span>
-            </div>
-            <p class="kanban-title">{c.title}</p>
-            {c.chips && c.chips.length > 0 && (
-              <div class="kanban-chips" data-chips>
-                {c.chips.map((ch) => <span class:list={['kanban-chip', ch.tone && `tone-${ch.tone}`]}>{ch.text}</span>)}
-              </div>
-            )}
+          <li class:list={['kanban-card', c.selected && 'is-selected']} data-card={c.id} data-title={c.title} hidden={c.hidden} aria-current={c.selected ? 'true' : undefined}>
+            <Inner class="kanban-card-in" {...(interactive ? { type: 'button', 'data-card-pick': c.id, 'aria-pressed': c.selected ? 'true' : 'false' } : {})}>
+              <span class="kanban-card-top">
+                <span class="kanban-id">{c.id}</span>
+                <span class:list={['kanban-src', srcClass[c.src]]} title={srcName[c.src]} aria-label={srcName[c.src]}>{c.src}</span>
+              </span>
+              <span class="kanban-title">{c.title}</span>
+              <span class="kanban-chips" data-chips hidden={!c.chips || c.chips.length === 0}>
+                {(c.chips ?? []).map((ch) => <span class:list={['kanban-chip', ch.tone && `tone-${ch.tone}`]}>{ch.text}</span>)}
+              </span>
+            </Inner>
             <slot name={`card-${c.id}`} />
           </li>
         ))}
@@ -36,7 +38,7 @@ const srcClass = { Li: 'src-li', Ji: 'src-ji', As: 'src-as', Gh: 'src-gh', Gl: '
   ))}
 </div>
 
-<style>
+<style is:global>
   .kanban { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--border); font-size: 0.8rem; }
   @media (max-width: 47.9rem) { .kanban { grid-template-columns: repeat(4, 14.5rem); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin; } .kanban-col { scroll-snap-align: start; } }
   .kanban-col { background: var(--surface); min-width: 0; }
@@ -44,7 +46,11 @@ const srcClass = { Li: 'src-li', Ji: 'src-ji', As: 'src-as', Gh: 'src-gh', Gl: '
   .kanban-count { color: var(--text-3); font-family: var(--font-mono); }
   .kanban-cards { list-style: none; margin: 0; padding: 0.55rem; display: flex; flex-direction: column; gap: 0.5rem; min-height: 15rem; }
   .kanban-compact .kanban-cards { min-height: 11rem; }
-  .kanban-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.55rem 0.65rem; display: flex; flex-direction: column; gap: 0.35rem; transition: border-color var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out), transform var(--dur-slow) var(--ease-spring), opacity var(--dur) var(--ease-out); }
+  .kanban-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); transition: border-color var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out), transform var(--dur-slow) var(--ease-spring), opacity var(--dur) var(--ease-out); }
+  .kanban-card-in { display: flex; flex-direction: column; gap: 0.35rem; width: 100%; padding: 0.55rem 0.65rem; text-align: left; background: transparent; border: 0; border-radius: inherit; color: inherit; font: inherit; }
+  button.kanban-card-in { cursor: pointer; }
+  button.kanban-card-in:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .kanban-card:has(button.kanban-card-in:hover) { border-color: var(--border-strong); }
   .kanban-card.is-selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 10px 30px -14px color-mix(in srgb, var(--accent) 50%, transparent); }
   .kanban-card.is-entering { animation: scale-in 500ms var(--ease-out) both; }
   .kanban-card-top { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
@@ -57,6 +63,7 @@ const srcClass = { Li: 'src-li', Ji: 'src-ji', As: 'src-as', Gh: 'src-gh', Gl: '
   .src-mon { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 50%, transparent); }
   .kanban-title { color: var(--text); font-size: 0.8rem; line-height: 1.35; }
   .kanban-chips { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+  .kanban-chips[hidden] { display: none; }
   .kanban-chip { font-size: 0.66rem; color: var(--text-2); border: 1px solid var(--border); border-radius: 999px; padding: 0.08rem 0.45rem; display: inline-flex; align-items: center; gap: 0.3rem; }
   .kanban-chip::before { content: ''; width: 0.35rem; height: 0.35rem; border-radius: 50%; background: var(--text-3); }
   .kanban-chip.tone-ok::before { background: var(--ok); } .kanban-chip.tone-warn::before { background: var(--warn); } .kanban-chip.tone-info::before { background: var(--info); }

@@ -1,7 +1,7 @@
 ---
 import Base from '@/layouts/Base.astro';
 import Section from '@/components/Section.astro';
-import SectionHeading from '@/components/SectionHeading.astro';
+import PageHero from '@/components/PageHero.astro';
 import Button from '@/components/Button.astro';
 import { site } from '@/data/site';
 
@@ -17,11 +17,9 @@ const title = 'Open source';
 const description = 'Why Vekrun is free and open source, what it will never ask of you, and the licence it is published under.';
 ---
 <Base title={title} description={description}>
-  <Section padded="tight" class="pt-16 sm:pt-20">
-    <SectionHeading level="h1" title="Your development environment should belong to you." lede="AI coding tools tend to arrive with an account, a subscription and one vendor's models. Vekrun is the other way around: a terminal that works without AI, and when you want AI, it uses whichever models you choose." />
-  </Section>
+  <PageHero eyebrow="Open source" title="Your development environment should" accent="belong to you." lede="AI coding tools tend to arrive with an account, a subscription and one vendor's models. Vekrun is the other way around: a terminal that works without AI, and when you want AI, it uses whichever models you choose." align="left" />
 
-  <Section rule padded="tight">
+  <Section padded="tight">
     <ul class="ruled-grid sm:grid-cols-2 lg:grid-cols-3" role="list">
       {points.map((p) => (
         <li class="p-6">

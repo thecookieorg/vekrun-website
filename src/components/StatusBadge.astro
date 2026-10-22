@@ -13,9 +13,9 @@ const { status, kind = 'availability', class: className = '', compact = false } 
 const table = kind === 'roadmap' ? roadmapStatuses : availability;
 const entry = (table as Record<string, { label: string; tone: string }>)[status] ?? { label: status, tone: 'muted' };
 const toneClass: Record<string, string> = {
-  ok: 'text-ok border-ok/40',
-  warn: 'text-warn border-warn/40',
-  info: 'text-info border-info/40',
+  ok: 'text-ok border-ok/40 bg-ok/8',
+  warn: 'text-warn border-warn/40 bg-warn/8',
+  info: 'text-info border-info/40 bg-info/8',
   muted: 'text-text-2 border-border-strong',
   faint: 'text-text-3 border-border border-dashed',
 };
@@ -35,7 +35,6 @@ const title = kind === 'availability' ? (availability as Record<string, { descri
     {entry.tone === 'warn' && <circle cx="4" cy="4" r="3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="3 2" />}
     {entry.tone === 'info' && <rect x="0.5" y="0.5" width="7" height="7" rx="1.5" fill="currentColor" />}
     {entry.tone === 'muted' && <circle cx="4" cy="4" r="3" fill="none" stroke="currentColor" stroke-width="1.4" />}
-    {entry.tone === 'faint' && <rect x="1" y="1" width="6" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 1.5" />}
     {entry.tone === 'faint' && <rect x="1" y="1" width="6" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 1.5" />}
   </svg>
   {entry.label}

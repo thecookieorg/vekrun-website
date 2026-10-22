@@ -8,7 +8,7 @@ const noOverflow = async (page: Page) => {
 test.describe('homepage', () => {
   test('renders the hero, metadata and structured data', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText(/Your terminal\.\s*Your AI\.\s*Your workflow\./);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(/Your terminal\.\s*Your models\.\s*Your rules\./);
     await expect(page).toHaveTitle(/Vekrun/);
     await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /open-source AI-native terminal/);
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://vekrunapp.com/');
@@ -52,15 +52,78 @@ test.describe('homepage', () => {
     await expect(app).toHaveAttribute('data-demo', 'playing');
   });
 
-  test('the provider switcher is a keyboard-operable radiogroup', async ({ page }) => {
+  test('the model picker is a keyboard-operable radiogroup', async ({ page }) => {
     await page.goto('/');
-    const radios = page.getByRole('radiogroup').first().getByRole('radio');
+    const radios = page.getByRole('radiogroup', { name: 'Choose a model' }).first().getByRole('radio');
     expect(await radios.count()).toBeGreaterThanOrEqual(5);
     await radios.nth(0).click();
     await expect(radios.nth(0)).toHaveAttribute('aria-checked', 'true');
     await radios.nth(0).focus();
     await page.keyboard.press('ArrowRight');
     await expect(radios.nth(1)).toHaveAttribute('aria-checked', 'true');
+  });
+
+  test('the Board walkthrough lets a visitor pick a ticket, press Start Work and choose who does the work', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/');
+    const board = page.locator('[data-board-walk]').first();
+    await board.scrollIntoViewIfNeeded();
+    await board.getByRole('button', { name: /VEK-148/ }).click();
+    await expect(board.getByText('Selected: VEK-148', { exact: false })).toBeVisible();
+    await board.getByRole('button', { name: 'Start Work' }).click();
+    const dialog = board.getByRole('dialog', { name: 'Start Work' });
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole('button', { name: /With an AI agent/ }).click();
+    await expect(board.locator('[data-column="progress"] [data-card="VEK-148"]')).toHaveCount(1, { timeout: 5_000 });
+    await expect(board.locator('[data-card="VEK-148"]')).toContainText('Agent working');
+    await board.getByRole('button', { name: 'Back to the Board' }).click();
+    await expect(board.locator('[data-ws]')).toBeHidden();
+  });
+
+  test('the coding studio accepts a real approve or reject decision', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/features/ai-coding/');
+    const studio = page.locator('[data-coding]');
+    await studio.getByRole('button', { name: 'Replay' }).click();
+    await studio.getByRole('button', { name: 'Reject', exact: true }).click();
+    await expect(studio.getByText('Rejected by you · nothing written')).toBeVisible();
+    await expect(studio.getByRole('button', { name: 'Approve', exact: true })).toBeDisabled();
+  });
+
+  test('the review inbox switches pull requests and records a demonstration decision', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/features/code-review/');
+    const inbox = page.locator('[data-review-inbox]');
+    await inbox.getByRole('tab', { name: /#86/ }).click();
+    await expect(inbox.getByRole('tabpanel', { name: /#86/ })).toBeVisible();
+    await inbox.getByRole('tabpanel', { name: /#86/ }).getByRole('button', { name: 'Request changes' }).click();
+    await expect(inbox.getByText(/Changes requested by you \(demonstration\)/)).toBeVisible();
+  });
+
+  test('Insights can be driven by hand from Investigate & Fix to a ticket', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/features/insights/');
+    const ins = page.locator('[data-insights-walk]');
+    await ins.getByRole('button', { name: 'Replay' }).click();
+    await ins.getByRole('button', { name: 'Investigate & Fix' }).click();
+    await expect(ins.getByRole('button', { name: 'Create ticket' })).toBeVisible({ timeout: 8_000 });
+    await ins.getByRole('button', { name: 'Create ticket' }).click();
+    await expect(ins.getByText('Ticket API-231 created in Jira')).toBeVisible({ timeout: 5_000 });
+    await ins.getByRole('button', { name: 'Delegate to Factory' }).click();
+    await expect(ins.getByRole('button', { name: 'Mark resolved in Honeybadger' })).toBeVisible({ timeout: 12_000 });
+    await ins.getByRole('button', { name: 'Mark resolved in Honeybadger' }).click();
+    await expect(ins.getByRole('button', { name: 'Resolved by you (demonstration)' })).toBeDisabled();
+  });
+
+  test('the terminal showcase has real tabs', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/features/terminal/');
+    const term = page.locator('[data-terminal]');
+    await term.getByRole('tab', { name: 'ssh: staging' }).click();
+    await expect(term.getByRole('tabpanel', { name: 'ssh: staging' })).toContainText('journalctl');
+    await term.getByRole('tab', { name: 'web' }).focus();
+    await page.keyboard.press('ArrowLeft');
+    await expect(term.getByRole('tab', { name: 'api' })).toHaveAttribute('aria-selected', 'true');
   });
 });
 
@@ -102,6 +165,24 @@ test.describe('navigation and theme', () => {
     await expect(html).toHaveAttribute('data-theme', after!);
     await page.goto('/docs/');
     await expect(html).toHaveAttribute('data-theme', after!);
+  });
+
+  test('dark is the default, an explicit choice wins, and auto follows the system', async ({ browser }) => {
+    const ctx = await browser.newContext({ colorScheme: 'light' });
+    const page = await ctx.newPage();
+    await page.goto('/');
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    await page.goto('/docs/');
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    await page.evaluate(() => localStorage.setItem('starlight-theme', ''));
+    await page.goto('/');
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    await page.goto('/docs/');
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    await page.evaluate(() => localStorage.setItem('starlight-theme', 'dark'));
+    await page.goto('/docs/');
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    await ctx.close();
   });
 
   test('skip link targets main content', async ({ page }) => {
@@ -219,6 +300,16 @@ test.describe('other pages', () => {
     const ins = page.locator('[data-insights]');
     await ins.getByRole('button', { name: 'Mark as resolved' }).click();
     await expect(ins.getByRole('button', { name: 'Resolved by you' })).toBeDisabled();
+  });
+
+  test('the roadmap filters by status and keeps its area index in step', async ({ page, isMobile }) => {
+    await page.goto('/roadmap/');
+    await page.locator('label.filter-pill', { hasText: 'In progress' }).click();
+    await expect(page.locator('[data-roadmap-count]')).toContainText('of 79 items');
+    for (const s of await page.locator('[data-roadmap-item]:not([hidden])').evaluateAll((els) => els.map((e) => e.getAttribute('data-status')))) expect(s).toBe('in-progress');
+    if (!isMobile) await expect(page.locator('[data-roadmap-nav="terminal"]')).toBeHidden();
+    await page.locator('label.filter-pill', { hasText: 'In progress' }).click();
+    await expect(page.locator('[data-roadmap-count]')).toContainText('Showing all 79 items');
   });
 
   test('the Cloud roadmap group exists and holds only planned work', async ({ page }) => {

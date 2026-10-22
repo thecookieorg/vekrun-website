@@ -1,5 +1,5 @@
-/* Starlight theme bridged to the site tokens. Tailwind is not loaded here;
-   the docs use Starlight's own layout with our palette and fonts. */
+/* Starlight bridged to the Vekrun tokens. Tailwind is not loaded here; the docs use
+   Starlight's own layout with the site palette, fonts and restraint. */
 @import '@fontsource-variable/geist';
 @import '@fontsource-variable/geist-mono';
 
@@ -11,25 +11,25 @@
   --sl-text-body: 1rem;
   --sl-line-height: 1.65;
   --sl-sidebar-width: 17rem;
-  --vk-accent-2: #4fb8d8;
+  --vk-accent-2: #618bff;
 }
 
 :root[data-theme='dark'] {
-  --sl-color-accent-low: #0f2d27;
-  --sl-color-accent: #5fd3b5;
-  --sl-color-accent-high: #a8ead9;
-  --sl-color-white: #edf1f5;
-  --sl-color-gray-1: #d6dde6;
-  --sl-color-gray-2: #98a6b8;
-  --sl-color-gray-3: #66768a;
-  --sl-color-gray-4: #2f4053;
-  --sl-color-gray-5: #223040;
-  --sl-color-gray-6: #111820;
-  --sl-color-black: #0a0e14;
-  --sl-color-bg-nav: #0e141c;
-  --sl-color-bg-sidebar: #0a0e14;
-  --sl-color-bg-inline-code: #18212b;
-  --sl-color-hairline-shade: #223040;
+  --sl-color-accent-low: #10332a;
+  --sl-color-accent: #8ce6c4;
+  --sl-color-accent-high: #c4f3e2;
+  --sl-color-white: #f4f7fb;
+  --sl-color-gray-1: #d8dfe9;
+  --sl-color-gray-2: #9aa9bc;
+  --sl-color-gray-3: #6f7e94;
+  --sl-color-gray-4: #32455f;
+  --sl-color-gray-5: #233146;
+  --sl-color-gray-6: #111927;
+  --sl-color-black: #080b12;
+  --sl-color-bg-nav: #0d131d;
+  --sl-color-bg-sidebar: #080b12;
+  --sl-color-bg-inline-code: #172131;
+  --sl-color-hairline-shade: #233146;
   --sl-shadow-md: 0 24px 60px -30px rgba(0, 0, 0, 0.7);
 }
 
@@ -37,23 +37,23 @@
   --sl-color-accent-low: #d7f1e8;
   --sl-color-accent: #0f8f71;
   --sl-color-accent-high: #0a4a3b;
-  --sl-color-white: #0f1720;
+  --sl-color-white: #0e1522;
   --sl-color-gray-1: #1d2834;
-  --sl-color-gray-2: #4a5a6c;
-  --sl-color-gray-3: #76859a;
-  --sl-color-gray-4: #bfc9d6;
-  --sl-color-gray-5: #d8dfe8;
-  --sl-color-gray-6: #eef2f6;
-  --sl-color-gray-7: #f6f8fa;
+  --sl-color-gray-2: #4a5a6f;
+  --sl-color-gray-3: #74849a;
+  --sl-color-gray-4: #bcc7d6;
+  --sl-color-gray-5: #d7dee9;
+  --sl-color-gray-6: #eef2f7;
+  --sl-color-gray-7: #f5f7fb;
   --sl-color-black: #ffffff;
   --sl-color-bg-nav: #ffffff;
-  --sl-color-bg-sidebar: #f6f8fa;
-  --sl-color-bg-inline-code: #eef2f6;
-  --vk-accent-2: #1d86a8;
+  --sl-color-bg-sidebar: #f5f7fb;
+  --sl-color-bg-inline-code: #eef2f7;
+  --vk-accent-2: #3b63e0;
 }
 
 /* Header and sidebar */
-.header { border-bottom: 1px solid var(--sl-color-hairline-shade); }
+.header { border-bottom: 1px solid var(--sl-color-hairline-shade); background: color-mix(in srgb, var(--sl-color-bg-nav) 88%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
 .sidebar-pane { border-inline-end: 1px solid var(--sl-color-hairline-shade); }
 .sidebar-content { padding-block: 1.25rem; }
 .sidebar-content summary { font-size: 0.9375rem; }
@@ -88,7 +88,7 @@
 .starlight-aside__title { font-size: 0.875rem; }
 .starlight-aside--note { --sl-color-asides-border: var(--sl-color-accent); border-color: var(--sl-color-accent); color: var(--sl-color-gray-1); }
 .starlight-aside--note .starlight-aside__title { color: var(--sl-color-accent-high); }
-.starlight-aside--caution { --sl-color-asides-border: #e3b24f; }
+.starlight-aside--caution { --sl-color-asides-border: #f0c060; }
 .starlight-aside--tip { --sl-color-asides-border: var(--vk-accent-2); }
 
 /* Tables */
@@ -102,7 +102,8 @@
 .sl-link-card:hover { border-color: var(--sl-color-gray-4); transform: translateY(-1px); }
 .pagination-links a { border-radius: 10px; }
 .pagination-links a:hover { border-color: var(--sl-color-accent); }
-site-search button[data-open-modal] { border-radius: 8px; }
+site-search button[data-open-modal] { border-radius: 999px; border-color: var(--sl-color-gray-5); }
+site-search button[data-open-modal]:hover { border-color: var(--sl-color-gray-4); }
 
 @media (prefers-reduced-motion: reduce) {
   .sidebar-content a, .sl-link-card, .pagination-links a { transition: none; }

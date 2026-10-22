@@ -4,6 +4,7 @@ import { Copy } from '@lucide/astro';
 import Base from '@/layouts/Base.astro';
 import Section from '@/components/Section.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
+import PageHero from '@/components/PageHero.astro';
 import Button from '@/components/Button.astro';
 import StatusBadge from '@/components/StatusBadge.astro';
 import { site } from '@/data/site';
@@ -22,27 +23,17 @@ const description = releases.length
   : 'There is no public Vekrun release yet. Downloads appear here when signed builds exist.';
 ---
 <Base title={title} description={description}>
-  <Section padded="tight" class="pt-16 sm:pt-20">
-    {releases.length === 0 ? (
-      <>
-        <div class="flex flex-wrap items-center gap-3">
-          <StatusBadge status="in-development" />
-          <span class="text-[0.8125rem] text-text-3">as of {site.status.asOf}</span>
-        </div>
-        <SectionHeading level="h1" class="mt-5" title="No public release yet." lede="Downloads appear on this page when signed builds exist. Until then you can follow the roadmap or build from source." />
-        <div class="mt-8 flex flex-wrap gap-3">
-          <Button href="/roadmap/">See the roadmap</Button>
-          <Button href="/docs/getting-started/installation/" variant="secondary">Build from source</Button>
-        </div>
-      </>
-    ) : (
-      <SectionHeading level="h1" title="Download Vekrun." lede="Signed builds for macOS, Windows and Linux, each with a checksum and release notes." />
-    )}
-  </Section>
+  {releases.length === 0 ? (
+    <PageHero eyebrow="Download" title="No public release yet." lede="Downloads appear on this page when signed builds exist. Until then you can follow the roadmap or build from source." cta={{ label: 'See the roadmap', href: '/roadmap/' }} secondary={{ label: 'Build from source', href: '/docs/getting-started/installation/' }} align="left">
+      <Fragment slot="status"><StatusBadge status="in-development" /><span class="text-[0.8125rem] text-text-3">as of {site.status.asOf}</span></Fragment>
+    </PageHero>
+  ) : (
+    <PageHero eyebrow="Download" title="Download Vekrun." lede="Signed builds for macOS, Windows and Linux, each with a checksum and release notes." align="left" />
+  )}
 
   {releases.length === 0 && (
     <>
-      <Section rule padded="tight" aria-labelledby="targets">
+      <Section padded="tight" aria-labelledby="targets">
         <h2 id="targets" class="heading-3">Platforms the first release targets</h2>
         <ul class="ruled-grid mt-4 sm:grid-cols-3" role="list">
           {targets.map((t) => (

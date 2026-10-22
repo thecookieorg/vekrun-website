@@ -1,60 +1,64 @@
 ---
 import Base from '@/layouts/Base.astro';
-import Section from '@/components/Section.astro';
+import PageHero from '@/components/PageHero.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import Button from '@/components/Button.astro';
-import FeatureHero from '@/components/features/FeatureHero.astro';
-import TerminalSplitDemo from '@/components/features/TerminalSplitDemo.astro';
+import TerminalShowcase from '@/components/features/TerminalShowcase.astro';
 import Steps from '@/components/features/Steps.astro';
 import WhereThisStands from '@/components/features/WhereThisStands.astro';
-import { Columns2, Network, Search, Keyboard, Palette } from '@lucide/astro';
+import { Columns2, Network, Search, Keyboard, Palette, History } from '@lucide/astro';
 
 const benefits = [
   { icon: Columns2, title: 'Tabs and splits that keep your shell', body: 'Split with ⌘D, close a pane, drag a divider. A split never restarts the shell inside it.' },
   { icon: Network, title: 'SSH in a tab', body: 'Remote shells next to local ones. The host key is shown and checked before you connect.' },
   { icon: Search, title: 'Search everything', body: '⌘F through scrollback. Shell integration marks every command with its exit code and duration.' },
   { icon: Keyboard, title: 'Keyboard first', body: 'Every pane, tab and search has a shortcut. The mouse is optional.' },
+  { icon: History, title: 'Comes back as you left it', body: 'Close the window. Tabs, panes and scrollback are there when you return, clearly marked as restored.' },
   { icon: Palette, title: 'Yours to configure', body: 'Font, cursor, scrollback, shell, theme. Settings apply live, no restart.' },
 ];
 const workflow = [
   { title: 'Open the project', body: 'Shells start in the project you have open, on the branch you are on.' },
   { title: 'Split for the long job', body: '⌘D for a second pane. Run the build on one side, keep working on the other.' },
   { title: 'Ask about the output', body: 'A failing command? Send its output to the agent with one keystroke. Nothing is sent until you do.' },
-  { title: 'Come back tomorrow', body: 'Close the window. Tabs, panes and scrollback are there when you return, clearly marked as restored.' },
+  { title: 'Come back tomorrow', body: 'Close the window. Tabs, panes and scrollback are there when you return.' },
 ];
 ---
 <Base title="Terminal" description="A modern terminal with tabs, splits, SSH, search and session restore. It works without any AI connected, and when you want help, the AI reads the output you already have.">
-  <FeatureHero area="Terminal" title="A terminal you can" accent="live in." lede="Tabs, splits, SSH and search, fast and familiar. It works with no AI connected. When you want help, it reads the output you already have." cta={{ label: 'See what works today', href: '#status' }} secondary={{ label: 'Terminal docs', href: '/docs/terminal/tabs-and-panes/' }} />
+  <PageHero eyebrow="Terminal" title="A terminal you can" accent="live in." lede="Tabs, splits, SSH and search, fast and familiar. It works with no AI connected. When you want help, it reads the output you already have." cta={{ label: 'See what works today', href: '#status' }} secondary={{ label: 'Terminal docs', href: '/docs/terminal/tabs-and-panes/' }} wide>
+    <TerminalShowcase />
+  </PageHero>
 
-  <Section class="ambient ambient-low overflow-x-clip">
-    <div class="reveal"><TerminalSplitDemo /></div>
-  </Section>
-
-  <Section rule tone="elevated" aria-labelledby="why-title">
-    <div class="grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-16">
-      <SectionHeading id="why-title" title="Why developers keep it open" lede="Everything a daily terminal must do, done well, before any AI enters the picture." class="reveal" />
-      <ul class="reveal-group grid gap-x-8 gap-y-7 sm:grid-cols-2">
-        {benefits.map((b) => (
-          <li class="flex gap-3.5">
-            <b.icon class="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
-            <div><h3 class="text-[1.0625rem] font-[560] text-text">{b.title}</h3><p class="mt-1 text-[0.9375rem] leading-relaxed text-text-2">{b.body}</p></div>
-          </li>
-        ))}
-      </ul>
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="why-title">
+    <div class="container-site">
+      <div class="grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-16">
+        <SectionHeading id="why-title" kicker="Everyday terminal" title="Why developers keep it open." lede="Everything a daily terminal must do, done well, before any AI enters the picture." class="reveal" />
+        <ul class="reveal-group grid gap-x-8 gap-y-7 sm:grid-cols-2">
+          {benefits.map((b) => (
+            <li class="flex gap-3.5">
+              <b.icon class="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
+              <div><h3 class="text-[1.0625rem] font-[580] text-text">{b.title}</h3><p class="mt-1 text-[0.9375rem] leading-relaxed text-text-2">{b.body}</p></div>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
-  </Section>
+  </section>
 
-  <Section rule aria-labelledby="flow-title">
-    <SectionHeading id="flow-title" title="A day with it" lede="One realistic workflow, start to finish." class="reveal" />
-    <Steps steps={workflow} columns={4} class="reveal-group mt-10" />
-  </Section>
-
-  <Section rule tone="elevated" padded="tight">
-    <div class="card card-hover flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
-      <div><h2 class="heading-3">Next: bring your own AI</h2><p class="mt-1 text-[0.9375rem] text-text-2">The same terminal, with Claude, OpenAI, Gemini or a local model one keystroke away.</p></div>
-      <Button href="/features/ai-coding/" variant="secondary" class="shrink-0">AI coding</Button>
+  <section class="section-pad rule" aria-labelledby="flow-title">
+    <div class="container-site">
+      <SectionHeading id="flow-title" kicker="A day with it" title="One realistic workflow, start to finish." class="reveal" />
+      <Steps steps={workflow} columns={4} class="reveal-group mt-12" />
     </div>
-  </Section>
+  </section>
+
+  <section class="rule bg-bg-elevated">
+    <div class="container-site py-12">
+      <div class="card card-hover flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
+        <div><p class="kicker">Next</p><h2 class="heading-3 mt-2">Bring your own AI</h2><p class="mt-1 text-[0.9375rem] text-text-2">The same terminal, with Claude, OpenAI, Gemini or a local model one keystroke away.</p></div>
+        <Button href="/features/ai-coding/" variant="secondary" class="shrink-0">AI coding</Button>
+      </div>
+    </div>
+  </section>
 
   <div id="status"><WhereThisStands>Tabs, splits, search, session restore, shell integration, SSH and the settings above work in the development build on macOS. Remote file editing and transfers are planned.</WhereThisStands></div>
 </Base>

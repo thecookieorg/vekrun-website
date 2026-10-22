@@ -1,7 +1,7 @@
 ---
 import Base from '@/layouts/Base.astro';
 import Section from '@/components/Section.astro';
-import SectionHeading from '@/components/SectionHeading.astro';
+import PageHero from '@/components/PageHero.astro';
 import { site } from '@/data/site';
 
 const commitments = [
@@ -21,11 +21,9 @@ const title = 'Security';
 const description = 'How Vekrun handles untrusted input, your API keys and agent permissions, and how to report a vulnerability.';
 ---
 <Base title={title} description={description}>
-  <Section padded="tight" class="pt-16 sm:pt-20">
-    <SectionHeading level="h1" title="Agents act on your behalf. These are the rules they follow." lede="Vekrun runs commands, edits files and talks to AI providers for you. Four commitments shape how it does that." />
-  </Section>
+  <PageHero eyebrow="Security" title="Agents act on your behalf." accent="These are the rules they follow." lede="Vekrun runs commands, edits files and talks to AI providers for you. Four commitments shape how it does that." align="left" />
 
-  <Section rule padded="tight">
+  <Section padded="tight">
     <ul class="ruled-grid sm:grid-cols-2" role="list">
       {commitments.map((c) => (
         <li class="p-6">

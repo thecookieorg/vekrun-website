@@ -1,11 +1,10 @@
 ---
 import Base from '@/layouts/Base.astro';
-import Section from '@/components/Section.astro';
+import PageHero from '@/components/PageHero.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import Button from '@/components/Button.astro';
 import StatusBadge from '@/components/StatusBadge.astro';
-import FeatureHero from '@/components/features/FeatureHero.astro';
-import ReviewDemo from '@/components/home/ReviewDemo.astro';
+import ReviewInbox from '@/components/features/ReviewInbox.astro';
 import Steps from '@/components/features/Steps.astro';
 import WhereThisStands from '@/components/features/WhereThisStands.astro';
 import CloudCallout from '@/components/cloud/CloudCallout.astro';
@@ -21,7 +20,6 @@ const intended: { text: string; status: 'available' | 'planned' }[] = [
   { text: 'Approve or request changes.', status: 'planned' },
   { text: 'Submit the review through GitHub or GitLab as yourself. No hosted bot, no mandatory GitHub App.', status: 'planned' },
 ];
-
 const benefits = [
   { icon: Inbox, title: 'One inbox', body: 'Pull requests requested from you and the ones your teammates opened, in one list next to the code.' },
   { icon: ScanSearch, title: 'AI goes first', body: 'Ask a model to look for security and correctness problems before you read a line. Findings point at file and line.' },
@@ -35,49 +33,53 @@ const workflow = [
 ];
 ---
 <Base title="Code reviews" description="Pull requests waiting for you, the diff, AI findings and your comments in one place. Compare findings from several models when it matters, and approve without leaving your workspace.">
-  <FeatureHero area="Code reviews" title="Review where" accent="you write code." lede="Pull requests waiting for you, the diff, AI findings and your comments, side by side. Compare several models when a change is contested. You approve." cta={{ label: 'How AI Teams verify work', href: '/ai-teams/' }} secondary={{ label: 'Review docs', href: '/docs/git/ai-reviews/' }} />
+  <PageHero eyebrow="Code reviews" title="Review where" accent="you write code." lede="Pull requests waiting for you, the diff, AI findings and your comments, side by side. Compare several models when a change is contested. You approve." cta={{ label: 'How AI Teams verify work', href: '/ai-teams/' }} secondary={{ label: 'Review docs', href: '/docs/git/ai-reviews/' }} wide>
+    <ReviewInbox />
+  </PageHero>
 
-  <Section class="ambient ambient-low overflow-x-clip">
-    <div class="reveal"><ReviewDemo /></div>
-  </Section>
-
-  <Section rule tone="elevated" aria-labelledby="why-title">
-    <div class="grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-16">
-      <SectionHeading id="why-title" title="Faster reviews, fewer tabs" lede="Reviewing a teammate’s change should not mean leaving the place you understand the code best." class="reveal">
-        <p class="mt-5 flex items-center gap-2 text-[0.8125rem] text-text-3"><StatusBadge status="planned" compact /> Review Inbox and GitHub/GitLab submission: high priority.</p>
-      </SectionHeading>
-      <ul class="reveal-group grid gap-x-8 gap-y-7 sm:grid-cols-2">
-        {benefits.map((b) => (
-          <li class="flex gap-3.5">
-            <b.icon class="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
-            <div><h3 class="text-[1.0625rem] font-[560] text-text">{b.title}</h3><p class="mt-1 text-[0.9375rem] leading-relaxed text-text-2">{b.body}</p></div>
-          </li>
-        ))}
-      </ul>
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="why-title">
+    <div class="container-site">
+      <div class="grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-16">
+        <SectionHeading id="why-title" kicker="Review Inbox" title="Faster reviews, fewer tabs." lede="Reviewing a teammate’s change should not mean leaving the place you understand the code best." class="reveal">
+          <p class="mt-5 flex items-center gap-2 text-[0.8125rem] text-text-3"><StatusBadge status="planned" compact /> Review Inbox and GitHub/GitLab submission: high priority.</p>
+        </SectionHeading>
+        <ul class="reveal-group grid gap-x-8 gap-y-7 sm:grid-cols-2">
+          {benefits.map((b) => (
+            <li class="flex gap-3.5">
+              <b.icon class="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
+              <div><h3 class="text-[1.0625rem] font-[580] text-text">{b.title}</h3><p class="mt-1 text-[0.9375rem] leading-relaxed text-text-2">{b.body}</p></div>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
-  </Section>
+  </section>
 
-  <Section rule aria-labelledby="intended-title">
-    <div class="grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-16">
-      <SectionHeading id="intended-title" title="What reviewing in Vekrun will look like" lede="The Review Inbox is the next high-priority piece of Code reviews. AI review of local branches and review councils already work; the inbox and provider submission are being built on top of them." class="reveal" />
-      <ol class="reveal-group divide-y divide-border border-y border-border" aria-label="Intended review capabilities">
-        {intended.map((i) => (
-          <li class="flex items-start justify-between gap-4 py-3">
-            <span class="text-[0.9375rem] text-text-2">{i.text}</span>
-            <StatusBadge status={i.status} compact class="shrink-0" />
-          </li>
-        ))}
-      </ol>
+  <section class="section-pad rule" aria-labelledby="intended-title">
+    <div class="container-site">
+      <div class="grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-16">
+        <SectionHeading id="intended-title" kicker="What is built, what is next" title="What reviewing in Vekrun will look like." lede="The Review Inbox is the next high-priority piece of Code reviews. AI review of local branches and review councils already work; the inbox and provider submission are being built on top of them." class="reveal" />
+        <ol class="reveal-group divide-y divide-border border-y border-border" aria-label="Intended review capabilities">
+          {intended.map((i) => (
+            <li class="flex items-start justify-between gap-4 py-3">
+              <span class="text-[0.9375rem] text-text-2">{i.text}</span>
+              <StatusBadge status={i.status} compact class="shrink-0" />
+            </li>
+          ))}
+        </ol>
+      </div>
     </div>
-  </Section>
+  </section>
 
-  <Section rule tone="elevated" aria-labelledby="flow-title">
-    <SectionHeading id="flow-title" title="A review, start to finish" class="reveal" />
-    <Steps steps={workflow} columns={3} class="reveal-group mt-10" />
-    <div class="mt-10 reveal"><Button href="/features/board/" variant="secondary">Where the pull request came from: the Board</Button></div>
-  </Section>
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="flow-title">
+    <div class="container-site">
+      <SectionHeading id="flow-title" kicker="In order" title="A review, start to finish." class="reveal" />
+      <Steps steps={workflow} columns={3} class="reveal-group mt-12" />
+      <div class="mt-12 reveal"><Button href="/features/board/" variant="secondary">Where the pull request came from: the Board</Button></div>
+    </div>
+  </section>
 
-  <CloudCallout class="pb-12 sm:pb-14" text="Review requests routed to the right teammate, with AI findings beside the diff and project status updated when it merges." />
+  <CloudCallout class="py-12 sm:py-14" text="Review requests routed to the right teammate, with AI findings beside the diff and project status updated when it merges." />
 
   <WhereThisStands>AI review of local branches and diffs, and review councils across several models, work in the development build on macOS. The Review Inbox for GitHub pull requests and GitLab merge requests, Review with AI on a pull request, inline comments and submitting a verdict through the provider are planned and high priority; none has started in source. GitHub and GitLab stay the source of truth for submitted reviews.</WhereThisStands>
 </Base>

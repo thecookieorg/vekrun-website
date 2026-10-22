@@ -1,50 +1,48 @@
 ---
 import Base from '@/layouts/Base.astro';
+import PageHero from '@/components/PageHero.astro';
 import IntegrationCatalog from '@/components/catalog/IntegrationCatalog.astro';
 import IntegrationLogo from '@/components/catalog/IntegrationLogo.astro';
+import StatusBadge from '@/components/StatusBadge.astro';
+import { getCollection } from 'astro:content';
 import { site } from '@/data/site';
+import { ArrowUpRight } from '@lucide/astro';
 
 const title = 'Integrations';
 const description = 'The AI models, coding tools, project trackers, Git hosts and developer services Vekrun connects to, and what each connection lets you do.';
+const entries = await getCollection('integrations');
+const byId = (id: string) => entries.find((e) => e.id === id)!;
 const featured = [
-  { id: 'anthropic', name: 'Claude', monogram: 'Cl' },
-  { id: 'openai', name: 'OpenAI', monogram: 'Oa' },
-  { id: 'gemini', name: 'Gemini', monogram: 'Ge' },
-  { id: 'ollama', name: 'Ollama', monogram: 'Ol' },
-  { id: 'linear', name: 'Linear', monogram: 'Li' },
-  { id: 'jira', name: 'Jira', monogram: 'Ji' },
-  { id: 'asana', name: 'Asana', monogram: 'As' },
-  { id: 'github', name: 'GitHub', monogram: 'Gh' },
-  { id: 'gitlab', name: 'GitLab', monogram: 'Gl' },
-  { id: 'sentry', name: 'Sentry', monogram: 'Se' },
-  { id: 'figma', name: 'Figma', monogram: 'Fi' },
-  { id: 'stripe', name: 'Stripe', monogram: 'St' },
-];
+  { title: 'AI models', blurb: 'Your own key, billed by the provider. Or a model on your machine.', href: '/integrations/?category=ai-models', ids: ['anthropic', 'openai', 'gemini', 'openrouter'] },
+  { title: 'Git hosting', blurb: 'Branches, pull requests and the link between a ticket and its change.', href: '/integrations/?category=git-hosting', ids: ['github', 'gitlab'] },
+  { title: 'Project management', blurb: 'Where your tickets live. Connect one and they appear on the Board.', href: '/integrations/?category=project-management', ids: ['linear', 'jira', 'asana'] },
+  { title: 'Monitoring', blurb: 'Production errors and slow requests become work you can investigate and fix.', href: '/integrations/?category=monitoring', ids: ['honeybadger', 'sentry', 'datadog', 'appsignal'] },
+].map((g) => ({ ...g, items: g.ids.map(byId).filter(Boolean) }));
 ---
 <Base title={title} description={description}>
-  <section class="ambient relative overflow-hidden border-b border-border" aria-labelledby="int-title">
-    <div class="grid-field pointer-events-none absolute inset-0" aria-hidden="true"></div>
-    <div class="container-site relative pt-16 pb-12 sm:pt-24 sm:pb-16">
-      <div class="grid items-center gap-10 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)]">
-        <div>
-          <h1 id="int-title" class="heading-1 enter">Connect the tools <span class="text-gradient">you already use.</span></h1>
-          <p class="lede enter mt-5 max-w-xl" style="--i:1">Your AI provider, your ticket tracker, your Git host and the services your work depends on, each connected with your own account.</p>
-          <p class="enter mt-5 max-w-xl text-[0.9rem] leading-relaxed text-text-3" style="--i:2">
-            Hosted providers bill you directly, and a consumer chat subscription is not an API key. Setup steps live in the <a href="/docs/settings/providers/" class="text-accent link-slide">documentation</a>. {site.status.line}
-          </p>
-        </div>
-        <ul class="enter-scale grid grid-cols-4 gap-3 sm:grid-cols-6 lg:grid-cols-4" style="--i:2" aria-label="Some of the services in the catalog">
-          {featured.map((f) => (
-            <li class="card card-hover flex flex-col items-center gap-2 p-3">
-              <IntegrationLogo id={f.id} name={f.name} monogram={f.monogram} size="lg" />
-              <span class="text-[0.75rem] text-text-2">{f.name}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <p class="mt-8 text-[0.75rem] text-text-3">Logos are trademarks of their owners and indicate compatibility, not endorsement.</p>
+  <PageHero eyebrow="Integrations" title="Connect the tools" accent="you already use." lede="Your AI provider, your ticket tracker, your Git host and the services your work depends on, each connected with your own account." wide>
+    <Fragment slot="status"><span>Hosted providers bill you directly, and a consumer chat subscription is not an API key.</span><a href="/docs/settings/providers/" class="text-accent link-slide">Setup steps in the docs</a></Fragment>
+    <div class="feat-grid reveal-group" aria-label="Featured connections">
+      {featured.map((g) => (
+        <section class="feat-card card" aria-labelledby={`feat-${g.title.toLowerCase().replace(/\s+/g, '-')}`}>
+          <div class="feat-head">
+            <div><h2 id={`feat-${g.title.toLowerCase().replace(/\s+/g, '-')}`} class="feat-title">{g.title}</h2><p class="feat-blurb">{g.blurb}</p></div>
+            <a href={g.href} class="group feat-all link-slide">All<ArrowUpRight class="icon-nudge h-3.5 w-3.5" aria-hidden="true" /></a>
+          </div>
+          <ul class="feat-items" role="list">
+            {g.items.map((e) => (
+              <li class="feat-item">
+                <IntegrationLogo id={e.id} name={e.data.name} monogram={e.data.monogram} />
+                <span class="feat-name">{e.data.name}</span>
+                <StatusBadge status={e.data.status} compact class="feat-status" />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
     </div>
-  </section>
+    <p class="mt-6 text-center text-[0.75rem] text-text-3">Logos are trademarks of their owners and indicate compatibility, not endorsement. {site.status.line}</p>
+  </PageHero>
 
   <div class="pb-24">
     <IntegrationCatalog />
@@ -53,3 +51,21 @@ const featured = [
     </p>
   </div>
 </Base>
+
+<style>
+  .feat-grid { display: grid; gap: 1rem; }
+  @media (min-width: 40rem) { .feat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 80rem) { .feat-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .feat-card { display: flex; flex-direction: column; gap: 1rem; padding: 1.25rem; text-align: left; }
+  .feat-head { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start; }
+  .feat-title { margin: 0; font-size: 1.05rem; font-weight: 600; letter-spacing: -0.015em; color: var(--text); }
+  .feat-blurb { margin: 0.25rem 0 0; font-size: 0.85rem; line-height: 1.45; color: var(--text-3); }
+  .feat-all { display: inline-flex; align-items: center; gap: 0.2rem; flex: 0 0 auto; font-size: 0.8125rem; font-weight: 540; color: var(--accent); }
+  .feat-items { list-style: none; padding: 0; display: grid; gap: 0.5rem; }
+  .feat-item { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: 'logo name' 'logo status'; column-gap: 0.75rem; row-gap: 0.25rem; align-items: center; padding: 0.6rem 0.7rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-2); min-width: 0; transition: border-color var(--dur-fast), transform var(--dur) var(--ease-out); }
+  .feat-item > :first-child { grid-area: logo; }
+  .feat-item:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+  .feat-name { grid-area: name; font-size: 0.875rem; font-weight: 560; color: var(--text); line-height: 1.2; }
+  .feat-item :global(.feat-status) { grid-area: status; justify-self: start; }
+  @media (prefers-reduced-motion: reduce) { .feat-item { transition: none; } .feat-item:hover { transform: none; } }
+</style>

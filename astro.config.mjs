@@ -54,6 +54,8 @@ export default defineConfig({
       pagination: true,
       components: {
         SiteTitle: './src/components/docs/DocsSiteTitle.astro',
+        ThemeProvider: './src/components/docs/ThemeProvider.astro',
+        ThemeSelect: './src/components/docs/ThemeSelect.astro',
       },
       sidebar: [
         { label: 'Overview', link: '/docs/' },

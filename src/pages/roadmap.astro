@@ -1,5 +1,6 @@
 ---
 import Base from '@/layouts/Base.astro';
+import PageHero from '@/components/PageHero.astro';
 import RoadmapBoard from '@/components/catalog/RoadmapBoard.astro';
 import { roadmapStatuses, site, type RoadmapStatus } from '@/data/site';
 
@@ -9,22 +10,20 @@ const title = 'Roadmap';
 const description = 'What you can do in Vekrun today, what is being built, and what is planned, grouped by terminal, AI coding, Board, AI Teams, code reviews, Insights, integrations, Vekrun Cloud and release.';
 ---
 <Base title={title} description={description}>
-  <section class="ambient ambient-low relative overflow-hidden border-b border-border" aria-labelledby="rm-title">
-    <div class="container-site relative pt-16 pb-10 sm:pt-24 sm:pb-12">
-      <h1 id="rm-title" class="heading-1 enter max-w-3xl">What works, <span class="text-gradient">what is next.</span></h1>
-      <p class="lede enter mt-5 max-w-2xl" style="--i:1">{site.status.line} This page tracks the capabilities you will use, not the engineering behind them.</p>
-      <ul class="enter mt-8 flex flex-wrap gap-x-7 gap-y-2" style="--i:2" role="list" aria-label="What the statuses mean">
+  <PageHero eyebrow="Roadmap" title="What works," accent="what is next." lede={`${site.status.line} This page tracks the capabilities you will use, not the engineering behind them.`} align="left">
+    <Fragment slot="status">
+      <ul class="flex flex-wrap gap-x-6 gap-y-2" role="list" aria-label="What the statuses mean">
         {legend.map((s) => (
           <li class="flex items-center gap-2 text-[0.875rem] text-text-2">
             <span class:list={['h-2 w-2 rounded-full', dot[roadmapStatuses[s].tone]]} aria-hidden="true"></span>
             <span class="font-[540] text-text">{roadmapStatuses[s].label}</span>
-            <span class="hidden text-text-3 sm:inline">{roadmapStatuses[s].description}</span>
+            <span class="hidden text-text-3 lg:inline">{roadmapStatuses[s].description}</span>
           </li>
         ))}
       </ul>
-      <p class="enter mt-3 text-[0.8125rem] text-text-3" style="--i:3">{site.status.meaning} Reconciled on <time datetime={site.status.asOf}>{site.status.asOf}</time>.</p>
-    </div>
-  </section>
+      <p class="w-full text-[0.8125rem] text-text-3">{site.status.meaning} Reconciled on <time datetime={site.status.asOf}>{site.status.asOf}</time>.</p>
+    </Fragment>
+  </PageHero>
 
   <section class="container-site pt-10 pb-24">
     <RoadmapBoard />

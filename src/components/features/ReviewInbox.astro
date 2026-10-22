@@ -1,0 +1,231 @@
+---
+/**
+ * The Review Inbox: pull requests waiting for you on the left, the diff, the AI
+ * findings and your decision on the right. The script reviews #88; the list is a
+ * real tablist, so a visitor can open any request and decide on it. Final state
+ * is in the markup. The inbox itself is planned; AI review of local branches works.
+ */
+import Window from '@/components/mock/Window.astro';
+import DemoControls from '@/components/mock/DemoControls.astro';
+
+interface Props { notice?: string }
+const { notice = 'Product preview. AI review of local branches and review councils work in the development build; the pull-request inbox, inline comments and GitHub/GitLab submission are planned. Open any request and decide on it to try the flow.' } = Astro.props;
+
+type Row = { kind: 'ctx' | 'add' | 'del'; n: number; code: string };
+type Finding = { tone: 'err' | 'warn' | 'ok'; kind: string; text: string; loc: string };
+const prs: { id: string; num: string; title: string; who: string; by: string; tone: 'warn' | 'muted'; file: string; stat: string; rows: Row[]; findings: Finding[]; agree: string; ci: string }[] = [
+  { id: 'pr-88', num: '#88', title: 'Add GitHub OAuth login', who: 'Requested from you', by: 'Mira', tone: 'warn', file: 'src/auth/github.ts', stat: '+42 −3', ci: 'CI passed · 41 tests', agree: 'Claude, Gemini agree',
+    rows: [
+      { kind: 'ctx', n: 41, code: '  const token = await exchangeCode(code);' },
+      { kind: 'del', n: 42, code: "- log.debug('oauth token', token);" },
+      { kind: 'add', n: 42, code: "+ log.debug('oauth exchange ok');" },
+      { kind: 'ctx', n: 43, code: '  const profile = await fetchProfile(token);' },
+      { kind: 'add', n: 44, code: '+ const account = await linkOrCreate(profile);' },
+      { kind: 'add', n: 45, code: '+ session.set(account.id);' },
+      { kind: 'ctx', n: 46, code: "  return redirect('/');" },
+    ],
+    findings: [
+      { tone: 'err', kind: 'Security', text: 'The token was logged at debug level before this change; make sure older log lines are purged too.', loc: 'src/auth/github.ts:42' },
+      { tone: 'warn', kind: 'Correctness', text: 'The callback does not compare the state parameter with the one issued at redirect.', loc: 'src/auth/github.ts:38' },
+    ] },
+  { id: 'pr-86', num: '#86', title: 'Retry failed provider calls', who: 'Teammate', by: 'Priya', tone: 'muted', file: 'src/providers/client.ts', stat: '+28 −6', ci: 'CI passed · 38 tests', agree: 'Claude, local model agree',
+    rows: [
+      { kind: 'ctx', n: 17, code: 'async function call(req: Request) {' },
+      { kind: 'del', n: 18, code: '-   return await fetch(req);' },
+      { kind: 'add', n: 18, code: '+   for (let attempt = 0; attempt < 3; attempt++) {' },
+      { kind: 'add', n: 19, code: '+     const res = await fetch(req);' },
+      { kind: 'add', n: 20, code: '+     if (res.status < 500) return res;' },
+      { kind: 'add', n: 21, code: '+     await sleep(backoff(attempt));' },
+      { kind: 'add', n: 22, code: '+   }' },
+    ],
+    findings: [
+      { tone: 'warn', kind: 'Correctness', text: 'A request body stream cannot be re-sent on the second attempt; clone the request before the loop.', loc: 'src/providers/client.ts:19' },
+      { tone: 'ok', kind: 'Note', text: 'Backoff is capped and jittered. No further concerns.', loc: 'src/providers/backoff.ts:4' },
+    ] },
+  { id: 'pr-85', num: '#85', title: 'Paginate the activity feed', who: 'Teammate', by: 'Tom', tone: 'muted', file: 'src/api/feed.ts', stat: '+19 −2', ci: 'CI running', agree: 'Claude only',
+    rows: [
+      { kind: 'ctx', n: 30, code: 'export async function feed(q: Query) {' },
+      { kind: 'del', n: 31, code: '-   return db.events.all();' },
+      { kind: 'add', n: 31, code: '+   const page = Math.max(1, q.page ?? 1);' },
+      { kind: 'add', n: 32, code: '+   return db.events.page(page, 50);' },
+      { kind: 'ctx', n: 33, code: '}' },
+    ],
+    findings: [
+      { tone: 'warn', kind: 'Performance', text: 'Offset pagination on a growing table; a cursor on created_at would keep later pages fast.', loc: 'src/api/feed.ts:32' },
+    ] },
+];
+---
+<figure class="ri" data-demo-root="review" data-review-inbox>
+  <Window title="Reviews" crumbs={['acme-api']} class="ri-window">
+    <span slot="status" class="hidden sm:inline" data-field="state">Approved by you</span>
+
+    <div class="ri-split">
+      <aside class="ri-list" aria-label="Pull requests (simulated)">
+        <div class="window-pane-head"><span>Waiting for you</span><span data-field="count">3</span></div>
+        <div role="tablist" aria-label="Pull requests" aria-orientation="vertical" class="ri-tabs">
+          {prs.map((p, i) => (
+            <button type="button" role="tab" id={`ri-tab-${p.id}`} aria-selected={i === 0 ? 'true' : 'false'} aria-controls={`ri-panel-${p.id}`} tabindex={i === 0 ? 0 : -1} class:list={['ri-pr', i === 0 && 'is-selected']} data-pr={p.id}>
+              <span class="ri-pr-top"><span class="ri-pr-num">{p.num}</span><span class:list={['ri-pr-who', `tone-${p.tone}`]}>{p.who}</span></span>
+              <span class="ri-pr-title">{p.title}</span>
+              <span class="ri-pr-by">{p.by} · <span data-pr-state={p.id}>{i === 0 ? 'approved by you' : 'open'}</span></span>
+            </button>
+          ))}
+        </div>
+      </aside>
+
+      {prs.map((p, i) => (
+        <section class="ri-main" role="tabpanel" id={`ri-panel-${p.id}`} aria-labelledby={`ri-tab-${p.id}`} hidden={i !== 0} data-panel={p.id}>
+          <div class="window-pane-head"><span>{p.num} · {p.file}</span><span class="ri-meta"><span class="text-text-3">{p.stat}</span><span class="pill is-muted">{p.ci}</span></span></div>
+          <div class="ri-diff window-mono">
+            {p.rows.map((r, j) => <div class={`diff-row diff-${r.kind}`} data-t={i === 0 ? 900 + j * 300 : undefined}><span>{r.n}</span><span>{r.code}</span></div>)}
+          </div>
+          <div class="ri-findings">
+            <p class="ri-findings-head" data-t={i === 0 ? 3600 : undefined}><span class="live-dot" aria-hidden="true"></span>AI findings · {p.agree}</p>
+            {p.findings.map((fd, j) => (
+              <div class:list={['ri-finding', `tone-${fd.tone}`]} data-t={i === 0 ? 4200 + j * 900 : undefined}>
+                <span class="ri-finding-kind">{fd.kind}</span>
+                <span class="ri-finding-text">{fd.text}</span>
+                <span class="ri-finding-loc">{fd.loc}</span>
+                <span class="ri-finding-acts"><button type="button" class="ri-mini" data-accept>Add as comment</button><button type="button" class="ri-mini" data-dismiss>Dismiss</button></span>
+              </div>
+            ))}
+          </div>
+          <div class="ri-comment" data-t={i === 0 ? 6400 : undefined}>
+            <span class="ri-comment-who">You</span>
+            {i === 0
+              ? <p class="ri-comment-text" data-t="6700" data-type data-cps="48">Please add the state check before merge. The token logging fix looks good.</p>
+              : <p class="ri-comment-text ri-comment-empty">Your comment goes here. Nothing is posted until you decide.</p>}
+            <div class="ri-actions" data-t={i === 0 ? 9400 : undefined}>
+              <button type="button" class="ri-btn" data-decide="changes">Request changes</button>
+              <button type="button" class="ri-btn ri-btn-approve" data-decide="approve">Approve with comment</button>
+            </div>
+            <span class="ri-done" data-done data-t={i === 0 ? 10600 : undefined} hidden={i !== 0}>Approved by you · comment posted to the pull request</span>
+          </div>
+        </section>
+      ))}
+    </div>
+  </Window>
+  <DemoControls notice={notice} />
+</figure>
+
+<style is:global>
+  .ri-window { font-size: 0.8rem; }
+  .ri-split { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1px; background: var(--border); }
+  @media (min-width: 48rem) { .ri-split { grid-template-columns: 15.5rem minmax(0, 1fr); } }
+  .ri-list { background: var(--surface); min-width: 0; }
+  .ri-tabs { display: flex; flex-direction: column; gap: 0.4rem; padding: 0.5rem; }
+  @media (max-width: 47.9rem) { .ri-tabs { flex-direction: row; overflow-x: auto; scrollbar-width: thin; } .ri-pr { min-width: 13rem; } }
+  .ri-pr { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.5rem 0.6rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface-2); font-size: 0.75rem; text-align: left; cursor: pointer; color: inherit; font-family: inherit; transition: border-color var(--dur), box-shadow var(--dur), background-color var(--dur-fast); }
+  .ri-pr:hover { border-color: var(--border-strong); }
+  .ri-pr:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .ri-pr.is-selected, .ri-pr[aria-selected='true'] { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .ri-pr-top { display: flex; justify-content: space-between; gap: 0.5rem; align-items: center; }
+  .ri-pr-num { font-family: var(--font-mono); color: var(--text-3); font-size: 0.68rem; }
+  .ri-pr-who { font-size: 0.64rem; border-radius: 999px; padding: 0.05rem 0.4rem; border: 1px solid var(--border-strong); color: var(--text-3); }
+  .ri-pr-who.tone-warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 50%, transparent); }
+  .ri-pr-title { color: var(--text); font-weight: 540; }
+  .ri-pr-by { color: var(--text-3); font-size: 0.68rem; }
+  .ri-main { background: var(--surface); min-width: 0; display: flex; flex-direction: column; }
+  .ri-main[hidden] { display: none; }
+  .ri-meta { display: inline-flex; align-items: center; gap: 0.6rem; }
+  .ri-diff { padding: 0.5rem 0.6rem; min-height: 9.5rem; display: flex; flex-direction: column; gap: 0.05rem; background: var(--term-bg); }
+  .ri [data-t][hidden] { display: none; }
+  .ri-findings { padding: 0.7rem 0.85rem; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 0.45rem; min-height: 7.5rem; }
+  .ri-findings-head { margin: 0; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.72rem; color: var(--text-2); }
+  .ri-finding { display: grid; grid-template-columns: auto 1fr; gap: 0.15rem 0.6rem; align-items: baseline; font-size: 0.75rem; padding: 0.45rem 0.6rem; border: 1px solid var(--border); border-left-width: 3px; border-radius: var(--radius-sm); background: var(--surface-2); animation: rise-sm 360ms var(--ease-out) both; transition: opacity var(--dur); }
+  .ri-finding.tone-err { border-left-color: var(--danger); } .ri-finding.tone-warn { border-left-color: var(--warn); } .ri-finding.tone-ok { border-left-color: var(--ok); }
+  .ri-finding.is-dismissed { opacity: 0.4; }
+  .ri-finding.is-accepted { border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); border-left-color: var(--accent); }
+  .ri-finding-kind { font-size: 0.66rem; font-weight: 560; color: var(--text-2); grid-row: span 3; align-self: start; padding-top: 0.15rem; }
+  .ri-finding-text { color: var(--text); line-height: 1.4; }
+  .ri-finding-loc { font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-3); }
+  .ri-finding-acts { display: flex; gap: 0.4rem; margin-top: 0.1rem; }
+  .ri-mini { font: inherit; font-size: 0.66rem; color: var(--text-3); background: none; border: 1px solid var(--border); border-radius: 4px; padding: 0.1rem 0.4rem; cursor: pointer; }
+  .ri-mini:hover { color: var(--text); border-color: var(--border-strong); }
+  .ri-mini:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .ri-comment { padding: 0.7rem 0.85rem; border-top: 1px solid var(--border); background: var(--surface-2); min-height: 6.75rem; display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.78rem; animation: rise-sm 360ms var(--ease-out) both; }
+  .ri-comment-who { font-size: 0.68rem; color: var(--text-3); }
+  .ri-comment-text { margin: 0; color: var(--text); min-height: 1.4em; }
+  .ri-comment-empty { color: var(--text-3); font-style: italic; }
+  .ri-actions { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.2rem; }
+  .ri-btn { display: inline-flex; align-items: center; height: 1.8rem; padding: 0 0.7rem; border-radius: 6px; font: inherit; font-size: 0.72rem; font-weight: 540; border: 1px solid var(--border-strong); color: var(--text-2); background: var(--surface); cursor: pointer; transition: background-color var(--dur-fast), color var(--dur-fast), opacity var(--dur-fast); }
+  .ri-btn:hover { color: var(--text); }
+  .ri-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .ri-btn:disabled { opacity: 0.45; cursor: default; }
+  .ri-btn-approve { background: var(--accent); color: var(--accent-ink); border-color: transparent; box-shadow: 0 8px 24px -10px color-mix(in srgb, var(--accent) 70%, transparent); }
+  .ri-btn-approve:hover { background: var(--accent-strong); color: var(--accent-ink); }
+  .ri-done { font-size: 0.72rem; color: var(--ok); animation: fade 400ms both; }
+  .ri-done.is-changes { color: var(--warn); }
+  .ri-done[hidden] { display: none; }
+  @media (prefers-reduced-motion: reduce) { .ri-finding, .ri-comment, .ri-done { animation: none; } }
+</style>
+
+<script>
+  import { createSequence, typeSteps, type Step } from '@/scripts/sequence';
+
+  document.querySelectorAll<HTMLElement>('[data-review-inbox]').forEach((root) => {
+    const nodes = Array.from(root.querySelectorAll<HTMLElement>('[data-t]'));
+    const originals = new Map(nodes.map((n) => [n, n.textContent ?? '']));
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-panel]'));
+    const state = root.querySelector<HTMLElement>('[data-field="state"]')!;
+    const count = root.querySelector<HTMLElement>('[data-field="count"]')!;
+
+    const show = (id: string, focus = false) => {
+      tabs.forEach((t) => { const on = t.dataset.pr === id; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; t.classList.toggle('is-selected', on); if (on && focus) t.focus(); });
+      panels.forEach((p) => { p.hidden = p.dataset.panel !== id; });
+    };
+    const waiting = () => { const n = tabs.filter((t) => (root.querySelector(`[data-pr-state="${t.dataset.pr}"]`)?.textContent ?? '') === 'open').length; count.textContent = String(n); };
+
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => { seq.pause(); show(t.dataset.pr!); state.textContent = `Reviewing ${t.querySelector('.ri-pr-num')?.textContent}`; });
+      t.addEventListener('keydown', (e) => {
+        const n = tabs.length;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); seq.pause(); show(tabs[(i + 1) % n]!.dataset.pr!, true); }
+        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); seq.pause(); show(tabs[(i - 1 + n) % n]!.dataset.pr!, true); }
+        if (e.key === 'Home') { e.preventDefault(); show(tabs[0]!.dataset.pr!, true); }
+        if (e.key === 'End') { e.preventDefault(); show(tabs[n - 1]!.dataset.pr!, true); }
+      });
+    });
+
+    /* Decisions and finding actions are real in the demonstration only. */
+    panels.forEach((p) => {
+      const id = p.dataset.panel!;
+      const done = p.querySelector<HTMLElement>('[data-done]')!;
+      p.querySelectorAll<HTMLButtonElement>('[data-decide]').forEach((b) => b.addEventListener('click', () => {
+        seq.pause();
+        const ok = b.dataset.decide === 'approve';
+        p.querySelectorAll<HTMLButtonElement>('[data-decide]').forEach((x) => { x.disabled = true; });
+        done.hidden = false; done.classList.toggle('is-changes', !ok);
+        done.textContent = ok ? 'Approved by you (demonstration) · comment posted to the pull request' : 'Changes requested by you (demonstration) · sent back with your comment';
+        const s = root.querySelector<HTMLElement>(`[data-pr-state="${id}"]`); if (s) s.textContent = ok ? 'approved by you' : 'changes requested';
+        state.textContent = ok ? 'Approved by you' : 'Changes requested';
+        waiting();
+      }));
+      p.querySelectorAll<HTMLElement>('.ri-finding').forEach((fd) => {
+        fd.querySelector('[data-accept]')?.addEventListener('click', () => { seq.pause(); fd.classList.add('is-accepted'); fd.classList.remove('is-dismissed'); });
+        fd.querySelector('[data-dismiss]')?.addEventListener('click', () => { seq.pause(); fd.classList.add('is-dismissed'); fd.classList.remove('is-accepted'); });
+      });
+    });
+
+    const reset = () => {
+      nodes.forEach((n) => { n.hidden = true; if (n.dataset.type !== undefined) n.textContent = ''; });
+      show('pr-88');
+      panels.forEach((p) => { p.querySelectorAll<HTMLButtonElement>('[data-decide]').forEach((x) => { x.disabled = false; }); p.querySelectorAll('.ri-finding').forEach((f) => f.classList.remove('is-accepted', 'is-dismissed')); const d = p.querySelector<HTMLElement>('[data-done]')!; d.classList.remove('is-changes'); if (p.dataset.panel !== 'pr-88') d.hidden = true; });
+      root.querySelectorAll<HTMLElement>('[data-pr-state]').forEach((s) => { s.textContent = 'open'; });
+      const d88 = root.querySelector<HTMLElement>('[data-panel="pr-88"] [data-done]')!; d88.textContent = 'Approved by you · comment posted to the pull request';
+      state.textContent = '3 waiting for you'; waiting();
+    };
+
+    const steps: Step[] = [
+      { t: 400, run: () => { state.textContent = 'Reviewing #88'; } },
+      { t: 10600, run: () => { state.textContent = 'Approved by you'; const s = root.querySelector<HTMLElement>('[data-pr-state="pr-88"]'); if (s) s.textContent = 'approved by you'; root.querySelectorAll<HTMLButtonElement>('[data-panel="pr-88"] [data-decide]').forEach((x) => { x.disabled = true; }); waiting(); } },
+    ];
+    for (const n of nodes) {
+      const t = Number(n.dataset.t);
+      steps.push({ t, run: () => { n.hidden = false; } });
+      if (n.dataset.type !== undefined) steps.push(...typeSteps(() => n, originals.get(n)!, t, Number(n.dataset.cps ?? 36)).steps);
+    }
+    const seq = createSequence(root, steps, { reset });
+  });
+</script>

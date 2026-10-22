@@ -10,7 +10,7 @@ export const site = {
   /** Brand tagline. */
   tagline: 'Your terminal. Your models. Your rules.',
   /** Homepage headline and subheading. */
-  headline: 'Your terminal. Your AI. Your workflow.',
+  headline: 'Your terminal. Your models. Your rules.',
   subheading: 'Code with your favorite AI, manage tasks, review pull requests, and run coding agents, all in one terminal.',
   description:
     'Vekrun is a free, open-source AI-native terminal and developer workspace. Use your preferred AI models, write code, manage tickets, review pull requests, coordinate AI coding teams and turn production errors into verified fixes, in one application.',

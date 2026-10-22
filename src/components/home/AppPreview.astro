@@ -7,10 +7,8 @@
  *   5 tests run · 6 review ready. Final state is in the markup for no-JS readers.
  */
 import Window from '@/components/mock/Window.astro';
-import DemoControls from '@/components/mock/DemoControls.astro';
 ---
-<figure class="app-preview enter-scale" style="--i: 4" data-demo-root data-app>
-  <Window title="acme-api" crumbs={['feat/vek-142-github-oauth']} class="app-window">
+<Window title="acme-api" crumbs={['feat/vek-142-github-oauth']} class="app-window">
     <span slot="status" class="hidden items-center gap-1.5 md:inline-flex"><span class="live-dot" aria-hidden="true"></span><span data-model>Claude · your key</span></span>
     <span slot="status" class="hidden sm:inline" data-approvals>1 waiting</span>
 
@@ -86,9 +84,7 @@ import DemoControls from '@/components/mock/DemoControls.astro';
       <span class="hidden sm:inline" data-status-files>4 files · +212 −2</span>
       <span class="ml-auto is-ok" data-status-right>Review ready</span>
     </div>
-  </Window>
-  <DemoControls notice="Product preview. A scripted walkthrough of the intended experience, not a recording of the application." />
-</figure>
+</Window>
 
 <style is:global>
   /* Global on purpose: the timeline and terminal rows are created at runtime and would miss scoped selectors. */

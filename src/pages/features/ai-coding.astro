@@ -1,12 +1,10 @@
 ---
 import Base from '@/layouts/Base.astro';
-import Section from '@/components/Section.astro';
+import PageHero from '@/components/PageHero.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import Button from '@/components/Button.astro';
 import StatusBadge from '@/components/StatusBadge.astro';
-import FeatureHero from '@/components/features/FeatureHero.astro';
-import AgentChatDemo from '@/components/features/AgentChatDemo.astro';
-import ProviderSwitcher from '@/components/home/ProviderSwitcher.astro';
+import CodingStudio from '@/components/features/CodingStudio.astro';
 import Steps from '@/components/features/Steps.astro';
 import WhereThisStands from '@/components/features/WhereThisStands.astro';
 
@@ -25,36 +23,41 @@ const workflow = [
 ];
 ---
 <Base title="AI coding" description="Code with Claude, OpenAI, Gemini or a local model inside your terminal. Five modes, every change shown as a diff before it lands, commands only when you allow them, and you see what is sent before it is sent.">
-  <FeatureHero area="AI coding" title="Any model." accent="Every change approved." lede="Connect the provider you already pay for, or a model on your machine. Ask, plan, build, debug and review in the project, with every write shown as a diff and every command waiting for your yes." cta={{ label: 'Supported providers', href: '/integrations/?category=ai-models' }} secondary={{ label: 'AI coding docs', href: '/docs/ai-coding/coding-sessions/' }} />
+  <PageHero eyebrow="AI coding" title="Any model." accent="Every change approved." lede="Connect the provider you already pay for, or a model on your machine. Ask, plan, build, debug and review in the project, with every write shown as a diff and every command waiting for your yes." cta={{ label: 'Supported providers', href: '/integrations/?category=ai-models' }} secondary={{ label: 'AI coding docs', href: '/docs/ai-coding/coding-sessions/' }} wide>
+    <CodingStudio />
+  </PageHero>
 
-  <Section class="ambient overflow-x-clip">
-    <div class="reveal"><AgentChatDemo /></div>
-  </Section>
-
-  <Section rule tone="elevated" aria-labelledby="modes-title">
-    <SectionHeading id="modes-title" title="Five modes, five sets of permissions" lede="Switching mode changes what the agent is allowed to do, not just how it answers." class="reveal" />
-    <ol class="reveal-group mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5" aria-label="Agent modes">
-      {modes.map((m) => (
-        <li class="card p-5"><h3 class="text-[1.0625rem] font-[560] text-text">{m.name}</h3><p class="mt-1.5 text-[0.9rem] leading-relaxed text-text-2">{m.body}</p></li>
-      ))}
-    </ol>
-  </Section>
-
-  <Section rule aria-labelledby="byo-title">
-    <div class="grid items-center gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
-      <SectionHeading id="byo-title" title="Switch models per task" lede="A strong hosted model for the hard change, a local model for the summary. Keys stay in your OS keychain, and you see what will be sent before it goes." class="reveal">
-        <p class="mt-5 text-[0.9rem] text-text-3">Hosted providers bill you at their own rates. Local models are free to run.</p>
-        <p class="mt-4 flex items-center gap-2 text-[0.8125rem] text-text-3"><StatusBadge status="planned" compact /> Signing in with a coding-agent subscription you already have.</p>
-      </SectionHeading>
-      <div class="reveal"><ProviderSwitcher /></div>
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="modes-title">
+    <div class="container-site">
+      <SectionHeading id="modes-title" kicker="Five modes" title="Five modes, five sets of permissions." lede="Switching mode changes what the agent is allowed to do, not just how it answers." class="reveal" />
+      <ol class="ruled-grid reveal-group mt-10 sm:grid-cols-2 lg:grid-cols-5" aria-label="Agent modes">
+        {modes.map((m) => (
+          <li class="p-5"><h3 class="text-[1.0625rem] font-[580] text-text">{m.name}</h3><p class="mt-1.5 text-[0.9rem] leading-relaxed text-text-2">{m.body}</p></li>
+        ))}
+      </ol>
     </div>
-  </Section>
+  </section>
 
-  <Section rule tone="elevated" aria-labelledby="flow-title">
-    <SectionHeading id="flow-title" title="From question to approved change" class="reveal" />
-    <Steps steps={workflow} columns={4} class="reveal-group mt-10" />
-    <div class="mt-10 reveal"><Button href="/ai-teams/" variant="secondary">When one agent is not enough: AI Teams</Button></div>
-  </Section>
+  <section class="section-pad rule" aria-labelledby="byo-title">
+    <div class="container-site">
+      <div class="grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+        <SectionHeading id="byo-title" kicker="Bring your own AI" title="Switch models per task." lede="A strong hosted model for the hard change, a local model for the summary. Keys stay in your OS keychain, and you see what will be sent before it goes." class="reveal" />
+        <dl class="facts facts-lg reveal-group">
+          <div><dt>Hosted providers</dt><dd>Claude, OpenAI, Gemini and any OpenAI-compatible endpoint, with your own key. They bill you at their own rates.</dd></div>
+          <div><dt>Local models</dt><dd>Ollama and LM Studio are detected on your machine. Free to run, nothing leaves your computer.</dd></div>
+          <div><dt>Coding-agent accounts <StatusBadge status="planned" compact class="ml-2 align-middle" /></dt><dd>Signing in with a coding-agent subscription you already have is planned.</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="flow-title">
+    <div class="container-site">
+      <SectionHeading id="flow-title" kicker="In order" title="From question to approved change." class="reveal" />
+      <Steps steps={workflow} columns={4} class="reveal-group mt-12" />
+      <div class="mt-12 reveal"><Button href="/ai-teams/" variant="secondary">When one agent is not enough: AI Teams</Button></div>
+    </div>
+  </section>
 
   <WhereThisStands>Anthropic, OpenAI, Gemini and OpenAI-compatible keys, Ollama and LM Studio, the five modes, diff approvals, allowed commands, the egress preview and scoped memory work in the development build on macOS. Downloading local models from inside Vekrun and coding-agent subscriptions are planned.</WhereThisStands>
 </Base>

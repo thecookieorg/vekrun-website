@@ -7,4 +7,4 @@ const p = who ? people[who] : undefined;
 const text = p?.ini ?? label ?? '';
 const title = p?.name ?? label ?? '';
 ---
-<span class:list={['cl-avatar', kind === 'agent' && 'is-agent', kind === 'worker' && 'is-worker', size === 'sm' && 'is-sm', size === 'lg' && 'is-lg', className]} style={p ? `--h: ${p.hue}` : undefined} title={title} aria-label={title} role="img">{text}</span>
+<span class:list={['avatar', kind === 'agent' && 'is-agent', kind === 'worker' && 'is-worker', size === 'sm' && 'is-sm', size === 'lg' && 'is-lg', className]} style={p ? `--h: ${p.hue}` : undefined} title={title} aria-label={title} role="img">{text}</span>

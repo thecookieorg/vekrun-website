@@ -1,15 +1,27 @@
 ---
-/** A numbered sequence. Only for content that really is a sequence. */
+/** A numbered sequence on a rail. Only for content that really is a sequence. */
 export interface Step { title: string; body: string }
 interface Props { steps: Step[]; columns?: 3 | 4; class?: string; label?: string }
 const { steps, columns = 3, class: className = '', label = 'Steps, in order' } = Astro.props;
 ---
-<ol class:list={['grid gap-x-8 gap-y-6', columns === 4 ? 'sm:grid-cols-2 lg:grid-cols-4' : 'sm:grid-cols-3', className]} aria-label={label}>
+<ol class:list={['steps', columns === 4 ? 'steps-4' : 'steps-3', className]} aria-label={label}>
   {steps.map((s, i) => (
-    <li class="border-t border-border pt-4">
-      <span class="font-mono text-xs text-accent" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-      <h3 class="mt-1.5 text-[1rem] font-[580] text-text">{s.title}</h3>
-      <p class="mt-1.5 text-[0.9rem] leading-relaxed text-text-2">{s.body}</p>
+    <li class="step">
+      <span class="step-n" aria-hidden="true">{i + 1}</span>
+      <h3 class="step-t">{s.title}</h3>
+      <p class="step-b">{s.body}</p>
     </li>
   ))}
 </ol>
+
+<style>
+  .steps { list-style: none; padding: 0; display: grid; gap: 2rem 2rem; counter-reset: step; }
+  @media (min-width: 40rem) { .steps-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } .steps-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 64rem) { .steps-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .step { position: relative; padding-top: 1.1rem; }
+  .step::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--border); }
+  .step-n { position: absolute; left: 0; top: -0.75rem; display: inline-flex; width: 1.5rem; height: 1.5rem; align-items: center; justify-content: center; border-radius: 50%; background: var(--bg); border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--border)); color: var(--accent); font-family: var(--font-mono); font-size: 0.66rem; box-shadow: 0 0 0 4px var(--bg); }
+  .step-t { margin: 0.6rem 0 0; font-size: 1.0625rem; font-weight: 580; color: var(--text); letter-spacing: -0.01em; }
+  .step-b { margin: 0.4rem 0 0; font-size: 0.9375rem; line-height: 1.55; color: var(--text-2); }
+  :global(.bg-bg-elevated) .step-n { background: var(--bg-elevated); box-shadow: 0 0 0 4px var(--bg-elevated); }
+</style>

@@ -1,10 +1,9 @@
 ---
 import Base from '@/layouts/Base.astro';
-import Section from '@/components/Section.astro';
+import PageHero from '@/components/PageHero.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import Button from '@/components/Button.astro';
-import FeatureHero from '@/components/features/FeatureHero.astro';
-import TicketDemo from '@/components/features/TicketDemo.astro';
+import BoardWalkthrough from '@/components/features/BoardWalkthrough.astro';
 import Steps from '@/components/features/Steps.astro';
 import WhereThisStands from '@/components/features/WhereThisStands.astro';
 import CloudCallout from '@/components/cloud/CloudCallout.astro';
@@ -12,7 +11,7 @@ import CloudCallout from '@/components/cloud/CloudCallout.astro';
 const steps = [
   { title: 'Connect your tracker', body: 'Jira, Linear, Asana, GitHub or GitLab. Several accounts if you have them. Production errors from Insights can land here too.' },
   { title: 'See your tickets', body: 'Everything assigned to you in one Kanban, each card linked to the original.' },
-  { title: 'Click Start Work', body: 'A branch, a separate working copy and a terminal in it. One click.' },
+  { title: 'Press Start Work', body: 'A branch, a separate working copy and a terminal in it. One click.' },
   { title: 'Choose who does the work', body: 'You, an AI agent with the ticket as its brief, or an AI team.' },
   { title: 'Review and deliver', body: 'Diffs and tests collect on the ticket. The pull request links back; the ticket moves when you confirm.' },
 ];
@@ -22,41 +21,45 @@ const ways = [
   { title: 'Delegate to an AI team', body: 'A plan you approve, agents building in parallel, a separate check before review.' },
 ];
 ---
-<Base title="Board" description="See the tickets assigned to you from Jira, Linear, Asana, GitHub or GitLab in one Kanban. Click Start Work and you have a branch, a terminal and, if you want, an AI agent.">
-  <FeatureHero area="Board" title="Your tasks," accent="ready to build." lede="Your assigned tickets in one place. Pick one, click Start Work, and you have a branch, a terminal and, if you want, an AI agent. Your tasks, your terminal, and your AI, all connected." cta={{ label: 'See the trackers', href: '/integrations/?category=project-management' }} secondary={{ label: 'Board docs', href: '/docs/board/start-work/' }} />
+<Base title="Board" description="See the tickets assigned to you from Jira, Linear, Asana, GitHub or GitLab in one Kanban. Press Start Work and you have a branch, a terminal and, if you want, an AI agent.">
+  <PageHero eyebrow="Board and Start Work" title="Your tasks," accent="ready to build." lede="Your assigned tickets in one place. Pick one, press Start Work, and you have a branch, a terminal and, if you want, an AI agent. Your tasks, your terminal and your AI, all connected." cta={{ label: 'See the trackers', href: '/integrations/?category=project-management' }} secondary={{ label: 'Board docs', href: '/docs/board/start-work/' }} wide>
+    <BoardWalkthrough />
+  </PageHero>
 
-  <Section class="ambient overflow-x-clip">
-    <div class="reveal"><TicketDemo /></div>
-  </Section>
-
-  <Section rule tone="elevated" aria-labelledby="ways-title">
-    <SectionHeading id="ways-title" title="One question: who does the work?" lede="Start Work asks it once. The branch, the working copy and the terminal are the same whichever you choose." class="reveal" />
-    <div class="reveal-group mt-10 grid gap-5 sm:grid-cols-3">
-      {ways.map((w, i) => (
-        <div class="card card-hover p-6">
-          <span class="font-mono text-xs text-accent" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-          <h3 class="mt-2 heading-3 text-text">{w.title}</h3>
-          <p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">{w.body}</p>
-        </div>
-      ))}
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="ways-title">
+    <div class="container-site">
+      <SectionHeading id="ways-title" kicker="Start Work" title="One question: who does the work?" lede="Start Work asks it once. The branch, the working copy and the terminal are the same whichever you choose." class="reveal" />
+      <ol class="ruled-grid reveal-group mt-10 sm:grid-cols-3" aria-label="Ways of working">
+        {ways.map((w, i) => (
+          <li class="p-6">
+            <span class="font-mono text-xs text-accent" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="heading-3 mt-2 text-text">{w.title}</h3>
+            <p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">{w.body}</p>
+          </li>
+        ))}
+      </ol>
     </div>
-  </Section>
+  </section>
 
-  <Section rule aria-labelledby="flow-title">
-    <SectionHeading id="flow-title" title="From ticket to delivered" lede="Five steps. The middle one is a single click." class="reveal" />
-    <Steps steps={steps} columns={4} class="reveal-group mt-10" />
-  </Section>
-
-  <Section rule tone="elevated" padded="tight">
-    <div class="grid gap-6 md:grid-cols-3">
-      <div class="reveal"><h2 class="heading-3">Your tracker stays in charge</h2><p class="mt-1.5 text-[0.9375rem] text-text-2">Jira, Linear and Asana remain the system of record. Vekrun changes a ticket only when you confirm.</p></div>
-      <div class="reveal"><h3 class="heading-3">Columns that match your workflow</h3><p class="mt-1.5 text-[0.9375rem] text-text-2">Map each tracker’s statuses to your columns, or add your own.</p></div>
-      <div class="reveal"><h3 class="heading-3">No AI required</h3><p class="mt-1.5 text-[0.9375rem] text-text-2">The Board and Start Work need no model connection, and your tickets are cached for offline reading.</p></div>
+  <section class="section-pad rule" aria-labelledby="flow-title">
+    <div class="container-site">
+      <SectionHeading id="flow-title" kicker="Ticket to delivered" title="Five steps. The middle one is a single click." class="reveal" />
+      <Steps steps={steps} columns={4} class="reveal-group mt-12" />
     </div>
-    <div class="mt-8 reveal"><Button href="/ai-teams/" variant="secondary">Hand a bigger ticket to an AI team</Button></div>
-  </Section>
+  </section>
 
-  <CloudCallout class="pb-12 sm:pb-14" text="A shared Board across your organization, with assignments and plans every developer on the project can see." />
+  <section class="rule bg-bg-elevated">
+    <div class="container-site py-14 sm:py-16">
+      <dl class="facts facts-grid facts-lg reveal-group">
+        <div><dt>Your tracker stays in charge</dt><dd>Jira, Linear and Asana remain the system of record. Vekrun changes a ticket only when you confirm.</dd></div>
+        <div><dt>Columns that match your workflow</dt><dd>Map each tracker’s statuses to your columns, or add your own.</dd></div>
+        <div><dt>No AI required</dt><dd>The Board and Start Work need no model connection, and your tickets are cached for offline reading.</dd></div>
+      </dl>
+      <div class="mt-8 reveal"><Button href="/ai-teams/" variant="secondary">Hand a bigger ticket to an AI team</Button></div>
+    </div>
+  </section>
+
+  <CloudCallout class="py-12 sm:py-14" text="A shared Board across your organization, with assignments and plans every developer on the project can see." />
 
   <WhereThisStands>The Board, Start Work and all three ways of working run in the development build on macOS. Adapters for Jira, Linear, Asana, GitHub and GitLab exist and are tested against recorded responses, and a ticket created from a monitoring issue shows its investigation stage on its card. Running the trackers against live services, pull-request links and status updates are planned.</WhereThisStands>
 </Base>

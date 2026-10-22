@@ -1,0 +1,166 @@
+---
+/**
+ * The Terminal page centrepiece: three real tabs (the project shell, the web app,
+ * an SSH session), a split that opens with ⌘D, a host key checked before the
+ * remote shell connects, ⌘F through scrollback, and the failing output handed
+ * to the AI with one keystroke. Scripted first; the tabs are real.
+ * Final state is in the markup.
+ */
+import Window from '@/components/mock/Window.astro';
+import DemoControls from '@/components/mock/DemoControls.astro';
+interface Props { notice?: string }
+const { notice = 'Product preview. Tabs, splits, SSH with host-key checks, search, shell integration, session restore and the read-terminal assist work in the development build on macOS; the explanation shown is illustrative. Switch tabs to look around.' } = Astro.props;
+const tabs = [
+  { id: 'api', label: 'api', hint: 'acme-api · main' },
+  { id: 'web', label: 'web', hint: 'acme-web · pnpm dev' },
+  { id: 'ssh', label: 'ssh: staging', hint: 'deploy@staging' },
+];
+---
+<figure class="ts" data-demo-root="terminal-showcase" data-terminal>
+  <Window title="acme-api" class="ts-window">
+    <span slot="status" class="hidden sm:inline" data-field="hint">⌘F · search</span>
+    <span slot="status" class="hidden items-center gap-1.5 md:inline-flex"><span class="live-dot" aria-hidden="true"></span>Claude · your key</span>
+
+    <div class="ts-tabs" role="tablist" aria-label="Terminal tabs">
+      {tabs.map((t, i) => <button type="button" role="tab" id={`ts-tab-${t.id}`} aria-selected={i === 0 ? 'true' : 'false'} aria-controls={`ts-pane-${t.id}`} tabindex={i === 0 ? 0 : -1} class="ts-tab" data-tab={t.id}><span class="ts-tab-dot" aria-hidden="true"></span>{t.label}</button>)}
+      <span class="ts-tab-add" aria-hidden="true">+</span>
+      <span class="ts-ctx" data-field="ctx">acme-api · main · 2 panes</span>
+    </div>
+
+    <div class="ts-panes" id="ts-pane-api" role="tabpanel" aria-labelledby="ts-tab-api" data-pane="api" data-split="true">
+      <section class="term ts-pane" aria-label="Left pane (simulated)">
+        <div class="ts-lines">
+          <span class="term-line"><span class="dim">~/code/acme-api</span> <span class="ok">main</span></span>
+          <span class="term-line"><span class="dim">$</span> <span data-type data-t="300" data-cps="22">cargo build --release</span></span>
+          <span class="term-line" data-t="1500"><span class="ok">   Compiling</span> acme-api v0.4.2</span>
+          <span class="term-line" data-t="2300"><span class="ok">   Compiling</span> acme-auth v0.4.2</span>
+          <span class="term-line" data-t="3300"><span class="warn">warning</span>: unused variable `retries` <span class="dim">src/jobs/export.rs:41</span></span>
+          <span class="term-line" data-t="4200"><span class="ok">    Finished</span> release [optimized] in 38.2s <span class="dim">· exit 0 · 38.2s</span></span>
+          <span class="term-line" data-t="4300"><span class="dim">$</span> <span class="term-cursor"></span></span>
+        </div>
+        <div class="ts-find" data-t="9800" role="presentation">
+          <span class="ts-find-key">⌘F</span><span class="ts-find-q">unused</span><span class="ts-find-count">1 of 1</span>
+        </div>
+      </section>
+      <section class="term ts-pane ts-pane-right" aria-label="Right pane (simulated)" data-t="5200">
+        <div class="ts-lines">
+          <span class="term-line"><span class="dim">⌘D · new pane</span></span>
+          <span class="term-line"><span class="dim">$</span> <span data-type data-t="5600" data-cps="22">ssh deploy@staging</span></span>
+          <span class="term-line" data-t="6900"><span class="warn">Host key</span> for staging.acme.internal (ED25519)</span>
+          <span class="term-line" data-t="6950"><span class="dim">SHA256:</span>k9mWq3…Zp4Lc  <span class="info">matches the key you saved</span></span>
+          <span class="term-line" data-t="7800"><span class="dim">deploy@staging</span> <span class="ok">~</span></span>
+          <span class="term-line" data-t="8300"><span class="dim">$</span> <span data-type data-t="8300" data-cps="22">systemctl status acme-api</span></span>
+          <span class="term-line" data-t="9300"><span class="ok">●</span> acme-api.service · active (running) since 09:12</span>
+        </div>
+      </section>
+    </div>
+
+    <div class="ts-panes" id="ts-pane-web" role="tabpanel" aria-labelledby="ts-tab-web" data-pane="web" hidden>
+      <section class="term ts-pane" aria-label="Web pane (simulated)">
+        <div class="ts-lines">
+          <span class="term-line"><span class="dim">~/code/acme-web</span> <span class="ok">main</span></span>
+          <span class="term-line"><span class="dim">$</span> pnpm dev</span>
+          <span class="term-line"><span class="info">ready</span> in 412 ms · http://localhost:3000</span>
+          <span class="term-line"><span class="dim">12:04:19</span> GET /dashboard <span class="ok">200</span> · 38 ms</span>
+          <span class="term-line"><span class="dim">12:04:21</span> GET /api/exports <span class="warn">429</span> · 4 ms · Retry-After: 30</span>
+          <span class="term-line"><span class="dim">12:04:22</span> <span class="dim">hmr</span> src/pages/dashboard.tsx updated</span>
+          <span class="term-line"><span class="dim">·</span> <span class="term-cursor"></span></span>
+        </div>
+      </section>
+    </div>
+
+    <div class="ts-panes" id="ts-pane-ssh" role="tabpanel" aria-labelledby="ts-tab-ssh" data-pane="ssh" hidden>
+      <section class="term ts-pane" aria-label="SSH pane (simulated)">
+        <div class="ts-lines">
+          <span class="term-line"><span class="dim">deploy@staging</span> <span class="ok">~</span></span>
+          <span class="term-line"><span class="dim">$</span> journalctl -u acme-api -n 3</span>
+          <span class="term-line"><span class="dim">Oct 22 09:12:04</span> acme-api[812]: listening on :8080</span>
+          <span class="term-line"><span class="dim">Oct 22 09:12:05</span> acme-api[812]: migrations up to date (0007)</span>
+          <span class="term-line"><span class="dim">Oct 22 09:14:40</span> acme-api[812]: <span class="warn">warn</span> export: limiter not applied to /v1/export</span>
+          <span class="term-line"><span class="dim">$</span> <span class="term-cursor"></span></span>
+        </div>
+      </section>
+    </div>
+
+    <div class="ts-assist" data-t="10800">
+      <div class="ts-assist-head"><span class="ts-assist-chip">Ask about this warning</span><span class="text-text-3">the selected output, sent only when you press the key</span></div>
+      <p class="ts-assist-body" data-t="11400" data-type data-cps="60">`retries` is read in the loop that was removed in the last commit; the retry count is now passed through `ExportJob::new` instead. Safe to delete the variable at export.rs:41.</p>
+    </div>
+
+    <div class="ts-status" aria-label="Status bar"><span>acme-api</span><span>main</span><span class="hidden sm:inline">⌘D split · ⌘F search · ⌘K ask</span><span class="ml-auto">restored session · 3 tabs</span></div>
+  </Window>
+  <DemoControls notice={notice} />
+</figure>
+
+<style is:global>
+  .ts-window { font-size: 0.8rem; }
+  .ts-tabs { display: flex; align-items: center; gap: 0.15rem; padding: 0.35rem 0.5rem; border-bottom: 1px solid var(--border); background: var(--surface-2); font-family: var(--font-mono); font-size: 0.7rem; overflow-x: auto; scrollbar-width: none; }
+  .ts-tab { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.65rem; border-radius: 6px; border: 0; background: transparent; color: var(--text-3); font: inherit; cursor: pointer; white-space: nowrap; transition: background-color var(--dur-fast), color var(--dur-fast); }
+  .ts-tab:hover { color: var(--text-2); }
+  .ts-tab[aria-selected='true'] { background: var(--surface); color: var(--text); box-shadow: inset 0 0 0 1px var(--border); }
+  .ts-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .ts-tab-dot { width: 0.4rem; height: 0.4rem; border-radius: 50%; background: var(--border-strong); }
+  .ts-tab[aria-selected='true'] .ts-tab-dot { background: var(--accent); }
+  .ts-tab-add { padding: 0 0.5rem; color: var(--text-3); }
+  .ts-ctx { margin-left: auto; color: var(--text-3); white-space: nowrap; padding-right: 0.3rem; }
+  .ts-panes { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1px; background: var(--border); min-height: 17rem; }
+  .ts-panes[hidden] { display: none; }
+  @media (min-width: 48rem) { .ts-panes[data-split='true'] { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .ts-panes { min-height: 19rem; } }
+  .ts-pane { position: relative; padding: 0.75rem 0.9rem; min-width: 0; overflow: hidden; }
+  .ts-pane-right[hidden] { display: none; }
+  @media (max-width: 47.9rem) { .ts-pane-right { display: none !important; } }
+  .ts-lines .term-line[hidden] { display: none; }
+  .ts-lines .term-line.is-hit { background: color-mix(in srgb, var(--warn) 22%, transparent); border-radius: 3px; }
+  .ts-find { position: absolute; right: 0.6rem; top: 0.55rem; display: inline-flex; align-items: center; gap: 0.5rem; background: var(--bg-elevated); border: 1px solid var(--border-strong); border-radius: 6px; padding: 0.25rem 0.5rem; font-size: 0.68rem; color: var(--text-2); animation: scale-in 260ms var(--ease-out) both; }
+  .ts-find[hidden] { display: none; }
+  .ts-find-key { color: var(--text-3); } .ts-find-q { color: var(--text); font-family: var(--font-mono); } .ts-find-count { color: var(--text-3); }
+  .ts-assist { margin: 0; padding: 0.8rem 0.95rem; border-top: 1px solid var(--border); background: var(--surface-2); min-height: 5.6rem; font-size: 0.8125rem; display: flex; flex-direction: column; gap: 0.45rem; animation: rise-sm 420ms var(--ease-out) both; }
+  .ts-assist[hidden] { display: none; }
+  .ts-assist-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; font-size: 0.75rem; }
+  .ts-assist-chip { display: inline-flex; align-items: center; gap: 0.4rem; border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent); color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 0.2rem 0.6rem; font-weight: 540; }
+  .ts-assist-chip::before { content: ''; width: 0.4rem; height: 0.4rem; border-radius: 50%; background: var(--accent); }
+  .ts-assist-body { color: var(--text); line-height: 1.5; min-height: 2.6em; max-width: 70ch; margin: 0; }
+  .ts-status { display: flex; gap: 1rem; padding: 0.4rem 0.85rem; border-top: 1px solid var(--border); background: var(--bg-elevated); font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-3); }
+  @media (prefers-reduced-motion: reduce) { .ts-find, .ts-assist { animation: none; } }
+</style>
+
+<script>
+  import { createSequence, typeSteps, type Step } from '@/scripts/sequence';
+  document.querySelectorAll<HTMLElement>('[data-terminal]').forEach((root) => {
+    const timed = Array.from(root.querySelectorAll<HTMLElement>('[data-t]:not([data-type])'));
+    const typers = Array.from(root.querySelectorAll<HTMLElement>('[data-type]'));
+    const texts = typers.map((n) => n.textContent ?? '');
+    const hint = root.querySelector<HTMLElement>('[data-field="hint"]')!;
+    const ctx = root.querySelector<HTMLElement>('[data-field="ctx"]')!;
+    const hitLine = Array.from(root.querySelectorAll<HTMLElement>('.term-line')).find((l) => l.textContent?.includes('unused variable'))!;
+    const panes = root.querySelector<HTMLElement>('[data-pane="api"]')!;
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const hints: Record<string, string> = { api: 'acme-api · main · 2 panes', web: 'acme-web · pnpm dev', ssh: 'deploy@staging' };
+    const show = (id: string, focus = false) => {
+      tabs.forEach((t) => { const on = t.dataset.tab === id; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; if (on && focus) t.focus(); });
+      root.querySelectorAll<HTMLElement>('[data-pane]').forEach((p) => { p.hidden = p.dataset.pane !== id; });
+      ctx.textContent = hints[id] ?? '';
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => { seq.pause(); show(t.dataset.tab!); });
+      t.addEventListener('keydown', (e) => {
+        const n = tabs.length;
+        if (e.key === 'ArrowRight') { e.preventDefault(); seq.pause(); show(tabs[(i + 1) % n]!.dataset.tab!, true); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); seq.pause(); show(tabs[(i - 1 + n) % n]!.dataset.tab!, true); }
+      });
+    });
+    const reset = () => {
+      timed.forEach((n) => { n.hidden = true; });
+      typers.forEach((n) => { n.textContent = ''; });
+      hitLine.classList.remove('is-hit'); hint.textContent = 'one pane'; panes.dataset.split = 'false'; show('api'); ctx.textContent = 'acme-api · main · 1 pane';
+    };
+    const steps: Step[] = timed.map((n) => ({ t: Number(n.dataset.t), run: () => { n.hidden = false; } }));
+    typers.forEach((n, i) => steps.push(...typeSteps(() => n, texts[i]!, Number(n.dataset.t), Number(n.dataset.cps ?? 24)).steps));
+    steps.push(
+      { t: 5200, run: () => { panes.dataset.split = 'true'; hint.textContent = '⌘D · split'; ctx.textContent = 'acme-api · main · 2 panes'; } },
+      { t: 9800, run: () => { hitLine.classList.add('is-hit'); hint.textContent = '⌘F · search'; } },
+      { t: 10800, run: () => { hint.textContent = '⌘K · ask'; } },
+    );
+    const seq = createSequence(root, steps, { reset });
+  });
+</script>

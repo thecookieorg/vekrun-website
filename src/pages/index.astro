@@ -1,19 +1,19 @@
 ---
 import Base from '@/layouts/Base.astro';
 import Button from '@/components/Button.astro';
-import Section from '@/components/Section.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import StatusBadge from '@/components/StatusBadge.astro';
-import AppPreview from '@/components/home/AppPreview.astro';
+import HeroStage from '@/components/home/HeroStage.astro';
 import TerminalDemo from '@/components/home/TerminalDemo.astro';
-import ProviderSwitcher from '@/components/home/ProviderSwitcher.astro';
-import BoardDemo from '@/components/home/BoardDemo.astro';
-import AgentsFlow from '@/components/home/AgentsFlow.astro';
-import ReviewDemo from '@/components/home/ReviewDemo.astro';
-import InsightsDemo from '@/components/home/InsightsDemo.astro';
+import CloudPreview from '@/components/home/CloudPreview.astro';
+import CodingStudio from '@/components/features/CodingStudio.astro';
+import BoardWalkthrough from '@/components/features/BoardWalkthrough.astro';
+import TeamRunDemo from '@/components/features/TeamRunDemo.astro';
+import ReviewInbox from '@/components/features/ReviewInbox.astro';
+import InsightsWalkthrough from '@/components/features/InsightsWalkthrough.astro';
 import GithubMark from '@/components/GithubMark.astro';
 import { site, featurePages, cloud } from '@/data/site';
-import { ArrowUpRight, Columns2, Network, Search, KeyRound, HardDrive, Eye, ShieldCheck, GitBranch, Activity } from '@lucide/astro';
+import { ArrowUpRight, SquareTerminal, Sparkles, SquareKanban, Users, GitPullRequest, Activity } from '@lucide/astro';
 
 const structuredData = [
   {
@@ -29,223 +29,235 @@ const structuredData = [
   },
   { '@context': 'https://schema.org', '@type': 'WebSite', name: site.name, url: site.url },
 ];
+const icons: Record<string, typeof SquareTerminal> = { terminal: SquareTerminal, 'ai-coding': Sparkles, board: SquareKanban, 'ai-teams': Users, 'code-review': GitPullRequest, insights: Activity };
+const journeys = [
+  { k: 'Start from a ticket', t: 'From ticket to pull request.', b: 'Board → Start Work → code, alone or with agents → tests → a reviewable change.', href: '/features/board/', a: 'How the Board works' },
+  { k: 'Start from a production error', t: 'From production error to verified fix.', b: 'Insights → investigate → ticket, plan or team → review → check production after the deploy.', href: '/features/insights/', a: 'How Insights works' },
+  { k: 'Start from a failed build', t: 'From failed build to working code.', b: 'A failed CI run → what broke → a repair → local tests → the next green run.', href: '/roadmap/#ci-cd', a: 'On the roadmap', planned: true },
+];
 ---
-<Base title={`${site.name}: ${site.headline}`} description={site.description} structuredData={structuredData}>
+<Base title={`${site.name}: ${site.tagline}`} description={site.description} structuredData={structuredData}>
   <!-- Hero -->
-  <section class="hero ambient overflow-hidden" aria-labelledby="hero-title">
+  <section class="hero ambient" aria-labelledby="hero-title">
     <div class="grid-field pointer-events-none absolute inset-0" aria-hidden="true"></div>
-    <div class="container-site relative pt-14 sm:pt-20 lg:pt-24">
-      <div class="mx-auto max-w-3xl text-center">
-        <p class="enter mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-surface/70 px-3 py-1.5 text-[0.8125rem] text-text-2 backdrop-blur" style="--i: 0">
+    <div class="container-wide relative">
+      <div class="hero-copy">
+        <p class="enter inline-flex items-center gap-2 rounded-full border border-border bg-surface/70 px-3 py-1.5 text-[0.8125rem] text-text-2 backdrop-blur" style="--i: 0">
           <span class="h-1.5 w-1.5 rounded-full bg-warn" aria-hidden="true"></span>
-          Free and open source. {site.status.label}, no public release yet.
+          Free and open source · {site.status.label}, no public release yet
         </p>
-        <h1 id="hero-title" class="display">
+        <h1 id="hero-title" class="display mt-6 text-text">
           <span class="enter block" style="--i: 1">Your terminal.</span>
-          <span class="enter block" style="--i: 2">Your AI.</span>
-          <span class="enter block text-gradient" style="--i: 3">Your workflow.</span>
+          <span class="enter block" style="--i: 2">Your models.</span>
+          <span class="enter block text-gradient" style="--i: 3">Your rules.</span>
         </h1>
         <p class="lede enter mx-auto mt-7 max-w-2xl" style="--i: 3">{site.subheading}</p>
         <div class="enter mt-9 flex flex-wrap items-center justify-center gap-3" style="--i: 4">
           <Button href="/features/" size="lg">Explore features</Button>
-          <Button href="/roadmap/" size="lg" variant="secondary">View roadmap</Button>
+          <Button href="#board" size="lg" variant="secondary">See how it works</Button>
           {site.repo.public && <Button href={site.repo.url} size="lg" variant="ghost" external><GithubMark /> GitHub</Button>}
         </div>
       </div>
-      <div class="relative mt-14 sm:mt-16 lg:mt-20">
-        <AppPreview />
+      <div class="hero-stage enter-stage relative" style="--i: 5"><HeroStage /></div>
+    </div>
+  </section>
+
+  <!-- Six things, one workspace -->
+  <section class="rule" aria-labelledby="six-title">
+    <div class="container-site py-10 sm:py-12">
+      <h2 id="six-title" class="sr-only">What Vekrun does</h2>
+      <ul class="feat-index reveal-group" aria-label="What Vekrun does">
+        {featurePages.map((f) => { const Icon = icons[f.key]!; return (
+          <li>
+            <a href={f.href} class="feat-index-a group">
+              <Icon class="h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
+              <span class="feat-index-t">{f.label}<ArrowUpRight class="icon-nudge h-3.5 w-3.5 text-text-3" aria-hidden="true" /></span>
+              <span class="feat-index-d">{f.description}</span>
+            </a>
+          </li>
+        ); })}
+      </ul>
+    </div>
+  </section>
+
+  <!-- A. Terminal -->
+  <section class="section-pad rule ambient ambient-low" aria-labelledby="terminal-title">
+    <div class="container-site">
+      <SectionHeading id="terminal-title" kicker="Terminal" title="A terminal that does more." lede="Fast, familiar and yours: tabs, splits, SSH and search. When a command fails, the AI is one keystroke away, and it reads the output you already have." class="reveal" />
+      <div class="reveal mt-10"><TerminalDemo /></div>
+      <dl class="facts facts-grid reveal-group mt-10">
+        <div><dt>Tabs and splits</dt><dd>Arrange shells the way you work. A split never restarts a shell.</dd></div>
+        <div><dt>SSH built in</dt><dd>Remote shells with host keys you have checked, in a tab like any other.</dd></div>
+        <div><dt>Search and restore</dt><dd>Find anything in scrollback. Pick up where you left off after a restart.</dd></div>
+      </dl>
+      <a href="/features/terminal/" class="group link-slide mt-8 inline-flex items-center gap-1.5 text-[0.9375rem] font-[540] text-accent">More about the terminal<ArrowUpRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a>
+    </div>
+  </section>
+
+  <!-- B. AI coding -->
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="coding-title">
+    <div class="container-wide">
+      <div class="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-14 lg:items-start">
+        <div class="reveal min-w-0 lg:sticky lg:top-24">
+          <SectionHeading id="coding-title" kicker="AI coding" title="Any model. Every change approved." lede="Claude, OpenAI, Gemini, a compatible endpoint or a model on your machine. Ask in the project, get a diff, approve it yourself. No Vekrun subscription, and your keys stay in your operating system's keychain." />
+          <dl class="facts mt-7">
+            <div><dt>Your key, your bill</dt><dd>Hosted providers bill you directly at their rates. Local models cost nothing per token.</dd></div>
+            <div><dt>See what is sent</dt><dd>What goes to a provider is shown before it goes. The first time, nothing goes until you confirm.</dd></div>
+            <div><dt>Diffs before writes</dt><dd>Every change arrives as a diff. Commands wait for your yes unless you allowed them.</dd></div>
+          </dl>
+          <a href="/features/ai-coding/" class="group link-slide mt-7 inline-flex items-center gap-1.5 text-[0.9375rem] font-[540] text-accent">More about AI coding<ArrowUpRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a>
+        </div>
+        <div class="reveal min-w-0"><CodingStudio /></div>
       </div>
     </div>
   </section>
 
-  <!-- Five stories, introduced -->
-  <Section padded="tight" class="pt-10">
-    <ul class="reveal-group grid gap-x-6 gap-y-3 sm:grid-cols-2 lg:grid-cols-6" aria-label="What Vekrun does">
-      {featurePages.map((f) => (
-        <li>
-          <a href={f.href} class="group flex min-w-0 flex-col gap-1 border-t border-border py-4 transition-colors hover:border-accent">
-            <span class="flex items-center gap-1.5 text-[0.9375rem] font-[560] text-text">{f.label}<ArrowUpRight class="icon-nudge h-3.5 w-3.5 text-text-3" aria-hidden="true" /></span>
-            <span class="text-[0.8125rem] leading-snug text-text-3">{f.description}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
-  </Section>
-
-  <!-- Three journeys -->
-  <Section padded="tight" rule aria-labelledby="journeys-title">
-    <h2 id="journeys-title" class="sr-only">Three journeys</h2>
-    <ul class="reveal-group grid gap-4 md:grid-cols-3" aria-label="Where work starts and where it ends">
-      <li class="card card-hover p-5">
-        <p class="text-[0.8125rem] text-text-3">Start from a ticket</p>
-        <p class="mt-1 text-[1.0625rem] font-[560] text-text">From ticket to pull request.</p>
-        <p class="mt-2 text-[0.9rem] leading-relaxed text-text-2">Board → Start Work → code, alone or with agents → tests → a reviewable change.</p>
-        <a href="/features/board/" class="link-slide mt-3 inline-block text-[0.875rem] font-[540] text-accent">How the Board works</a>
-      </li>
-      <li class="card card-hover p-5">
-        <p class="text-[0.8125rem] text-text-3">Start from a production error</p>
-        <p class="mt-1 text-[1.0625rem] font-[560] text-text">From production error to verified fix.</p>
-        <p class="mt-2 text-[0.9rem] leading-relaxed text-text-2">Insights → investigate → ticket, plan or team → review → check production after the deploy.</p>
-        <a href="/features/insights/" class="link-slide mt-3 inline-block text-[0.875rem] font-[540] text-accent">How Insights works</a>
-      </li>
-      <li class="card card-hover p-5">
-        <p class="flex items-center gap-2 text-[0.8125rem] text-text-3">Start from a failed build <StatusBadge status="planned" compact /></p>
-        <p class="mt-1 text-[1.0625rem] font-[560] text-text">From failed build to working code.</p>
-        <p class="mt-2 text-[0.9rem] leading-relaxed text-text-2">A failed CI run → what broke → a repair → local tests → the next green run.</p>
-        <a href="/roadmap/#ci-cd" class="link-slide mt-3 inline-block text-[0.875rem] font-[540] text-accent">On the roadmap</a>
-      </li>
-    </ul>
-  </Section>
-
-  <!-- A. A terminal that does more -->
-  <Section rule aria-labelledby="terminal-title" class="ambient ambient-low">
-    <SectionHeading id="terminal-title" title="A terminal that does more" lede="Fast, familiar and yours: tabs, splits, SSH and search. When a command fails, the AI is one keystroke away, and it reads the output you already have." class="reveal" />
-    <div class="reveal mt-10"><TerminalDemo /></div>
-    <ul class="reveal-group mt-10 grid gap-x-8 gap-y-6 sm:grid-cols-3">
-      <li class="flex gap-3"><Columns2 class="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" /><div><h3 class="font-[560] text-text">Tabs and splits</h3><p class="mt-1 text-[0.9375rem] text-text-2">Arrange shells the way you work. A split never restarts a shell.</p></div></li>
-      <li class="flex gap-3"><Network class="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" /><div><h3 class="font-[560] text-text">SSH built in</h3><p class="mt-1 text-[0.9375rem] text-text-2">Remote shells with host keys you have checked, in a tab like any other.</p></div></li>
-      <li class="flex gap-3"><Search class="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" /><div><h3 class="font-[560] text-text">Search and restore</h3><p class="mt-1 text-[0.9375rem] text-text-2">Find anything in scrollback. Pick up where you left off after a restart.</p></div></li>
-    </ul>
-    <a href="/features/terminal/" class="link-slide mt-8 inline-flex items-center gap-1.5 text-[0.9375rem] font-[540] text-accent">More about the terminal</a>
-  </Section>
-
-  <!-- B. Bring your own AI -->
-  <Section rule tone="elevated" aria-labelledby="byo-title">
-    <div class="grid items-center gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
-      <SectionHeading id="byo-title" title="Bring your own AI" lede="Claude, OpenAI, Gemini, a local model, or any compatible endpoint. Switch per task. No Vekrun subscription, and your keys stay in your operating system's keychain." class="reveal">
-        <ul class="reveal-group mt-7 space-y-3 text-[0.9375rem] text-text-2">
-          <li class="flex gap-3"><KeyRound class="mt-0.5 h-4.5 w-4.5 shrink-0 text-accent" aria-hidden="true" /><span>Your own key, billed by the provider at their rates.</span></li>
-          <li class="flex gap-3"><HardDrive class="mt-0.5 h-4.5 w-4.5 shrink-0 text-accent" aria-hidden="true" /><span>Or a model on your machine with Ollama or LM Studio, at no cost per token.</span></li>
-          <li class="flex gap-3"><Eye class="mt-0.5 h-4.5 w-4.5 shrink-0 text-accent" aria-hidden="true" /><span>See what will be sent to a provider before it is sent.</span></li>
-        </ul>
-        <a href="/features/ai-coding/" class="link-slide mt-7 inline-flex items-center gap-1.5 text-[0.9375rem] font-[540] text-accent">More about AI coding</a>
-      </SectionHeading>
-      <div class="reveal"><ProviderSwitcher /></div>
+  <!-- C. Board -->
+  <section id="board" class="section-pad rule ambient scroll-mt-16" aria-labelledby="board-title">
+    <div class="container-wide">
+      <SectionHeading id="board-title" kicker="Board and Start Work" title="Your tickets become work." lede="Connect Jira, Linear or Asana. The tickets assigned to you land on a Board. Pick one, press Start Work, and you have a branch, a working copy and a terminal, with the ticket as context for you, an agent or a team." align="center" class="reveal" />
+      <div class="reveal mt-12"><BoardWalkthrough /></div>
+      <dl class="facts facts-grid reveal-group mt-10">
+        <div><dt>Work manually</dt><dd>Branch, working copy, terminal. You code; the ticket stays beside you.</dd></div>
+        <div><dt>With an AI agent</dt><dd>The ticket becomes the brief. Every diff and command is shown before it runs.</dd></div>
+        <div><dt>Delegate to an AI team</dt><dd>A plan you approve, agents in parallel, a separate check, your merge.</dd></div>
+      </dl>
+      <p class="reveal mt-10 text-center text-[1.15rem] font-[560] tracking-[-0.01em] text-text">Your tasks, your terminal and your AI, all connected.</p>
+      <div class="reveal mt-5 flex justify-center"><Button href="/features/board/" variant="secondary">More about the Board</Button></div>
     </div>
-  </Section>
+  </section>
 
-  <!-- C. Your tickets become work -->
-  <Section id="board" rule aria-labelledby="board-title" class="ambient">
-    <SectionHeading id="board-title" title="Your tickets become work" lede="Connect Jira, Linear or Asana. The tickets assigned to you land on a Board. Pick one, click Start Work, and you have a branch, a working copy and a terminal, with the ticket as context for you or an agent." align="center" class="reveal" />
-    <div class="reveal mt-12"><BoardDemo /></div>
-    <div class="reveal-group mt-10 grid gap-6 sm:grid-cols-3">
-      <div class="card p-5"><h3 class="font-[560] text-text">Work manually</h3><p class="mt-1 text-[0.9375rem] text-text-2">Branch, working copy, terminal. You code; the ticket stays beside you.</p></div>
-      <div class="card p-5"><h3 class="font-[560] text-text">With an AI agent</h3><p class="mt-1 text-[0.9375rem] text-text-2">The ticket becomes the brief. Every diff and command is shown before it runs.</p></div>
-      <div class="card p-5"><h3 class="font-[560] text-text">Delegate to an AI team</h3><p class="mt-1 text-[0.9375rem] text-text-2">A plan you approve, agents in parallel, a separate check, your merge.</p></div>
+  <!-- D. AI Teams -->
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="teams-title">
+    <div class="container-wide">
+      <SectionHeading id="teams-title" kicker="AI Teams" title="AI teams that build with you." lede="For work bigger than one conversation. A planner drafts the steps, developers build in parallel on their own branches, a tester runs the suite, a reviewer checks the result, and you approve what merges." class="reveal" />
+      <div class="reveal mt-10"><TeamRunDemo /></div>
+      <dl class="facts facts-grid reveal-group mt-10">
+        <div><dt>Plan</dt><dd>An idea or a ticket becomes steps, files and acceptance criteria you can edit.</dd></div>
+        <div><dt>Council, when it matters</dt><dd>Several models weigh in on a decision and challenge each other. Optional, never the default.</dd></div>
+        <div><dt>Factory</dt><dd>Agents work on separate branches without interfering, and a different agent checks the work.</dd></div>
+      </dl>
+      <a href="/ai-teams/" class="group link-slide mt-8 inline-flex items-center gap-1.5 text-[0.9375rem] font-[540] text-accent">How AI Teams work<ArrowUpRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a>
     </div>
-    <p class="reveal mt-10 text-center text-[1.125rem] font-[560] text-text">Your tasks, your terminal, and your AI, all connected.</p>
-    <div class="reveal mt-5 flex justify-center"><Button href="/features/board/" variant="secondary">More about the Board</Button></div>
-  </Section>
+  </section>
 
-  <!-- D. AI teams that build with you -->
-  <Section rule tone="elevated" aria-labelledby="teams-title">
-    <SectionHeading id="teams-title" title="AI teams that build with you" lede="For work bigger than one conversation. A planner drafts the steps, developers build in parallel on their own branches, a tester runs the suite, a reviewer checks the result, and you approve what merges." class="reveal" />
-    <div class="reveal mt-10"><AgentsFlow /></div>
-    <div class="reveal-group mt-10 grid gap-6 md:grid-cols-3">
-      <div><h3 class="font-[560] text-text">Plan</h3><p class="mt-1 text-[0.9375rem] text-text-2">An idea or a ticket becomes steps, files and acceptance criteria you can edit.</p></div>
-      <div><h3 class="font-[560] text-text">Council, when it matters</h3><p class="mt-1 text-[0.9375rem] text-text-2">Several models weigh in on a decision and challenge each other. Optional, never the default.</p></div>
-      <div><h3 class="font-[560] text-text">Factory</h3><p class="mt-1 text-[0.9375rem] text-text-2">Agents work on separate branches without interfering, and a different agent checks the work.</p></div>
+  <!-- E. Vekrun Cloud -->
+  <section class="section-pad rule ambient ambient-blue" aria-labelledby="cloud-title">
+    <div class="container-wide">
+      <div class="reveal mx-auto max-w-3xl text-center">
+        <p class="kicker"><span class="inline-flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-cloud" aria-hidden="true"></span>{cloud.name} · {cloud.statusLabel}</span></p>
+        <h2 id="cloud-title" class="heading-2 mt-3 text-text">Built for you. <span class="text-gradient">Connected for your team.</span></h2>
+        <p class="lede mx-auto mt-4">Vekrun is free for every developer. {cloud.name}, the optional team layer, connects your organization: shared projects and Factory queues, approvals in one place, and a clear view of engineering progress for the people who manage it.</p>
+      </div>
+      <div class="reveal mt-12"><CloudPreview /></div>
+      <div class="reveal mt-10 flex flex-col items-center gap-4 text-center">
+        <Button href={cloud.href} size="lg">Explore {cloud.name}</Button>
+        <p class="text-[0.875rem] text-text-3">{cloud.promise} Demonstration data; Cloud is in development.</p>
+      </div>
     </div>
-    <a href="/ai-teams/" class="link-slide mt-8 inline-flex items-center gap-1.5 text-[0.9375rem] font-[540] text-accent">How AI Teams work</a>
-  </Section>
+  </section>
 
-  <!-- D2. Vekrun Cloud -->
-  <Section rule aria-labelledby="cloud-title" class="cloud-band">
-    <div class="grid items-center gap-10 lg:grid-cols-[minmax(0,6fr)_minmax(0,6fr)] lg:gap-16">
-      <SectionHeading id="cloud-title" title="Built for you. Connected for your team." lede="Vekrun is free for every developer. Vekrun Cloud, the optional team layer, connects your organization: shared projects and Factory queues, approvals in one place, and a clear view of engineering progress for the people who manage it." class="reveal">
-        <p class="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.875rem] text-text-3"><span class="inline-flex items-center gap-1.5"><span class="h-1.5 w-1.5 rounded-full bg-warn" aria-hidden="true"></span>{cloud.statusLabel}</span><span>{cloud.promise}</span></p>
-        <a href={cloud.href} class="group link-slide mt-6 inline-flex items-center gap-1.5 text-[0.9375rem] font-[540] text-accent">Explore {cloud.name}<ArrowUpRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a>
-      </SectionHeading>
-      <a href={cloud.href} class="reveal cloud-mini card card-hover block p-5" aria-label="Explore Vekrun Cloud">
-        <span class="cloud-mini-bar"><span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>Acme Engineering · overview</span><span class="cloud-mini-live"><i></i>3 desktops connected</span></span>
-        <span class="cloud-mini-stats" aria-hidden="true"><span><b>11</b>In progress</span><span><b>4</b>Awaiting review</span><span><b>2</b>AI jobs running</span><span><b>9</b>Delivered this week</span></span>
-        <span class="cloud-mini-feed" aria-hidden="true">
-          <span><i class="is-ok">Merged</i>#216 Retry failed exports · approved by Priya</span>
-          <span><i class="is-cloud">Factory</i>VEK-152 · build-3 · step 2 of 3</span>
-          <span><i class="is-warn">Approval</i>VEK-145 plan · waiting on Sam</span>
-        </span>
-        <span class="cloud-mini-foot">Dashboard preview with demonstration data · Vekrun Cloud is in development</span>
-      </a>
+  <!-- F. Code reviews -->
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="review-title">
+    <div class="container-wide">
+      <div class="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-14 lg:items-start">
+        <div class="reveal min-w-0 lg:sticky lg:top-24">
+          <SectionHeading id="review-title" kicker="Code reviews" title="Review without leaving your workspace." lede="Pull requests waiting for you, the diff, AI findings and your comments, in the place you already write code." />
+          <dl class="facts mt-7">
+            <div><dt>One inbox</dt><dd>What is requested from you and what your teammates opened, next to the code.</dd></div>
+            <div><dt>AI goes first</dt><dd>Ask for problems before you read a line, and compare several models when it matters.</dd></div>
+            <div><dt>You decide</dt><dd>Accept or dismiss each finding. Nothing is posted or merged on your behalf.</dd></div>
+          </dl>
+          <p class="mt-6 flex items-center gap-2 text-[0.8125rem] text-text-3"><StatusBadge status="planned" compact /> Pull-request inbox and GitHub/GitLab sync. AI review of local branches works today.</p>
+          <a href="/features/code-review/" class="group link-slide mt-6 inline-flex items-center gap-1.5 text-[0.9375rem] font-[540] text-accent">More about code reviews<ArrowUpRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a>
+        </div>
+        <div class="reveal min-w-0"><ReviewInbox /></div>
+      </div>
     </div>
-  </Section>
+  </section>
 
-  <!-- E. Review without leaving your workspace -->
-  <Section rule aria-labelledby="review-title" class="ambient ambient-low">
-    <div class="grid items-center gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
-      <SectionHeading id="review-title" title="Review without leaving your workspace" lede="Pull requests waiting for you, the diff, AI findings and your comments, in the place you already write code." class="reveal">
-        <ul class="reveal-group mt-7 space-y-3 text-[0.9375rem] text-text-2">
-          <li class="flex gap-3"><GitBranch class="mt-0.5 h-4.5 w-4.5 shrink-0 text-accent" aria-hidden="true" /><span>See what is requested from you and what your teammates opened.</span></li>
-          <li class="flex gap-3"><ShieldCheck class="mt-0.5 h-4.5 w-4.5 shrink-0 text-accent" aria-hidden="true" /><span>Ask AI for problems first, and compare findings from several models when it matters.</span></li>
-          <li class="flex gap-3"><Eye class="mt-0.5 h-4.5 w-4.5 shrink-0 text-accent" aria-hidden="true" /><span>You approve. Nothing is posted or merged on your behalf.</span></li>
-        </ul>
-        <p class="mt-6 flex items-center gap-2 text-[0.8125rem] text-text-3"><StatusBadge status="planned" compact /> Pull-request inbox and GitHub/GitLab sync. AI review of local branches works today.</p>
-        <a href="/features/code-review/" class="link-slide mt-6 inline-flex items-center gap-1.5 text-[0.9375rem] font-[540] text-accent">More about code reviews</a>
-      </SectionHeading>
-      <div class="reveal"><ReviewDemo /></div>
+  <!-- G. Insights -->
+  <section class="section-pad rule ambient ambient-low" aria-labelledby="insights-title">
+    <div class="container-wide">
+      <SectionHeading id="insights-title" kicker="Insights" title="From production error to verified fix." lede="Connect Honeybadger, Sentry, Datadog or AppSignal. See the error, let an agent investigate, then create a ticket, generate a plan or hand the fix to a team. After you deploy, Vekrun checks whether it worked." align="center" class="reveal" />
+      <div class="reveal mt-12"><InsightsWalkthrough compact /></div>
+      <dl class="facts facts-grid reveal-group mt-10">
+        <div><dt>Your monitoring, not ours</dt><dd>The provider stays the source of truth. Connections are read-only unless you say otherwise.</dd></div>
+        <div><dt>Evidence, not guesses</dt><dd>Likely causes come with a confidence and the frames, files and occurrences behind them.</dd></div>
+        <div><dt>Sensitive by default</dt><dd>Tokens, headers and emails are redacted on arrival, and nothing reaches a model before you see it.</dd></div>
+      </dl>
+      <div class="reveal mt-8 flex justify-center"><Button href="/features/insights/" variant="secondary">More about Insights</Button></div>
     </div>
-  </Section>
+  </section>
 
-  <!-- F. From production error to verified fix -->
-  <Section rule tone="elevated" aria-labelledby="insights-title">
-    <SectionHeading id="insights-title" title="From production error to verified fix" lede="Connect Honeybadger, Sentry, Datadog or AppSignal. See the error, let an agent investigate, then create a ticket, generate a plan or hand the fix to a team. After you deploy, Vekrun checks whether it worked." align="center" class="reveal" />
-    <div class="reveal mt-12"><InsightsDemo compact /></div>
-    <ul class="reveal-group mt-10 grid gap-x-8 gap-y-6 sm:grid-cols-3">
-      <li class="flex gap-3"><Activity class="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" /><div><h3 class="font-[560] text-text">Your monitoring, not ours</h3><p class="mt-1 text-[0.9375rem] text-text-2">The provider stays the source of truth. Connections are read-only unless you say otherwise.</p></div></li>
-      <li class="flex gap-3"><Search class="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" /><div><h3 class="font-[560] text-text">Evidence, not guesses</h3><p class="mt-1 text-[0.9375rem] text-text-2">Likely causes come with a confidence and the frames, files and occurrences behind them.</p></div></li>
-      <li class="flex gap-3"><ShieldCheck class="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" /><div><h3 class="font-[560] text-text">Sensitive by default</h3><p class="mt-1 text-[0.9375rem] text-text-2">Tokens, headers and emails are redacted on arrival, and nothing reaches a model before you see it.</p></div></li>
-    </ul>
-    <div class="reveal mt-8 flex justify-center"><Button href="/features/insights/" variant="secondary">More about Insights</Button></div>
-  </Section>
+  <!-- Where work starts -->
+  <section class="rule bg-bg-elevated" aria-labelledby="journeys-title">
+    <div class="container-site py-14 sm:py-16">
+      <h2 id="journeys-title" class="kicker">Three places work starts</h2>
+      <ul class="ruled-grid reveal-group mt-5 md:grid-cols-3" aria-label="Where work starts and where it ends">
+        {journeys.map((j) => (
+          <li class="p-6">
+            <p class="flex items-center gap-2 text-[0.8125rem] text-text-3">{j.k}{j.planned && <StatusBadge status="planned" compact />}</p>
+            <p class="mt-1.5 text-[1.1rem] font-[580] tracking-[-0.01em] text-text">{j.t}</p>
+            <p class="mt-2 text-[0.9rem] leading-relaxed text-text-2">{j.b}</p>
+            <a href={j.href} class="link-slide mt-4 inline-block text-[0.875rem] font-[540] text-accent">{j.a}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
 
   <!-- Why -->
-  <Section rule padded="tight" aria-labelledby="why-title">
-    <div class="reveal-group grid gap-6 md:grid-cols-3">
-      <div class="card card-hover p-6">
-        <h2 id="why-title" class="heading-3">Free and open source</h2>
-        <p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">No account, no subscription, no hosted service required.</p>
-      </div>
-      <div class="card card-hover p-6">
-        <h3 class="heading-3">Runs on your machine</h3>
-        <p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">Sessions, memory and credentials stay local. You see what is sent before it goes.</p>
-      </div>
-      <div class="card card-hover p-6">
-        <h3 class="heading-3">You set the permissions</h3>
-        <p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">Agents write files and run commands only when you allow it. <a href="/open-source/" class="text-accent hover:underline hover:underline-offset-4">Why we build it this way</a>.</p>
+  <section class="rule" aria-labelledby="why-title">
+    <div class="container-site py-14 sm:py-16">
+      <h2 id="why-title" class="kicker">Why it is built this way</h2>
+      <div class="reveal-group mt-5 grid gap-6 md:grid-cols-3">
+        <div class="card p-6">
+          <h3 class="heading-3">Free and open source</h3>
+          <p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">No account, no subscription, no hosted service required.</p>
+        </div>
+        <div class="card p-6">
+          <h3 class="heading-3">Runs on your machine</h3>
+          <p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">Sessions, memory and credentials stay local. You see what is sent before it goes.</p>
+        </div>
+        <div class="card p-6">
+          <h3 class="heading-3">You set the permissions</h3>
+          <p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">Agents write files and run commands only when you allow it. <a href="/open-source/" class="text-accent hover:underline hover:underline-offset-4">Why we build it this way</a>.</p>
+        </div>
       </div>
     </div>
-  </Section>
+  </section>
 
   <!-- CTA -->
-  <Section rule aria-labelledby="cta-title" class="ambient">
-    <div class="mx-auto max-w-3xl text-center">
-      <h2 id="cta-title" class="heading-1 reveal">Your development environment should belong to you.</h2>
-      <p class="lede reveal mx-auto mt-5">One terminal. Any supported model. Your tasks and reviews where you write the code.</p>
+  <section class="rule ambient" aria-labelledby="cta-title">
+    <div class="container-site relative py-20 text-center sm:py-24">
+      <h2 id="cta-title" class="heading-2 reveal mx-auto max-w-3xl">Your development environment should belong to you.</h2>
+      <p class="lede reveal mx-auto mt-5 max-w-2xl">One terminal. Any supported model. Your tasks and reviews where you write the code.</p>
       <div class="reveal mt-8 flex flex-wrap justify-center gap-3">
         <Button href="/roadmap/" size="lg">See what is ready</Button>
         <Button href="/docs/" size="lg" variant="secondary">Read the docs</Button>
       </div>
       <p class="mt-10 text-[0.8125rem] text-text-3">{site.status.line} Status as of {site.status.asOf}.</p>
     </div>
-  </Section>
+  </section>
 </Base>
 
 <style>
-  .hero { position: relative; }
-  .hero::before { left: 50%; top: -6rem; transform: translateX(-50%); width: 60rem; height: 30rem; }
-  .hero::after { right: 10%; top: 14rem; }
-  .cloud-mini { display: grid; gap: 0.75rem; font-size: 0.78rem; color: var(--text-2); }
-  .cloud-mini-bar { display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-3); padding-bottom: 0.6rem; border-bottom: 1px solid var(--border); }
-  .cloud-mini-live { margin-left: auto; display: inline-flex; align-items: center; gap: 0.35rem; color: var(--text-2); }
-  .cloud-mini-live i { width: 0.45rem; height: 0.45rem; border-radius: 50%; background: var(--accent-2); }
-  .cloud-mini-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
-  .cloud-mini-stats > span { display: flex; flex-direction: column; gap: 0.1rem; padding: 0.55rem 0.65rem; background: var(--surface); font-size: 0.64rem; color: var(--text-3); min-width: 0; }
-  .cloud-mini-stats b { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.02em; color: var(--text); line-height: 1.1; }
-  .cloud-mini-feed { display: grid; gap: 0.35rem; }
-  .cloud-mini-feed > span { display: flex; align-items: center; gap: 0.5rem; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .cloud-mini-feed i { font-style: normal; font-family: var(--font-mono); font-size: 0.62rem; border: 1px solid var(--border-strong); border-radius: 999px; padding: 0.1rem 0.45rem; color: var(--text-2); flex: 0 0 auto; }
-  .cloud-mini-feed i.is-ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 50%, transparent); }
-  .cloud-mini-feed i.is-warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 50%, transparent); }
-  .cloud-mini-feed i.is-cloud { color: var(--accent-2); border-color: color-mix(in srgb, var(--accent-2) 50%, transparent); }
-  .cloud-mini-foot { font-size: 0.7rem; color: var(--text-3); }
-  @media (max-width: 30rem) { .cloud-mini-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--border); padding-top: 4.5rem; padding-bottom: 3.5rem; }
+  @media (min-width: 64rem) { .hero { padding-top: 5.5rem; padding-bottom: 4.5rem; } }
+  .hero::before { left: 50%; top: -8rem; transform: translateX(-50%); width: 64rem; height: 34rem; }
+  .hero::after { right: 6%; top: 16rem; }
+  .hero-copy { max-width: 56rem; margin-inline: auto; text-align: center; }
+  .hero-stage { margin-top: 3.5rem; }
+  @media (min-width: 64rem) { .hero-stage { margin-top: 4.5rem; } }
+  .feat-index { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+  @media (min-width: 40rem) { .feat-index { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 64rem) { .feat-index { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.75rem; } }
+  .feat-index-a { display: grid; grid-template-columns: auto 1fr; gap: 0.3rem 0.7rem; align-items: center; padding: 0.9rem 1rem; border: 1px solid var(--border); border-radius: var(--radius); background: color-mix(in srgb, var(--surface) 70%, transparent); transition: border-color var(--dur-fast), background-color var(--dur-fast), transform var(--dur) var(--ease-out); }
+  .feat-index-a:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); background: var(--surface); transform: translateY(-2px); }
+  @media (min-width: 64rem) { .feat-index-a { grid-template-columns: 1fr; gap: 0.5rem; padding: 1rem 1rem 1.05rem; } }
+  .feat-index-t { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.9375rem; font-weight: 560; color: var(--text); }
+  .feat-index-d { grid-column: 1 / -1; font-size: 0.8125rem; line-height: 1.4; color: var(--text-3); }
+  @media (min-width: 64rem) { .feat-index-d { grid-column: auto; } }
+  @media (prefers-reduced-motion: reduce) { .feat-index-a { transition: none; } .feat-index-a:hover { transform: none; } }
 </style>

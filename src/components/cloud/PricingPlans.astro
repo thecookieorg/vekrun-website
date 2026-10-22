@@ -1,0 +1,42 @@
+---
+/**
+ * Community, Cloud Teams and Enterprise, from `cloud.tiers`. Proposed launch
+ * pricing: monthly only, no annual discount, nothing purchasable. Teams is the
+ * emphasised card; every Enterprise line carries its Planned badge.
+ */
+import StatusBadge from '@/components/StatusBadge.astro';
+import { cloud } from '@/data/site';
+import { Check } from '@lucide/astro';
+---
+<ul class="reveal-group mt-12 grid gap-5 lg:grid-cols-3" aria-label="Plans">
+  {cloud.tiers.map((t) => (
+    <li id={`plans-${t.id}`} class:list={['plan', t.id === 'teams' && 'is-cloud', 'scroll-mt-24']}>
+      <p class="plan-k">{t.kicker}</p>
+      <h3 class="plan-n">{t.name}</h3>
+      <p class="plan-price"><span class:list={['plan-p', t.id === 'community' && 'text-gradient']}>{t.price}</span><span class="plan-per">{t.per}</span></p>
+      {'sub' in t && <p class="plan-sub">{t.sub}</p>}
+      <p class="plan-b">{t.summary}</p>
+<ul class="plan-list">{t.includes.map((x) => <li><Check class="h-3.5 w-3.5 shrink-0" aria-hidden="true" /><span>{x}</span>{t.id === 'enterprise' && <StatusBadge status="planned" kind="roadmap" compact class="ml-auto" />}</li>)}</ul>
+      <p class="plan-note">{t.note}</p>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .plan { position: relative; display: flex; flex-direction: column; gap: 0.5rem; padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
+  .plan.is-cloud { border-color: color-mix(in srgb, var(--cloud) 55%, var(--border)); box-shadow: 0 0 0 1px color-mix(in srgb, var(--cloud) 25%, transparent), 0 30px 80px -40px rgba(97, 139, 255, 0.5); background: linear-gradient(180deg, color-mix(in srgb, var(--cloud) 7%, var(--surface)), var(--surface) 40%); }
+  .plan-k { margin: 0; font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); }
+  .plan.is-cloud .plan-k, .plan.is-cloud .plan-p { color: var(--cloud-strong); }
+  .plan-n { margin: 0; font-size: 1.35rem; font-weight: 600; letter-spacing: -0.02em; color: var(--text); }
+  .plan-price { margin: 0.4rem 0 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4rem 0.6rem; }
+  .plan-p { font-size: 1.75rem; font-weight: 600; letter-spacing: -0.03em; color: var(--text); line-height: 1.1; }
+  .plan-per { font-size: 0.8125rem; color: var(--text-3); }
+  .plan-sub { margin: 0.2rem 0 0; font-size: 0.85rem; color: var(--text); font-weight: 520; }
+  .plan-b { margin: 0.25rem 0 0; color: var(--text-2); font-size: 0.9375rem; line-height: 1.5; }
+  .plan-list { list-style: none; margin: 0.5rem 0 0; padding: 0; display: grid; gap: 0.45rem; color: var(--text-2); font-size: 0.9rem; }
+  .plan-list li { display: flex; align-items: center; gap: 0.55rem; }
+  .plan-list li > span { min-width: 0; }
+  .plan-list svg { color: var(--accent); }
+  .plan.is-cloud .plan-list svg { color: var(--cloud-strong); }
+  .plan-note { margin: auto 0 0; padding-top: 1rem; color: var(--text-3); font-size: 0.8125rem; }
+</style>

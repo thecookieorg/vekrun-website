@@ -1,9 +1,8 @@
 ---
 import Base from '@/layouts/Base.astro';
-import Section from '@/components/Section.astro';
+import PageHero from '@/components/PageHero.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import Button from '@/components/Button.astro';
-import FeatureHero from '@/components/features/FeatureHero.astro';
 import TeamRunDemo from '@/components/features/TeamRunDemo.astro';
 import WhereThisStands from '@/components/features/WhereThisStands.astro';
 import CloudCallout from '@/components/cloud/CloudCallout.astro';
@@ -21,37 +20,39 @@ const controls = [
 ];
 ---
 <Base title="AI Teams" description="Plan a change, let several models review the decision, and delegate the build to coordinated agents that work on separate branches while a different agent checks the result. You approve what merges.">
-  <FeatureHero area="AI Teams" title="Hand off the work." accent="Keep the decisions." lede="For work bigger than one conversation: an agent plans it, others build and test it on their own branches, a separate one checks the result, and you approve what merges." cta={{ label: 'Start from a ticket', href: '/features/board/' }} secondary={{ label: 'AI Teams docs', href: '/docs/ai-teams/factory/' }} />
+  <PageHero eyebrow="AI Teams · Plan, Council, Factory" title="Hand off the work." accent="Keep the decisions." lede="For work bigger than one conversation: an agent plans it, others build and test it on their own branches, a separate one checks the result, and you approve what merges." cta={{ label: 'Start from a ticket', href: '/features/board/' }} secondary={{ label: 'AI Teams docs', href: '/docs/ai-teams/factory/' }} wide>
+    <TeamRunDemo />
+  </PageHero>
 
-  <Section class="ambient overflow-x-clip">
-    <div class="reveal"><TeamRunDemo /></div>
-  </Section>
-
-  <Section rule tone="elevated" aria-labelledby="parts-title">
-    <SectionHeading id="parts-title" title="Three capabilities, one story" class="reveal" />
-    <div class="reveal-group mt-10 divide-y divide-border border-y border-border">
-      {parts.map((p) => (
-        <div class="grid gap-3 py-8 sm:grid-cols-[9rem_1fr] sm:gap-8">
-          <p class="text-[0.9375rem] font-[560] text-gradient">{p.name}</p>
-          <div><h3 class="heading-3 text-text">{p.title}</h3><p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2 measure-wide">{p.body}</p></div>
-        </div>
-      ))}
-    </div>
-  </Section>
-
-  <Section rule aria-labelledby="control-title">
-    <div class="grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-16">
-      <SectionHeading id="control-title" title="You keep the final say" lede="The agent that wrote the code is not the one that signs it off, and nothing merges without you." class="reveal" />
-      <ul class="reveal-group grid gap-5 sm:grid-cols-2">
-        {controls.map((c) => (
-          <li class="card p-5"><h3 class="text-[1.0625rem] font-[560] text-text">{c.title}</h3><p class="mt-1.5 text-[0.9rem] leading-relaxed text-text-2">{c.body}</p></li>
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="parts-title">
+    <div class="container-site">
+      <SectionHeading id="parts-title" kicker="Three capabilities" title="Plan it, argue it, build it." lede="Each part can be used alone. Together they take a ticket from an idea to a merge you approved." class="reveal" />
+      <div class="reveal-group mt-10 divide-y divide-border border-y border-border">
+        {parts.map((p) => (
+          <div class="grid gap-3 py-8 sm:grid-cols-[9rem_1fr] sm:gap-8">
+            <p class="text-[0.9375rem] font-[560] text-gradient">{p.name}</p>
+            <div><h3 class="heading-3 text-text">{p.title}</h3><p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2 measure-wide">{p.body}</p></div>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
-    <div class="mt-10 reveal"><Button href="/features/code-review/" variant="secondary">Then review it without leaving Vekrun</Button></div>
-  </Section>
+  </section>
 
-  <CloudCallout class="pb-12 sm:pb-14" text="Shared Factory queues, approved workers and team approvals, so a manager can create work and a lead can approve it." />
+  <section class="section-pad rule" aria-labelledby="control-title">
+    <div class="container-site">
+      <div class="grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-16">
+        <SectionHeading id="control-title" kicker="Human approvals" title="You keep the final say." lede="The agent that wrote the code is not the one that signs it off, and nothing merges without you." class="reveal" />
+        <ul class="ruled-grid reveal-group sm:grid-cols-2">
+          {controls.map((c) => (
+            <li class="p-5"><h3 class="text-[1.0625rem] font-[580] text-text">{c.title}</h3><p class="mt-1.5 text-[0.9rem] leading-relaxed text-text-2">{c.body}</p></li>
+          ))}
+        </ul>
+      </div>
+      <div class="mt-10 reveal"><Button href="/features/code-review/" variant="secondary">Then review it without leaving Vekrun</Button></div>
+    </div>
+  </section>
+
+  <CloudCallout class="py-12 sm:py-14" text="Shared Factory queues, approved workers and team approvals, so a manager can create work and a lead can approve it." />
 
   <WhereThisStands>Plans with approval, Council sessions, parallel agents on separate branches, a separate checking agent, repair limits, merge previews, budgets, built-in workflows, schedules, mid-flight steering and a headless worker that keeps running after you close the window work in the development build on macOS. The incident workflow from <a href="/features/insights/" class="text-accent underline underline-offset-2">Insights</a> runs on the same team. Running agents in the background or on another machine is planned.</WhereThisStands>
 </Base>

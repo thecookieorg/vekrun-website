@@ -17,8 +17,8 @@ const { notice, class: className = '' } = Astro.props;
   </div>
 </div>
 <style>
-  .demo-btn { display: inline-flex; align-items: center; gap: 0.4rem; height: 2rem; padding: 0 0.7rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.8125rem; color: var(--text-2); background: var(--surface); transition: border-color var(--dur-fast), color var(--dur-fast); }
-  .demo-btn:hover { border-color: var(--border-strong); color: var(--text); }
+  .demo-btn { display: inline-flex; align-items: center; gap: 0.4rem; height: 2rem; padding: 0 0.75rem; border: 1px solid var(--border); border-radius: 999px; font-size: 0.8125rem; color: var(--text-2); background: color-mix(in srgb, var(--surface) 70%, transparent); transition: border-color var(--dur-fast), color var(--dur-fast), background-color var(--dur-fast); }
+  .demo-btn:hover { border-color: var(--border-strong); color: var(--text); background: var(--surface-2); }
   .demo-icon-pause, .demo-label-pause { display: none; }
   :global([data-demo='playing']) .demo-icon-play, :global([data-demo='playing']) .demo-label-play { display: none; }
   :global([data-demo='playing']) .demo-icon-pause, :global([data-demo='playing']) .demo-label-pause { display: inline; }

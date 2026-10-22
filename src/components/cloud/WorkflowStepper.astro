@@ -33,7 +33,7 @@ const steps = [
       <span class="wf-line" aria-hidden="true"><i data-wf-line style="--p: 100%"></i></span>
     </ol>
     <div class="wf-nav">
-      <p class="wf-now" aria-live="polite"><span class="cl-kicker">Step <b data-wf-n>8</b> of 8</span><span data-wf-who>Dana sees it delivered</span></p>
+      <p class="wf-now" aria-live="polite"><span class="kicker">Step <b data-wf-n>8</b> of 8</span><span data-wf-who>Dana sees it delivered</span></p>
       <div class="wf-btns">
         <button type="button" class="wf-btn" data-wf-prev aria-label="Previous step"><ChevronLeft class="h-4 w-4" aria-hidden="true" /></button>
         <button type="button" class="wf-btn" data-wf-next aria-label="Next step"><ChevronRight class="h-4 w-4" aria-hidden="true" /></button>
@@ -47,12 +47,12 @@ const steps = [
       <p class="wf-actor-h"><Avatar who="dana" size="sm" /> Dana · project manager · browser</p>
       <Browser path="/acme/work" class="wf-browser is-compact">
         <div class="wf-ticket">
-          <div class="wf-ticket-row"><span class="wf-id">VEK-152</span><span class="wf-t">Audit log pagination</span><span class="cl-pill is-ok" data-wf-status>Delivered</span></div>
+          <div class="wf-ticket-row"><span class="wf-id">VEK-152</span><span class="wf-t">Audit log pagination</span><span class="pill is-ok" data-wf-status>Delivered</span></div>
           <ul class="wf-log">
-            <li data-step="1"><span class="cl-pill is-cloud">Assigned</span>to Alex · priority high</li>
-            <li data-step="3"><span class="cl-pill is-info">In progress</span>Alex started work · branch feat/audit-pagination</li>
-            <li data-step="6"><span class="cl-pill is-info">In review</span>#218 opened · 24 tests passed</li>
-            <li data-step="8"><span class="cl-pill is-ok">Delivered</span>#218 merged · approved by Priya</li>
+            <li data-step="1"><span class="pill is-cloud">Assigned</span>to Alex · priority high</li>
+            <li data-step="3"><span class="pill is-info">In progress</span>Alex started work · branch feat/audit-pagination</li>
+            <li data-step="6"><span class="pill is-info">In review</span>#218 opened · 24 tests passed</li>
+            <li data-step="8"><span class="pill is-ok">Delivered</span>#218 merged · approved by Priya</li>
           </ul>
         </div>
       </Browser>
@@ -64,15 +64,15 @@ const steps = [
       <Window title="Alex · Vekrun" crumbs={['Board']} class="wf-win">
         <div class="wf-board">
           <div class="wf-col"><span class="wf-col-h">To do</span>
-            <div class="wf-card" data-step="2" data-step-until="2"><span class="wf-id">VEK-152</span>Audit log pagination<span class="cl-pill is-cloud">from Dana</span></div>
+            <div class="wf-card" data-step="2" data-step-until="2"><span class="wf-id">VEK-152</span>Audit log pagination<span class="pill is-cloud">from Dana</span></div>
             <div class="wf-card is-quiet"><span class="wf-id">VEK-139</span>Checkout redesign</div>
           </div>
           <div class="wf-col"><span class="wf-col-h">In progress</span>
-            <div class="wf-card is-hot" data-step="3" data-step-until="7"><span class="wf-id">VEK-152</span>Audit log pagination<span class="wf-start" data-step="3" data-step-until="3">Start Work</span><span class="cl-pill is-info" data-step="4">Factory · build-3</span></div>
+            <div class="wf-card is-hot" data-step="3" data-step-until="7"><span class="wf-id">VEK-152</span>Audit log pagination<span class="wf-start" data-step="3" data-step-until="3">Start Work</span><span class="pill is-info" data-step="4">Factory · build-3</span></div>
             <span class="wf-empty" data-step="8">Nothing in progress</span>
           </div>
           <div class="wf-col"><span class="wf-col-h">Done</span>
-            <div class="wf-card is-ok" data-step="8"><span class="wf-id">VEK-152</span>Audit log pagination<span class="cl-pill is-ok">merged</span></div>
+            <div class="wf-card is-ok" data-step="8"><span class="wf-id">VEK-152</span>Audit log pagination<span class="pill is-ok">merged</span></div>
           </div>
         </div>
         <pre class="term wf-term"><span class="term-line" data-step="4"><span class="dim">›</span> Factory · plan approved by Sam · worker <span class="mag">build-3</span> · 3 steps</span><span class="term-line" data-step="4">step 1 of 3 · add cursor pagination to AuditLogsController</span><span class="term-line" data-step="5">24 tests … <span class="ok">24 passed</span> · verified by a second agent</span><span class="term-line" data-step="6">pull request <span class="info">#218</span> opened · review requested from Priya</span></pre>
@@ -84,7 +84,7 @@ const steps = [
       <p class="wf-actor-h"><Avatar who="priya" size="sm" /> Priya · developer · Vekrun on Windows</p>
       <Window title="Priya · Vekrun" crumbs={['Reviews']} class="wf-win">
         <ul class="wf-reviews">
-          <li class="wf-review" data-step="7"><span><span class="wf-id">#218</span>Audit log pagination</span><span class="wf-meta">from Factory via Alex · AI findings: none</span><span class="cl-pill is-ok" data-step="8">Approved by Priya</span></li>
+          <li class="wf-review" data-step="7"><span><span class="wf-id">#218</span>Audit log pagination</span><span class="wf-meta">from Factory via Alex · AI findings: none</span><span class="pill is-ok" data-step="8">Approved by Priya</span></li>
           <li class="wf-review is-quiet"><span><span class="wf-id">#211</span>Replace the retry queue</span><span class="wf-meta">from Sam · 2 notes</span></li>
           <li class="wf-review is-quiet" data-step-until="6"><span class="wf-meta">No new review requests</span></li>
         </ul>
@@ -141,17 +141,17 @@ const steps = [
   .wf-card.is-quiet { color: var(--text-2); animation: none; }
   .wf-card.is-hot { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
   .wf-card.is-ok { border-color: color-mix(in srgb, var(--ok) 55%, transparent); }
-  .wf-card .cl-pill { align-self: flex-start; }
+  .wf-card .pill { align-self: flex-start; }
   .wf-start { align-self: flex-start; background: var(--accent); color: var(--accent-ink); border-radius: 4px; padding: 0.12rem 0.45rem; font-size: 0.64rem; font-weight: 600; animation: scale-in 300ms var(--ease-spring) both; }
   .wf-empty { font-size: 0.64rem; color: var(--text-3); border: 1px dashed var(--border); border-radius: var(--radius-sm); padding: 0.45rem; text-align: center; }
   .wf-term { margin: 0; padding: 0.55rem 0.7rem; min-height: 5.8rem; font-size: 0.68rem; border-top: 1px solid var(--border); }
   .wf-reviews { list-style: none; margin: 0; padding: 0.55rem; display: flex; flex-direction: column; gap: 0.4rem; min-height: 11rem; }
   .wf-review { display: flex; flex-direction: column; gap: 0.15rem; padding: 0.45rem 0.55rem; border: 1px solid color-mix(in srgb, var(--info) 45%, transparent); border-radius: var(--radius-sm); background: var(--surface-2); color: var(--text); font-size: 0.7rem; animation: scale-in 360ms var(--ease-out) both; }
   .wf-review.is-quiet { border-color: var(--border); animation: none; color: var(--text-2); }
-  .wf-review .cl-pill { align-self: flex-start; margin-top: 0.15rem; animation: scale-in 300ms var(--ease-spring) both; }
+  .wf-review .pill { align-self: flex-start; margin-top: 0.15rem; animation: scale-in 300ms var(--ease-spring) both; }
   .wf-meta { font-size: 0.64rem; color: var(--text-3); }
   .wf [data-step][hidden], .wf [data-step-until][hidden] { display: none; }
-  @media (prefers-reduced-motion: reduce) { .wf-log li, .wf-card, .wf-start, .wf-review, .wf-review .cl-pill { animation: none; } .wf-line i, .wf-actor { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .wf-log li, .wf-card, .wf-start, .wf-review, .wf-review .pill { animation: none; } .wf-line i, .wf-actor { transition: none; } }
 </style>
 
 <script>

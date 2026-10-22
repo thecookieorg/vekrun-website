@@ -5,10 +5,8 @@
  * demonstration built from one sample organization; nothing is a recording and
  * nothing here signs anyone up. Status comes from `cloud` in data/site.ts.
  */
-import '@/styles/cloud.css';
 import Base from '@/layouts/Base.astro';
 import Button from '@/components/Button.astro';
-import StatusBadge from '@/components/StatusBadge.astro';
 import CloudHero from '@/components/cloud/CloudHero.astro';
 import DesktopSwitcher from '@/components/cloud/DesktopSwitcher.astro';
 import WorkflowStepper from '@/components/cloud/WorkflowStepper.astro';
@@ -20,8 +18,8 @@ import GovernanceSettings from '@/components/cloud/GovernanceSettings.astro';
 import RoleSwitcher from '@/components/cloud/RoleSwitcher.astro';
 import SignInStrip from '@/components/cloud/SignInStrip.astro';
 import PricingCalculator from '@/components/cloud/PricingCalculator.astro';
+import PricingPlans from '@/components/cloud/PricingPlans.astro';
 import { cloud, site } from '@/data/site';
-import { Check } from '@lucide/astro';
 
 const title = 'Vekrun Cloud — One Connected Workspace for Engineering Teams';
 const description = 'Coordinate developers, AI agents, projects, code reviews and engineering workflows in one shared workspace. Vekrun Cloud brings your entire engineering organization together. In development.';
@@ -57,13 +55,13 @@ const faq = [
 ---
 <Base title={cloud.name} fullTitle={title} description={description} image="/og/cloud.png" structuredData={structuredData} lockTheme="dark" page="cloud">
   <!-- Hero -->
-  <section class="cl-hero ambient" aria-labelledby="cloud-title">
+  <section class="hero ambient" aria-labelledby="cloud-title">
     <div class="grid-field pointer-events-none absolute inset-0" aria-hidden="true"></div>
-    <div class="cl-wide relative">
-      <div class="cl-hero-copy">
-        <p class="cl-eyebrow enter" style="--i: 0">Introducing Vekrun Cloud</p>
-        <h1 id="cloud-title" class="cl-display enter mt-5 text-text" style="--i: 1">Your entire engineering team.<br class="hidden sm:inline" /> <span class="text-gradient">One connected workspace.</span></h1>
-        <p class="cl-lede enter mx-auto mt-6 max-w-2xl" style="--i: 2">Connect developers, AI agents, and engineering workflows in one place. Coordinate projects, delegate work, manage approvals, and see what’s happening across your organization.</p>
+    <div class="container-wide relative">
+      <div class="hero-copy">
+        <p class="eyebrow enter" style="--i: 0">Introducing Vekrun Cloud</p>
+        <h1 id="cloud-title" class="display enter mt-5 text-text" style="--i: 1">Your entire engineering team.<br class="hidden sm:inline" /> <span class="text-gradient">One connected workspace.</span></h1>
+        <p class="lede enter mx-auto mt-6 max-w-2xl" style="--i: 2">Connect developers, AI agents, and engineering workflows in one place. Coordinate projects, delegate work, manage approvals, and see what’s happening across your organization.</p>
         <div class="enter mt-8 flex flex-wrap justify-center gap-3" style="--i: 3">
           <Button href="#connected" size="lg">Explore Vekrun Cloud</Button>
           <Button href="#how-it-works" size="lg" variant="secondary">See How It Works</Button>
@@ -78,14 +76,14 @@ const faq = [
   </section>
 
   <!-- One desktop, your whole team -->
-  <section id="connected" class="cl-section cl-rule scroll-mt-16" aria-labelledby="connected-title">
+  <section id="connected" class="section-pad rule scroll-mt-16" aria-labelledby="connected-title">
     <div class="container-site">
       <div class="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-14 lg:items-start">
         <div class="reveal min-w-0 lg:sticky lg:top-24">
-          <p class="cl-kicker">One desktop, your whole team</p>
-          <h2 id="connected-title" class="cl-h2 mt-3 text-text">The Vekrun you already know. Now connected.</h2>
-          <p class="cl-lede mt-4">Developers keep the same Vekrun desktop application. Cloud connects the organization work they are authorized to see. No separate Teams app, nothing duplicated.</p>
-          <dl class="cl-facts mt-7">
+          <p class="kicker">One desktop, your whole team</p>
+          <h2 id="connected-title" class="heading-2 mt-3 text-text">The Vekrun you already know. Now connected.</h2>
+          <p class="lede mt-4">Developers keep the same Vekrun desktop application. Cloud connects the organization work they are authorized to see. No separate Teams app, nothing duplicated.</p>
+          <dl class="facts mt-7">
             <div><dt>Personal projects remain personal</dt><dd>They never join an organization unless you move them.</dd></div>
             <div><dt>Organization projects are shared by permission</dt><dd>Members see what their project role allows.</dd></div>
             <div><dt>Connect at any time</dt><dd>Join from the workspace menu, later, without reinstalling. {cloud.promise}</dd></div>
@@ -97,12 +95,12 @@ const faq = [
   </section>
 
   <!-- Shared engineering workflows -->
-  <section id="how-it-works" class="cl-section cl-rule bg-bg-elevated scroll-mt-16" aria-labelledby="flow-title">
+  <section id="how-it-works" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="flow-title">
     <div class="container-site">
       <div class="reveal max-w-3xl">
-        <p class="cl-kicker">Shared engineering workflows</p>
-        <h2 id="flow-title" class="cl-h2 mt-3 text-text">Work moves forward. Everyone stays in sync.</h2>
-        <p class="cl-lede mt-4">Work travels between a manager, a developer, the AI agents and a reviewer without anyone forwarding anything. Step through it, or let it play.</p>
+        <p class="kicker">Shared engineering workflows</p>
+        <h2 id="flow-title" class="heading-2 mt-3 text-text">Work moves forward. Everyone stays in sync.</h2>
+        <p class="lede mt-4">Work travels between a manager, a developer, the AI agents and a reviewer without anyone forwarding anything. Step through it, or let it play.</p>
       </div>
       <div class="reveal mt-10"><WorkflowStepper /></div>
       <p class="reveal mt-10 text-center text-[1.15rem] font-[560] tracking-[-0.01em] text-text">From assignment to delivery, every step is connected.</p>
@@ -110,28 +108,28 @@ const faq = [
   </section>
 
   <!-- Project manager dashboard -->
-  <section id="dashboard" class="cl-section cl-rule ambient" aria-labelledby="dash-title">
-    <div class="cl-wide">
+  <section id="dashboard" class="section-pad rule ambient" aria-labelledby="dash-title">
+    <div class="container-wide">
       <div class="reveal mx-auto max-w-3xl text-center">
-        <p class="cl-kicker">Project manager dashboard</p>
-        <h2 id="dash-title" class="cl-h2 mt-3 text-text">Finally, a clear view of engineering progress.</h2>
-        <p class="cl-lede mx-auto mt-4">See what your developers and AI agents are working on, what’s blocked, what’s awaiting review, and what’s been delivered, without opening a terminal.</p>
+        <p class="kicker">Project manager dashboard</p>
+        <h2 id="dash-title" class="heading-2 mt-3 text-text">Finally, a clear view of engineering progress.</h2>
+        <p class="lede mx-auto mt-4">See what your developers and AI agents are working on, what’s blocked, what’s awaiting review, and what’s been delivered, without opening a terminal.</p>
       </div>
       <div class="reveal mt-12"><CloudDashboard /></div>
       <div class="reveal mt-10 grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-12">
         <p class="text-[0.95rem] leading-relaxed text-text-2">From a browser, with no desktop install, a project manager can do all of this. Cloud connects Jira, Linear or Asana to the work itself; it does not replace them.</p>
-        <ul class="cl-chips" aria-label="What a project manager can do">{managerDoes.map((m) => <li>{m}</li>)}</ul>
+        <ul class="chips" aria-label="What a project manager can do">{managerDoes.map((m) => <li>{m}</li>)}</ul>
       </div>
     </div>
   </section>
 
   <!-- AI Factory across the organization -->
-  <section id="factory" class="cl-section cl-rule bg-bg-elevated" aria-labelledby="factory-title">
-    <div class="cl-wide">
+  <section id="factory" class="section-pad rule bg-bg-elevated" aria-labelledby="factory-title">
+    <div class="container-wide">
       <div class="reveal max-w-3xl">
-        <p class="cl-kicker">AI Factory across your organization</p>
-        <h2 id="factory-title" class="cl-h2 mt-3 text-text">AI engineering work, coordinated across your entire team.</h2>
-        <p class="cl-lede mt-4">Several developers, shared queues, company-owned workers, human approvals, execution budgets, clear ownership, and progress the whole organization can see.</p>
+        <p class="kicker">AI Factory across your organization</p>
+        <h2 id="factory-title" class="heading-2 mt-3 text-text">AI engineering work, coordinated across your entire team.</h2>
+        <p class="lede mt-4">Several developers, shared queues, company-owned workers, human approvals, execution budgets, clear ownership, and progress the whole organization can see.</p>
       </div>
       <div class="reveal mt-10"><FactoryOps /></div>
       <p class="reveal mt-8 text-[0.9rem] text-text-3">The same agents that run on one machine. No proprietary model and no second engine: your organization’s provider policy decides which models run, including local ones.</p>
@@ -139,14 +137,14 @@ const faq = [
   </section>
 
   <!-- Approvals -->
-  <section id="approvals" class="cl-section cl-rule" aria-labelledby="approvals-title">
+  <section id="approvals" class="section-pad rule" aria-labelledby="approvals-title">
     <div class="container-site">
       <div class="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-14 lg:items-start">
         <div class="reveal min-w-0 lg:sticky lg:top-24">
-          <p class="cl-kicker">One place for approvals</p>
-          <h2 id="approvals-title" class="cl-h2 mt-3 text-text">Stay in control without slowing everyone down.</h2>
-          <p class="cl-lede mt-4">Every decision an organization wants a person to make, in one inbox, with the context to make it quickly.</p>
-          <ul class="cl-chips mt-7" aria-label="What can require approval">{approvalKinds.map((k) => <li>{k}</li>)}</ul>
+          <p class="kicker">One place for approvals</p>
+          <h2 id="approvals-title" class="heading-2 mt-3 text-text">Stay in control without slowing everyone down.</h2>
+          <p class="lede mt-4">Every decision an organization wants a person to make, in one inbox, with the context to make it quickly.</p>
+          <ul class="chips mt-7" aria-label="What can require approval">{approvalKinds.map((k) => <li>{k}</li>)}</ul>
           <p class="mt-6 text-[0.875rem] text-text-3">In the product, an approval requires an authenticated, authorized member of the organization. The demonstration here approves nothing.</p>
         </div>
         <div class="reveal min-w-0"><ApprovalsDemo /></div>
@@ -155,90 +153,78 @@ const faq = [
   </section>
 
   <!-- Insights and quality -->
-  <section id="insights" class="cl-section cl-rule bg-bg-elevated" aria-labelledby="insights-title">
+  <section id="insights" class="section-pad rule bg-bg-elevated" aria-labelledby="insights-title">
     <div class="container-site">
       <div class="reveal max-w-3xl">
-        <p class="cl-kicker">Shared Insights and engineering quality</p>
-        <h2 id="insights-title" class="cl-h2 mt-3 text-text">Know what’s broken. See who’s fixing it.</h2>
-        <p class="cl-lede mt-4">An error from Honeybadger, AppSignal, Sentry or Datadog becomes a shared investigation, a verified fix and a confirmed deploy. Resolving it stays a person’s decision.</p>
+        <p class="kicker">Shared Insights and engineering quality</p>
+        <h2 id="insights-title" class="heading-2 mt-3 text-text">Know what’s broken. See who’s fixing it.</h2>
+        <p class="lede mt-4">An error from Honeybadger, AppSignal, Sentry or Datadog becomes a shared investigation, a verified fix and a confirmed deploy. Resolving it stays a person’s decision.</p>
       </div>
       <div class="reveal mt-10"><InsightsFlow /></div>
     </div>
   </section>
 
   <!-- Governance -->
-  <section id="governance" class="cl-section cl-rule" aria-labelledby="gov-title">
+  <section id="governance" class="section-pad rule" aria-labelledby="gov-title">
     <div class="container-site">
       <div class="reveal max-w-3xl">
-        <p class="cl-kicker">Organization governance</p>
-        <h2 id="gov-title" class="cl-h2 mt-3 text-text">Your organization. Your rules.</h2>
-        <p class="cl-lede mt-4">Roles, access, model policies, budgets, approvals, workers, audit history and data sharing. Decided once, for the organization.</p>
+        <p class="kicker">Organization governance</p>
+        <h2 id="gov-title" class="heading-2 mt-3 text-text">Your organization. Your rules.</h2>
+        <p class="lede mt-4">Roles, access, model policies, budgets, approvals, workers, audit history and data sharing. Decided once, for the organization.</p>
       </div>
       <div class="reveal mt-10"><GovernanceSettings /></div>
     </div>
   </section>
 
   <!-- Roles -->
-  <section id="roles" class="cl-section cl-rule bg-bg-elevated" aria-labelledby="roles-title">
+  <section id="roles" class="section-pad rule bg-bg-elevated" aria-labelledby="roles-title">
     <div class="container-site">
       <div class="reveal max-w-3xl">
-        <p class="cl-kicker">Built for different roles</p>
-        <h2 id="roles-title" class="cl-h2 mt-3 text-text">One organization, four ways in.</h2>
+        <p class="kicker">Built for different roles</p>
+        <h2 id="roles-title" class="heading-2 mt-3 text-text">One organization, four ways in.</h2>
       </div>
       <div class="reveal mt-8"><RoleSwitcher /></div>
     </div>
   </section>
 
   <!-- Sign in and membership -->
-  <section id="join" class="cl-section cl-rule" aria-labelledby="join-title">
+  <section id="join" class="section-pad rule" aria-labelledby="join-title">
     <div class="container-site">
       <div class="reveal max-w-3xl">
-        <p class="cl-kicker">Sign in and organization membership</p>
-        <h2 id="join-title" class="cl-h2 mt-3 text-text">Join your organization in three screens.</h2>
-        <p class="cl-lede mt-4">A developer connects the desktop application to an organization with one account. Email, Google, GitHub, GitLab and Enterprise SSO are the planned ways in.</p>
+        <p class="kicker">Sign in and organization membership</p>
+        <h2 id="join-title" class="heading-2 mt-3 text-text">Join your organization in three screens.</h2>
+        <p class="lede mt-4">A developer connects the desktop application to an organization with one account. Email, Google, GitHub, GitLab and Enterprise SSO are the planned ways in.</p>
       </div>
       <div class="reveal mt-10"><SignInStrip /></div>
     </div>
   </section>
 
   <!-- Community, Cloud Teams, Enterprise -->
-  <section id="plans" class="cl-section cl-rule ambient ambient-low bg-bg-elevated scroll-mt-16" aria-labelledby="plans-title">
+  <section id="plans" class="section-pad rule ambient ambient-low bg-bg-elevated scroll-mt-16" aria-labelledby="plans-title">
     <div class="container-site">
       <div class="reveal mx-auto max-w-3xl text-center">
-        <p class="cl-kicker">Community, Cloud Teams, Enterprise</p>
-        <h2 id="plans-title" class="cl-h2 mt-3 text-text">Free for developers. Connected for teams.</h2>
-        <p class="cl-lede mx-auto mt-4">Community is free. Cloud Teams connects your team. Enterprise gives larger organizations advanced control. Nothing moves behind a paywall.</p>
-        <p class="cl-price-label mt-6"><span class="h-1.5 w-1.5 rounded-full bg-warn" aria-hidden="true"></span>{cloud.pricing.label}</p>
+        <p class="kicker">Community, Cloud Teams, Enterprise</p>
+        <h2 id="plans-title" class="heading-2 mt-3 text-text">Free for developers. Connected for teams.</h2>
+        <p class="lede mx-auto mt-4">Community is free. Cloud Teams connects your team. Enterprise gives larger organizations advanced control. Nothing moves behind a paywall.</p>
+        <p class="price-label mt-6"><span class="h-1.5 w-1.5 rounded-full bg-warn" aria-hidden="true"></span>{cloud.pricing.label}</p>
       </div>
-      <ul class="reveal-group mt-12 grid gap-5 lg:grid-cols-3" aria-label="Plans">
-        {cloud.tiers.map((t) => (
-          <li id={`plans-${t.id}`} class:list={['cl-plan', t.id === 'teams' && 'is-cloud', 'scroll-mt-24']}>
-            <p class="cl-plan-k">{t.kicker}</p>
-            <h3 class="cl-plan-n">{t.name}</h3>
-            <p class="cl-plan-price"><span class:list={['cl-plan-p', t.id === 'community' && 'text-gradient']}>{t.price}</span><span class="cl-plan-per">{t.per}</span></p>
-            {'sub' in t && <p class="cl-plan-sub">{t.sub}</p>}
-            <p class="cl-plan-b">{t.summary}</p>
-            <ul class="cl-plan-list">{t.includes.map((x) => <li><Check class="h-3.5 w-3.5 shrink-0" aria-hidden="true" /><span>{x}</span>{t.id === 'enterprise' && <StatusBadge status="planned" kind="roadmap" compact class="ml-auto" />}</li>)}</ul>
-            <p class="cl-plan-note">{t.note}</p>
-          </li>
-        ))}
-      </ul>
+      <div class="reveal-group mt-12"><PricingPlans /></div>
       <p class="reveal mt-5 text-center text-[0.875rem] text-text-3">Monthly prices only; no annual pricing has been decided. Email, Google, GitHub and GitLab sign-in belong to Cloud Teams; SSO enforcement and SCIM belong to Enterprise. There is no sign-up, trial or billing yet.</p>
 
       <div class="reveal mt-10"><PricingCalculator /></div>
 
       <div class="reveal-group mt-10 grid gap-5 lg:grid-cols-2">
-        <div class="cl-def">
+        <div class="def">
           <h3>Active member <small>a paid seat</small></h3>
           <p>Someone who uses Cloud to take part in organization work: a developer in a connected organization, an engineering lead managing shared Factory work, a project manager assigning and coordinating tasks, an administrator managing policies and members.</p>
         </div>
-        <div class="cl-def">
+        <div class="def">
           <h3>Read-only viewer <small>no seat charge</small></h3>
           <p>Inspects the dashboards, reports, progress and project status their permissions allow. A viewer cannot start Factory jobs, modify tickets, approve consequential actions, reassign work, change organization settings, manage paid resources, or see anything beyond their assigned permissions. The Cloud service enforces this, not the website.</p>
         </div>
       </div>
 
-      <div class="reveal mt-12 cl-econ">
+      <div class="reveal mt-12 econ">
         <h3 class="heading-3">Bring your own AI. Pay for team coordination.</h3>
         <p class="mt-2 text-[0.95rem] leading-relaxed text-text-2">Vekrun Cloud connects your team and coordinates work. Your AI providers and execution infrastructure remain under your control and are billed separately where applicable.</p>
         <ul class="mt-4 grid gap-2 sm:grid-cols-2 text-[0.875rem] text-text-2">{economics.map((e) => <li class="flex gap-2"><span class="mt-[0.55rem] h-1 w-1 shrink-0 rounded-full bg-accent" aria-hidden="true"></span>{e}</li>)}</ul>
@@ -247,37 +233,37 @@ const faq = [
   </section>
 
   <!-- FAQ -->
-  <section id="faq" class="cl-section cl-rule" aria-labelledby="faq-title">
+  <section id="faq" class="section-pad rule" aria-labelledby="faq-title">
     <div class="container-site">
       <div class="grid gap-8 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-16">
         <div class="reveal">
-          <p class="cl-kicker">Questions before adopting Cloud</p>
-          <h2 id="faq-title" class="cl-h2 mt-3 text-text">Short answers.</h2>
+          <p class="kicker">Questions before adopting Cloud</p>
+          <h2 id="faq-title" class="heading-2 mt-3 text-text">Short answers.</h2>
         </div>
-        <div class="reveal cl-faq">
-          {faq.map(([q, a]) => <details class="cl-faq-i"><summary>{q}<svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></summary><p>{a}</p></details>)}
+        <div class="reveal faq">
+          {faq.map(([q, a]) => <details class="faq-i"><summary>{q}<svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></summary><p>{a}</p></details>)}
         </div>
       </div>
     </div>
   </section>
 
   <!-- Data ownership -->
-  <section id="privacy" class="cl-section cl-rule" aria-labelledby="privacy-title">
+  <section id="privacy" class="section-pad rule" aria-labelledby="privacy-title">
     <div class="container-site">
       <div class="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
         <div class="reveal">
-          <p class="cl-kicker">Data ownership and privacy</p>
-          <h2 id="privacy-title" class="cl-h2 mt-3 text-text">Your code stays under your control.</h2>
-          <p class="cl-lede mt-4">Cloud follows the same local-first idea as the desktop app. It coordinates work; it does not become the place your code or your keys live.</p>
-          <div class="cl-flow mt-8" aria-label="What lives where">
-            <div class="cl-flow-box is-mint"><b>Your machine</b><span>source code · API keys · personal projects · local models</span></div>
-            <span class="cl-flow-link"><i>tickets, plans, review status, job results</i></span>
-            <div class="cl-flow-box is-blue"><b>Vekrun Cloud</b><span>organization, members, policies, shared work</span></div>
-            <span class="cl-flow-link"><i>approved jobs</i></span>
-            <div class="cl-flow-box is-mint"><b>Your infrastructure</b><span>shared workers · company keys · CI</span></div>
+          <p class="kicker">Data ownership and privacy</p>
+          <h2 id="privacy-title" class="heading-2 mt-3 text-text">Your code stays under your control.</h2>
+          <p class="lede mt-4">Cloud follows the same local-first idea as the desktop app. It coordinates work; it does not become the place your code or your keys live.</p>
+          <div class="flow mt-8" aria-label="What lives where">
+            <div class="flow-box is-mint"><b>Your machine</b><span>source code · API keys · personal projects · local models</span></div>
+            <span class="flow-link"><i>tickets, plans, review status, job results</i></span>
+            <div class="flow-box is-blue"><b>Vekrun Cloud</b><span>organization, members, policies, shared work</span></div>
+            <span class="flow-link"><i>approved jobs</i></span>
+            <div class="flow-box is-mint"><b>Your infrastructure</b><span>shared workers · company keys · CI</span></div>
           </div>
         </div>
-        <dl class="reveal-group cl-facts cl-facts-lg">
+        <dl class="reveal-group facts facts-lg">
           {privacy.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
         </dl>
       </div>
@@ -286,12 +272,12 @@ const faq = [
   </section>
 
   <!-- Interest and status -->
-  <section id="interest" class="cl-rule ambient bg-bg-elevated" aria-labelledby="interest-title">
+  <section id="interest" class="rule ambient bg-bg-elevated" aria-labelledby="interest-title">
     <div class="container-site relative py-16 text-center sm:py-20">
-      <h2 id="interest-title" class="cl-h2 text-text">Interested in Vekrun Cloud?</h2>
-      <p class="cl-lede mx-auto mt-4 max-w-2xl">Bring your engineering team together with shared AI workflows, project visibility, and organization-wide controls.</p>
+      <h2 id="interest-title" class="heading-2 text-text">Interested in Vekrun Cloud?</h2>
+      <p class="lede mx-auto mt-4 max-w-2xl">Bring your engineering team together with shared AI workflows, project visibility, and organization-wide controls.</p>
       <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
-        <span class="cl-soon"><span class="h-1.5 w-1.5 rounded-full bg-warn" aria-hidden="true"></span>Register interest · coming soon</span>
+        <span class="soon"><span class="h-1.5 w-1.5 rounded-full bg-warn" aria-hidden="true"></span>Register interest · coming soon</span>
         <Button href={cloud.roadmapHref} variant="secondary">View the Cloud roadmap</Button>
       </div>
       <p class="mx-auto mt-6 max-w-2xl text-[0.875rem] leading-relaxed text-text-3">There is no way to register yet, and no sign-up, trial or billing. {site.status.line} Every interface on this page is a conceptual demonstration with invented data; the desktop application keeps the status given on its feature pages.</p>
@@ -300,60 +286,24 @@ const faq = [
 </Base>
 
 <style>
-  .cl-hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--border); padding-top: 5rem; padding-bottom: 4rem; }
-  @media (min-width: 64rem) { .cl-hero { padding-top: 5.5rem; padding-bottom: 5rem; } }
-  .cl-hero::before { left: 10%; top: -12rem; width: 60rem; height: 34rem; }
-  .cl-hero::after { right: -5%; top: 10rem; }
-  .cl-hero-copy { max-width: 56rem; margin-inline: auto; text-align: center; }
-  .cl-facts { margin: 0; display: grid; gap: 1rem; }
-  .cl-facts > div, .cl-facts > li { display: grid; gap: 0.2rem; padding-left: 1rem; border-left: 2px solid var(--border-strong); list-style: none; }
-  .cl-facts dt, .cl-facts b { color: var(--text); font-weight: 560; font-size: 0.95rem; }
-  .cl-facts dd, .cl-facts span { margin: 0; color: var(--text-2); font-size: 0.9rem; line-height: 1.5; }
-  .cl-facts-lg { gap: 1.4rem; }
-  .cl-facts-lg dt { font-size: 1.05rem; }
-  .cl-facts-lg dd { font-size: 0.95rem; }
-  .cl-chips { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.45rem; }
-  .cl-chips li { border: 1px solid var(--border); border-radius: 999px; padding: 0.35rem 0.8rem; font-size: 0.875rem; color: var(--text-2); background: var(--surface); }
-  .cl-price-label { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.9rem; border: 1px solid var(--border); border-radius: 999px; background: color-mix(in srgb, var(--surface) 70%, transparent); font-size: 0.8125rem; color: var(--text-2); backdrop-filter: blur(8px); }
-  .cl-plan-price { margin: 0.4rem 0 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4rem 0.6rem; }
-  .cl-plan-per { font-size: 0.8125rem; color: var(--text-3); }
-  .cl-plan-sub { margin: 0.2rem 0 0; font-size: 0.85rem; color: var(--text); font-weight: 520; }
-  .cl-def { padding: 1.25rem 1.4rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
-  .cl-def h3 { margin: 0; font-size: 1.05rem; font-weight: 580; color: var(--text); display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap; }
-  .cl-def h3 small { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cloud-strong); }
-  .cl-def p { margin: 0.6rem 0 0; font-size: 0.9rem; line-height: 1.55; color: var(--text-2); }
-  .cl-econ { padding: 1.5rem 1.6rem; border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border)); border-radius: var(--radius-lg); background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 6%, var(--surface)), color-mix(in srgb, var(--cloud) 6%, var(--surface))); }
-  .cl-faq { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-  .cl-faq-i { background: var(--surface); }
-  .cl-faq-i summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1rem 1.25rem; font-size: 1rem; font-weight: 560; color: var(--text); transition: background-color var(--dur-fast); }
-  .cl-faq-i summary::-webkit-details-marker { display: none; }
-  .cl-faq-i summary:hover { background: var(--surface-2); }
-  .cl-faq-i summary:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
-  .cl-faq-i summary svg { flex: 0 0 auto; color: var(--text-3); transition: transform var(--dur) var(--ease-out); }
-  .cl-faq-i[open] summary svg { transform: rotate(180deg); }
-  @media (prefers-reduced-motion: reduce) { .cl-faq-i summary svg { transition: none; } }
-  .cl-faq-i p { margin: 0; padding: 0 1.25rem 1.1rem; color: var(--text-2); font-size: 0.95rem; line-height: 1.55; max-width: 60ch; }
-  .cl-soon { display: inline-flex; align-items: center; gap: 0.5rem; height: 2.5rem; padding: 0 1rem; border: 1px dashed var(--border-strong); border-radius: 6px; font-size: 0.9375rem; color: var(--text-2); }
-  .cl-plan { position: relative; display: flex; flex-direction: column; gap: 0.5rem; padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
-  .cl-plan.is-cloud { border-color: color-mix(in srgb, var(--cloud) 55%, var(--border)); box-shadow: 0 0 0 1px color-mix(in srgb, var(--cloud) 25%, transparent), 0 30px 80px -40px rgba(97, 139, 255, 0.5); background: linear-gradient(180deg, color-mix(in srgb, var(--cloud) 7%, var(--surface)), var(--surface) 40%); }
-  .cl-plan-k { margin: 0; font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); }
-  .cl-plan.is-cloud .cl-plan-k { color: var(--cloud-strong); }
-  .cl-plan.is-cloud .cl-plan-p { color: var(--cloud-strong); }
-  .cl-plan-n { margin: 0; font-size: 1.35rem; font-weight: 600; letter-spacing: -0.02em; color: var(--text); }
-  .cl-plan-p { font-size: 1.75rem; font-weight: 600; letter-spacing: -0.03em; color: var(--text); line-height: 1.1; }
-  .cl-plan-b { margin: 0.25rem 0 0; color: var(--text-2); font-size: 0.9375rem; line-height: 1.5; }
-  .cl-plan-list { list-style: none; margin: 0.5rem 0 0; padding: 0; display: grid; gap: 0.45rem; color: var(--text-2); font-size: 0.9rem; }
-  .cl-plan-list li { display: flex; align-items: center; gap: 0.55rem; }
-  .cl-plan-list li > span { min-width: 0; }
-  .cl-plan-list svg { color: var(--accent); }
-  .cl-plan.is-cloud .cl-plan-list svg { color: var(--cloud-strong); }
-  .cl-plan-note { margin: auto 0 0; padding-top: 1rem; color: var(--text-3); font-size: 0.8125rem; }
-  .cl-flow { display: grid; gap: 0.3rem; }
-  .cl-flow-box { display: grid; gap: 0.15rem; padding: 0.8rem 0.95rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
-  .cl-flow-box b { color: var(--text); font-weight: 560; font-size: 0.95rem; }
-  .cl-flow-box span { color: var(--text-3); font-size: 0.8rem; }
-  .cl-flow-box.is-mint { border-left: 3px solid var(--accent); }
-  .cl-flow-box.is-blue { border-left: 3px solid var(--cloud); background: color-mix(in srgb, var(--cloud) 6%, var(--surface)); }
-  .cl-flow-link { display: flex; align-items: center; gap: 0.6rem; padding-left: 1.4rem; color: var(--text-3); font-family: var(--font-mono); font-size: 0.66rem; }
-  .cl-flow-link::before { content: ''; width: 1px; height: 1.4rem; background: linear-gradient(var(--accent), var(--cloud)); }
+  .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--border); padding-top: 5rem; padding-bottom: 4rem; }
+  @media (min-width: 64rem) { .hero { padding-top: 5.5rem; padding-bottom: 5rem; } }
+  .hero::before { left: 10%; top: -12rem; width: 60rem; height: 34rem; }
+  .hero::after { right: -5%; top: 10rem; }
+  .hero-copy { max-width: 56rem; margin-inline: auto; text-align: center; }
+  .price-label { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.9rem; border: 1px solid var(--border); border-radius: 999px; background: color-mix(in srgb, var(--surface) 70%, transparent); font-size: 0.8125rem; color: var(--text-2); backdrop-filter: blur(8px); }
+  .def { padding: 1.25rem 1.4rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
+  .def h3 { margin: 0; font-size: 1.05rem; font-weight: 580; color: var(--text); display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap; }
+  .def h3 small { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cloud-strong); }
+  .def p { margin: 0.6rem 0 0; font-size: 0.9rem; line-height: 1.55; color: var(--text-2); }
+  .econ { padding: 1.5rem 1.6rem; border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border)); border-radius: var(--radius-lg); background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 6%, var(--surface)), color-mix(in srgb, var(--cloud) 6%, var(--surface))); }
+  .soon { display: inline-flex; align-items: center; gap: 0.5rem; height: 2.5rem; padding: 0 1rem; border: 1px dashed var(--border-strong); border-radius: 6px; font-size: 0.9375rem; color: var(--text-2); }
+  .flow { display: grid; gap: 0.3rem; }
+  .flow-box { display: grid; gap: 0.15rem; padding: 0.8rem 0.95rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+  .flow-box b { color: var(--text); font-weight: 560; font-size: 0.95rem; }
+  .flow-box span { color: var(--text-3); font-size: 0.8rem; }
+  .flow-box.is-mint { border-left: 3px solid var(--accent); }
+  .flow-box.is-blue { border-left: 3px solid var(--cloud); background: color-mix(in srgb, var(--cloud) 6%, var(--surface)); }
+  .flow-link { display: flex; align-items: center; gap: 0.6rem; padding-left: 1.4rem; color: var(--text-3); font-family: var(--font-mono); font-size: 0.66rem; }
+  .flow-link::before { content: ''; width: 1px; height: 1.4rem; background: linear-gradient(var(--accent), var(--cloud)); }
 </style>

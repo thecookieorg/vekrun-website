@@ -1,0 +1,233 @@
+---
+/**
+ * The Board story, as a walkthrough a visitor can drive. A ticket arrives from
+ * Jira, it is picked, Start Work asks who does the work, and the chosen way of
+ * working opens a workspace: a terminal in a fresh working copy for manual work,
+ * an agent with the ticket as its brief, or an AI team with a plan. The card
+ * moves on the Board as the work progresses. Scripted first; any click takes over.
+ * Final state is in the markup.
+ */
+import Window from '@/components/mock/Window.astro';
+import Kanban, { type Column } from '@/components/mock/Kanban.astro';
+import DemoControls from '@/components/mock/DemoControls.astro';
+
+interface Props { notice?: string }
+const { notice = 'Product preview. The Board, Start Work and the three ways of working run in the development build with local tickets; Jira, Linear, Asana, GitHub and GitLab connections and status sync are planned. Pick any ticket and press Start Work to try the flow.' } = Astro.props;
+
+const columns: Column[] = [
+  { id: 'todo', name: 'To do', cards: [
+    { id: 'VEK-148', title: 'Rate-limit the webhook endpoint', src: 'Li' },
+    { id: 'WEB-311', title: 'Fix the dark-mode flash on load', src: 'Gh' },
+  ] },
+  { id: 'progress', name: 'In progress', cards: [
+    { id: 'VEK-139', title: 'Paginate the activity feed', src: 'Li', chips: [{ text: 'Agent working', tone: 'warn' }] },
+    { id: 'HB-2381', title: 'NoMethodError in ExportsController#create', src: 'Hb', chips: [{ text: 'From Honeybadger', tone: 'warn' }, { text: 'Investigation: fix proposed', tone: 'info' }] },
+  ] },
+  { id: 'review', name: 'In review', cards: [
+    { id: 'API-212', title: 'Expired tokens return 500 instead of 401', src: 'Ji', selected: true, chips: [{ text: 'PR #91', tone: 'info' }, { text: 'You', tone: 'ok' }] },
+  ] },
+  { id: 'done', name: 'Done', cards: [
+    { id: 'API-207', title: 'Retry failed provider calls', src: 'Ji', chips: [{ text: 'Merged', tone: 'ok' }] },
+  ] },
+];
+---
+<figure class="bw" data-demo-root="board" data-board-walk>
+  <Window title="Board" crumbs={['Assigned to you']} class="bw-window">
+    <span slot="status" class="hidden items-center gap-1.5 sm:inline-flex"><span class="live-dot" aria-hidden="true"></span><span data-field="phase">In review · synced to Jira</span></span>
+    <div class="bw-stage" data-stage>
+      <Kanban columns={columns} compact interactive />
+
+      <div class="bw-sheet" data-sheet hidden role="dialog" aria-label="Start Work">
+        <div class="bw-sheet-head"><span class="kanban-id" data-sheet-id>API-212</span><strong data-sheet-title>Expired tokens return 500 instead of 401</strong></div>
+        <p class="bw-sheet-q">Start Work. Who does the work?</p>
+        <div class="bw-choices" role="group" aria-label="Ways of working">
+          <button type="button" class="bw-choice" data-choice="manual"><strong>Manually</strong><span>A branch, a working copy and a terminal. You code.</span></button>
+          <button type="button" class="bw-choice" data-choice="agent"><strong>With an AI agent</strong><span>The ticket becomes the agent’s brief. Every change is a diff you approve.</span></button>
+          <button type="button" class="bw-choice" data-choice="team"><strong>Delegate to an AI team</strong><span>A plan you approve, agents on separate branches, a separate check.</span></button>
+        </div>
+        <button type="button" class="bw-cancel" data-sheet-close>Not now</button>
+      </div>
+
+      <div class="bw-ws" data-ws hidden>
+        <div class="window-pane-head"><span data-ws-head>Terminal · fix/api-212-expired-token</span><span data-ws-mode>Ticket · API-212</span></div>
+        <div class="bw-ws-body">
+          <pre class="term bw-term" data-term></pre>
+          <aside class="bw-side" data-side hidden aria-label="Agent activity (simulated)"><ol class="bw-side-list" data-side-list></ol></aside>
+        </div>
+        <div class="bw-ws-foot"><span class="bw-ws-git" data-ws-git>Branch pushed · pull request #91 opened</span><button type="button" class="bw-back" data-ws-close>Back to the Board</button></div>
+      </div>
+    </div>
+
+    <div class="bw-bar">
+      <span class="bw-sel" data-sel-label>Selected: API-212 · Expired tokens return 500 instead of 401</span>
+      <button type="button" class="bw-start" data-start>Start Work</button>
+    </div>
+  </Window>
+  <DemoControls notice={notice} />
+</figure>
+
+<style is:global>
+  .bw-window { font-size: 0.8rem; }
+  .bw-stage { position: relative; }
+  .bw-stage[data-dim='true'] .kanban { filter: blur(1px) saturate(0.8); opacity: 0.5; transition: filter var(--dur), opacity var(--dur); }
+  .bw-sheet { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(27rem, calc(100% - 2rem)); background: var(--bg-elevated); border: 1px solid var(--border-strong); border-radius: var(--radius-lg); box-shadow: 0 40px 100px -30px rgba(0, 0, 0, 0.8), 0 0 0 1px color-mix(in srgb, var(--accent) 15%, transparent); padding: 1rem 1.1rem 1rem; z-index: 3; animation: scale-in 360ms var(--ease-out) both; }
+  .bw-sheet[hidden] { display: none; }
+  .bw-sheet-head { display: flex; align-items: center; gap: 0.6rem; color: var(--text); font-size: 0.875rem; }
+  .bw-sheet-q { color: var(--text-2); font-size: 0.8125rem; margin: 0.6rem 0 0.75rem; }
+  .bw-choices { display: flex; flex-direction: column; gap: 0.4rem; }
+  .bw-choice { width: 100%; text-align: left; border: 1px solid var(--border); border-radius: 8px; padding: 0.55rem 0.7rem; display: flex; flex-direction: column; gap: 0.1rem; background: var(--surface); cursor: pointer; transition: border-color var(--dur-fast), background-color var(--dur-fast), transform var(--dur-fast); }
+  .bw-choice strong { color: var(--text); font-weight: 560; font-size: 0.8125rem; } .bw-choice span { color: var(--text-3); font-size: 0.75rem; line-height: 1.35; }
+  .bw-choice:hover, .bw-choice.is-hover { border-color: var(--border-strong); background: var(--surface-2); }
+  .bw-choice:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .bw-choice.is-chosen { border-color: var(--accent); background: var(--accent-soft); }
+  .bw-cancel { margin-top: 0.7rem; background: none; border: 0; color: var(--text-3); font-size: 0.75rem; cursor: pointer; padding: 0.2rem 0; }
+  .bw-cancel:hover { color: var(--text); }
+  .bw-ws { position: absolute; inset: 0; z-index: 2; background: var(--surface); display: flex; flex-direction: column; animation: rise 420ms var(--ease-out) both; }
+  .bw-ws[hidden] { display: none; }
+  .bw-ws-body { display: grid; grid-template-columns: minmax(0, 1fr); flex: 1; min-height: 0; }
+  .bw-ws-body:has(.bw-side:not([hidden])) { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); }
+  @media (max-width: 47.9rem) { .bw-ws-body:has(.bw-side:not([hidden])) { grid-template-columns: minmax(0, 1fr); } .bw-ws-body:has(.bw-side:not([hidden])) .bw-term { display: none; } }
+  .bw-term { margin: 0; padding: 0.7rem 0.85rem; overflow: hidden; min-height: 0; }
+  .bw-side { border-left: 1px solid var(--border); background: var(--surface); padding: 0.6rem 0.8rem; overflow: hidden; }
+  .bw-side[hidden] { display: none; }
+  .bw-side-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.75rem; color: var(--text-2); }
+  .bw-side-list li { display: grid; grid-template-columns: 0.8rem 1fr; gap: 0.45rem; align-items: start; animation: rise-sm 300ms var(--ease-out) both; }
+  .bw-side-list li i { margin-top: 0.3rem; width: 0.6rem; height: 0.6rem; border-radius: 50%; border: 1.5px solid var(--border-strong); display: block; }
+  .bw-side-list li[data-state='running'] i { border-color: var(--warn); border-top-color: transparent; animation: spin 0.9s linear infinite; }
+  .bw-side-list li[data-state='done'] i { border-color: var(--ok); background: var(--ok); box-shadow: inset 0 0 0 2px var(--surface); }
+  .bw-side-list li[data-state='wait'] i { border-color: var(--info); background: var(--info); border-radius: 2px; box-shadow: inset 0 0 0 2px var(--surface); }
+  .bw-side-list strong { color: var(--text); font-weight: 560; }
+  .bw-side-list small { display: block; color: var(--text-3); font-size: 0.68rem; }
+  .bw-ws-foot { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.45rem 0.85rem; border-top: 1px solid var(--border); background: var(--surface-2); font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-3); }
+  .bw-ws-git[hidden] { visibility: hidden; }
+  .bw-back { background: none; border: 1px solid var(--border-strong); border-radius: 6px; color: var(--text-2); font: inherit; font-size: 0.7rem; padding: 0.2rem 0.55rem; cursor: pointer; }
+  .bw-back:hover { color: var(--text); }
+  .bw-bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.5rem 0.85rem; border-top: 1px solid var(--border); background: var(--surface-2); font-size: 0.75rem; color: var(--text-2); }
+  .bw-sel { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bw-start { flex: 0 0 auto; display: inline-flex; align-items: center; height: 1.9rem; padding: 0 0.8rem; border-radius: 6px; border: 0; background: var(--accent); color: var(--accent-ink); font-weight: 580; font-size: 0.78rem; cursor: pointer; box-shadow: 0 8px 24px -10px color-mix(in srgb, var(--accent) 70%, transparent); transition: transform var(--dur-fast), opacity var(--dur-fast); }
+  .bw-start:hover { background: var(--accent-strong); }
+  .bw-start:disabled { opacity: 0.45; cursor: default; box-shadow: none; }
+  .bw-start.is-lit { animation: pulse-dot 1.2s ease-out 2; }
+  @media (prefers-reduced-motion: reduce) { .bw-sheet, .bw-ws, .bw-side-list li { animation: none; } .bw-side-list li[data-state='running'] i { animation: none; } .bw-start.is-lit { animation: none; } }
+</style>
+
+<script>
+  import { createSequence, appendLine, type Step } from '@/scripts/sequence';
+
+  type Choice = 'manual' | 'agent' | 'team';
+
+  document.querySelectorAll<HTMLElement>('[data-board-walk]').forEach((root) => {
+    const q = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
+    const stage = q('[data-stage]');
+    const sheet = q('[data-sheet]');
+    const ws = q('[data-ws]');
+    const term = q('[data-term]');
+    const side = q('[data-side]');
+    const sideList = q('[data-side-list]');
+    const phase = q('[data-field="phase"]');
+    const start = q<HTMLButtonElement>('[data-start]');
+    const selLabel = q('[data-sel-label]');
+    const col = (id: string) => q(`[data-column="${id}"] .kanban-cards`);
+    const cards = () => Array.from(root.querySelectorAll<HTMLElement>('[data-card]'));
+    const card = (id: string) => q(`[data-card="${id}"]`);
+    const choiceBtn = (c: Choice) => q<HTMLButtonElement>(`[data-choice="${c}"]`);
+    const counts = () => root.querySelectorAll<HTMLElement>('[data-column]').forEach((c) => { const el = c.querySelector<HTMLElement>('[data-count]'); if (el) el.textContent = String(c.querySelectorAll('.kanban-card:not([hidden])').length); });
+    const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').split('-').slice(0, 3).join('-');
+    const branchFor = (id: string) => `fix/${id.toLowerCase()}-${slug(card(id).dataset.title ?? '')}`;
+
+    let selected = 'API-212';
+    let timers: number[] = [];
+    const later = (t: number, fn: () => void) => timers.push(window.setTimeout(fn, t));
+    const cancel = () => { timers.forEach((t) => clearTimeout(t)); timers = []; };
+
+    const setChips = (id: string, chips: { text: string; tone?: string }[]) => {
+      const box = card(id).querySelector<HTMLElement>('[data-chips]')!;
+      box.innerHTML = chips.map((c) => `<span class="kanban-chip${c.tone ? ` tone-${c.tone}` : ''}">${c.text}</span>`).join('');
+      box.hidden = chips.length === 0;
+    };
+    const moveCard = (id: string, to: string) => { const c = card(id); col(to).prepend(c); c.classList.remove('is-entering'); void c.offsetWidth; c.classList.add('is-entering'); counts(); };
+    const select = (id: string) => {
+      selected = id;
+      cards().forEach((c) => { const on = c.dataset.card === id; c.classList.toggle('is-selected', on); c.querySelector('button')?.setAttribute('aria-pressed', String(on)); if (on) c.setAttribute('aria-current', 'true'); else c.removeAttribute('aria-current'); });
+      selLabel.textContent = `Selected: ${id} · ${card(id).dataset.title ?? ''}`;
+      start.disabled = false;
+    };
+    const openSheet = () => {
+      q('[data-sheet-id]').textContent = selected; q('[data-sheet-title]').textContent = card(selected).dataset.title ?? '';
+      stage.dataset.dim = 'true'; sheet.hidden = false;
+    };
+    const closeSheet = () => { sheet.hidden = true; stage.dataset.dim = 'false'; root.querySelectorAll<HTMLElement>('[data-choice]').forEach((c) => c.classList.remove('is-hover', 'is-chosen')); };
+    const sideItem = (html: string, state: string) => { const li = document.createElement('li'); li.dataset.state = state; li.innerHTML = `<i aria-hidden="true"></i><div>${html}</div>`; sideList.appendChild(li); return li; };
+    const openWs = (choice: Choice) => {
+      const id = selected; const branch = branchFor(id);
+      term.innerHTML = ''; sideList.innerHTML = ''; side.hidden = choice === 'manual'; q('[data-ws-git]').hidden = true;
+      q('[data-ws-head]').textContent = `Terminal · ${branch}`;
+      q('[data-ws-mode]').textContent = choice === 'manual' ? `Ticket · ${id}` : choice === 'agent' ? 'Agent · Build' : 'AI team · Plan';
+      ws.hidden = false;
+      appendLine(term, `<span class="dim">~/code/acme-api/.worktrees/${id.toLowerCase()}</span> <span class="ok">${branch}</span>`);
+      return { id, branch };
+    };
+
+    /* Three ways of working. Each runs in the open workspace and moves the card. */
+    const runManual = (id: string, branch: string) => {
+      moveCard(id, 'progress'); setChips(id, [{ text: 'You', tone: 'ok' }]); phase.textContent = 'In progress · you';
+      later(700, () => appendLine(term, '<span class="dim">$</span> cargo test --test auth'));
+      later(1700, () => { appendLine(term, 'test expired_token_returns_401 ... <span class="ok">ok</span>'); appendLine(term, 'test result: <span class="ok">ok</span>. 9 passed; 0 failed'); });
+      later(2700, () => { appendLine(term, `<span class="dim">$</span> git push -u origin ${branch}`); });
+      later(3500, () => { appendLine(term, '<span class="info">remote:</span> Create a pull request: https://github.com/acme/api/pull/91'); q('[data-ws-git]').hidden = false; });
+      later(4600, () => { moveCard(id, 'review'); setChips(id, [{ text: 'PR #91', tone: 'info' }, { text: 'You', tone: 'ok' }]); phase.textContent = 'In review · synced to Jira'; });
+    };
+    const runAgent = (id: string, branch: string) => {
+      moveCard(id, 'progress'); setChips(id, [{ text: 'Agent working', tone: 'warn' }, { text: branch, tone: 'muted' }]); phase.textContent = 'In progress · agent';
+      appendLine(term, `<span class="dim">$</span> vekrun agent run --ticket ${id}`);
+      const read = sideItem(`<strong>Reading ${id}</strong> and the repository<small>What is sent is shown before it is sent</small>`, 'running');
+      later(1100, () => { read.dataset.state = 'done'; sideItem('<strong>Plan ready</strong> 2 steps · 3 files<small>Waiting for your approval</small>', 'wait'); appendLine(term, '<span class="info">agent</span> Plan: 2 steps, 3 files. <span class="warn">Approve?</span>'); });
+      later(2600, () => { sideList.lastElementChild!.setAttribute('data-state', 'done'); sideItem('<strong>Approved by you</strong><small>Writing src/auth/session.rs</small>', 'done'); appendLine(term, '<span class="dim">$</span> approve'); });
+      later(3600, () => { const w = sideItem('<strong>Proposed change</strong> 1 file · +4 −1<small>Shown as a diff before it is written</small>', 'running'); later(900, () => { w.dataset.state = 'done'; }); });
+      later(4800, () => { const t = sideItem('<strong>Running tests</strong> cargo test --test auth<small>An allowed command, in the worktree</small>', 'running'); appendLine(term, '<span class="dim">$</span> cargo test --test auth'); later(1000, () => { t.dataset.state = 'done'; appendLine(term, 'test result: <span class="ok">ok</span>. 9 passed; 0 failed'); }); });
+      later(6400, () => { sideItem('<strong>Ready for your review</strong> 1 file · +4 −1<small>Nothing merges until you approve</small>', 'wait'); setChips(id, [{ text: 'Ready for review', tone: 'ok' }, { text: branch, tone: 'muted' }]); phase.textContent = 'In progress · review ready'; q('[data-ws-git]').textContent = 'Diff ready · waiting for your approval'; q('[data-ws-git]').hidden = false; });
+    };
+    const runTeam = (id: string, branch: string) => {
+      moveCard(id, 'progress'); setChips(id, [{ text: 'AI team', tone: 'info' }]); phase.textContent = 'In progress · AI team';
+      appendLine(term, `<span class="dim">$</span> vekrun team run --ticket ${id}`);
+      const plan = sideItem('<strong>Planner</strong> drafting the plan<small>2 tasks · acceptance criteria</small>', 'running');
+      later(1200, () => { plan.dataset.state = 'done'; sideItem('<strong>Plan approved by you</strong><small>Work starts only after approval</small>', 'done'); appendLine(term, '<span class="info">team</span> Plan approved · 2 developers starting'); });
+      later(2200, () => { sideItem(`<strong>Developer A</strong> ${branch}-a<small>editing · own worktree</small>`, 'running'); sideItem(`<strong>Developer B</strong> ${branch}-b<small>editing · own worktree</small>`, 'running'); });
+      later(4200, () => { Array.from(sideList.children).slice(-2).forEach((li) => li.setAttribute('data-state', 'done')); const t = sideItem('<strong>Tester</strong> running 14 tests<small>Only the commands you allowed</small>', 'running'); appendLine(term, '<span class="info">team</span> 14 tests passed on both branches'); later(1200, () => { t.dataset.state = 'done'; }); });
+      later(5800, () => { const r = sideItem('<strong>Reviewer</strong> a different agent checks the work<small>Against the plan, with the tests rerun</small>', 'running'); later(1200, () => { r.dataset.state = 'done'; }); });
+      later(7400, () => { sideItem('<strong>Merge preview ready</strong> no conflicts<small>You approve what merges</small>', 'wait'); setChips(id, [{ text: 'AI team', tone: 'info' }, { text: 'Merge preview', tone: 'ok' }]); phase.textContent = 'In progress · merge preview'; q('[data-ws-git]').textContent = 'Two branches verified · merge preview waiting for you'; q('[data-ws-git]').hidden = false; });
+    };
+    const choose = (choice: Choice) => {
+      cancel();
+      root.querySelectorAll<HTMLElement>('[data-choice]').forEach((c) => c.classList.remove('is-hover', 'is-chosen'));
+      choiceBtn(choice).classList.add('is-chosen');
+      later(500, () => { closeSheet(); const { id, branch } = openWs(choice); ({ manual: runManual, agent: runAgent, team: runTeam })[choice](id, branch); });
+    };
+
+    /* Visitor controls. Any of them pauses the script and takes over. */
+    root.querySelectorAll<HTMLButtonElement>('[data-card-pick]').forEach((b) => b.addEventListener('click', () => { seq.pause(); cancel(); ws.hidden = true; closeSheet(); select(b.dataset.cardPick!); start.classList.add('is-lit'); }));
+    start.addEventListener('click', () => { seq.pause(); cancel(); ws.hidden = true; start.classList.remove('is-lit'); openSheet(); choiceBtn('manual').focus(); });
+    root.querySelectorAll<HTMLButtonElement>('[data-choice]').forEach((b) => b.addEventListener('click', () => { seq.pause(); choose(b.dataset.choice as Choice); }));
+    q('[data-sheet-close]').addEventListener('click', () => { seq.pause(); closeSheet(); start.focus(); });
+    q('[data-ws-close]').addEventListener('click', () => { seq.pause(); cancel(); ws.hidden = true; });
+    sheet.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeSheet(); start.focus(); } });
+
+    /* The scripted opening: a Jira ticket arrives and is worked on manually. */
+    const api = card('API-212');
+    const reset = () => {
+      cancel(); ws.hidden = true; closeSheet(); term.innerHTML = ''; sideList.innerHTML = '';
+      api.classList.remove('is-entering'); setChips('API-212', []); col('todo').prepend(api); api.hidden = true; counts();
+      phase.textContent = 'Synced to Jira'; select('VEK-148'); start.classList.remove('is-lit');
+    };
+    const steps: Step[] = [
+      { t: 300, run: () => { api.hidden = false; api.classList.add('is-entering'); phase.textContent = 'New from Jira'; counts(); } },
+      { t: 1500, run: () => select('API-212') },
+      { t: 2300, run: () => openSheet() },
+      { t: 3300, run: () => choiceBtn('manual').classList.add('is-hover') },
+      { t: 4000, run: () => { choiceBtn('manual').classList.remove('is-hover'); choiceBtn('manual').classList.add('is-chosen'); } },
+      { t: 4700, run: () => { closeSheet(); const { id, branch } = openWs('manual'); runManual(id, branch); } },
+      { t: 10400, run: () => { cancel(); ws.hidden = true; moveCard('API-212', 'review'); setChips('API-212', [{ text: 'PR #91', tone: 'info' }, { text: 'You', tone: 'ok' }]); phase.textContent = 'In review · synced to Jira'; q('[data-ws-git]').hidden = false; } },
+    ];
+    const seq = createSequence(root, steps, { reset });
+  });
+</script>

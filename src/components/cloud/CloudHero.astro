@@ -14,20 +14,20 @@ import { org } from '@/data/cloud-demo';
 const nav = ['Overview', 'Projects', 'Work', 'AI Operations', 'Quality & Insights', 'Reports', 'Settings'];
 const weeks = [5, 6, 6, 8, 7, 9, 8, 11];
 ---
-<figure class="hs-wrap enter-scale" style="--i: 4" data-demo-root="cloud-hero" data-hero>
+<figure class="hs-wrap enter-stage" style="--i: 4" data-demo-root="cloud-hero" data-hero>
 <div class="hs">
   <svg class="hs-paths" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-    <defs><linearGradient id="cl-grad" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="var(--accent)"/><stop offset="1" stop-color="var(--cloud)"/></linearGradient></defs>
-    <path class="cl-path" d="M11 74 C 11 60, 15 54, 19 52" pathLength="100"/>
-    <path class="cl-packet" d="M11 74 C 11 60, 15 54, 19 52" pathLength="100" data-path="l"/>
-    <path class="cl-path" d="M89 78 C 89 64, 85 58, 81 56" pathLength="100"/>
-    <path class="cl-packet" d="M89 78 C 89 64, 85 58, 81 56" pathLength="100" data-path="r"/>
+    <defs><linearGradient id="wire-grad" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="var(--accent)"/><stop offset="1" stop-color="var(--cloud)"/></linearGradient></defs>
+    <path class="wire" d="M11 74 C 11 60, 15 54, 19 52" pathLength="100"/>
+    <path class="wire-packet" d="M11 74 C 11 60, 15 54, 19 52" pathLength="100" data-path="l"/>
+    <path class="wire" d="M89 78 C 89 64, 85 58, 81 56" pathLength="100"/>
+    <path class="wire-packet" d="M89 78 C 89 64, 85 58, 81 56" pathLength="100" data-path="r"/>
   </svg>
 
   <!-- The Cloud dashboard -->
   <div class="hs-dash">
     <Browser path="/acme/overview" class="hs-browser">
-      <span slot="status" class="cl-live"><i></i><span data-hero-sync>Up to date</span></span>
+      <span slot="status" class="live"><i></i><span data-hero-sync>Up to date</span></span>
       <span slot="status" class="hs-who"><Avatar who="dana" size="sm" /><span>Dana</span></span>
       <div class="hs-body">
         <nav class="hs-nav" aria-hidden="true">
@@ -51,18 +51,18 @@ const weeks = [5, 6, 6, 8, 7, 9, 8, 11];
             <div class="hs-panel">
               <h4>Factory <small>shared queue</small></h4>
               <ul class="hs-jobs">
-                <li><span class="hs-id">VEK-140</span><span class="hs-t">Retry failed exports</span><span class="cl-pill is-ok" data-hero-job>merged · #216</span></li>
-                <li><span class="hs-id">VEK-145</span><span class="hs-t">Payment webhooks</span><span class="cl-pill is-warn">waiting for Sam</span></li>
+                <li><span class="hs-id">VEK-140</span><span class="hs-t">Retry failed exports</span><span class="pill is-ok" data-hero-job>merged · #216</span></li>
+                <li><span class="hs-id">VEK-145</span><span class="hs-t">Payment webhooks</span><span class="pill is-warn">waiting for Sam</span></li>
               </ul>
             </div>
           </div>
           <div class="hs-panel">
             <h4>Activity</h4>
             <ul class="hs-feed" data-feed>
-              <li data-t="7300"><span class="cl-pill is-ok">Merged</span><span>#216 Retry failed exports · approved by Priya</span></li>
-              <li data-t="4000"><span class="cl-pill is-info">Review</span><span>#216 requested from Priya · 18 tests passed</span></li>
-              <li data-t="2600"><span class="cl-pill is-cloud">Factory</span><span>VEK-140 · build-2 finished implementing · verifying</span></li>
-              <li><span class="cl-pill is-muted">Queued</span><span>VEK-145 Payment webhooks added by Dana · plan requested</span></li>
+              <li data-t="7300"><span class="pill is-ok">Merged</span><span>#216 Retry failed exports · approved by Priya</span></li>
+              <li data-t="4000"><span class="pill is-info">Review</span><span>#216 requested from Priya · 18 tests passed</span></li>
+              <li data-t="2600"><span class="pill is-cloud">Factory</span><span>VEK-140 · build-2 finished implementing · verifying</span></li>
+              <li><span class="pill is-muted">Queued</span><span>VEK-145 Payment webhooks added by Dana · plan requested</span></li>
             </ul>
           </div>
         </div>
@@ -76,12 +76,12 @@ const weeks = [5, 6, 6, 8, 7, 9, 8, 11];
       <span slot="status" class="hs-mono">macOS</span>
       <div class="hs-job">
         <div class="hs-job-head"><span>Retry failed exports</span><span class="hs-mono">worker build-2 · $3.20 of $12</span></div>
-        <span class="cl-bar" data-hero-prog style="--w: 100%"><i></i></span>
+        <span class="bar" data-hero-prog style="--w: 100%"><i></i></span>
         <ul class="hs-agents">
           <li><Avatar kind="agent" label="D" size="sm" /><span>Developer agent</span><span class="hs-mono" data-ag="dev">done · 4 files changed</span></li>
           <li><Avatar kind="agent" label="T" size="sm" /><span>Testing agent</span><span class="hs-mono" data-ag="test">18 passed · verified</span></li>
         </ul>
-        <p class="hs-pr" data-t="3400"><span class="cl-pill is-info">#216</span>Pull request opened · review requested</p>
+        <p class="hs-pr" data-t="3400"><span class="pill is-info">#216</span>Pull request opened · review requested</p>
       </div>
     </Window>
   </div>
@@ -91,7 +91,7 @@ const weeks = [5, 6, 6, 8, 7, 9, 8, 11];
     <Window title="Priya · Vekrun" crumbs={['Reviews']} class="hs-win">
       <span slot="status" class="hs-mono">Windows</span>
       <ul class="hs-reviews">
-        <li class="hs-review" data-t="4700"><span class="hs-review-t"><span class="hs-id">#216</span>Retry failed exports</span><span class="hs-mono">from Factory via Alex · AI findings: 1 note</span><span class="cl-pill is-ok" data-t="6600">Approved by Priya</span></li>
+        <li class="hs-review" data-t="4700"><span class="hs-review-t"><span class="hs-id">#216</span>Retry failed exports</span><span class="hs-mono">from Factory via Alex · AI findings: 1 note</span><span class="pill is-ok" data-t="6600">Approved by Priya</span></li>
         <li class="hs-review is-quiet"><span class="hs-review-t"><span class="hs-id">#211</span>Replace the retry queue</span><span class="hs-mono">from Sam · 2 notes</span></li>
       </ul>
     </Window>
@@ -127,8 +127,8 @@ const weeks = [5, 6, 6, 8, 7, 9, 8, 11];
     .hs-paths { display: block; position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; overflow: visible; }
     .hs-dash { margin-inline: 19%; }
     .hs-desk { position: absolute; bottom: 0; width: 30%; }
-    .hs-desk-l { left: 0; animation: cl-slide-l 800ms var(--ease-out) both; animation-delay: 650ms; }
-    .hs-desk-r { right: 0; animation: cl-slide-r 800ms var(--ease-out) both; animation-delay: 780ms; }
+    .hs-desk-l { left: 0; animation: slide-l 800ms var(--ease-out) both; animation-delay: 650ms; }
+    .hs-desk-r { right: 0; animation: slide-r 800ms var(--ease-out) both; animation-delay: 780ms; }
     .hs-desk-l { bottom: 1.5rem; }
   }
   @media (min-width: 80rem) { .hs-dash { margin-inline: 18%; } .hs-desk { width: 29%; } }
@@ -155,7 +155,7 @@ const weeks = [5, 6, 6, 8, 7, 9, 8, 11];
   .hs-panel h4 { margin: 0 0 0.45rem; font-size: 0.66rem; font-weight: 560; color: var(--text-2); letter-spacing: 0; display: flex; gap: 0.4rem; align-items: baseline; }
   .hs-panel h4 small { font-weight: 400; color: var(--text-3); font-size: 0.6rem; }
   .hs-chart { width: 100%; height: 3rem; overflow: visible; }
-  .hs-bar { fill: color-mix(in srgb, var(--accent) 38%, var(--surface-3)); transform-origin: bottom; transform-box: fill-box; animation: cl-grow-y 700ms var(--ease-out) both; animation-delay: calc(900ms + var(--d)); }
+  .hs-bar { fill: color-mix(in srgb, var(--accent) 38%, var(--surface-3)); transform-origin: bottom; transform-box: fill-box; animation: grow-y 700ms var(--ease-out) both; animation-delay: calc(900ms + var(--d)); }
   .hs-bar.is-now { fill: var(--accent); }
   .hs-jobs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.35rem; }
   .hs-jobs li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.45rem; }
@@ -177,11 +177,11 @@ const weeks = [5, 6, 6, 8, 7, 9, 8, 11];
   .hs-review[hidden] { display: none; }
   .hs-review.is-quiet { border-color: var(--border); animation: none; }
   .hs-review-t { color: var(--text); }
-  .hs-review .cl-pill { align-self: flex-start; margin-top: 0.15rem; animation: scale-in 350ms var(--ease-spring) both; }
-  .hs-review .cl-pill[hidden] { display: none; }
+  .hs-review .pill { align-self: flex-start; margin-top: 0.15rem; animation: scale-in 350ms var(--ease-spring) both; }
+  .hs-review .pill[hidden] { display: none; }
 
   @media (prefers-reduced-motion: reduce) {
-    .hs-wrap, .hs-desk-l, .hs-desk-r, .hs-bar, .hs-feed li, .hs-pr, .hs-review, .hs-review .cl-pill { animation: none !important; }
+    .hs-wrap, .hs-desk-l, .hs-desk-r, .hs-bar, .hs-feed li, .hs-pr, .hs-review, .hs-review .pill { animation: none !important; }
   }
 </style>
 
@@ -211,7 +211,7 @@ const weeks = [5, 6, 6, 8, 7, 9, 8, 11];
 
     const reset = () => {
       timed.forEach((n) => { n.hidden = true; });
-      root.querySelectorAll('.cl-packet').forEach((p) => p.classList.remove('is-go', 'is-back'));
+      root.querySelectorAll('.wire-packet').forEach((p) => p.classList.remove('is-go', 'is-back'));
       stat('review').textContent = '3'; stat('jobs').textContent = '2'; stat('done').textContent = '8';
       prog.style.setProperty('--w', '55%');
       dev.textContent = 'implementing · step 3 of 4'; test.textContent = 'waiting';

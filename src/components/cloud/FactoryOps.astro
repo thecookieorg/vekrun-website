@@ -32,7 +32,7 @@ const timeline = [
 ---
 <figure class="fo" data-demo-root="factory-ops" data-factory>
   <Browser path="/acme/factory" class="fo-browser">
-    <span slot="status" class="cl-live"><i></i><span data-fo-live>2 jobs running</span></span>
+    <span slot="status" class="live"><i></i><span data-fo-live>2 jobs running</span></span>
     <span slot="status" class="hidden md:inline">${budget.used} of ${budget.total} {budget.period}</span>
     <div class="fo-body">
       <!-- Shared queue -->
@@ -41,9 +41,9 @@ const timeline = [
         <ul class="fo-cards">
           {queue.map((q) => (
             <li class:list={['fo-card', q.live && 'is-live']} data-q={q.id}>
-              <span class="fo-card-top"><span class="fo-mono">{q.id}</span><span class:list={['cl-pill', `is-${q.tone}`]} data-q-state>{q.s}</span></span>
+              <span class="fo-card-top"><span class="fo-mono">{q.id}</span><span class:list={['pill', `is-${q.tone}`]} data-q-state>{q.s}</span></span>
               <span class="fo-card-t">{q.t}</span>
-              <span class="cl-bar" style={`--w: ${q.p}%`} data-q-prog><i></i></span>
+              <span class="bar" style={`--w: ${q.p}%`} data-q-prog><i></i></span>
               <span class="fo-card-w"><Avatar kind="worker" label="W" size="sm" /><span data-q-worker>{q.w}</span></span>
             </li>
           ))}
@@ -54,7 +54,7 @@ const timeline = [
       <section class="fo-detail" aria-label="Job detail">
         <header class="fo-head">
           <div><span class="fo-mono">VEK-145</span><h4>Payment webhooks</h4><p>acme-api · requested by Dana · plan approved by Sam · budget $12</p></div>
-          <span class="cl-pill is-info fo-status" data-fo-status>In review</span>
+          <span class="pill is-info fo-status" data-fo-status>In review</span>
         </header>
         <ul class="fo-agents" aria-label="Agents on this job">
           <li><Avatar kind="agent" label="D" /><span>Developer agent<small data-ag="dev">done · 7 files changed</small></span></li>
@@ -70,8 +70,8 @@ const timeline = [
           ))}
         </ol>
         <div class="fo-approval" data-t="6800">
-          <p class="fo-approval-h"><span class="cl-pill is-warn">Approval</span>Add an idempotency key to webhook retries</p>
-          <dl><div><dt>Repository</dt><dd>acme-api · payments/webhooks.rb</dd></div><div><dt>Why a person</dt><dd>touches the payment path</dd></div><div><dt>Cost</dt><dd>about $1.20 more</dd></div><div><dt>Risk</dt><dd><span class="cl-pill is-warn">medium</span></dd></div></dl>
+          <p class="fo-approval-h"><span class="pill is-warn">Approval</span>Add an idempotency key to webhook retries</p>
+          <dl><div><dt>Repository</dt><dd>acme-api · payments/webhooks.rb</dd></div><div><dt>Why a person</dt><dd>touches the payment path</dd></div><div><dt>Cost</dt><dd>about $1.20 more</dd></div><div><dt>Risk</dt><dd><span class="pill is-warn">medium</span></dd></div></dl>
           <p class="fo-approval-r"><Avatar who="alex" size="sm" /><span data-fo-approval>Approved by Alex · continuing</span></p>
         </div>
       </section>
@@ -80,11 +80,11 @@ const timeline = [
       <aside class="fo-side" aria-label="Workers and budget">
         <p class="fo-h">Workers</p>
         <ul class="fo-workers">
-          {workers.map((w) => <li><Avatar kind="worker" label={w.kind === 'shared' ? 'W' : 'P'} size="sm" /><span>{w.id}<small>{w.where}</small></span><span class:list={['cl-pill', w.state === 'busy' ? 'is-cloud' : w.state === 'idle' ? 'is-ok' : 'is-muted']} data-w={w.id}>{w.state}</span></li>)}
+          {workers.map((w) => <li><Avatar kind="worker" label={w.kind === 'shared' ? 'W' : 'P'} size="sm" /><span>{w.id}<small>{w.where}</small></span><span class:list={['pill', w.state === 'busy' ? 'is-cloud' : w.state === 'idle' ? 'is-ok' : 'is-muted']} data-w={w.id}>{w.state}</span></li>)}
         </ul>
         <p class="fo-h">Team budget <small>{budget.period}</small></p>
         <p class="fo-budget"><b data-fo-spent>${budget.used + 12}</b><span> of ${budget.total}</span></p>
-        <span class="cl-bar" data-fo-budget style={`--w: ${Math.round(((budget.used + 12) / budget.total) * 100)}%`}><i></i></span>
+        <span class="bar" data-fo-budget style={`--w: ${Math.round(((budget.used + 12) / budget.total) * 100)}%`}><i></i></span>
         <p class="fo-policy">Shared workers may run tests and open pull requests. They do not merge, and they use only the organization-managed credentials they are granted.</p>
       </aside>
     </div>

@@ -1,16 +1,14 @@
 ---
 import Base from '@/layouts/Base.astro';
 import Section from '@/components/Section.astro';
-import SectionHeading from '@/components/SectionHeading.astro';
+import PageHero from '@/components/PageHero.astro';
 import { site } from '@/data/site';
 const title = 'Contact';
 const description = 'How to reach the Vekrun project.';
 ---
 <Base title={title} description={description}>
-  <Section padded="tight" class="pt-16 sm:pt-20">
-    <SectionHeading level="h1" title="Get in touch." lede="Public channels open with the source code. This page lists only what exists today." />
-  </Section>
-  <Section rule padded="tight" class="pb-24">
+  <PageHero eyebrow="Contact" title="Get in touch." lede="Public channels open with the source code. This page lists only what exists today." align="left" />
+  <Section padded="tight" class="pb-24">
     <ul class="ruled-grid max-w-3xl" role="list">
       <li class="p-6">
         <h2 class="text-[1rem] font-[560] text-text">Bugs and ideas</h2>

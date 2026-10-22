@@ -1,15 +1,13 @@
 ---
 import Base from '@/layouts/Base.astro';
 import Section from '@/components/Section.astro';
-import SectionHeading from '@/components/SectionHeading.astro';
+import PageHero from '@/components/PageHero.astro';
 const title = 'Privacy';
 const description = 'This website sets no cookies and runs no analytics. The application keeps your work on your machine and shows you what it sends to AI providers.';
 ---
 <Base title={title} description={description}>
-  <Section padded="tight" class="pt-16 sm:pt-20">
-    <SectionHeading level="h1" title="Nothing here watches you." lede="No cookies, no analytics, no trackers. The application follows the same rule." />
-  </Section>
-  <Section rule padded="tight" class="pb-24">
+  <PageHero eyebrow="Privacy" title="Nothing here watches you." lede="No cookies, no analytics, no trackers. The application follows the same rule." align="left" />
+  <Section padded="tight" class="pb-24">
     <div class="prose-site max-w-3xl text-[1.0625rem] leading-relaxed">
       <h2 class="!mt-0">This website</h2>
       <ul>

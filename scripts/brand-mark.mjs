@@ -7,7 +7,7 @@ const mark = (bg, tile, stroke, cursor) => `
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 32 32">
   <defs>
     <linearGradient id="g" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#5fd3b5"/><stop offset="1" stop-color="#4fb8d8"/>
+      <stop offset="0" stop-color="#8ce6c4"/><stop offset="1" stop-color="#618bff"/>
     </linearGradient>
   </defs>
   ${bg ? `<rect width="32" height="32" rx="7" fill="${bg}"/>` : ''}
@@ -18,9 +18,9 @@ const mark = (bg, tile, stroke, cursor) => `
 
 mkdirSync('public/brand', { recursive: true });
 const variants = [
-  ['vekrun-mark-dark-1024.png', mark('#0a0e14', '#111820', 0.7, '#edf1f5')],
-  ['vekrun-mark-dark-512.png', mark('#0a0e14', '#111820', 0.7, '#edf1f5')],
-  ['vekrun-mark-transparent-1024.png', mark(null, '#111820', 0.7, '#edf1f5')],
+  ['vekrun-mark-dark-1024.png', mark('#080b12', '#111927', 0.7, '#f4f7fb')],
+  ['vekrun-mark-dark-512.png', mark('#080b12', '#111927', 0.7, '#f4f7fb')],
+  ['vekrun-mark-transparent-1024.png', mark(null, '#111927', 0.7, '#f4f7fb')],
   ['vekrun-mark-light-1024.png', mark('#f6f8fa', '#ffffff', 0.9, '#0f1720')],
 ];
 for (const [name, svg] of variants) {
@@ -28,5 +28,5 @@ for (const [name, svg] of variants) {
   writeFileSync(`public/brand/${name}`, await sharp(Buffer.from(svg), { density: 300 }).resize(size, size).png().toBuffer());
   console.log('wrote public/brand/' + name);
 }
-writeFileSync('public/brand/vekrun-mark.svg', mark('#0a0e14', '#111820', 0.7, '#edf1f5').trim());
+writeFileSync('public/brand/vekrun-mark.svg', mark('#080b12', '#111927', 0.7, '#f4f7fb').trim());
 console.log('wrote public/brand/vekrun-mark.svg');

@@ -74,7 +74,7 @@ const pct = Math.round((budget.used / budget.total) * 100);
             <div class="db-card">
               <h4>Engineering throughput <small>delivered per week</small></h4>
               <svg class="db-chart" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true">
-                {weeks.map((w, i) => <rect x={i * 25 + 4} y={56 - (w / 11) * 50} width="17" height={(w / 11) * 50} rx="2" class:list={['db-bar cl-grow-y', i === weeks.length - 1 && 'is-now']} style={`animation-delay: ${i * 50}ms`} />)}
+                {weeks.map((w, i) => <rect x={i * 25 + 4} y={56 - (w / 11) * 50} width="17" height={(w / 11) * 50} rx="2" class:list={['db-bar grow-y', i === weeks.length - 1 && 'is-now']} style={`animation-delay: ${i * 50}ms`} />)}
                 <line x1="0" y1="56.5" x2="200" y2="56.5" class="db-axis" />
               </svg>
               <p class="db-legend"><span>8 weeks ago</span><span>this week · <b>11</b></span></p>
@@ -82,7 +82,7 @@ const pct = Math.round((budget.used / budget.total) * 100);
             <div class="db-card">
               <h4>Work distribution <small>how work gets done</small></h4>
               <div class="db-stack" role="img" aria-label="54% by people, 31% AI-assisted, 15% AI-executed">
-                <i style="--w: 54%" class="is-human cl-grow-x"></i><i style="--w: 31%" class="is-assist cl-grow-x"></i><i style="--w: 15%" class="is-exec cl-grow-x"></i>
+                <i style="--w: 54%" class="is-human grow-x"></i><i style="--w: 31%" class="is-assist grow-x"></i><i style="--w: 15%" class="is-exec grow-x"></i>
               </div>
               <ul class="db-keys"><li><i class="is-human"></i>People <b>54%</b></li><li><i class="is-assist"></i>AI-assisted <b>31%</b></li><li><i class="is-exec"></i>AI-executed, human-approved <b>15%</b></li></ul>
             </div>
@@ -91,13 +91,13 @@ const pct = Math.round((budget.used / budget.total) * 100);
             <div class="db-card">
               <h4>Blocked <small>needs a person</small></h4>
               <ul class="db-rows">
-                {blockers.map((b) => <li><Avatar who={b.who as 'sam'} size="sm" /><span><span class="db-mono">{b.id}</span> {b.t}<small>{b.why}</small></span><span class="cl-pill is-warn">blocked</span></li>)}
+                {blockers.map((b) => <li><Avatar who={b.who as 'sam'} size="sm" /><span><span class="db-mono">{b.id}</span> {b.t}<small>{b.why}</small></span><span class="pill is-warn">blocked</span></li>)}
               </ul>
             </div>
             <div class="db-card">
               <h4>Activity</h4>
               <ul class="db-feed" data-feed>
-                {activity.map((a) => <li data-t={a.at}><span class:list={['cl-pill', `is-${a.tone}`]}>{a.t}</span><span>{a.s}</span></li>)}
+                {activity.map((a) => <li data-t={a.at}><span class:list={['pill', `is-${a.tone}`]}>{a.t}</span><span>{a.s}</span></li>)}
               </ul>
             </div>
           </div>
@@ -109,21 +109,21 @@ const pct = Math.round((budget.used / budget.total) * 100);
             <thead><tr><th>Project</th><th>Milestone</th><th>Completion</th><th class="db-hide-sm">Owner</th><th>Health</th><th class="db-hide-sm">Due</th></tr></thead>
             <tbody>
               {projects.map((p) => (
-                <tr><td class="db-mono">{p.name}</td><td>{p.milestone}</td><td><span class="db-prog"><span class="cl-bar" style={`--w: ${p.pct}%`}><i></i></span><span class="db-pct">{p.pct}%</span></span></td><td class="db-hide-sm"><span class="db-person"><Avatar who={p.owner} size="sm" />{people[p.owner].short}</span></td><td><span class:list={['cl-pill', `is-${p.tone}`]}>{p.health}</span></td><td class="db-hide-sm db-dim">{p.due}</td></tr>
+                <tr><td class="db-mono">{p.name}</td><td>{p.milestone}</td><td><span class="db-prog"><span class="bar" style={`--w: ${p.pct}%`}><i></i></span><span class="db-pct">{p.pct}%</span></span></td><td class="db-hide-sm"><span class="db-person"><Avatar who={p.owner} size="sm" />{people[p.owner].short}</span></td><td><span class:list={['pill', `is-${p.tone}`]}>{p.health}</span></td><td class="db-hide-sm db-dim">{p.due}</td></tr>
               ))}
             </tbody>
           </table>
           <div class="db-grid2">
             <div class="db-card">
               <h4>Project completion <small>planned work delivered</small></h4>
-              {projects.map((p) => <p class="db-hbar"><span class="db-mono">{p.name}</span><span class="db-hbar-track"><i class="cl-grow-x" style={`--w: ${p.pct}%`}></i></span><span class="db-pct">{p.pct}%</span></p>)}
+              {projects.map((p) => <p class="db-hbar"><span class="db-mono">{p.name}</span><span class="db-hbar-track"><i class="grow-x" style={`--w: ${p.pct}%`}></i></span><span class="db-pct">{p.pct}%</span></p>)}
             </div>
             <div class="db-card">
               <h4>Milestones <small>next four weeks</small></h4>
               <ul class="db-rows">
-                <li><span class="db-mono">Oct 24</span><span>Rate limits <small>infra · 2 tickets left</small></span><span class="cl-pill is-info">this week</span></li>
-                <li><span class="db-mono">Nov 4</span><span>Webhooks v2 <small>acme-api · 5 tickets left</small></span><span class="cl-pill is-ok">on track</span></li>
-                <li><span class="db-mono">Nov 11</span><span>Checkout redesign <small>acme-web · design review pending</small></span><span class="cl-pill is-warn">at risk</span></li>
+                <li><span class="db-mono">Oct 24</span><span>Rate limits <small>infra · 2 tickets left</small></span><span class="pill is-info">this week</span></li>
+                <li><span class="db-mono">Nov 4</span><span>Webhooks v2 <small>acme-api · 5 tickets left</small></span><span class="pill is-ok">on track</span></li>
+                <li><span class="db-mono">Nov 11</span><span>Checkout redesign <small>acme-web · design review pending</small></span><span class="pill is-warn">at risk</span></li>
               </ul>
             </div>
           </div>
@@ -135,7 +135,7 @@ const pct = Math.round((budget.used / budget.total) * 100);
           <table class="db-table">
             <thead><tr><th>Ticket</th><th>Assignee</th><th class="db-hide-sm">Priority</th><th>How</th><th class="db-hide-sm">Pull request</th><th>State</th></tr></thead>
             <tbody>
-              {work.map((w) => <tr><td><span class="db-mono">{w.id}</span> {w.t}</td><td>{w.who ? <span class="db-person"><Avatar who={w.who as 'alex'} size="sm" />{people[w.who as 'alex'].short}</span> : <span class="db-dim">—</span>}</td><td class="db-hide-sm">{w.pri}</td><td><span class:list={['cl-pill', w.how.startsWith('AI') ? 'is-cloud' : 'is-muted']}>{w.how}</span></td><td class="db-hide-sm db-mono">{w.pr}</td><td><span class:list={['cl-pill', `is-${w.tone}`]}>{w.state}</span></td></tr>)}
+              {work.map((w) => <tr><td><span class="db-mono">{w.id}</span> {w.t}</td><td>{w.who ? <span class="db-person"><Avatar who={w.who as 'alex'} size="sm" />{people[w.who as 'alex'].short}</span> : <span class="db-dim">—</span>}</td><td class="db-hide-sm">{w.pri}</td><td><span class:list={['pill', w.how.startsWith('AI') ? 'is-cloud' : 'is-muted']}>{w.how}</span></td><td class="db-hide-sm db-mono">{w.pr}</td><td><span class:list={['pill', `is-${w.tone}`]}>{w.state}</span></td></tr>)}
             </tbody>
           </table>
         </section>
@@ -146,21 +146,21 @@ const pct = Math.round((budget.used / budget.total) * 100);
             <div>
               <h4 class="db-h">Running Factory jobs</h4>
               <ul class="db-jobs">
-                <li><span class="db-job-top"><span class="db-mono">VEK-152</span><span>Audit log pagination</span><span class="cl-pill is-cloud">build-3</span></span><span class="cl-bar" style="--w: 62%"><i></i></span><span class="db-job-meta"><Avatar kind="agent" label="D" size="sm" />Developer agent · step 2 of 3 · $4.10 of $9</span></li>
-                <li><span class="db-job-top"><span class="db-mono">VEK-140</span><span>Retry failed exports</span><span class="cl-pill is-cloud">build-2</span></span><span class="cl-bar" style="--w: 92%"><i></i></span><span class="db-job-meta"><Avatar kind="agent" label="T" size="sm" />Testing agent · 18 passed · verifying against the plan</span></li>
+                <li><span class="db-job-top"><span class="db-mono">VEK-152</span><span>Audit log pagination</span><span class="pill is-cloud">build-3</span></span><span class="bar" style="--w: 62%"><i></i></span><span class="db-job-meta"><Avatar kind="agent" label="D" size="sm" />Developer agent · step 2 of 3 · $4.10 of $9</span></li>
+                <li><span class="db-job-top"><span class="db-mono">VEK-140</span><span>Retry failed exports</span><span class="pill is-cloud">build-2</span></span><span class="bar" style="--w: 92%"><i></i></span><span class="db-job-meta"><Avatar kind="agent" label="T" size="sm" />Testing agent · 18 passed · verifying against the plan</span></li>
               </ul>
               <h4 class="db-h">Approval requests</h4>
               <ul class="db-rows">
-                <li><span class="cl-pill is-warn">Plan</span><span>VEK-145 Payment webhooks · 4 steps · estimated $12<small>waiting on Sam</small></span><Avatar who="sam" size="sm" /></li>
-                <li><span class="cl-pill is-warn">Permission</span><span>Run the exports migration in staging<small>waiting on Alex</small></span><Avatar who="alex" size="sm" /></li>
+                <li><span class="pill is-warn">Plan</span><span>VEK-145 Payment webhooks · 4 steps · estimated $12<small>waiting on Sam</small></span><Avatar who="sam" size="sm" /></li>
+                <li><span class="pill is-warn">Permission</span><span>Run the exports migration in staging<small>waiting on Alex</small></span><Avatar who="alex" size="sm" /></li>
               </ul>
             </div>
             <div>
               <h4 class="db-h">Agents today</h4>
               <ul class="db-rows">
-                <li><Avatar kind="agent" label="D" size="sm" /><span>Developer agent<small>6 jobs · 5 verified · 1 returned to a person</small></span><span class="cl-pill is-ok">6</span></li>
-                <li><Avatar kind="agent" label="T" size="sm" /><span>Testing agent<small>14 runs · 0 failures missed</small></span><span class="cl-pill is-ok">14</span></li>
-                <li><Avatar kind="agent" label="R" size="sm" /><span>Review agent<small>9 reviews · 3 findings confirmed by people</small></span><span class="cl-pill is-ok">9</span></li>
+                <li><Avatar kind="agent" label="D" size="sm" /><span>Developer agent<small>6 jobs · 5 verified · 1 returned to a person</small></span><span class="pill is-ok">6</span></li>
+                <li><Avatar kind="agent" label="T" size="sm" /><span>Testing agent<small>14 runs · 0 failures missed</small></span><span class="pill is-ok">14</span></li>
+                <li><Avatar kind="agent" label="R" size="sm" /><span>Review agent<small>9 reviews · 3 findings confirmed by people</small></span><span class="pill is-ok">9</span></li>
               </ul>
               <h4 class="db-h">Spending <small>{budget.period}</small></h4>
               <div class="db-ring-row">
@@ -178,23 +178,23 @@ const pct = Math.round((budget.used / budget.total) * 100);
           <div class="db-grid2">
             <div class="db-card">
               <h4>Review bottlenecks <small>median wait, days</small></h4>
-              {bottleneck.map((b) => <p class="db-hbar"><span class="db-mono">{b.p}</span><span class="db-hbar-track"><i class:list={['cl-grow-x', b.d > 2 && 'is-warn']} style={`--w: ${(b.d / 3) * 100}%`}></i></span><span class="db-pct">{b.d} d</span></p>)}
+              {bottleneck.map((b) => <p class="db-hbar"><span class="db-mono">{b.p}</span><span class="db-hbar-track"><i class:list={['grow-x', b.d > 2 && 'is-warn']} style={`--w: ${(b.d / 3) * 100}%`}></i></span><span class="db-pct">{b.d} d</span></p>)}
               <p class="db-note">acme-web waits longest: one reviewer for four open pull requests.</p>
             </div>
             <div class="db-card">
               <h4>Failing checks</h4>
               <ul class="db-rows">
-                <li><span class="cl-pill is-danger">CI</span><span>acme-web · main · lint<small>2 hours ago · Priya is looking</small></span></li>
-                <li><span class="cl-pill is-warn">Flaky</span><span>infra · integration · 3 retries this week<small>candidate for an investigation</small></span></li>
+                <li><span class="pill is-danger">CI</span><span>acme-web · main · lint<small>2 hours ago · Priya is looking</small></span></li>
+                <li><span class="pill is-warn">Flaky</span><span>infra · integration · 3 retries this week<small>candidate for an investigation</small></span></li>
               </ul>
             </div>
           </div>
           <div class="db-card">
             <h4>Production investigations <small>Honeybadger · AppSignal · Sentry · Datadog</small></h4>
             <ul class="db-rows">
-              <li><span class="cl-pill is-info">Fix in review</span><span>NoMethodError in ExportsController<small>142 in 24 h · Honeybadger · likely cause 0.8 · #221 waiting on Alex</small></span><Avatar who="priya" size="sm" /></li>
-              <li><span class="cl-pill is-warn">Investigating</span><span>Slow /search · p95 2.4 s<small>AppSignal · since the index change · Sam</small></span><Avatar who="sam" size="sm" /></li>
-              <li><span class="cl-pill is-ok">Monitoring</span><span>Timeout in BillingWorker<small>Sentry · fixed in v2.14.2 · 0 occurrences in 3 days · resolution pending a person</small></span><Avatar who="alex" size="sm" /></li>
+              <li><span class="pill is-info">Fix in review</span><span>NoMethodError in ExportsController<small>142 in 24 h · Honeybadger · likely cause 0.8 · #221 waiting on Alex</small></span><Avatar who="priya" size="sm" /></li>
+              <li><span class="pill is-warn">Investigating</span><span>Slow /search · p95 2.4 s<small>AppSignal · since the index change · Sam</small></span><Avatar who="sam" size="sm" /></li>
+              <li><span class="pill is-ok">Monitoring</span><span>Timeout in BillingWorker<small>Sentry · fixed in v2.14.2 · 0 occurrences in 3 days · resolution pending a person</small></span><Avatar who="alex" size="sm" /></li>
             </ul>
           </div>
         </section>
@@ -218,7 +218,7 @@ const pct = Math.round((budget.used / budget.total) * 100);
             </div>
             <div class="db-card">
               <h4>Budget utilization <small>by team, {budget.period}</small></h4>
-              {teamBudget.map((t) => <p class="db-hbar"><span class="db-mono">{t.t}</span><span class="db-hbar-track"><i class="cl-grow-x" style={`--w: ${Math.round((t.used / t.total) * 100)}%`}></i></span><span class="db-pct">${t.used} / ${t.total}</span></p>)}
+              {teamBudget.map((t) => <p class="db-hbar"><span class="db-mono">{t.t}</span><span class="db-hbar-track"><i class="grow-x" style={`--w: ${Math.round((t.used / t.total) * 100)}%`}></i></span><span class="db-pct">${t.used} / ${t.total}</span></p>)}
             </div>
           </div>
           <p class="db-note">Reports are built from shared tickets, plans, review status and job results. Nothing on a developer's machine is read to produce them.</p>
@@ -231,7 +231,7 @@ const pct = Math.round((budget.used / budget.total) * 100);
             <div><dt>Members</dt><dd>5 people, 3 teams, 2 shared workers · <span class="db-link">Organization settings</span></dd></div>
             <div><dt>Policies</dt><dd>Plans, merges and production commands need a lead · company AI keys · $600 a week</dd></div>
             <div><dt>Data sharing</dt><dd>Tickets, plans, review status and approved job summaries. Source code is not uploaded for coordination; personal credentials stay in each developer's local store.</dd></div>
-            <div><dt>Billing</dt><dd><span class="cl-pill is-muted">planned</span> No subscription exists yet; pricing will be published before anything is sold.</dd></div>
+            <div><dt>Billing</dt><dd><span class="pill is-muted">planned</span> No subscription exists yet; pricing will be published before anything is sold.</dd></div>
           </dl>
         </section>
       </div>
@@ -277,7 +277,7 @@ const pct = Math.round((budget.used / budget.total) * 100);
   .db-bar { fill: color-mix(in srgb, var(--accent) 38%, var(--surface-3)); transform-box: fill-box; transform-origin: bottom; }
   .db-bar.is-now { fill: var(--accent); }
   .db-axis { stroke: var(--border-strong); stroke-width: 1; vector-effect: non-scaling-stroke; }
-  .db-area { fill: url(#cl-grad); opacity: 0.18; }
+  .db-area { fill: url(#wire-grad); opacity: 0.18; }
   .db-line { fill: none; stroke: var(--accent); stroke-width: 1.5; vector-effect: non-scaling-stroke; stroke-dasharray: 100; stroke-dashoffset: 100; animation: db-draw 900ms var(--ease-out) forwards; }
   @keyframes db-draw { to { stroke-dashoffset: 0; } }
   .db-legend { margin: 0; display: flex; justify-content: space-between; font-size: 0.62rem; color: var(--text-3); }
@@ -305,7 +305,7 @@ const pct = Math.round((budget.used / budget.total) * 100);
   .db-mono { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text); }
   .db-dim { color: var(--text-3); }
   .db-prog { display: inline-flex; align-items: center; gap: 0.4rem; }
-  .db-prog .cl-bar { width: 4.5rem; }
+  .db-prog .bar { width: 4.5rem; }
   .db-pct { font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-3); white-space: nowrap; }
   .db-person { display: inline-flex; align-items: center; gap: 0.35rem; white-space: nowrap; }
   @media (max-width: 47.9rem) { .db-hide-sm { display: none; } }
