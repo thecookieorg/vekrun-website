@@ -85,7 +85,7 @@ const timeline = [
         <p class="fo-h">Team budget <small>{budget.period}</small></p>
         <p class="fo-budget"><b data-fo-spent>${budget.used + 12}</b><span> of ${budget.total}</span></p>
         <span class="cl-bar" data-fo-budget style={`--w: ${Math.round(((budget.used + 12) / budget.total) * 100)}%`}><i></i></span>
-        <p class="fo-policy">Shared workers may run tests and open pull requests. They never merge, and they never see credentials that are not theirs.</p>
+        <p class="fo-policy">Shared workers may run tests and open pull requests. They do not merge, and they use only the organization-managed credentials they are granted.</p>
       </aside>
     </div>
   </Browser>

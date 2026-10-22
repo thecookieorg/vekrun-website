@@ -19,6 +19,7 @@ import InsightsFlow from '@/components/cloud/InsightsFlow.astro';
 import GovernanceSettings from '@/components/cloud/GovernanceSettings.astro';
 import RoleSwitcher from '@/components/cloud/RoleSwitcher.astro';
 import SignInStrip from '@/components/cloud/SignInStrip.astro';
+import PricingCalculator from '@/components/cloud/PricingCalculator.astro';
 import { cloud, site } from '@/data/site';
 import { Check } from '@lucide/astro';
 
@@ -29,21 +30,29 @@ const structuredData = [
   { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: site.name, item: site.url }, { '@type': 'ListItem', position: 2, name: cloud.name, item: `${site.url}${cloud.href}` }] },
 ];
 
-const approvalKinds = [
-  ['Task plans', 'before Factory runs them'],
-  ['Pull request reviews', 'before anything merges'],
-  ['Expensive AI operations', 'above a limit you set'],
-  ['Permission requests', 'new workers, new repositories'],
-  ['Sensitive actions', 'production, secrets, migrations'],
-  ['Verification reports', 'kept for the record, no decision needed'],
-];
+const approvalKinds = ['Task plans', 'Pull request reviews', 'Expensive AI operations', 'Permission requests', 'Sensitive actions', 'Verification reports'];
+const managerDoes = ['Track project progress', 'See blocked work', 'Review milestones', 'Coordinate assignments', 'Follow Factory jobs', 'Inspect delivery reports', 'See reviews and investigations', 'Request plans', 'Start authorized workflows'];
 const privacy = [
-  ['Personal projects stay separate', 'An organization workspace sits beside your personal one. Nothing moves between them unless you move it.'],
-  ['Shared by permission', 'Organization data is visible to the people and roles a project grants, and the policy is visible to every member.'],
-  ['Source code is not uploaded by default', 'Cloud coordinates tickets, plans, review status and job results. Code stays in your repositories and on the machines you authorize.'],
-  ['API keys stay where they are', 'Personal keys never leave your machine. Company keys are held by the organization for organization work only.'],
-  ['Policies decide what synchronizes', 'The Data sharing settings above are the whole list. Add nothing, and nothing more is shared.'],
-  ['Work can run on your infrastructure', 'Shared workers are machines you own and approve. Vekrun Cloud does not need to run your code to coordinate it.'],
+  ['Personal credentials', 'Stay in your local credential store unless you explicitly connect a service that needs another approved storage model.'],
+  ['Organization-managed credentials', 'Stored and used according to the organization’s verified Cloud and worker security architecture, for organization work only.'],
+  ['Shared metadata', 'Tickets, assignments, plans, approval records, review status and approved execution summaries synchronize according to organization policy. The data-sharing settings are the whole list.'],
+  ['Source code', 'Not uploaded to Cloud as part of ordinary coordination. It stays in your repositories and on the machines you authorize, including the workers your organization owns.'],
+  ['Personal projects', 'Sit beside the organization workspace and never join it unless you move them.'],
+];
+const economics = [
+  'Claude, OpenAI, Gemini and OpenRouter usage is not included; organizations use their approved provider accounts.',
+  'Company-owned workers run on company infrastructure, at company cost.',
+  'Optional Vekrun-managed workers, if offered later, would carry separate usage-based charges.',
+  'Individual Community workflows never need a Cloud subscription.',
+];
+const faq = [
+  ['Do I need Cloud to use Vekrun?', 'No. Community remains free and fully functional, with no account.'],
+  ['Do my developers need a different desktop app?', 'No. They connect the Vekrun installation they already use and gain an organization workspace beside their personal one.'],
+  ['Is AI model usage included?', 'No. Organizations use their approved AI providers and pay those providers separately where applicable. The subscription pays for coordination.'],
+  ['Do project managers need the desktop app?', 'No. The Cloud dashboard runs in a browser.'],
+  ['Can one developer join multiple organizations?', 'Yes, that is part of the approved Cloud design: one account, several organizations, one personal workspace.'],
+  ['Can we run AI workers on our own infrastructure?', 'Yes, under the planned organization worker model: machines you own and approve, with the permissions you grant.'],
+  ['Is Vekrun Cloud available today?', 'Not yet. It is in development, and the pricing above is proposed launch pricing, not something you can buy.'],
 ];
 ---
 <Base title={cloud.name} fullTitle={title} description={description} image="/og/cloud.png" structuredData={structuredData} lockTheme="dark" page="cloud">
@@ -79,8 +88,7 @@ const privacy = [
           <dl class="cl-facts mt-7">
             <div><dt>Personal projects remain personal</dt><dd>They never join an organization unless you move them.</dd></div>
             <div><dt>Organization projects are shared by permission</dt><dd>Members see what their project role allows.</dd></div>
-            <div><dt>Connect at any time</dt><dd>Join from the workspace menu, later, without reinstalling.</dd></div>
-            <div><dt>Community never needs an account</dt><dd>{cloud.promise}</dd></div>
+            <div><dt>Connect at any time</dt><dd>Join from the workspace menu, later, without reinstalling. {cloud.promise}</dd></div>
           </dl>
         </div>
         <div class="reveal min-w-0"><DesktopSwitcher /></div>
@@ -110,6 +118,10 @@ const privacy = [
         <p class="cl-lede mx-auto mt-4">See what your developers and AI agents are working on, what’s blocked, what’s awaiting review, and what’s been delivered, without opening a terminal.</p>
       </div>
       <div class="reveal mt-12"><CloudDashboard /></div>
+      <div class="reveal mt-10 grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-12">
+        <p class="text-[0.95rem] leading-relaxed text-text-2">From a browser, with no desktop install, a project manager can do all of this. Cloud connects Jira, Linear or Asana to the work itself; it does not replace them.</p>
+        <ul class="cl-chips" aria-label="What a project manager can do">{managerDoes.map((m) => <li>{m}</li>)}</ul>
+      </div>
     </div>
   </section>
 
@@ -118,17 +130,11 @@ const privacy = [
     <div class="cl-wide">
       <div class="reveal max-w-3xl">
         <p class="cl-kicker">AI Factory across your organization</p>
-        <h2 id="factory-title" class="cl-h2 mt-3 text-text">An AI engineering team that works with your team.</h2>
-        <p class="cl-lede mt-4">Vekrun Cloud coordinates approved engineering work across developers and the execution workers an organization makes available. The same agents that run on one machine, with a queue, approvals and a budget the whole team can see.</p>
+        <h2 id="factory-title" class="cl-h2 mt-3 text-text">AI engineering work, coordinated across your entire team.</h2>
+        <p class="cl-lede mt-4">Several developers, shared queues, company-owned workers, human approvals, execution budgets, clear ownership, and progress the whole organization can see.</p>
       </div>
       <div class="reveal mt-10"><FactoryOps /></div>
-      <ul class="reveal-group mt-10 grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-4 text-[0.9375rem]">
-        <li><h3 class="font-[560] text-text">Shared queue</h3><p class="mt-1 text-text-2">Work queued by a manager or a lead, claimed by an approved worker, visible to everyone on the team.</p></li>
-        <li><h3 class="font-[560] text-text">Agents with names</h3><p class="mt-1 text-text-2">A developer agent implements, a testing agent verifies, a review agent looks for trouble. Each step is on the record.</p></li>
-        <li><h3 class="font-[560] text-text">A person in the loop</h3><p class="mt-1 text-text-2">Plans, sensitive changes and merges wait for the person your policy names. Nothing merges on its own.</p></li>
-        <li><h3 class="font-[560] text-text">Workers and budgets</h3><p class="mt-1 text-text-2">Machines you own, with the permissions you grant, and a weekly budget shown before any job starts.</p></li>
-      </ul>
-      <p class="reveal mt-8 text-[0.9rem] text-text-3">No proprietary model and no second agent engine. Your organization’s provider policy decides which models run, including local ones.</p>
+      <p class="reveal mt-8 text-[0.9rem] text-text-3">The same agents that run on one machine. No proprietary model and no second engine: your organization’s provider policy decides which models run, including local ones.</p>
     </div>
   </section>
 
@@ -140,9 +146,7 @@ const privacy = [
           <p class="cl-kicker">One place for approvals</p>
           <h2 id="approvals-title" class="cl-h2 mt-3 text-text">Stay in control without slowing everyone down.</h2>
           <p class="cl-lede mt-4">Every decision an organization wants a person to make, in one inbox, with the context to make it quickly.</p>
-          <ul class="cl-facts mt-7" aria-label="What can require approval">
-            {approvalKinds.map(([k, v]) => <li><b>{k}</b><span>{v}</span></li>)}
-          </ul>
+          <ul class="cl-chips mt-7" aria-label="What can require approval">{approvalKinds.map((k) => <li>{k}</li>)}</ul>
           <p class="mt-6 text-[0.875rem] text-text-3">In the product, an approval requires an authenticated, authorized member of the organization. The demonstration here approves nothing.</p>
         </div>
         <div class="reveal min-w-0"><ApprovalsDemo /></div>
@@ -156,7 +160,7 @@ const privacy = [
       <div class="reveal max-w-3xl">
         <p class="cl-kicker">Shared Insights and engineering quality</p>
         <h2 id="insights-title" class="cl-h2 mt-3 text-text">Know what’s broken. See who’s fixing it.</h2>
-        <p class="cl-lede mt-4">A production error from Honeybadger, AppSignal, Sentry or Datadog becomes an investigation the whole team can see, a verified fix, a reviewed pull request and a confirmed deploy. Resolving it stays a person’s decision.</p>
+        <p class="cl-lede mt-4">An error from Honeybadger, AppSignal, Sentry or Datadog becomes a shared investigation, a verified fix and a confirmed deploy. Resolving it stays a person’s decision.</p>
       </div>
       <div class="reveal mt-10"><InsightsFlow /></div>
     </div>
@@ -168,7 +172,7 @@ const privacy = [
       <div class="reveal max-w-3xl">
         <p class="cl-kicker">Organization governance</p>
         <h2 id="gov-title" class="cl-h2 mt-3 text-text">Your organization. Your rules.</h2>
-        <p class="cl-lede mt-4">Team roles, project access, model restrictions, AI spending limits, approval policies, shared worker permissions, audit history and data-sharing controls. Decided once, for the organization.</p>
+        <p class="cl-lede mt-4">Roles, access, model policies, budgets, approvals, workers, audit history and data sharing. Decided once, for the organization.</p>
       </div>
       <div class="reveal mt-10"><GovernanceSettings /></div>
     </div>
@@ -197,28 +201,63 @@ const privacy = [
     </div>
   </section>
 
-  <!-- Community vs Cloud vs Enterprise -->
-  <section id="plans" class="cl-section cl-rule ambient ambient-low bg-bg-elevated" aria-labelledby="plans-title">
+  <!-- Community, Cloud Teams, Enterprise -->
+  <section id="plans" class="cl-section cl-rule ambient ambient-low bg-bg-elevated scroll-mt-16" aria-labelledby="plans-title">
     <div class="container-site">
       <div class="reveal mx-auto max-w-3xl text-center">
-        <p class="cl-kicker">Community, Cloud, Enterprise</p>
+        <p class="cl-kicker">Community, Cloud Teams, Enterprise</p>
         <h2 id="plans-title" class="cl-h2 mt-3 text-text">Free for developers. Connected for teams.</h2>
-        <p class="cl-lede mx-auto mt-4">Vekrun Community is the complete, free, open-source desktop application. Vekrun Cloud is the optional layer that connects an organization. Nothing moves behind a paywall.</p>
+        <p class="cl-lede mx-auto mt-4">Community is free. Cloud Teams connects your team. Enterprise gives larger organizations advanced control. Nothing moves behind a paywall.</p>
+        <p class="cl-price-label mt-6"><span class="h-1.5 w-1.5 rounded-full bg-warn" aria-hidden="true"></span>{cloud.pricing.label}</p>
       </div>
       <ul class="reveal-group mt-12 grid gap-5 lg:grid-cols-3" aria-label="Plans">
-        {cloud.tiers.map((t, i) => (
-          <li class:list={['cl-plan', i === 1 && 'is-cloud']}>
+        {cloud.tiers.map((t) => (
+          <li id={`plans-${t.id}`} class:list={['cl-plan', t.id === 'teams' && 'is-cloud', 'scroll-mt-24']}>
             <p class="cl-plan-k">{t.kicker}</p>
             <h3 class="cl-plan-n">{t.name}</h3>
-            <p class:list={['cl-plan-p', i === 0 && 'text-gradient']}>{t.price}</p>
-            <p class="cl-plan-b">{t.body}</p>
-            {'plus' in t && <p class="cl-plan-plus">{t.plus}</p>}
-            <ul class="cl-plan-list">{t.includes.map((x) => <li><Check class="h-3.5 w-3.5 shrink-0" aria-hidden="true" />{x}{i === 2 && <StatusBadge status="planned" kind="roadmap" compact class="ml-auto" />}</li>)}</ul>
+            <p class="cl-plan-price"><span class:list={['cl-plan-p', t.id === 'community' && 'text-gradient']}>{t.price}</span><span class="cl-plan-per">{t.per}</span></p>
+            {'sub' in t && <p class="cl-plan-sub">{t.sub}</p>}
+            <p class="cl-plan-b">{t.summary}</p>
+            <ul class="cl-plan-list">{t.includes.map((x) => <li><Check class="h-3.5 w-3.5 shrink-0" aria-hidden="true" /><span>{x}</span>{t.id === 'enterprise' && <StatusBadge status="planned" kind="roadmap" compact class="ml-auto" />}</li>)}</ul>
             <p class="cl-plan-note">{t.note}</p>
           </li>
         ))}
       </ul>
-      <p class="reveal mt-6 text-center text-[0.875rem] text-text-3">There is no sign-up, trial or billing yet. When there is, it will be announced here and on the roadmap.</p>
+      <p class="reveal mt-5 text-center text-[0.875rem] text-text-3">Monthly prices only; no annual pricing has been decided. Email, Google, GitHub and GitLab sign-in belong to Cloud Teams; SSO enforcement and SCIM belong to Enterprise. There is no sign-up, trial or billing yet.</p>
+
+      <div class="reveal mt-10"><PricingCalculator /></div>
+
+      <div class="reveal-group mt-10 grid gap-5 lg:grid-cols-2">
+        <div class="cl-def">
+          <h3>Active member <small>a paid seat</small></h3>
+          <p>Someone who uses Cloud to take part in organization work: a developer in a connected organization, an engineering lead managing shared Factory work, a project manager assigning and coordinating tasks, an administrator managing policies and members.</p>
+        </div>
+        <div class="cl-def">
+          <h3>Read-only viewer <small>no seat charge</small></h3>
+          <p>Inspects the dashboards, reports, progress and project status their permissions allow. A viewer cannot start Factory jobs, modify tickets, approve consequential actions, reassign work, change organization settings, manage paid resources, or see anything beyond their assigned permissions. The Cloud service enforces this, not the website.</p>
+        </div>
+      </div>
+
+      <div class="reveal mt-12 cl-econ">
+        <h3 class="heading-3">Bring your own AI. Pay for team coordination.</h3>
+        <p class="mt-2 text-[0.95rem] leading-relaxed text-text-2">Vekrun Cloud connects your team and coordinates work. Your AI providers and execution infrastructure remain under your control and are billed separately where applicable.</p>
+        <ul class="mt-4 grid gap-2 sm:grid-cols-2 text-[0.875rem] text-text-2">{economics.map((e) => <li class="flex gap-2"><span class="mt-[0.55rem] h-1 w-1 shrink-0 rounded-full bg-accent" aria-hidden="true"></span>{e}</li>)}</ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="cl-section cl-rule" aria-labelledby="faq-title">
+    <div class="container-site">
+      <div class="grid gap-8 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-16">
+        <div class="reveal">
+          <p class="cl-kicker">Questions before adopting Cloud</p>
+          <h2 id="faq-title" class="cl-h2 mt-3 text-text">Short answers.</h2>
+        </div>
+        <div class="reveal cl-faq">
+          {faq.map(([q, a]) => <details class="cl-faq-i"><summary>{q}<svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></summary><p>{a}</p></details>)}
+        </div>
+      </div>
     </div>
   </section>
 
@@ -229,7 +268,7 @@ const privacy = [
         <div class="reveal">
           <p class="cl-kicker">Data ownership and privacy</p>
           <h2 id="privacy-title" class="cl-h2 mt-3 text-text">Your code stays under your control.</h2>
-          <p class="cl-lede mt-4">Cloud follows the same local-first idea as the desktop app. It coordinates work; it does not become the place your code lives.</p>
+          <p class="cl-lede mt-4">Cloud follows the same local-first idea as the desktop app. It coordinates work; it does not become the place your code or your keys live.</p>
           <div class="cl-flow mt-8" aria-label="What lives where">
             <div class="cl-flow-box is-mint"><b>Your machine</b><span>source code · API keys · personal projects · local models</span></div>
             <span class="cl-flow-link"><i>tickets, plans, review status, job results</i></span>
@@ -246,16 +285,16 @@ const privacy = [
     </div>
   </section>
 
-  <!-- Where this stands -->
-  <section class="cl-rule bg-bg-elevated" aria-labelledby="status-title">
-    <div class="container-site py-12 sm:py-14">
-      <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-        <div class="max-w-2xl">
-          <h2 id="status-title" class="heading-3">Where this stands</h2>
-          <p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">{site.status.line} Vekrun Cloud is a planned product: every capability on this page is on the roadmap and none is built yet. Every interface above is a conceptual demonstration with invented data. The desktop application it connects runs in a development build on macOS, and everything shown about it keeps the status given on its own feature pages.</p>
-        </div>
-        <Button href={cloud.roadmapHref} variant="secondary" class="shrink-0">View the Cloud roadmap</Button>
+  <!-- Interest and status -->
+  <section id="interest" class="cl-rule ambient bg-bg-elevated" aria-labelledby="interest-title">
+    <div class="container-site relative py-16 text-center sm:py-20">
+      <h2 id="interest-title" class="cl-h2 text-text">Interested in Vekrun Cloud?</h2>
+      <p class="cl-lede mx-auto mt-4 max-w-2xl">Bring your engineering team together with shared AI workflows, project visibility, and organization-wide controls.</p>
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <span class="cl-soon"><span class="h-1.5 w-1.5 rounded-full bg-warn" aria-hidden="true"></span>Register interest · coming soon</span>
+        <Button href={cloud.roadmapHref} variant="secondary">View the Cloud roadmap</Button>
       </div>
+      <p class="mx-auto mt-6 max-w-2xl text-[0.875rem] leading-relaxed text-text-3">There is no way to register yet, and no sign-up, trial or billing. {site.status.line} Every interface on this page is a conceptual demonstration with invented data; the desktop application keeps the status given on its feature pages.</p>
     </div>
   </section>
 </Base>
@@ -273,16 +312,39 @@ const privacy = [
   .cl-facts-lg { gap: 1.4rem; }
   .cl-facts-lg dt { font-size: 1.05rem; }
   .cl-facts-lg dd { font-size: 0.95rem; }
+  .cl-chips { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.45rem; }
+  .cl-chips li { border: 1px solid var(--border); border-radius: 999px; padding: 0.35rem 0.8rem; font-size: 0.875rem; color: var(--text-2); background: var(--surface); }
+  .cl-price-label { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.9rem; border: 1px solid var(--border); border-radius: 999px; background: color-mix(in srgb, var(--surface) 70%, transparent); font-size: 0.8125rem; color: var(--text-2); backdrop-filter: blur(8px); }
+  .cl-plan-price { margin: 0.4rem 0 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4rem 0.6rem; }
+  .cl-plan-per { font-size: 0.8125rem; color: var(--text-3); }
+  .cl-plan-sub { margin: 0.2rem 0 0; font-size: 0.85rem; color: var(--text); font-weight: 520; }
+  .cl-def { padding: 1.25rem 1.4rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
+  .cl-def h3 { margin: 0; font-size: 1.05rem; font-weight: 580; color: var(--text); display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap; }
+  .cl-def h3 small { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cloud-strong); }
+  .cl-def p { margin: 0.6rem 0 0; font-size: 0.9rem; line-height: 1.55; color: var(--text-2); }
+  .cl-econ { padding: 1.5rem 1.6rem; border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border)); border-radius: var(--radius-lg); background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 6%, var(--surface)), color-mix(in srgb, var(--cloud) 6%, var(--surface))); }
+  .cl-faq { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  .cl-faq-i { background: var(--surface); }
+  .cl-faq-i summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1rem 1.25rem; font-size: 1rem; font-weight: 560; color: var(--text); transition: background-color var(--dur-fast); }
+  .cl-faq-i summary::-webkit-details-marker { display: none; }
+  .cl-faq-i summary:hover { background: var(--surface-2); }
+  .cl-faq-i summary:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .cl-faq-i summary svg { flex: 0 0 auto; color: var(--text-3); transition: transform var(--dur) var(--ease-out); }
+  .cl-faq-i[open] summary svg { transform: rotate(180deg); }
+  @media (prefers-reduced-motion: reduce) { .cl-faq-i summary svg { transition: none; } }
+  .cl-faq-i p { margin: 0; padding: 0 1.25rem 1.1rem; color: var(--text-2); font-size: 0.95rem; line-height: 1.55; max-width: 60ch; }
+  .cl-soon { display: inline-flex; align-items: center; gap: 0.5rem; height: 2.5rem; padding: 0 1rem; border: 1px dashed var(--border-strong); border-radius: 6px; font-size: 0.9375rem; color: var(--text-2); }
   .cl-plan { position: relative; display: flex; flex-direction: column; gap: 0.5rem; padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
   .cl-plan.is-cloud { border-color: color-mix(in srgb, var(--cloud) 55%, var(--border)); box-shadow: 0 0 0 1px color-mix(in srgb, var(--cloud) 25%, transparent), 0 30px 80px -40px rgba(97, 139, 255, 0.5); background: linear-gradient(180deg, color-mix(in srgb, var(--cloud) 7%, var(--surface)), var(--surface) 40%); }
   .cl-plan-k { margin: 0; font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); }
   .cl-plan.is-cloud .cl-plan-k { color: var(--cloud-strong); }
+  .cl-plan.is-cloud .cl-plan-p { color: var(--cloud-strong); }
   .cl-plan-n { margin: 0; font-size: 1.35rem; font-weight: 600; letter-spacing: -0.02em; color: var(--text); }
-  .cl-plan-p { margin: 0; font-size: 1.05rem; font-weight: 560; color: var(--text); }
+  .cl-plan-p { font-size: 1.75rem; font-weight: 600; letter-spacing: -0.03em; color: var(--text); line-height: 1.1; }
   .cl-plan-b { margin: 0.25rem 0 0; color: var(--text-2); font-size: 0.9375rem; line-height: 1.5; }
-  .cl-plan-plus { margin: 0.6rem 0 0; color: var(--text); font-weight: 560; font-size: 0.875rem; }
   .cl-plan-list { list-style: none; margin: 0.5rem 0 0; padding: 0; display: grid; gap: 0.45rem; color: var(--text-2); font-size: 0.9rem; }
   .cl-plan-list li { display: flex; align-items: center; gap: 0.55rem; }
+  .cl-plan-list li > span { min-width: 0; }
   .cl-plan-list svg { color: var(--accent); }
   .cl-plan.is-cloud .cl-plan-list svg { color: var(--cloud-strong); }
   .cl-plan-note { margin: auto 0 0; padding-top: 1rem; color: var(--text-3); font-size: 0.8125rem; }

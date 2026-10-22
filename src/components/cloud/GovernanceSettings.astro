@@ -63,7 +63,8 @@ const data = [
   { k: 'Factory job progress, cost and results', v: 'shared with the team', on: true },
   { k: 'Insights investigations', v: 'shared with the project', on: true },
   { k: 'Source code', v: 'stays on developer machines and in your repositories', on: false },
-  { k: 'API keys, tokens and secrets', v: 'never leave the machine they are on', on: false },
+  { k: 'Personal credentials', v: 'stay in your local credential store unless you connect a service that needs another approved storage model', on: false },
+  { k: 'Organization-managed credentials', v: 'stored and used according to the organization’s verified Cloud and worker security architecture', on: true },
   { k: 'Personal projects', v: 'never part of an organization', on: false },
 ];
 ---
@@ -117,7 +118,7 @@ const data = [
         <section role="tabpanel" id="gv-panel-workers" aria-labelledby="gv-tab-workers" class="gv-panel" data-gv-panel="workers" hidden>
           <header class="gv-h"><h4>Shared workers</h4><p>Machines the organization runs Factory work on, and what each may do.</p></header>
           <ul class="gv-rows">
-            {workers.map((w) => <li class="gv-worker"><Avatar kind="worker" label={w.kind === 'shared' ? 'W' : 'P'} /><span><b>{w.id}</b><small>{w.where} · {w.kind}</small></span><span class="gv-dim">{w.kind === 'shared' ? 'tests, pull requests · never merge, never production' : 'owner decides · personal keys stay personal'}</span></li>)}
+            {workers.map((w) => <li class="gv-worker"><Avatar kind="worker" label={w.kind === 'shared' ? 'W' : 'P'} /><span><b>{w.id}</b><small>{w.where} · {w.kind}</small></span><span class="gv-dim">{w.kind === 'shared' ? 'tests, pull requests · never merge, never production' : 'owner decides · personal credentials stay in the owner’s local store'}</span></li>)}
           </ul>
         </section>
 
@@ -129,7 +130,7 @@ const data = [
         </section>
 
         <section role="tabpanel" id="gv-panel-data" aria-labelledby="gv-tab-data" class="gv-panel" data-gv-panel="data" hidden>
-          <header class="gv-h"><h4>Data sharing</h4><p>What an organization workspace synchronizes. Source code and credentials stay local.</p></header>
+          <header class="gv-h"><h4>Data sharing</h4><p>What an organization workspace synchronizes. Source code is not uploaded for coordination; personal credentials stay in your local store.</p></header>
           <ul class="gv-rows">
             {data.map((d) => <li class="gv-data"><span class:list={['gv-switch', d.on && 'is-on', !d.on && 'is-locked']} role="img" aria-label={d.on ? 'shared' : 'never shared'}><i></i></span><span><b>{d.k}</b></span><span class:list={['gv-dim', !d.on && 'is-local']}>{d.v}</span></li>)}
           </ul>

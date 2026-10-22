@@ -123,7 +123,16 @@ describe('navigation and positioning', () => {
     expect(primaryNav.some((n) => n.label === 'AI Teams')).toBe(false);
     const product = footerColumns.find((c) => c.title === 'Product')!;
     expect(product.items.filter((i) => i.href.startsWith('/cloud'))).toHaveLength(1);
-    expect(cloud.tiers.map((t) => t.price).join(' ')).not.toMatch(/\$\s?\d/);
+  });
+  it('publishes proposed pricing as proposed, monthly only, with Community free', () => {
+    expect(cloud.pricing.label).toMatch(/^Proposed launch pricing/);
+    expect(cloud.tiers[0].price).toBe('$0');
+    expect(cloud.tiers[1].price).toBe(`$${cloud.pricing.teams.base}`);
+    expect(cloud.tiers[1].sub).toContain(`${cloud.pricing.teams.includedMembers} active members`);
+    expect(cloud.tiers[1].sub).toContain(`$${cloud.pricing.teams.perExtraMember}`);
+    expect(cloud.tiers[2].per).toContain(cloud.pricing.enterpriseStartingTarget.toLocaleString('en-US'));
+    const text = JSON.stringify(cloud.tiers) + cloud.pricing.label;
+    expect(text).not.toMatch(/annual discount|per year billed|save \d+%|free trial|buy now|checkout/i);
   });
   it('does not expose the application repository while it is private', () => {
     if (!site.repo.public) expect(primaryNav.some((n) => n.href.includes('github.com'))).toBe(false);

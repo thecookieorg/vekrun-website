@@ -1,0 +1,87 @@
+---
+/**
+ * The Teams calculator: a local illustration of the proposed launch pricing,
+ * not a quote and not a checkout. Formula: base + max(0, members − included) × perExtra.
+ * Markup carries a worked example (20 members) so it reads without JavaScript.
+ */
+import { cloud } from '@/data/site';
+const { base, includedMembers, perExtraMember, calculatorMin, calculatorMax, enterpriseFrom } = cloud.pricing.teams;
+const start = 20;
+const monthly = base + Math.max(0, start - includedMembers) * perExtraMember;
+const fmt = (n: number) => `$${n.toLocaleString('en-US')}`;
+---
+<div class="pc" data-pricing-calc data-base={base} data-included={includedMembers} data-extra={perExtraMember} data-enterprise-from={enterpriseFrom}>
+  <div class="pc-in">
+    <p class="pc-k">Estimate a Teams subscription</p>
+    <label class="pc-label" for="pc-members">Active members</label>
+    <div class="pc-controls">
+      <input id="pc-members" class="pc-range" type="range" min={calculatorMin} max={calculatorMax} step="1" value={start} data-pc-range aria-describedby="pc-note" />
+      <input class="pc-num" type="number" min={calculatorMin} max={calculatorMax} step="1" value={start} data-pc-num aria-label="Active members, typed" />
+    </div>
+    <p id="pc-note" class="pc-note">Billed as one organization. Teams below {includedMembers} members pay the same {fmt(base)} minimum. Read-only viewers are not counted.</p>
+    <p class="pc-ent" data-pc-enterprise hidden>At this size, Enterprise identity, governance and support may fit better. <a href="#plans-enterprise" class="pc-ent-a">See Enterprise</a></p>
+  </div>
+  <dl class="pc-out" aria-live="polite">
+    <div><dt>Active members</dt><dd data-pc-members>{start}</dd></div>
+    <div><dt>Included in the base price</dt><dd data-pc-included>{Math.min(start, includedMembers)}</dd></div>
+    <div><dt>Additional paid members</dt><dd data-pc-paid>{Math.max(0, start - includedMembers)} <small>× {fmt(perExtraMember)}</small></dd></div>
+    <div class="pc-total"><dt>Monthly cost</dt><dd data-pc-monthly>{fmt(monthly)}</dd></div>
+    <div><dt>Annualized, billed monthly</dt><dd data-pc-annual>{fmt(monthly * 12)} <small>no discount applied</small></dd></div>
+    <div><dt>Read-only viewers</dt><dd>Unlimited <small>no seat charge, fair use</small></dd></div>
+  </dl>
+  <p class="pc-fine">Proposed launch pricing in US dollars. An illustration, not a quote: there is no checkout, trial or subscription yet. AI provider usage and your own worker infrastructure are billed separately where applicable.</p>
+</div>
+
+<style>
+  .pc { display: grid; gap: 1.25rem 2.5rem; padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
+  @media (min-width: 64rem) { .pc { grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); padding: 1.75rem 2rem; } .pc-fine { grid-column: 1 / -1; } }
+  .pc-k { margin: 0 0 0.9rem; font-size: 1.05rem; font-weight: 580; color: var(--text); letter-spacing: -0.01em; }
+  .pc-label { display: block; font-size: 0.8125rem; color: var(--text-2); margin-bottom: 0.5rem; }
+  .pc-controls { display: grid; grid-template-columns: minmax(0, 1fr) 5.5rem; gap: 0.9rem; align-items: center; }
+  .pc-range { width: 100%; height: 1.5rem; margin: 0; background: transparent; accent-color: var(--accent); cursor: pointer; }
+  .pc-range:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 999px; }
+  .pc-num { height: 2.5rem; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface-2); color: var(--text); font-family: var(--font-mono); font-size: 0.95rem; padding: 0 0.7rem; text-align: right; font-variant-numeric: tabular-nums; }
+  .pc-num:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .pc-note { margin: 0.8rem 0 0; font-size: 0.8rem; color: var(--text-3); line-height: 1.45; }
+  .pc-ent { margin: 0.8rem 0 0; padding: 0.6rem 0.75rem; border: 1px solid color-mix(in srgb, var(--cloud) 50%, var(--border)); border-radius: var(--radius-sm); background: var(--cloud-soft); color: var(--text-2); font-size: 0.8125rem; line-height: 1.45; animation: rise-sm 260ms var(--ease-out) both; }
+  .pc-ent[hidden] { display: none; }
+  .pc-ent-a { color: var(--cloud-strong); font-weight: 560; white-space: nowrap; }
+  .pc-out { margin: 0; display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; align-self: start; }
+  .pc-out > div { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: 0.6rem 0.9rem; background: var(--surface-2); }
+  .pc-out dt { color: var(--text-2); font-size: 0.875rem; }
+  .pc-out dd { margin: 0; color: var(--text); font-weight: 560; font-variant-numeric: tabular-nums; text-align: right; }
+  .pc-out small { display: block; font-weight: 400; color: var(--text-3); font-size: 0.72rem; }
+  .pc-total { background: color-mix(in srgb, var(--cloud) 10%, var(--surface-2)) !important; }
+  .pc-total dt { color: var(--text); font-weight: 560; }
+  .pc-total dd { font-size: 1.6rem; letter-spacing: -0.03em; color: var(--text); line-height: 1.1; }
+  .pc-fine { margin: 0; font-size: 0.78rem; color: var(--text-3); line-height: 1.5; }
+  @media (prefers-reduced-motion: reduce) { .pc-ent { animation: none; } }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-pricing-calc]');
+  if (root) {
+    const base = Number(root.dataset.base), included = Number(root.dataset.included), extra = Number(root.dataset.extra), entFrom = Number(root.dataset.enterpriseFrom);
+    const range = root.querySelector<HTMLInputElement>('[data-pc-range]')!;
+    const num = root.querySelector<HTMLInputElement>('[data-pc-num]')!;
+    const out = (k: string) => root.querySelector<HTMLElement>(`[data-pc-${k}]`)!;
+    const min = Number(range.min), max = Number(range.max);
+    const fmt = (n: number) => `$${n.toLocaleString('en-US')}`;
+    const compute = (members: number) => { const paid = Math.max(0, members - included); return { paid, monthly: base + paid * extra }; };
+    const render = (raw: number) => {
+      const members = Math.min(max, Math.max(min, Math.round(Number.isFinite(raw) ? raw : min)));
+      const { paid, monthly } = compute(members);
+      range.value = String(members); if (document.activeElement !== num) num.value = String(members);
+      out('members').textContent = String(members);
+      out('included').textContent = String(Math.min(members, included));
+      out('paid').innerHTML = `${paid} <small>× ${fmt(extra)}</small>`;
+      out('monthly').textContent = fmt(monthly);
+      out('annual').innerHTML = `${fmt(monthly * 12)} <small>no discount applied</small>`;
+      out('enterprise').hidden = members < entFrom;
+    };
+    range.addEventListener('input', () => render(Number(range.value)));
+    num.addEventListener('input', () => { if (num.value !== '') render(Number(num.value)); });
+    num.addEventListener('blur', () => render(Number(num.value)));
+    render(Number(range.value));
+  }
+</script>
