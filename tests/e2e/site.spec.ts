@@ -129,10 +129,11 @@ test.describe('other pages', () => {
     await expect(page.getByRole('heading', { level: 1 })).toContainText('One connected workspace');
     await expect(page.getByText('In development').first()).toBeVisible();
     await expect(page.getByRole('link', { name: /sign up|start trial|subscribe|buy/i })).toHaveCount(0);
-    await expect(page.getByRole('button', { name: /sign up|start trial|subscribe|buy/i })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /sign up|start trial|subscribe|buy|continue with/i })).toHaveCount(0);
     const roots = page.locator('[data-demo-root]');
-    expect(await roots.count()).toBe(5);
-    for (let i = 0; i < 5; i++) {
+    const n = await roots.count();
+    expect(n).toBeGreaterThanOrEqual(7);
+    for (let i = 0; i < n; i++) {
       await roots.nth(i).scrollIntoViewIfNeeded();
       await expect(roots.nth(i)).toHaveAttribute('data-demo', 'done', { timeout: 60_000 });
       await expect(roots.nth(i).getByText(/Conceptual preview/)).toBeVisible();
@@ -140,21 +141,55 @@ test.describe('other pages', () => {
     await expect(page.getByText('Demonstration data').first()).toBeVisible();
   });
 
-  test('the Cloud dashboard and organization tabs are keyboard-operable', async ({ page }) => {
+  test('the Cloud page is dark by design and leaves the stored theme alone', async ({ page }) => {
+    await page.addInitScript(() => { try { localStorage.setItem('starlight-theme', 'light'); } catch {} });
+    await page.goto('/cloud/');
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    await expect(page.locator('[data-theme-toggle]')).toHaveCount(0);
+    expect(await page.evaluate(() => localStorage.getItem('starlight-theme'))).toBe('light');
+    await expect(page).toHaveTitle('Vekrun Cloud — One Connected Workspace for Engineering Teams');
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og\/cloud\.png$/);
+    await page.goto('/');
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  });
+
+  test('the Cloud dashboard, settings, roles and workflow are keyboard-operable', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/cloud/');
     const dash = page.locator('[data-dashboard]');
-    const org = page.locator('[data-org]');
     const overview = dash.getByRole('tab', { name: 'Overview' });
     await overview.scrollIntoViewIfNeeded();
     await overview.focus();
     await page.keyboard.press('ArrowDown');
     await expect(dash.getByRole('tab', { name: 'Projects' })).toHaveAttribute('aria-selected', 'true');
     await expect(dash.getByRole('tabpanel', { name: 'Projects' })).toBeVisible();
-    await dash.getByRole('tab', { name: 'Reports' }).click();
-    await expect(dash.getByRole('tabpanel', { name: 'Reports' })).toBeVisible();
-    await org.getByRole('tab', { name: 'Policies' }).click();
-    await expect(org.getByRole('tabpanel', { name: 'Policies' })).toContainText('Source code and credentials stay local');
+    for (const name of ['AI Operations', 'Quality & Insights', 'Reports', 'Settings']) {
+      await dash.getByRole('tab', { name }).click();
+      await expect(dash.getByRole('tabpanel', { name })).toBeVisible();
+    }
+    const gov = page.locator('[data-governance]');
+    await gov.getByRole('tab', { name: 'Data sharing' }).click();
+    await expect(gov.getByRole('tabpanel', { name: 'Data sharing' })).toContainText('Source code and credentials stay local');
+    const roles = page.locator('[data-roles]');
+    await roles.getByRole('tab', { name: 'Project manager' }).click();
+    await expect(roles.getByRole('tabpanel', { name: 'Project manager' })).toBeVisible();
+    const wf = page.locator('[data-workflow]');
+    await wf.getByRole('button', { name: /Step 3 of 8/ }).click();
+    await expect(wf).toHaveAttribute('data-current', '3');
+    await wf.getByRole('button', { name: 'Next step' }).click();
+    await expect(wf).toHaveAttribute('data-current', '4');
+  });
+
+  test('the Cloud approvals and resolve controls work in the demonstration only', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/cloud/');
+    const ap = page.locator('[data-approvals]');
+    await ap.getByRole('tab', { name: /Rotate the webhook signing secret/ }).click();
+    await ap.getByRole('button', { name: 'Reject' }).filter({ visible: true }).click();
+    await expect(ap.getByText(/Rejected by you \(demonstration\)/)).toBeVisible();
+    const ins = page.locator('[data-insights]');
+    await ins.getByRole('button', { name: 'Mark as resolved' }).click();
+    await expect(ins.getByRole('button', { name: 'Resolved by you' })).toBeDisabled();
   });
 
   test('the Cloud roadmap group exists and holds only planned work', async ({ page }) => {

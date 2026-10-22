@@ -1,0 +1,136 @@
+---
+/**
+ * "Built for different roles." Four roles behind a segmented tablist; each
+ * selects a short description and a compact preview built from the same
+ * sample organization. Motion only answers a click. Conceptual.
+ */
+import Window from '@/components/mock/Window.astro';
+import Browser from './Browser.astro';
+import Avatar from './Avatar.astro';
+import ConceptNotice from '@/components/ConceptNotice.astro';
+
+const roles = [
+  { id: 'dev', name: 'Developer', who: 'alex', t: 'Work on tickets, write code, run agents and review changes.', b: ['Your terminal, your models, your Board, now with the team’s tickets on it', 'Start Factory work on a shared queue and watch it in the same app', 'Review requests find you; AI findings sit beside the diff'] },
+  { id: 'lead', name: 'Engineering lead', who: 'sam', t: 'Coordinate teams, approve work, manage quality and assign AI workloads.', b: ['Approve plans, merges and anything that touches production', 'Decide which models, workers and budgets the team may use', 'See review bottlenecks before they become late milestones'] },
+  { id: 'pm', name: 'Project manager', who: 'dana', t: 'Track delivery, manage work, identify blockers and view reports.', b: ['Assign work from the browser and see it land on a developer’s Board', 'Blocked, in review, delivered: one view, without a terminal', 'Reports built from shared tickets, plans and job results'] },
+  { id: 'admin', name: 'Organization administrator', who: 'sam', t: 'Manage identities, permissions, model policies and budgets.', b: ['Members, teams and roles in one place', 'Provider and model policies with company keys', 'Audit history of every approval and policy change'] },
+];
+---
+<figure class="rs" data-roles>
+  <div role="tablist" aria-label="Roles" class="rs-tabs">
+    {roles.map((r, i) => <button type="button" role="tab" id={`rs-tab-${r.id}`} aria-selected={i === 0 ? 'true' : 'false'} aria-controls={`rs-panel-${r.id}`} tabindex={i === 0 ? 0 : -1} class="rs-tab" data-rs-tab={r.id}>{r.name}</button>)}
+  </div>
+  {roles.map((r, i) => (
+    <section role="tabpanel" id={`rs-panel-${r.id}`} aria-labelledby={`rs-tab-${r.id}`} class="rs-panel" data-rs-panel={r.id} hidden={i !== 0}>
+      <div class="rs-copy">
+        <p class="rs-who"><Avatar who={r.who as 'alex'} /><span>{r.name}</span></p>
+        <h3 class="rs-t">{r.t}</h3>
+        <ul class="rs-list">{r.b.map((x) => <li>{x}</li>)}</ul>
+      </div>
+      <div class="rs-preview">
+        {r.id === 'dev' && (
+          <Window title="Alex · Vekrun" crumbs={['Board']} class="rs-win">
+            <div class="rs-board">
+              <div class="rs-col"><span>To do</span><div class="rs-card"><i>VEK-152</i>Audit log pagination<span class="cl-pill is-cloud">from Dana</span></div></div>
+              <div class="rs-col"><span>In progress</span><div class="rs-card is-hot"><i>VEK-131</i>Rate-limit the webhook endpoint<span class="cl-pill is-info">Factory · build-2</span></div></div>
+              <div class="rs-col"><span>Review</span><div class="rs-card"><i>#216</i>Retry failed exports<span class="cl-pill is-ok">Priya approved</span></div></div>
+            </div>
+            <pre class="term rs-term"><span class="term-line"><span class="dim">›</span> factory run VEK-131 <span class="dim">· shared queue · worker build-2</span></span><span class="term-line">plan approved by Sam · 4 steps · <span class="ok">running</span></span></pre>
+          </Window>
+        )}
+        {r.id === 'lead' && (
+          <Browser path="/acme/approvals" class="rs-browser is-compact">
+            <ul class="rs-inbox">
+              <li><span class="cl-pill is-warn">Plan</span><span>VEK-152 Audit log pagination · 3 steps · $9</span><span class="rs-act">Approve</span></li>
+              <li><span class="cl-pill is-warn">Expensive</span><span>Refactor the exports module · estimated $38</span><span class="rs-act">Approve</span></li>
+              <li><span class="cl-pill is-info">Review</span><span>#220 Payment webhooks · 1 finding resolved</span><span class="rs-act">Review</span></li>
+              <li><span class="cl-pill is-ok">Done</span><span>Permission · exports migration in staging · approved 13:48</span></li>
+            </ul>
+            <p class="rs-foot"><span>Review wait · acme-web <b>2.6 d</b></span><span>Factory budget <b>$196 of $600</b></span></p>
+          </Browser>
+        )}
+        {r.id === 'pm' && (
+          <Browser path="/acme/overview" class="rs-browser is-compact">
+            <div class="rs-stats"><div><b>3</b><span>Active projects</span></div><div><b>11</b><span>In progress</span></div><div><b class="is-warn">2</b><span>Blocked</span></div><div><b class="is-info">4</b><span>Awaiting review</span></div><div><b class="is-ok">9</b><span>Delivered this week</span></div><div><b class="is-cloud">2</b><span>AI jobs running</span></div></div>
+            <ul class="rs-inbox">
+              <li><span class="cl-pill is-ok">Merged</span><span>#216 Retry failed exports · approved by Priya</span></li>
+              <li><span class="cl-pill is-warn">Blocked</span><span>VEK-139 Checkout redesign · design review · 3 days</span></li>
+              <li><span class="cl-pill is-cloud">Factory</span><span>VEK-152 · build-3 · step 2 of 3</span></li>
+            </ul>
+          </Browser>
+        )}
+        {r.id === 'admin' && (
+          <Browser path="/acme/settings" class="rs-browser is-compact">
+            <ul class="rs-inbox rs-policies">
+              <li><span>Members</span><span>5 people · 3 teams · 2 shared workers</span><span class="cl-avatars" aria-hidden="true"><Avatar who="dana" size="sm" /><Avatar who="sam" size="sm" /><Avatar who="alex" size="sm" /><Avatar who="priya" size="sm" /></span></li>
+              <li><span>AI providers</span><span>Anthropic, OpenAI through company keys · local models allowed</span><span class="cl-pill is-ok">policy</span></li>
+              <li><span>Budgets</span><span>$600 a week · $200 per developer</span><span class="cl-pill is-ok">policy</span></li>
+              <li><span>Approvals</span><span>plans, merges and production commands need a lead</span><span class="cl-pill is-ok">policy</span></li>
+              <li><span>Audit</span><span>Sam approved plan VEK-152 · 14:02</span><span class="cl-pill is-muted">latest</span></li>
+            </ul>
+          </Browser>
+        )}
+      </div>
+    </section>
+  ))}
+  <ConceptNotice class="mt-4" text="Conceptual previews with demonstration data. Role-based views are a planned Cloud capability." />
+</figure>
+
+<style>
+  .rs { margin: 0; }
+  .rs-tabs { display: inline-flex; flex-wrap: wrap; gap: 0.25rem; padding: 0.25rem; border: 1px solid var(--border); border-radius: 999px; background: var(--bg-elevated); margin-bottom: 1.75rem; }
+  .rs-tab { border: 0; background: transparent; color: var(--text-2); font-size: 0.9rem; font-weight: 520; padding: 0.5rem 1rem; border-radius: 999px; cursor: pointer; transition: color var(--dur-fast), background-color var(--dur-fast), box-shadow var(--dur-fast); white-space: nowrap; }
+  .rs-tab:hover { color: var(--text); }
+  .rs-tab[aria-selected='true'] { background: var(--surface-2); color: var(--text); box-shadow: inset 0 0 0 1px var(--border-strong); }
+  @media (max-width: 40rem) { .rs-tabs { display: grid; grid-template-columns: 1fr 1fr; border-radius: var(--radius); } .rs-tab { border-radius: 8px; padding: 0.55rem 0.6rem; font-size: 0.85rem; white-space: normal; } }
+  .rs-panel { display: grid; gap: 2rem; animation: fade 260ms var(--ease-out) both; }
+  @media (min-width: 64rem) { .rs-panel { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: 3rem; align-items: center; } }
+  .rs-panel[hidden] { display: none; }
+  .rs-who { margin: 0; display: flex; align-items: center; gap: 0.5rem; color: var(--text-2); font-size: 0.9rem; }
+  .rs-t { margin: 0.9rem 0 0; font-size: 1.35rem; line-height: 1.3; letter-spacing: -0.015em; font-weight: 560; color: var(--text); }
+  .rs-list { margin: 1.1rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.55rem; color: var(--text-2); font-size: 0.95rem; }
+  .rs-list li { padding-left: 1rem; position: relative; }
+  .rs-list li::before { content: ''; position: absolute; left: 0; top: 0.6rem; width: 0.4rem; height: 0.4rem; border-radius: 50%; background: var(--accent-gradient); }
+  .rs-win, .rs-browser { font-size: 0.74rem; }
+  .rs-board { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--border); }
+  .rs-col { background: var(--surface); padding: 0.5rem; display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; min-height: 5.5rem; }
+  .rs-col > span { font-size: 0.64rem; color: var(--text-3); }
+  .rs-card { display: flex; flex-direction: column; gap: 0.2rem; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.4rem 0.5rem; color: var(--text); font-size: 0.7rem; line-height: 1.3; }
+  .rs-card i { font-style: normal; font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-3); }
+  .rs-card.is-hot { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .rs-card .cl-pill { align-self: flex-start; }
+  .rs-term { margin: 0; padding: 0.5rem 0.7rem; border-top: 1px solid var(--border); font-size: 0.68rem; }
+  .rs-inbox { list-style: none; margin: 0; padding: 0.6rem; display: flex; flex-direction: column; gap: 0.35rem; }
+  .rs-inbox li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.6rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface-2); padding: 0.45rem 0.6rem; color: var(--text); }
+  .rs-inbox li > span:nth-child(2) { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rs-policies li > span:first-child { color: var(--text-3); font-size: 0.68rem; width: 5rem; }
+  .rs-act { font-size: 0.66rem; font-weight: 600; color: var(--accent-ink); background: var(--accent); border-radius: 4px; padding: 0.15rem 0.5rem; }
+  .rs-foot { margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.2rem; padding: 0.55rem 0.8rem; border-top: 1px solid var(--border); color: var(--text-3); font-size: 0.68rem; }
+  .rs-foot b { color: var(--text); font-weight: 560; }
+  .rs-stats { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; background: var(--border); border-bottom: 1px solid var(--border); }
+  @media (max-width: 40rem) { .rs-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .rs-stats > div { background: var(--surface); padding: 0.55rem 0.65rem; display: flex; flex-direction: column; min-width: 0; }
+  .rs-stats b { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.02em; color: var(--text); line-height: 1.1; }
+  .rs-stats b.is-warn { color: var(--warn); } .rs-stats b.is-info { color: var(--info); } .rs-stats b.is-ok { color: var(--ok); } .rs-stats b.is-cloud { color: var(--cloud-strong); }
+  .rs-stats span { font-size: 0.62rem; color: var(--text-3); }
+  @media (prefers-reduced-motion: reduce) { .rs-panel { animation: none; } }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-roles]');
+  if (root) {
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-rs-tab]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-rs-panel]'));
+    const select = (id: string, focus = false) => {
+      tabs.forEach((t) => { const on = t.dataset.rsTab === id; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; if (on && focus) t.focus(); });
+      panels.forEach((p) => { p.hidden = p.dataset.rsPanel !== id; });
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(t.dataset.rsTab!));
+      t.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); select(tabs[(i + 1) % tabs.length]!.dataset.rsTab!, true); }
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); select(tabs[(i - 1 + tabs.length) % tabs.length]!.dataset.rsTab!, true); }
+      });
+    });
+  }
+</script>

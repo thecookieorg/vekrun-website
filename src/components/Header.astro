@@ -7,6 +7,9 @@ import GithubMark from './GithubMark.astro';
 import { primaryNav, primaryCta, featurePages, site } from '@/data/site';
 import { hasRelease } from '@/data/releases';
 
+interface Props { themeToggle?: boolean }
+const { themeToggle = true } = Astro.props;
+
 const cta = hasRelease
   ? { label: primaryCta.releasedLabel, href: primaryCta.releasedHref }
   : { label: primaryCta.label, href: primaryCta.href };
@@ -53,7 +56,7 @@ const nav = site.repo.public ? [...primaryNav, { label: 'GitHub', href: site.rep
     </nav>
 
     <div class="flex items-center gap-2">
-      <ThemeToggle />
+      {themeToggle && <ThemeToggle />}
       <span class="hidden sm:inline-flex"><Button href={cta.href}>{cta.label}</Button></span>
       <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-text-2 hover:text-text lg:hidden" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav" data-menu-toggle>
         <Menu class="h-4 w-4" data-icon="open" aria-hidden="true" />

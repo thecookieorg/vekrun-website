@@ -151,22 +151,21 @@ const structuredData = [
 
   <!-- D2. Vekrun Cloud -->
   <Section rule aria-labelledby="cloud-title" class="cloud-band">
-    <div class="grid items-center gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-16">
-      <SectionHeading id="cloud-title" title="Built for you. Connected for your team." lede="Vekrun is free for every developer. Connect your organization with Vekrun Cloud to share projects, coordinate AI work, and give your team a clear view of engineering progress." class="reveal">
+    <div class="grid items-center gap-10 lg:grid-cols-[minmax(0,6fr)_minmax(0,6fr)] lg:gap-16">
+      <SectionHeading id="cloud-title" title="Built for you. Connected for your team." lede="Vekrun is free for every developer. Vekrun Cloud, the optional team layer, connects your organization: shared projects and Factory queues, approvals in one place, and a clear view of engineering progress for the people who manage it." class="reveal">
         <p class="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.875rem] text-text-3"><span class="inline-flex items-center gap-1.5"><span class="h-1.5 w-1.5 rounded-full bg-warn" aria-hidden="true"></span>{cloud.statusLabel}</span><span>{cloud.promise}</span></p>
         <a href={cloud.href} class="group link-slide mt-6 inline-flex items-center gap-1.5 text-[0.9375rem] font-[540] text-accent">Explore {cloud.name}<ArrowUpRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a>
       </SectionHeading>
-      <div class="reveal cloud-mini" aria-hidden="true">
-        <div class="cloud-mini-col">
-          <span class="cloud-mini-desk">Alex · Board</span>
-          <span class="cloud-mini-desk">Priya · Reviews</span>
-          <span class="cloud-mini-desk">Factory worker</span>
-        </div>
-        <span class="cloud-mini-wires"></span>
-        <span class="cloud-mini-hub"><svg viewBox="0 0 32 32" width="18" height="18"><path d="M5 7h5.2l5.8 13.4L21.8 7H27L18.1 27h-4.2Z" fill="currentColor"/></svg>Acme Engineering<small>Vekrun Cloud</small></span>
-        <span class="cloud-mini-wire"></span>
-        <span class="cloud-mini-dash">Dashboard<small>browser</small></span>
-      </div>
+      <a href={cloud.href} class="reveal cloud-mini card card-hover block p-5" aria-label="Explore Vekrun Cloud">
+        <span class="cloud-mini-bar"><span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>Acme Engineering · overview</span><span class="cloud-mini-live"><i></i>3 desktops connected</span></span>
+        <span class="cloud-mini-stats" aria-hidden="true"><span><b>11</b>In progress</span><span><b>4</b>Awaiting review</span><span><b>2</b>AI jobs running</span><span><b>9</b>Delivered this week</span></span>
+        <span class="cloud-mini-feed" aria-hidden="true">
+          <span><i class="is-ok">Merged</i>#216 Retry failed exports · approved by Priya</span>
+          <span><i class="is-cloud">Factory</i>VEK-152 · build-3 · step 2 of 3</span>
+          <span><i class="is-warn">Approval</i>VEK-145 plan · waiting on Sam</span>
+        </span>
+        <span class="cloud-mini-foot">Dashboard preview with demonstration data · Vekrun Cloud is in development</span>
+      </a>
     </div>
   </Section>
 
@@ -234,16 +233,19 @@ const structuredData = [
   .hero { position: relative; }
   .hero::before { left: 50%; top: -6rem; transform: translateX(-50%); width: 60rem; height: 30rem; }
   .hero::after { right: 10%; top: 14rem; }
-  .cloud-mini { display: grid; grid-template-columns: auto 1.5rem auto 1.5rem auto; align-items: center; justify-content: center; font-size: 0.74rem; }
-  .cloud-mini-col { display: flex; flex-direction: column; gap: 0.5rem; }
-  .cloud-mini-desk { border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); padding: 0.45rem 0.7rem; color: var(--text-2); font-family: var(--font-mono); font-size: 0.68rem; white-space: nowrap; }
-  .cloud-mini-wires { position: relative; height: 100%; }
-  .cloud-mini-wires::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: color-mix(in srgb, var(--accent) 45%, var(--border-strong)); }
-  .cloud-mini-wires::after { content: ''; position: absolute; left: 50%; top: 1rem; bottom: 1rem; width: 1px; background: color-mix(in srgb, var(--accent) 45%, var(--border-strong)); }
-  .cloud-mini-wire { height: 1px; background: color-mix(in srgb, var(--accent) 45%, var(--border-strong)); }
-  .cloud-mini-hub { display: flex; flex-direction: column; align-items: center; gap: 0.1rem; padding: 0.8rem 1rem; border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--border)); border-radius: var(--radius-lg); background: color-mix(in srgb, var(--accent) 6%, var(--surface)); box-shadow: var(--glow); color: var(--text); font-weight: 560; text-align: center; }
-  .cloud-mini-hub svg { color: var(--accent); margin-bottom: 0.2rem; }
-  .cloud-mini-hub small, .cloud-mini-dash small { display: block; color: var(--text-3); font-weight: 400; font-size: 0.66rem; }
-  .cloud-mini-dash { border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); padding: 0.55rem 0.8rem; color: var(--text); text-align: center; white-space: nowrap; }
-  @media (max-width: 30rem) { .cloud-mini { grid-template-columns: auto 1rem auto; } .cloud-mini-wire, .cloud-mini-dash { display: none; } }
+  .cloud-mini { display: grid; gap: 0.75rem; font-size: 0.78rem; color: var(--text-2); }
+  .cloud-mini-bar { display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-3); padding-bottom: 0.6rem; border-bottom: 1px solid var(--border); }
+  .cloud-mini-live { margin-left: auto; display: inline-flex; align-items: center; gap: 0.35rem; color: var(--text-2); }
+  .cloud-mini-live i { width: 0.45rem; height: 0.45rem; border-radius: 50%; background: var(--accent-2); }
+  .cloud-mini-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+  .cloud-mini-stats > span { display: flex; flex-direction: column; gap: 0.1rem; padding: 0.55rem 0.65rem; background: var(--surface); font-size: 0.64rem; color: var(--text-3); min-width: 0; }
+  .cloud-mini-stats b { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.02em; color: var(--text); line-height: 1.1; }
+  .cloud-mini-feed { display: grid; gap: 0.35rem; }
+  .cloud-mini-feed > span { display: flex; align-items: center; gap: 0.5rem; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cloud-mini-feed i { font-style: normal; font-family: var(--font-mono); font-size: 0.62rem; border: 1px solid var(--border-strong); border-radius: 999px; padding: 0.1rem 0.45rem; color: var(--text-2); flex: 0 0 auto; }
+  .cloud-mini-feed i.is-ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 50%, transparent); }
+  .cloud-mini-feed i.is-warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 50%, transparent); }
+  .cloud-mini-feed i.is-cloud { color: var(--accent-2); border-color: color-mix(in srgb, var(--accent-2) 50%, transparent); }
+  .cloud-mini-foot { font-size: 0.7rem; color: var(--text-3); }
+  @media (max-width: 30rem) { .cloud-mini-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 </style>

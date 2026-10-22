@@ -1,0 +1,235 @@
+---
+/**
+ * The hero stage. The Cloud dashboard is the artwork; two developer desktops sit
+ * behind it at different depths. One job finishes on Alex's machine, becomes a
+ * pull request, reaches Priya for review, and the dashboard updates each time.
+ * Markup carries the final state. Conceptual, demonstration data.
+ */
+import Window from '@/components/mock/Window.astro';
+import DemoControls from '@/components/mock/DemoControls.astro';
+import Browser from './Browser.astro';
+import Avatar from './Avatar.astro';
+import { org } from '@/data/cloud-demo';
+
+const nav = ['Overview', 'Projects', 'Work', 'AI Operations', 'Quality & Insights', 'Reports', 'Settings'];
+const weeks = [5, 6, 6, 8, 7, 9, 8, 11];
+---
+<figure class="hs-wrap enter-scale" style="--i: 4" data-demo-root="cloud-hero" data-hero>
+<div class="hs">
+  <svg class="hs-paths" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+    <defs><linearGradient id="cl-grad" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="var(--accent)"/><stop offset="1" stop-color="var(--cloud)"/></linearGradient></defs>
+    <path class="cl-path" d="M11 74 C 11 60, 15 54, 19 52" pathLength="100"/>
+    <path class="cl-packet" d="M11 74 C 11 60, 15 54, 19 52" pathLength="100" data-path="l"/>
+    <path class="cl-path" d="M89 78 C 89 64, 85 58, 81 56" pathLength="100"/>
+    <path class="cl-packet" d="M89 78 C 89 64, 85 58, 81 56" pathLength="100" data-path="r"/>
+  </svg>
+
+  <!-- The Cloud dashboard -->
+  <div class="hs-dash">
+    <Browser path="/acme/overview" class="hs-browser">
+      <span slot="status" class="cl-live"><i></i><span data-hero-sync>Up to date</span></span>
+      <span slot="status" class="hs-who"><Avatar who="dana" size="sm" /><span>Dana</span></span>
+      <div class="hs-body">
+        <nav class="hs-nav" aria-hidden="true">
+          <span class="hs-org"><i></i>{org.name}</span>
+          {nav.map((n, i) => <span class:list={['hs-nav-i', i === 0 && 'is-on']}>{n}</span>)}
+        </nav>
+        <div class="hs-main">
+          <div class="hs-stats">
+            <div><b>11</b><span>In progress</span></div>
+            <div><b data-stat="review">3</b><span>Awaiting review</span></div>
+            <div><b data-stat="jobs">1</b><span>AI jobs running</span></div>
+            <div><b data-stat="done" class="is-ok">9</b><span>Delivered this week</span></div>
+          </div>
+          <div class="hs-two">
+            <div class="hs-panel">
+              <h4>Throughput <small>delivered per week</small></h4>
+              <svg class="hs-chart" viewBox="0 0 160 44" preserveAspectRatio="none" aria-hidden="true">
+                {weeks.map((w, i) => <rect x={i * 20 + 3} y={44 - (w / 11) * 40} width="14" height={(w / 11) * 40} rx="2" class:list={['hs-bar', i === weeks.length - 1 && 'is-now']} style={`--d: ${i * 60}ms`} />)}
+              </svg>
+            </div>
+            <div class="hs-panel">
+              <h4>Factory <small>shared queue</small></h4>
+              <ul class="hs-jobs">
+                <li><span class="hs-id">VEK-140</span><span class="hs-t">Retry failed exports</span><span class="cl-pill is-ok" data-hero-job>merged · #216</span></li>
+                <li><span class="hs-id">VEK-145</span><span class="hs-t">Payment webhooks</span><span class="cl-pill is-warn">waiting for Sam</span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="hs-panel">
+            <h4>Activity</h4>
+            <ul class="hs-feed" data-feed>
+              <li data-t="7300"><span class="cl-pill is-ok">Merged</span><span>#216 Retry failed exports · approved by Priya</span></li>
+              <li data-t="4000"><span class="cl-pill is-info">Review</span><span>#216 requested from Priya · 18 tests passed</span></li>
+              <li data-t="2600"><span class="cl-pill is-cloud">Factory</span><span>VEK-140 · build-2 finished implementing · verifying</span></li>
+              <li><span class="cl-pill is-muted">Queued</span><span>VEK-145 Payment webhooks added by Dana · plan requested</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </Browser>
+  </div>
+
+  <!-- Alex's desktop: the Factory job -->
+  <div class="hs-desk hs-desk-l">
+    <Window title="Alex · Vekrun" crumbs={['Factory', 'VEK-140']} class="hs-win">
+      <span slot="status" class="hs-mono">macOS</span>
+      <div class="hs-job">
+        <div class="hs-job-head"><span>Retry failed exports</span><span class="hs-mono">worker build-2 · $3.20 of $12</span></div>
+        <span class="cl-bar" data-hero-prog style="--w: 100%"><i></i></span>
+        <ul class="hs-agents">
+          <li><Avatar kind="agent" label="D" size="sm" /><span>Developer agent</span><span class="hs-mono" data-ag="dev">done · 4 files changed</span></li>
+          <li><Avatar kind="agent" label="T" size="sm" /><span>Testing agent</span><span class="hs-mono" data-ag="test">18 passed · verified</span></li>
+        </ul>
+        <p class="hs-pr" data-t="3400"><span class="cl-pill is-info">#216</span>Pull request opened · review requested</p>
+      </div>
+    </Window>
+  </div>
+
+  <!-- Priya's desktop: the review -->
+  <div class="hs-desk hs-desk-r">
+    <Window title="Priya · Vekrun" crumbs={['Reviews']} class="hs-win">
+      <span slot="status" class="hs-mono">Windows</span>
+      <ul class="hs-reviews">
+        <li class="hs-review" data-t="4700"><span class="hs-review-t"><span class="hs-id">#216</span>Retry failed exports</span><span class="hs-mono">from Factory via Alex · AI findings: 1 note</span><span class="cl-pill is-ok" data-t="6600">Approved by Priya</span></li>
+        <li class="hs-review is-quiet"><span class="hs-review-t"><span class="hs-id">#211</span>Replace the retry queue</span><span class="hs-mono">from Sam · 2 notes</span></li>
+      </ul>
+    </Window>
+  </div>
+</div>
+  <DemoControls notice="Conceptual preview. Vekrun Cloud is in development; this is the intended experience with demonstration data, not a recording of the application." />
+</figure>
+
+<style>
+  .hs-wrap { margin: 0; }
+  .hs { position: relative; }
+  .hs-paths { display: none; }
+  .hs-dash { position: relative; z-index: 2; min-width: 0; }
+  .hs-browser { font-size: 0.72rem; }
+  .hs-desk { position: relative; z-index: 3; min-width: 0; }
+  .hs-win { font-size: 0.7rem; box-shadow: var(--shadow-window); }
+  .hs-who { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--text-2); }
+  .hs-mono { font-family: var(--font-mono); font-size: 0.64rem; color: var(--text-3); }
+  .hs-id { font-family: var(--font-mono); font-size: 0.64rem; color: var(--text-3); margin-right: 0.35rem; }
+
+  /* Phone and tablet: a column. Desktop: the stage. */
+  @media (max-width: 63.9rem) {
+    .hs { display: grid; gap: 1rem; }
+    .hs-desk { width: 100%; }
+    .hs-desk-l, .hs-desk-r { animation: none; }
+  }
+  @media (min-width: 40rem) and (max-width: 63.9rem) {
+    .hs { grid-template-columns: 1fr 1fr; }
+    .hs-dash { grid-column: 1 / -1; }
+  }
+  @media (min-width: 64rem) {
+    .hs { padding-bottom: 7.5rem; }
+    .hs-paths { display: block; position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; overflow: visible; }
+    .hs-dash { margin-inline: 19%; }
+    .hs-desk { position: absolute; bottom: 0; width: 30%; }
+    .hs-desk-l { left: 0; animation: cl-slide-l 800ms var(--ease-out) both; animation-delay: 650ms; }
+    .hs-desk-r { right: 0; animation: cl-slide-r 800ms var(--ease-out) both; animation-delay: 780ms; }
+    .hs-desk-l { bottom: 1.5rem; }
+  }
+  @media (min-width: 80rem) { .hs-dash { margin-inline: 18%; } .hs-desk { width: 29%; } }
+
+  /* Dashboard body */
+  .hs-body { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); }
+  .hs-nav { display: flex; flex-direction: column; gap: 0.1rem; padding: 0.6rem; border-right: 1px solid var(--border); background: var(--bg-elevated); }
+  .hs-org { display: flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.5rem 0.6rem; font-weight: 560; color: var(--text); }
+  .hs-org i { width: 0.6rem; height: 0.6rem; border-radius: 3px; background: var(--accent-gradient); }
+  .hs-nav-i { padding: 0.3rem 0.5rem; border-radius: 6px; color: var(--text-3); }
+  .hs-nav-i.is-on { background: var(--surface-2); color: var(--text); box-shadow: inset 0 0 0 1px var(--border); }
+  @media (max-width: 47.9rem) { .hs-body { grid-template-columns: 1fr; } .hs-nav { display: none; } }
+  .hs-main { display: grid; gap: 0.7rem; padding: 0.75rem; min-width: 0; }
+  .hs-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+  @media (max-width: 30rem) { .hs-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .hs-stats > div { display: flex; flex-direction: column; gap: 0.1rem; padding: 0.55rem 0.65rem; background: var(--surface); min-width: 0; }
+  .hs-stats b { font-size: 1.35rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; color: var(--text); font-variant-numeric: tabular-nums; transition: color var(--dur-fast); }
+  .hs-stats b.is-ok { color: var(--ok); }
+  .hs-stats b.is-bump { color: var(--cloud-strong); }
+  .hs-stats span { font-size: 0.62rem; color: var(--text-3); }
+  .hs-two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0.7rem; }
+  @media (max-width: 30rem) { .hs-two { grid-template-columns: 1fr; } }
+  .hs-panel { border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); padding: 0.55rem 0.65rem; min-width: 0; }
+  .hs-panel h4 { margin: 0 0 0.45rem; font-size: 0.66rem; font-weight: 560; color: var(--text-2); letter-spacing: 0; display: flex; gap: 0.4rem; align-items: baseline; }
+  .hs-panel h4 small { font-weight: 400; color: var(--text-3); font-size: 0.6rem; }
+  .hs-chart { width: 100%; height: 3rem; overflow: visible; }
+  .hs-bar { fill: color-mix(in srgb, var(--accent) 38%, var(--surface-3)); transform-origin: bottom; transform-box: fill-box; animation: cl-grow-y 700ms var(--ease-out) both; animation-delay: calc(900ms + var(--d)); }
+  .hs-bar.is-now { fill: var(--accent); }
+  .hs-jobs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.35rem; }
+  .hs-jobs li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.45rem; }
+  .hs-t { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hs-feed { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.35rem; min-height: 5.2rem; }
+  .hs-feed li { display: flex; gap: 0.5rem; align-items: center; color: var(--text-2); animation: rise-sm 420ms var(--ease-out) both; }
+  .hs-feed li > span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hs-feed li[hidden] { display: none; }
+
+  /* Desktops */
+  .hs-job { display: grid; gap: 0.5rem; padding: 0.65rem 0.75rem; }
+  .hs-job-head { display: flex; justify-content: space-between; gap: 0.6rem; color: var(--text); font-weight: 540; }
+  .hs-agents { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.35rem; }
+  .hs-agents li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.45rem; color: var(--text-2); }
+  .hs-pr { margin: 0; display: flex; align-items: center; gap: 0.45rem; color: var(--text); padding-top: 0.4rem; border-top: 1px solid var(--border); animation: rise-sm 420ms var(--ease-out) both; }
+  .hs-pr[hidden] { display: none; }
+  .hs-reviews { list-style: none; margin: 0; padding: 0.55rem; display: flex; flex-direction: column; gap: 0.4rem; min-height: 6.5rem; }
+  .hs-review { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.5rem 0.6rem; border: 1px solid color-mix(in srgb, var(--info) 45%, transparent); border-radius: var(--radius-sm); background: var(--surface-2); animation: scale-in 450ms var(--ease-out) both; }
+  .hs-review[hidden] { display: none; }
+  .hs-review.is-quiet { border-color: var(--border); animation: none; }
+  .hs-review-t { color: var(--text); }
+  .hs-review .cl-pill { align-self: flex-start; margin-top: 0.15rem; animation: scale-in 350ms var(--ease-spring) both; }
+  .hs-review .cl-pill[hidden] { display: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hs-wrap, .hs-desk-l, .hs-desk-r, .hs-bar, .hs-feed li, .hs-pr, .hs-review, .hs-review .cl-pill { animation: none !important; }
+  }
+</style>
+
+<script>
+  import { createSequence, reducedMotion, type Step } from '@/scripts/sequence';
+
+  const root = document.querySelector<HTMLElement>('[data-hero]');
+  if (root) {
+    const timed = Array.from(root.querySelectorAll<HTMLElement>('[data-t]'));
+    const at = (t: string) => timed.filter((n) => n.dataset.t === t);
+    const stat = (k: string) => root.querySelector<HTMLElement>(`[data-stat="${k}"]`)!;
+    const sync = root.querySelector<HTMLElement>('[data-hero-sync]')!;
+    const prog = root.querySelector<HTMLElement>('[data-hero-prog]')!;
+    const job = root.querySelector<HTMLElement>('[data-hero-job]')!;
+    const dev = root.querySelector<HTMLElement>('[data-ag="dev"]')!;
+    const test = root.querySelector<HTMLElement>('[data-ag="test"]')!;
+    const packet = (k: string) => root.querySelector<SVGPathElement>(`[data-path="${k}"]`)!;
+    const reduce = reducedMotion();
+
+    const send = (k: string, dir: 'go' | 'back') => {
+      if (reduce) return;
+      const p = packet(k); p.classList.remove('is-go', 'is-back'); void p.getBoundingClientRect(); p.classList.add(`is-${dir}`);
+    };
+    const set = (k: string, v: number) => { const el = stat(k); el.textContent = String(v); if (!reduce) { el.classList.add('is-bump'); setTimeout(() => el.classList.remove('is-bump'), 700); } };
+    const syncing = (on: boolean) => { sync.textContent = on ? 'Syncing' : 'Up to date'; };
+    const jobState = (text: string, tone: string) => { job.textContent = text; job.classList.remove('is-ok', 'is-warn', 'is-info', 'is-cloud'); job.classList.add(`is-${tone}`); };
+
+    const reset = () => {
+      timed.forEach((n) => { n.hidden = true; });
+      root.querySelectorAll('.cl-packet').forEach((p) => p.classList.remove('is-go', 'is-back'));
+      stat('review').textContent = '3'; stat('jobs').textContent = '2'; stat('done').textContent = '8';
+      prog.style.setProperty('--w', '55%');
+      dev.textContent = 'implementing · step 3 of 4'; test.textContent = 'waiting';
+      jobState('build-2 · implementing', 'cloud'); syncing(false);
+    };
+    const show = (t: string) => at(t).forEach((n) => { n.hidden = false; });
+    const steps: Step[] = [
+      { t: 1400, run: () => { dev.textContent = 'implementing · step 4 of 4'; prog.style.setProperty('--w', '70%'); } },
+      { t: 2200, run: () => { dev.textContent = 'done · 4 files changed'; test.textContent = '18 tests · running'; prog.style.setProperty('--w', '85%'); } },
+      { t: 2600, run: () => { send('l', 'go'); syncing(true); } },
+      { t: 3000, run: () => { show('2600'); jobState('build-2 · verifying', 'cloud'); } },
+      { t: 3400, run: () => { test.textContent = '18 passed · verified'; prog.style.setProperty('--w', '100%'); show('3400'); send('l', 'go'); } },
+      { t: 4000, run: () => { show('4000'); set('review', 4); set('jobs', 1); jobState('in review · #216', 'info'); send('r', 'back'); } },
+      { t: 4700, run: () => { show('4700'); syncing(false); } },
+      { t: 6600, run: () => { show('6600'); send('r', 'go'); syncing(true); } },
+      { t: 7300, run: () => { show('7300'); set('review', 3); set('done', 9); jobState('merged · #216', 'ok'); } },
+      { t: 7900, run: () => syncing(false) },
+    ];
+    createSequence(root, steps, { reset });
+  }
+</script>

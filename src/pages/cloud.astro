@@ -1,239 +1,297 @@
 ---
+/**
+ * Vekrun Cloud. Dark by design (Base locks the theme), with page-scoped tokens
+ * from styles/cloud.css. Every product interface on this page is a conceptual
+ * demonstration built from one sample organization; nothing is a recording and
+ * nothing here signs anyone up. Status comes from `cloud` in data/site.ts.
+ */
+import '@/styles/cloud.css';
 import Base from '@/layouts/Base.astro';
-import Section from '@/components/Section.astro';
-import SectionHeading from '@/components/SectionHeading.astro';
 import Button from '@/components/Button.astro';
 import StatusBadge from '@/components/StatusBadge.astro';
-import CloudConstellation from '@/components/cloud/CloudConstellation.astro';
-import OrgWindow from '@/components/cloud/OrgWindow.astro';
-import DashboardDemo from '@/components/cloud/DashboardDemo.astro';
-import WorkspaceDemo from '@/components/cloud/WorkspaceDemo.astro';
-import FactoryFlowDemo from '@/components/cloud/FactoryFlowDemo.astro';
-import WorkflowChains from '@/components/cloud/WorkflowChains.astro';
+import CloudHero from '@/components/cloud/CloudHero.astro';
+import DesktopSwitcher from '@/components/cloud/DesktopSwitcher.astro';
+import WorkflowStepper from '@/components/cloud/WorkflowStepper.astro';
+import CloudDashboard from '@/components/cloud/CloudDashboard.astro';
+import FactoryOps from '@/components/cloud/FactoryOps.astro';
+import ApprovalsDemo from '@/components/cloud/ApprovalsDemo.astro';
+import InsightsFlow from '@/components/cloud/InsightsFlow.astro';
+import GovernanceSettings from '@/components/cloud/GovernanceSettings.astro';
+import RoleSwitcher from '@/components/cloud/RoleSwitcher.astro';
+import SignInStrip from '@/components/cloud/SignInStrip.astro';
 import { cloud, site } from '@/data/site';
-import { Users, FolderKanban, GitPullRequest, ShieldCheck, Eye, Lock, Wallet, History, Mail, KeyRound, Building2 } from '@lucide/astro';
+import { Check } from '@lucide/astro';
 
-const compare: [string, string][] = [
-  ['Free and open source', 'Optional paid service'],
-  ['No account required', 'Organization sign-in'],
-  ['Full desktop terminal', 'Same desktop application'],
-  ['AI coding agents', 'Shared AI workflows'],
-  ['Local Factory and Council', 'Organization Factory queues'],
-  ['Personal Board and Insights', 'Shared projects and investigations'],
-  ['Local code reviews', 'Team-wide review coordination'],
-  ['Local and self-managed workers', 'Shared worker coordination'],
-  ['Personal permissions and settings', 'Organization governance and policies'],
-  ['Local-first workflows', 'Synchronization across developers'],
+const title = 'Vekrun Cloud — One Connected Workspace for Engineering Teams';
+const description = 'Coordinate developers, AI agents, projects, code reviews and engineering workflows in one shared workspace. Vekrun Cloud brings your entire engineering organization together. In development.';
+const structuredData = [
+  { '@context': 'https://schema.org', '@type': 'WebPage', name: cloud.name, url: `${site.url}${cloud.href}`, description, isPartOf: { '@type': 'WebSite', name: site.name, url: site.url }, about: { '@type': 'Thing', name: cloud.name, description: 'An optional, planned team layer for the free Vekrun desktop application.' } },
+  { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: site.name, item: site.url }, { '@type': 'ListItem', position: 2, name: cloud.name, item: `${site.url}${cloud.href}` }] },
 ];
-const workspace = [
-  { icon: Users, t: 'Membership, teams and roles', b: 'Invite developers, leads and managers. Each sees what their role allows.' },
-  { icon: FolderKanban, t: 'Shared projects, Boards and plans', b: 'Assignments and approved plans visible to everyone on the project, in the same Board developers already use.' },
-  { icon: GitPullRequest, t: 'Pull requests and reviews', b: 'Review requests reach the right teammate, with the AI findings beside the diff.' },
-  { icon: Eye, t: 'Shared Insights investigations', b: 'A production error investigated once, visible to the whole team, with the fix plan attached.' },
-  { icon: ShieldCheck, t: 'Approvals and policies', b: 'Who approves plans, merges and production commands, and which models and budgets apply, decided once for the organization.' },
+
+const approvalKinds = [
+  ['Task plans', 'before Factory runs them'],
+  ['Pull request reviews', 'before anything merges'],
+  ['Expensive AI operations', 'above a limit you set'],
+  ['Permission requests', 'new workers, new repositories'],
+  ['Sensitive actions', 'production, secrets, migrations'],
+  ['Verification reports', 'kept for the record, no decision needed'],
 ];
-const signIn = [
-  { icon: Mail, t: 'Email' },
-  { icon: KeyRound, t: 'Google' },
-  { icon: KeyRound, t: 'GitHub' },
-  { icon: KeyRound, t: 'GitLab' },
-  { icon: Building2, t: 'Enterprise SSO' },
-];
-const governance = [
-  { icon: Users, t: 'Roles and access', b: 'Organization roles and per-project permissions.' },
-  { icon: KeyRound, t: 'Model and provider policies', b: 'Which AI providers and models the organization allows, with company keys where you want them.' },
-  { icon: Wallet, t: 'Spending controls', b: 'Limits per developer, per queue and per week, visible before work starts.' },
-  { icon: ShieldCheck, t: 'Approval requirements', b: 'Which steps need a person: plans, merges, production-related commands, new workers.' },
-  { icon: Lock, t: 'Shared worker permissions', b: 'What a shared machine may run, open or never touch.' },
-  { icon: History, t: 'Audit history and data policies', b: 'Who approved what, when, and which kinds of data an organization workspace shares.' },
-];
-const enterprise = ['SSO enforcement', 'SCIM provisioning', 'Advanced access controls', 'Audit exports', 'Private deployment options', 'Priority support'];
 const privacy = [
-  'Source code stays in the environments you authorize by default. Cloud coordinates work; it does not need your repositories to do so.',
-  'Personal projects remain separate from any organization workspace.',
-  'Synchronization is selective: tickets, plans, review status and job results, not everything on your machine.',
-  'Organization policies decide what is shared, and the policy is visible to every member.',
-  'Local credentials and secrets are not uploaded automatically.',
-  'AI provider selection stays under your control, or under the organization’s policy where you have chosen to join one.',
-  'Code execution can run on company-owned infrastructure, including the shared workers an organization approves.',
+  ['Personal projects stay separate', 'An organization workspace sits beside your personal one. Nothing moves between them unless you move it.'],
+  ['Shared by permission', 'Organization data is visible to the people and roles a project grants, and the policy is visible to every member.'],
+  ['Source code is not uploaded by default', 'Cloud coordinates tickets, plans, review status and job results. Code stays in your repositories and on the machines you authorize.'],
+  ['API keys stay where they are', 'Personal keys never leave your machine. Company keys are held by the organization for organization work only.'],
+  ['Policies decide what synchronizes', 'The Data sharing settings above are the whole list. Add nothing, and nothing more is shared.'],
+  ['Work can run on your infrastructure', 'Shared workers are machines you own and approve. Vekrun Cloud does not need to run your code to coordinate it.'],
 ];
-const description = `${cloud.name}: ${cloud.headline} Optional shared workspaces, a web dashboard for project managers, shared Factory queues and organization policies for teams using the free Vekrun desktop app. In development.`;
 ---
-<Base title={cloud.name} description={description}>
+<Base title={cloud.name} fullTitle={title} description={description} image="/og/cloud.png" structuredData={structuredData} lockTheme="dark" page="cloud">
   <!-- Hero -->
-  <section class="ch ambient overflow-hidden border-b border-border" aria-labelledby="cloud-title">
+  <section class="cl-hero ambient" aria-labelledby="cloud-title">
     <div class="grid-field pointer-events-none absolute inset-0" aria-hidden="true"></div>
-    <div class="container-site relative pt-16 sm:pt-20 lg:pt-24 pb-14 sm:pb-16">
-      <div class="max-w-3xl">
-        <p class="enter flex flex-wrap items-center gap-3" style="--i: 0">
-          <span class="text-[0.9375rem] font-[540] text-accent">{cloud.name}</span>
-          <span class="inline-flex items-center gap-2 rounded-full border border-border bg-surface/70 px-3 py-1 text-[0.8125rem] text-text-2 backdrop-blur"><span class="h-1.5 w-1.5 rounded-full bg-warn" aria-hidden="true"></span>{cloud.statusLabel}</span>
-        </p>
-        <h1 id="cloud-title" class="heading-1 enter mt-4 text-text" style="--i: 1">Your entire engineering team. <span class="text-gradient">One connected workspace.</span></h1>
-        <p class="lede enter mt-5 measure-wide" style="--i: 2">Connect developers, AI agents and engineering workflows. Manage projects, coordinate work, and see progress across your organization.</p>
-        <div class="enter mt-8 flex flex-wrap gap-3" style="--i: 3">
-          <Button href="#workspace">Explore Cloud</Button>
-          <Button href={cloud.roadmapHref} variant="secondary">View Cloud roadmap</Button>
+    <div class="cl-wide relative">
+      <div class="cl-hero-copy">
+        <p class="cl-eyebrow enter" style="--i: 0">Introducing Vekrun Cloud</p>
+        <h1 id="cloud-title" class="cl-display enter mt-5 text-text" style="--i: 1">Your entire engineering team.<br class="hidden sm:inline" /> <span class="text-gradient">One connected workspace.</span></h1>
+        <p class="cl-lede enter mx-auto mt-6 max-w-2xl" style="--i: 2">Connect developers, AI agents, and engineering workflows in one place. Coordinate projects, delegate work, manage approvals, and see what’s happening across your organization.</p>
+        <div class="enter mt-8 flex flex-wrap justify-center gap-3" style="--i: 3">
+          <Button href="#connected" size="lg">Explore Vekrun Cloud</Button>
+          <Button href="#how-it-works" size="lg" variant="secondary">See How It Works</Button>
         </div>
-        <p class="enter mt-6 text-[0.9375rem] text-text-2" style="--i: 3">{cloud.secondary} <span class="text-text">{cloud.promise}</span></p>
+        <p class="enter mt-6 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[0.9rem] text-text-2" style="--i: 3">
+          <span class="inline-flex items-center gap-2 rounded-full border border-border bg-surface/70 px-3 py-1 text-[0.8125rem] backdrop-blur"><span class="h-1.5 w-1.5 rounded-full bg-warn" aria-hidden="true"></span>{cloud.statusLabel}</span>
+          <span>{cloud.promise}</span>
+        </p>
       </div>
-      <div class="relative mt-12 sm:mt-14 lg:mt-16"><CloudConstellation /></div>
+      <div class="relative mt-12 sm:mt-14 lg:mt-16"><CloudHero /></div>
     </div>
   </section>
 
-  <!-- Community vs Cloud -->
-  <Section rule tone="elevated" aria-labelledby="compare-title">
-    <div class="grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-16">
-      <SectionHeading id="compare-title" title="Two products, one application" lede="Vekrun Community is the complete, free, open-source desktop application. Vekrun Cloud is the optional layer that connects an organization. Developers keep the same app; connecting an organization unlocks the shared parts. Project managers use the Cloud dashboard in a browser without installing anything." class="reveal">
-        <p class="mt-6 text-[1.0625rem] font-[560] text-text">{cloud.promise}</p>
-        <p class="mt-2 text-[0.9375rem] text-text-2">Community users keep every capability, including AI agents with their own models. Nothing moves behind a paywall.</p>
-      </SectionHeading>
-      <div class="reveal overflow-x-auto">
-        <table class="cmp">
-          <thead><tr><th scope="col">Vekrun Community</th><th scope="col">Vekrun Cloud</th></tr></thead>
-          <tbody>{compare.map(([a, b]) => <tr><td>{a}</td><td>{b}</td></tr>)}</tbody>
-        </table>
+  <!-- One desktop, your whole team -->
+  <section id="connected" class="cl-section cl-rule scroll-mt-16" aria-labelledby="connected-title">
+    <div class="container-site">
+      <div class="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-14 lg:items-start">
+        <div class="reveal min-w-0 lg:sticky lg:top-24">
+          <p class="cl-kicker">One desktop, your whole team</p>
+          <h2 id="connected-title" class="cl-h2 mt-3 text-text">The Vekrun you already know. Now connected.</h2>
+          <p class="cl-lede mt-4">Developers keep the same Vekrun desktop application. Cloud connects the organization work they are authorized to see. No separate Teams app, nothing duplicated.</p>
+          <dl class="cl-facts mt-7">
+            <div><dt>Personal projects remain personal</dt><dd>They never join an organization unless you move them.</dd></div>
+            <div><dt>Organization projects are shared by permission</dt><dd>Members see what their project role allows.</dd></div>
+            <div><dt>Connect at any time</dt><dd>Join from the workspace menu, later, without reinstalling.</dd></div>
+            <div><dt>Community never needs an account</dt><dd>{cloud.promise}</dd></div>
+          </dl>
+        </div>
+        <div class="reveal min-w-0"><DesktopSwitcher /></div>
       </div>
     </div>
-  </Section>
+  </section>
 
-  <!-- One workspace -->
-  <Section id="workspace" rule aria-labelledby="workspace-title" class="ambient scroll-mt-16">
-    <SectionHeading id="workspace-title" title="One workspace for your whole team" lede="Several developers, the same Vekrun desktop app, one organization. Work assigned in the browser lands on a developer’s Board; what an agent finishes reaches a reviewer; the manager sees it delivered. The preview above plays that story." class="reveal" />
-    <div class="mt-10 grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14">
-      <ul class="reveal-group space-y-5">
-        {workspace.map((w) => (
-          <li class="flex gap-3"><w.icon class="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" /><div><h3 class="text-[1.0625rem] font-[560] text-text">{w.t}</h3><p class="mt-1 text-[0.9375rem] leading-relaxed text-text-2">{w.b}</p></div></li>
-        ))}
-      </ul>
-      <div class="reveal"><OrgWindow /></div>
+  <!-- Shared engineering workflows -->
+  <section id="how-it-works" class="cl-section cl-rule bg-bg-elevated scroll-mt-16" aria-labelledby="flow-title">
+    <div class="container-site">
+      <div class="reveal max-w-3xl">
+        <p class="cl-kicker">Shared engineering workflows</p>
+        <h2 id="flow-title" class="cl-h2 mt-3 text-text">Work moves forward. Everyone stays in sync.</h2>
+        <p class="cl-lede mt-4">Work travels between a manager, a developer, the AI agents and a reviewer without anyone forwarding anything. Step through it, or let it play.</p>
+      </div>
+      <div class="reveal mt-10"><WorkflowStepper /></div>
+      <p class="reveal mt-10 text-center text-[1.15rem] font-[560] tracking-[-0.01em] text-text">From assignment to delivery, every step is connected.</p>
     </div>
-  </Section>
+  </section>
 
   <!-- Project manager dashboard -->
-  <Section rule tone="elevated" aria-labelledby="dash-title">
-    <SectionHeading id="dash-title" title="Your projects. Clear visibility." lede="See what your developers and AI agents are working on, what’s blocked, what’s ready for review, and what’s been delivered, all from your browser. No desktop install for managers and stakeholders." align="center" class="reveal" />
-    <div class="reveal mt-12"><DashboardDemo /></div>
-    <ul class="reveal-group mt-10 grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 text-[0.9375rem]">
-      <li><h3 class="font-[560] text-text">Overview</h3><p class="mt-1 text-text-2">Active projects, work in progress, blocked tasks, pending reviews, completed work and recent activity.</p></li>
-      <li><h3 class="font-[560] text-text">Projects and work</h3><p class="mt-1 text-text-2">Milestones, progress, dependencies and ownership; shared tickets with assignments, priorities, manual versus AI-executed work and linked pull requests.</p></li>
-      <li><h3 class="font-[560] text-text">AI operations</h3><p class="mt-1 text-text-2">Running Factory jobs, assigned workers, approval requests, agent activity, budget usage and verification results.</p></li>
-      <li><h3 class="font-[560] text-text">Quality and Insights</h3><p class="mt-1 text-text-2">Failed CI checks, outstanding reviews, production errors, active investigations and pending fixes.</p></li>
-      <li><h3 class="font-[560] text-text">Reports</h3><p class="mt-1 text-text-2">Completed work, delivery trends, review bottlenecks, agent usage, engineering spending and project progress.</p></li>
-      <li><h3 class="font-[560] text-text">Demonstration data only</h3><p class="mt-1 text-text-2">Every number above is invented to show the layout. No organization’s statistics are shown anywhere on this site.</p></li>
-    </ul>
-  </Section>
-
-  <!-- One desktop application -->
-  <Section rule aria-labelledby="desk-title" class="ambient ambient-low">
-    <div class="grid items-center gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
-      <SectionHeading id="desk-title" title="Your Vekrun. Now connected." lede="There is no separate Teams application. The Vekrun desktop app has a personal workspace and, if you join an organization, an organization workspace beside it." class="reveal">
-        <dl class="reveal-group mt-7 space-y-5">
-          <div><dt class="font-[560] text-text">Personal workspace</dt><dd class="mt-1 text-[0.9375rem] text-text-2">Free, local-first development without an account. This is Vekrun today.</dd></div>
-          <div><dt class="font-[560] text-text">Organization workspace</dt><dd class="mt-1 text-[0.9375rem] text-text-2">An optional Cloud connection for shared projects, workflows, approvals and policies. Join later, without reinstalling or losing personal projects, and switch between organizations from one menu.</dd></div>
-        </dl>
-      </SectionHeading>
-      <div class="reveal"><WorkspaceDemo /></div>
-    </div>
-  </Section>
-
-  <!-- Sign-in -->
-  <Section rule tone="elevated" padded="tight" aria-labelledby="signin-title">
-    <div class="grid gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
-      <div class="reveal">
-        <h2 id="signin-title" class="heading-3">Organization sign-in</h2>
-        <p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">Planned ways to sign in to an organization. Enterprise plans add SSO enforcement and advanced policies so the company controls access. Signing in to Cloud does not grant access to repositories, trackers or any other service; each of those is authorized separately, as it is today.</p>
+  <section id="dashboard" class="cl-section cl-rule ambient" aria-labelledby="dash-title">
+    <div class="cl-wide">
+      <div class="reveal mx-auto max-w-3xl text-center">
+        <p class="cl-kicker">Project manager dashboard</p>
+        <h2 id="dash-title" class="cl-h2 mt-3 text-text">Finally, a clear view of engineering progress.</h2>
+        <p class="cl-lede mx-auto mt-4">See what your developers and AI agents are working on, what’s blocked, what’s awaiting review, and what’s been delivered, without opening a terminal.</p>
       </div>
-      <ul class="reveal-group flex flex-wrap gap-2" aria-label="Planned sign-in methods">
-        {signIn.map((s) => <li class="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3.5 py-2 text-[0.9rem] text-text-2"><s.icon class="h-4 w-4 text-text-3" aria-hidden="true" />{s.t}<StatusBadge status="planned" kind="roadmap" compact /></li>)}
-      </ul>
+      <div class="reveal mt-12"><CloudDashboard /></div>
     </div>
-  </Section>
+  </section>
 
-  <!-- Shared Factory -->
-  <Section rule aria-labelledby="factory-title" class="ambient">
-    <SectionHeading id="factory-title" title="AI teams that work across your organization" lede="The same Vekrun AI engine that runs on a developer’s machine runs organization work. Cloud adds the coordination: shared queues, approved workers, human approvals, progress and results everyone can see." class="reveal" />
-    <div class="reveal mt-10"><FactoryFlowDemo /></div>
-    <ul class="reveal-group mt-10 grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-4 text-[0.9375rem]">
-      <li><h3 class="font-[560] text-text">Shared queues and assignments</h3><p class="mt-1 text-text-2">Work created by a manager or a lead, queued for the team, picked up by an approved worker.</p></li>
-      <li><h3 class="font-[560] text-text">Human approvals</h3><p class="mt-1 text-text-2">A lead approves the plan and the budget. A developer approves the result. Nothing merges on its own.</p></li>
-      <li><h3 class="font-[560] text-text">Progress and verification</h3><p class="mt-1 text-text-2">Job progress, test results and a second agent’s verification, visible as they happen.</p></li>
-      <li><h3 class="font-[560] text-text">History and limits</h3><p class="mt-1 text-text-2">Shared execution history and spending limits per queue, per person and per week.</p></li>
-    </ul>
-    <p class="reveal mt-8 text-[0.9rem] text-text-3">No proprietary model and no second agent engine. Your organization’s provider policy decides which models run, including local ones.</p>
-  </Section>
+  <!-- AI Factory across the organization -->
+  <section id="factory" class="cl-section cl-rule bg-bg-elevated" aria-labelledby="factory-title">
+    <div class="cl-wide">
+      <div class="reveal max-w-3xl">
+        <p class="cl-kicker">AI Factory across your organization</p>
+        <h2 id="factory-title" class="cl-h2 mt-3 text-text">An AI engineering team that works with your team.</h2>
+        <p class="cl-lede mt-4">Vekrun Cloud coordinates approved engineering work across developers and the execution workers an organization makes available. The same agents that run on one machine, with a queue, approvals and a budget the whole team can see.</p>
+      </div>
+      <div class="reveal mt-10"><FactoryOps /></div>
+      <ul class="reveal-group mt-10 grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-4 text-[0.9375rem]">
+        <li><h3 class="font-[560] text-text">Shared queue</h3><p class="mt-1 text-text-2">Work queued by a manager or a lead, claimed by an approved worker, visible to everyone on the team.</p></li>
+        <li><h3 class="font-[560] text-text">Agents with names</h3><p class="mt-1 text-text-2">A developer agent implements, a testing agent verifies, a review agent looks for trouble. Each step is on the record.</p></li>
+        <li><h3 class="font-[560] text-text">A person in the loop</h3><p class="mt-1 text-text-2">Plans, sensitive changes and merges wait for the person your policy names. Nothing merges on its own.</p></li>
+        <li><h3 class="font-[560] text-text">Workers and budgets</h3><p class="mt-1 text-text-2">Machines you own, with the permissions you grant, and a weekly budget shown before any job starts.</p></li>
+      </ul>
+      <p class="reveal mt-8 text-[0.9rem] text-text-3">No proprietary model and no second agent engine. Your organization’s provider policy decides which models run, including local ones.</p>
+    </div>
+  </section>
 
-  <!-- Connected workflows -->
-  <Section rule tone="elevated" aria-labelledby="flows-title">
-    <SectionHeading id="flows-title" title="Connected engineering workflows" lede="Three examples of work that today stops at the edge of one developer’s machine, carried across the team instead." class="reveal" />
-    <div class="reveal mt-10"><WorkflowChains /></div>
-  </Section>
+  <!-- Approvals -->
+  <section id="approvals" class="cl-section cl-rule" aria-labelledby="approvals-title">
+    <div class="container-site">
+      <div class="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-14 lg:items-start">
+        <div class="reveal min-w-0 lg:sticky lg:top-24">
+          <p class="cl-kicker">One place for approvals</p>
+          <h2 id="approvals-title" class="cl-h2 mt-3 text-text">Stay in control without slowing everyone down.</h2>
+          <p class="cl-lede mt-4">Every decision an organization wants a person to make, in one inbox, with the context to make it quickly.</p>
+          <ul class="cl-facts mt-7" aria-label="What can require approval">
+            {approvalKinds.map(([k, v]) => <li><b>{k}</b><span>{v}</span></li>)}
+          </ul>
+          <p class="mt-6 text-[0.875rem] text-text-3">In the product, an approval requires an authenticated, authorized member of the organization. The demonstration here approves nothing.</p>
+        </div>
+        <div class="reveal min-w-0"><ApprovalsDemo /></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Insights and quality -->
+  <section id="insights" class="cl-section cl-rule bg-bg-elevated" aria-labelledby="insights-title">
+    <div class="container-site">
+      <div class="reveal max-w-3xl">
+        <p class="cl-kicker">Shared Insights and engineering quality</p>
+        <h2 id="insights-title" class="cl-h2 mt-3 text-text">Know what’s broken. See who’s fixing it.</h2>
+        <p class="cl-lede mt-4">A production error from Honeybadger, AppSignal, Sentry or Datadog becomes an investigation the whole team can see, a verified fix, a reviewed pull request and a confirmed deploy. Resolving it stays a person’s decision.</p>
+      </div>
+      <div class="reveal mt-10"><InsightsFlow /></div>
+    </div>
+  </section>
 
   <!-- Governance -->
-  <Section rule aria-labelledby="gov-title">
-    <SectionHeading id="gov-title" title="Stay in control as your team grows" lede="Decide once, for the organization, what people and agents may do." class="reveal" />
-    <ul class="reveal-group mt-10 grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
-      {governance.map((g) => <li class="flex gap-3"><g.icon class="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" /><div><h3 class="font-[560] text-text">{g.t}</h3><p class="mt-1 text-[0.9375rem] text-text-2">{g.b}</p></div></li>)}
-    </ul>
-    <div class="reveal mt-10 card p-6">
-      <div class="flex flex-wrap items-center gap-3"><h3 class="heading-3">Enterprise</h3><StatusBadge status="planned" kind="roadmap" compact /></div>
-      <ul class="mt-3 flex flex-wrap gap-2" aria-label="Planned enterprise capabilities">
-        {enterprise.map((e) => <li class="rounded-full border border-border bg-surface px-3 py-1.5 text-[0.875rem] text-text-2">{e}</li>)}
+  <section id="governance" class="cl-section cl-rule" aria-labelledby="gov-title">
+    <div class="container-site">
+      <div class="reveal max-w-3xl">
+        <p class="cl-kicker">Organization governance</p>
+        <h2 id="gov-title" class="cl-h2 mt-3 text-text">Your organization. Your rules.</h2>
+        <p class="cl-lede mt-4">Team roles, project access, model restrictions, AI spending limits, approval policies, shared worker permissions, audit history and data-sharing controls. Decided once, for the organization.</p>
+      </div>
+      <div class="reveal mt-10"><GovernanceSettings /></div>
+    </div>
+  </section>
+
+  <!-- Roles -->
+  <section id="roles" class="cl-section cl-rule bg-bg-elevated" aria-labelledby="roles-title">
+    <div class="container-site">
+      <div class="reveal max-w-3xl">
+        <p class="cl-kicker">Built for different roles</p>
+        <h2 id="roles-title" class="cl-h2 mt-3 text-text">One organization, four ways in.</h2>
+      </div>
+      <div class="reveal mt-8"><RoleSwitcher /></div>
+    </div>
+  </section>
+
+  <!-- Sign in and membership -->
+  <section id="join" class="cl-section cl-rule" aria-labelledby="join-title">
+    <div class="container-site">
+      <div class="reveal max-w-3xl">
+        <p class="cl-kicker">Sign in and organization membership</p>
+        <h2 id="join-title" class="cl-h2 mt-3 text-text">Join your organization in three screens.</h2>
+        <p class="cl-lede mt-4">A developer connects the desktop application to an organization with one account. Email, Google, GitHub, GitLab and Enterprise SSO are the planned ways in.</p>
+      </div>
+      <div class="reveal mt-10"><SignInStrip /></div>
+    </div>
+  </section>
+
+  <!-- Community vs Cloud vs Enterprise -->
+  <section id="plans" class="cl-section cl-rule ambient ambient-low bg-bg-elevated" aria-labelledby="plans-title">
+    <div class="container-site">
+      <div class="reveal mx-auto max-w-3xl text-center">
+        <p class="cl-kicker">Community, Cloud, Enterprise</p>
+        <h2 id="plans-title" class="cl-h2 mt-3 text-text">Free for developers. Connected for teams.</h2>
+        <p class="cl-lede mx-auto mt-4">Vekrun Community is the complete, free, open-source desktop application. Vekrun Cloud is the optional layer that connects an organization. Nothing moves behind a paywall.</p>
+      </div>
+      <ul class="reveal-group mt-12 grid gap-5 lg:grid-cols-3" aria-label="Plans">
+        {cloud.tiers.map((t, i) => (
+          <li class:list={['cl-plan', i === 1 && 'is-cloud']}>
+            <p class="cl-plan-k">{t.kicker}</p>
+            <h3 class="cl-plan-n">{t.name}</h3>
+            <p class:list={['cl-plan-p', i === 0 && 'text-gradient']}>{t.price}</p>
+            <p class="cl-plan-b">{t.body}</p>
+            {'plus' in t && <p class="cl-plan-plus">{t.plus}</p>}
+            <ul class="cl-plan-list">{t.includes.map((x) => <li><Check class="h-3.5 w-3.5 shrink-0" aria-hidden="true" />{x}{i === 2 && <StatusBadge status="planned" kind="roadmap" compact class="ml-auto" />}</li>)}</ul>
+            <p class="cl-plan-note">{t.note}</p>
+          </li>
+        ))}
       </ul>
-      <p class="mt-4 text-[0.875rem] text-text-3">No compliance certification or security guarantee is claimed here. What Cloud will and will not do with your data is described below, and the security page will be updated when the service exists.</p>
+      <p class="reveal mt-6 text-center text-[0.875rem] text-text-3">There is no sign-up, trial or billing yet. When there is, it will be announced here and on the roadmap.</p>
     </div>
-  </Section>
+  </section>
 
-  <!-- Privacy -->
-  <Section rule tone="elevated" aria-labelledby="privacy-title">
-    <div class="grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-16">
-      <SectionHeading id="privacy-title" title="Privacy and data ownership" lede="Cloud follows the same local-first idea as the desktop app. It coordinates work; it does not become the place your code lives." class="reveal" />
-      <ol class="reveal-group divide-y divide-border border-y border-border">
-        {privacy.map((p) => <li class="py-3.5 text-[0.9375rem] leading-relaxed text-text-2">{p}</li>)}
-      </ol>
+  <!-- Data ownership -->
+  <section id="privacy" class="cl-section cl-rule" aria-labelledby="privacy-title">
+    <div class="container-site">
+      <div class="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+        <div class="reveal">
+          <p class="cl-kicker">Data ownership and privacy</p>
+          <h2 id="privacy-title" class="cl-h2 mt-3 text-text">Your code stays under your control.</h2>
+          <p class="cl-lede mt-4">Cloud follows the same local-first idea as the desktop app. It coordinates work; it does not become the place your code lives.</p>
+          <div class="cl-flow mt-8" aria-label="What lives where">
+            <div class="cl-flow-box is-mint"><b>Your machine</b><span>source code · API keys · personal projects · local models</span></div>
+            <span class="cl-flow-link"><i>tickets, plans, review status, job results</i></span>
+            <div class="cl-flow-box is-blue"><b>Vekrun Cloud</b><span>organization, members, policies, shared work</span></div>
+            <span class="cl-flow-link"><i>approved jobs</i></span>
+            <div class="cl-flow-box is-mint"><b>Your infrastructure</b><span>shared workers · company keys · CI</span></div>
+          </div>
+        </div>
+        <dl class="reveal-group cl-facts cl-facts-lg">
+          {privacy.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+        </dl>
+      </div>
+      <p class="reveal mt-8 text-[0.875rem] text-text-3">We do not claim zero access or end-to-end encryption, and we claim no certification. If a verified implementation supports such a guarantee later, this page will say exactly what it covers.</p>
     </div>
-    <p class="reveal mt-8 text-[0.875rem] text-text-3">We do not claim zero access or end-to-end encryption. If a verified implementation supports such a guarantee later, this page will say exactly what it covers.</p>
-  </Section>
-
-  <!-- Pricing -->
-  <Section rule aria-labelledby="pricing-title" class="ambient ambient-low">
-    <SectionHeading id="pricing-title" title="Plans" lede="The intended structure. No price is final, nothing can be bought yet, and Community stays free." align="center" class="reveal" />
-    <ul class="reveal-group mt-10 grid gap-5 md:grid-cols-3" aria-label="Plans">
-      {cloud.tiers.map((t, i) => (
-        <li class:list={['card flex flex-col p-6', i === 0 && 'border-accent/50']}>
-          <h3 class="text-[1.0625rem] font-[560] text-text">{t.name}</h3>
-          <p class:list={['mt-2 text-[1.35rem] font-[600] tracking-[-0.02em]', i === 0 ? 'text-gradient' : 'text-text']}>{t.price}</p>
-          <p class="mt-3 text-[0.9375rem] leading-relaxed text-text-2">{t.body}</p>
-          <p class="mt-auto pt-4 text-[0.8125rem] text-text-3">{t.note}</p>
-        </li>
-      ))}
-    </ul>
-    <p class="reveal mt-6 text-center text-[0.875rem] text-text-3">There is no sign-up, trial or billing yet. When there is, it will be announced here and on the roadmap.</p>
-  </Section>
+  </section>
 
   <!-- Where this stands -->
-  <section class="border-t border-border bg-bg-elevated">
+  <section class="cl-rule bg-bg-elevated" aria-labelledby="status-title">
     <div class="container-site py-12 sm:py-14">
       <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
         <div class="max-w-2xl">
-          <h2 class="heading-3">Where this stands</h2>
-          <p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">{site.status.line} Vekrun Cloud is a planned product: every capability on this page is on the roadmap and none is built yet. The desktop application it connects runs in a development build on macOS, and everything shown about it keeps the status given on its own feature pages.</p>
+          <h2 id="status-title" class="heading-3">Where this stands</h2>
+          <p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">{site.status.line} Vekrun Cloud is a planned product: every capability on this page is on the roadmap and none is built yet. Every interface above is a conceptual demonstration with invented data. The desktop application it connects runs in a development build on macOS, and everything shown about it keeps the status given on its own feature pages.</p>
         </div>
-        <Button href={cloud.roadmapHref} variant="secondary" class="shrink-0">Cloud on the roadmap</Button>
+        <Button href={cloud.roadmapHref} variant="secondary" class="shrink-0">View the Cloud roadmap</Button>
       </div>
     </div>
   </section>
 </Base>
 
 <style>
-  .ch::before { left: -5%; top: -10rem; }
-  .ch::after { right: 0; top: 0; }
-  .cmp { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
-  .cmp th { text-align: left; font-weight: 560; color: var(--text); padding: 0.6rem 0.9rem; border-bottom: 1px solid var(--border-strong); }
-  .cmp th:last-child { color: var(--accent); }
-  .cmp td { padding: 0.6rem 0.9rem; border-bottom: 1px solid var(--border); color: var(--text-2); vertical-align: top; }
-  .cmp td:first-child { color: var(--text-2); }
-  .cmp tr:last-child td { border-bottom: 0; }
-  .cmp tbody tr:hover td { background: color-mix(in srgb, var(--surface-2) 60%, transparent); }
-  .cmp th, .cmp td { width: 50%; }
+  .cl-hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--border); padding-top: 5rem; padding-bottom: 4rem; }
+  @media (min-width: 64rem) { .cl-hero { padding-top: 5.5rem; padding-bottom: 5rem; } }
+  .cl-hero::before { left: 10%; top: -12rem; width: 60rem; height: 34rem; }
+  .cl-hero::after { right: -5%; top: 10rem; }
+  .cl-hero-copy { max-width: 56rem; margin-inline: auto; text-align: center; }
+  .cl-facts { margin: 0; display: grid; gap: 1rem; }
+  .cl-facts > div, .cl-facts > li { display: grid; gap: 0.2rem; padding-left: 1rem; border-left: 2px solid var(--border-strong); list-style: none; }
+  .cl-facts dt, .cl-facts b { color: var(--text); font-weight: 560; font-size: 0.95rem; }
+  .cl-facts dd, .cl-facts span { margin: 0; color: var(--text-2); font-size: 0.9rem; line-height: 1.5; }
+  .cl-facts-lg { gap: 1.4rem; }
+  .cl-facts-lg dt { font-size: 1.05rem; }
+  .cl-facts-lg dd { font-size: 0.95rem; }
+  .cl-plan { position: relative; display: flex; flex-direction: column; gap: 0.5rem; padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
+  .cl-plan.is-cloud { border-color: color-mix(in srgb, var(--cloud) 55%, var(--border)); box-shadow: 0 0 0 1px color-mix(in srgb, var(--cloud) 25%, transparent), 0 30px 80px -40px rgba(97, 139, 255, 0.5); background: linear-gradient(180deg, color-mix(in srgb, var(--cloud) 7%, var(--surface)), var(--surface) 40%); }
+  .cl-plan-k { margin: 0; font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); }
+  .cl-plan.is-cloud .cl-plan-k { color: var(--cloud-strong); }
+  .cl-plan-n { margin: 0; font-size: 1.35rem; font-weight: 600; letter-spacing: -0.02em; color: var(--text); }
+  .cl-plan-p { margin: 0; font-size: 1.05rem; font-weight: 560; color: var(--text); }
+  .cl-plan-b { margin: 0.25rem 0 0; color: var(--text-2); font-size: 0.9375rem; line-height: 1.5; }
+  .cl-plan-plus { margin: 0.6rem 0 0; color: var(--text); font-weight: 560; font-size: 0.875rem; }
+  .cl-plan-list { list-style: none; margin: 0.5rem 0 0; padding: 0; display: grid; gap: 0.45rem; color: var(--text-2); font-size: 0.9rem; }
+  .cl-plan-list li { display: flex; align-items: center; gap: 0.55rem; }
+  .cl-plan-list svg { color: var(--accent); }
+  .cl-plan.is-cloud .cl-plan-list svg { color: var(--cloud-strong); }
+  .cl-plan-note { margin: auto 0 0; padding-top: 1rem; color: var(--text-3); font-size: 0.8125rem; }
+  .cl-flow { display: grid; gap: 0.3rem; }
+  .cl-flow-box { display: grid; gap: 0.15rem; padding: 0.8rem 0.95rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+  .cl-flow-box b { color: var(--text); font-weight: 560; font-size: 0.95rem; }
+  .cl-flow-box span { color: var(--text-3); font-size: 0.8rem; }
+  .cl-flow-box.is-mint { border-left: 3px solid var(--accent); }
+  .cl-flow-box.is-blue { border-left: 3px solid var(--cloud); background: color-mix(in srgb, var(--cloud) 6%, var(--surface)); }
+  .cl-flow-link { display: flex; align-items: center; gap: 0.6rem; padding-left: 1.4rem; color: var(--text-3); font-family: var(--font-mono); font-size: 0.66rem; }
+  .cl-flow-link::before { content: ''; width: 1px; height: 1.4rem; background: linear-gradient(var(--accent), var(--cloud)); }
 </style>

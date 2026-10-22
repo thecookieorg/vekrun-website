@@ -1,0 +1,127 @@
+/* ===========================================================================
+   Vekrun Cloud: page-scoped design tokens and shared mock primitives.
+   The page is dark by design (Base locks the theme), so these tokens never need
+   a light counterpart. Two accents carry meaning everywhere on the page:
+     mint  = a developer's machine, Vekrun itself
+     blue  = the organization, Vekrun Cloud
+   Every connection path runs from mint to blue.
+   =========================================================================== */
+:root[data-page='cloud'] {
+  color-scheme: dark;
+  --bg: #080b12;
+  --bg-elevated: #0d131d;
+  --surface: #111927;
+  --surface-2: #172131;
+  --surface-3: #1f2b3d;
+  --border: #233146;
+  --border-strong: #32455f;
+  --text: #f4f7fb;
+  --text-2: #9aa9bc;
+  --text-3: #6f7e94;
+  --accent: #8ce6c4;
+  --accent-strong: #a8f0d6;
+  --accent-ink: #062018;
+  --accent-soft: rgba(140, 230, 196, 0.12);
+  --accent-ring: rgba(140, 230, 196, 0.45);
+  --accent-2: #618bff;
+  --cloud: #618bff;
+  --cloud-strong: #86a6ff;
+  --cloud-soft: rgba(97, 139, 255, 0.14);
+  --ok: #8ce6c4;
+  --warn: #f0c060;
+  --info: #7da3ff;
+  --danger: #ff8a8a;
+  --muted: #7f8ea4;
+  --term-bg: #060910;
+  --term-green: #8ce6c4;
+  --term-blue: #86a6ff;
+  --accent-gradient: linear-gradient(120deg, #8ce6c4 0%, #618bff 100%);
+  --ambient-a: rgba(140, 230, 196, 0.14);
+  --ambient-b: rgba(97, 139, 255, 0.2);
+  --glow: 0 0 0 1px color-mix(in srgb, var(--accent) 16%, var(--border)), 0 30px 90px -30px rgba(97, 139, 255, 0.4);
+  --shadow-window: 0 40px 100px -30px rgba(0, 0, 0, 0.8), 0 0 0 1px var(--border);
+}
+
+/* ---- Typography ---------------------------------------------------------- */
+.cl-eyebrow { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+.cl-display { font-size: clamp(2.5rem, 1.3rem + 4.6vw, 4.9rem); line-height: 0.98; letter-spacing: -0.04em; font-weight: 600; }
+.cl-h2 { font-size: clamp(1.85rem, 1.25rem + 2.4vw, 3rem); line-height: 1.06; letter-spacing: -0.032em; font-weight: 600; }
+.cl-lede { font-size: clamp(1.0625rem, 1rem + 0.4vw, 1.3rem); line-height: 1.5; color: var(--text-2); }
+.cl-kicker { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); }
+
+/* ---- Layout --------------------------------------------------------------- */
+.cl-wide { width: 100%; max-width: 88rem; margin-inline: auto; padding-inline: 1.25rem; }
+@media (min-width: 40rem) { .cl-wide { padding-inline: 2rem; } }
+@media (min-width: 64rem) { .cl-wide { padding-inline: 2.5rem; } }
+.cl-section { padding-block: 5.5rem; }
+@media (min-width: 64rem) { .cl-section { padding-block: 7.5rem; } }
+.cl-rule { border-top: 1px solid var(--border); }
+
+/* ---- Status and identity primitives ------------------------------------- */
+.cl-pill { display: inline-flex; align-items: center; gap: 0.35rem; white-space: nowrap; font-family: var(--font-mono); font-size: 0.64rem; line-height: 1; padding: 0.25rem 0.5rem; border-radius: 999px; border: 1px solid var(--border-strong); color: var(--text-2); background: transparent; }
+.cl-pill.is-ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 45%, transparent); background: color-mix(in srgb, var(--ok) 8%, transparent); }
+.cl-pill.is-warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, transparent); background: color-mix(in srgb, var(--warn) 8%, transparent); }
+.cl-pill.is-info { color: var(--info); border-color: color-mix(in srgb, var(--info) 45%, transparent); background: color-mix(in srgb, var(--info) 8%, transparent); }
+.cl-pill.is-cloud { color: var(--cloud-strong); border-color: color-mix(in srgb, var(--cloud) 50%, transparent); background: var(--cloud-soft); }
+.cl-pill.is-danger { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 45%, transparent); background: color-mix(in srgb, var(--danger) 8%, transparent); }
+.cl-pill.is-muted { color: var(--text-3); }
+
+.cl-avatar { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; width: 1.5rem; height: 1.5rem; border-radius: 50%; font-size: 0.58rem; font-weight: 600; letter-spacing: 0.02em; color: hsl(var(--h) 60% 86%); background: hsl(var(--h) 38% 24%); box-shadow: inset 0 0 0 1px hsl(var(--h) 40% 34%); }
+.cl-avatar.is-agent { border-radius: 6px; color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--surface-3)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent); }
+.cl-avatar.is-worker { border-radius: 6px; color: var(--cloud-strong); background: var(--cloud-soft); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cloud) 40%, transparent); }
+.cl-avatar.is-sm { width: 1.2rem; height: 1.2rem; font-size: 0.5rem; }
+.cl-avatar.is-lg { width: 2rem; height: 2rem; font-size: 0.72rem; }
+.cl-avatars { display: inline-flex; }
+.cl-avatars .cl-avatar { box-shadow: 0 0 0 2px var(--surface), inset 0 0 0 1px hsl(var(--h) 40% 34%); }
+.cl-avatars .cl-avatar + .cl-avatar { margin-left: -0.4rem; }
+
+.cl-live { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 0.64rem; color: var(--text-2); }
+.cl-live i { width: 0.45rem; height: 0.45rem; border-radius: 50%; background: var(--cloud); box-shadow: 0 0 0 0 color-mix(in srgb, var(--cloud) 55%, transparent); }
+[data-demo='playing'] .cl-live i, .cl-live.is-on i { animation: cl-pulse 1.6s ease-out infinite; }
+@keyframes cl-pulse { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--cloud) 55%, transparent); } 70% { box-shadow: 0 0 0 6px transparent; } }
+
+.cl-bar { display: block; height: 5px; border-radius: 999px; background: var(--surface-3); overflow: hidden; }
+.cl-bar i { display: block; height: 100%; width: var(--w, 0%); border-radius: inherit; background: var(--accent-gradient); transition: width 600ms var(--ease-out); }
+.cl-bar.is-warn i { background: var(--warn); }
+.cl-bar.is-cloud i { background: var(--cloud); }
+
+/* ---- Browser chrome: the Cloud dashboard always lives in a browser --------- */
+.browser { position: relative; min-width: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--glow), 0 50px 120px -40px rgba(0, 0, 0, 0.75); overflow: hidden; }
+.browser::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 1px; z-index: 2; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 70%, transparent) 25%, color-mix(in srgb, var(--cloud) 80%, transparent) 75%, transparent); }
+.browser-bar { display: flex; min-width: 0; align-items: center; gap: 0.6rem; padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); background: var(--bg-elevated); font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-3); min-height: 2.4rem; }
+.browser-tab { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.6rem; border-radius: 6px 6px 0 0; background: var(--surface); color: var(--text-2); box-shadow: inset 0 0 0 1px var(--border); white-space: nowrap; max-width: 14rem; overflow: hidden; text-overflow: ellipsis; }
+.browser-tab svg { color: var(--cloud); flex: 0 0 auto; }
+.browser-url { flex: 1 1 auto; min-width: 0; display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.6rem; border-radius: 999px; background: var(--surface-2); color: var(--text-3); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.browser-url svg { flex: 0 0 auto; color: var(--text-3); }
+.browser-url b { font-weight: 400; color: var(--text-2); }
+.browser-status { margin-left: auto; display: inline-flex; align-items: center; gap: 0.6rem; white-space: nowrap; }
+@media (max-width: 40rem) { .browser-tab { display: none; } }
+.browser.is-compact .browser-tab { display: none; }
+
+/* ---- Connection paths ----------------------------------------------------- */
+.cl-path { fill: none; stroke: url(#cl-grad); stroke-width: 1.25; vector-effect: non-scaling-stroke; opacity: 0.7; }
+.cl-packet { fill: none; stroke: var(--accent-strong); stroke-width: 2.5; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-dasharray: 8 200; stroke-dashoffset: 8; opacity: 0; filter: drop-shadow(0 0 4px color-mix(in srgb, var(--accent) 80%, transparent)); }
+/* Paths carry pathLength="100", so these offsets are percentages of any path. */
+.cl-packet.is-go { animation: cl-travel 900ms var(--ease-out) both; }
+.cl-packet.is-back { animation: cl-travel-back 900ms var(--ease-out) both; }
+@keyframes cl-travel { from { opacity: 1; stroke-dashoffset: 8; } to { opacity: 1; stroke-dashoffset: -100; } }
+@keyframes cl-travel-back { from { opacity: 1; stroke-dashoffset: -100; } to { opacity: 1; stroke-dashoffset: 8; } }
+
+/* ---- Motion --------------------------------------------------------------- */
+@keyframes cl-stage-in { from { opacity: 0; transform: translateY(28px) scale(0.975); } to { opacity: 1; transform: none; } }
+@keyframes cl-slide-l { from { opacity: 0; transform: translate(-28px, 20px); } to { opacity: 1; transform: none; } }
+@keyframes cl-slide-r { from { opacity: 0; transform: translate(28px, 20px); } to { opacity: 1; transform: none; } }
+@keyframes cl-grow-y { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes cl-grow-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.cl-grow-y { transform-origin: bottom; animation: cl-grow-y 700ms var(--ease-out) both; }
+.cl-grow-x { transform-origin: left; animation: cl-grow-x 700ms var(--ease-out) both; }
+
+/* The demo notice and controls are reused from the site; Cloud only tints the live dot. */
+:root[data-page='cloud'] .live-dot { background: var(--cloud); }
+
+@media (prefers-reduced-motion: reduce) {
+  .cl-packet, .cl-packet.is-go, .cl-packet.is-back { animation: none !important; opacity: 0; }
+  .cl-grow-y, .cl-grow-x { animation: none; }
+  .cl-live i { animation: none !important; }
+  .cl-bar i { transition: none; }
+}

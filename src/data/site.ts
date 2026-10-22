@@ -67,9 +67,9 @@ export const cloud = {
   statusLabel: 'In development',
   roadmapHref: '/roadmap/#cloud',
   tiers: [
-    { name: 'Community', price: 'Free forever', body: 'The full personal desktop experience: terminal, AI coding with your own models, Board, AI Teams, code reviews and Insights.', note: 'No account. No subscription.' },
-    { name: 'Vekrun Teams', price: 'Pricing to be announced', body: 'Organization collaboration, shared workflows, project dashboards, shared Factory coordination and team policies.', note: 'Per-organization pricing will be published before anything is sold.' },
-    { name: 'Vekrun Enterprise', price: 'Contact us, coming later', body: 'Advanced governance, enterprise identity, private deployment options and support.', note: 'Follows Teams.' },
+    { name: 'Community', kicker: 'Free and open source', price: 'Free forever', body: 'The complete desktop application for one developer.', includes: ['Full desktop terminal', 'Bring your own AI', 'AI coding agents', 'Factory and Council', 'Board', 'Insights', 'Code reviews', 'Local and self-managed execution', 'No account required'], note: 'No account. No subscription.' },
+    { name: 'Vekrun Cloud', kicker: 'Optional team platform', price: 'Pricing to be announced', body: 'Connect an organization around the application developers already use.', plus: 'Everything in Community, plus:', includes: ['Organization workspaces', 'Shared engineering workflows', 'Team Factory queues', 'Project manager dashboards', 'Centralized approvals', 'Shared reporting', 'Organization permissions', 'Team-wide budgets', 'Cloud synchronization'], note: 'Per-organization pricing will be published before anything is sold.' },
+    { name: 'Enterprise', kicker: 'Advanced organization control', price: 'Contact us, coming later', body: 'Cloud capabilities plus identity, access and deployment options for larger organizations.', plus: 'Cloud, plus planned:', includes: ['Enterprise SSO', 'SCIM', 'Advanced RBAC', 'Audit exports', 'Private deployment options', 'Priority support'], note: 'Follows the Cloud capabilities.' },
   ],
 } as const;
 
