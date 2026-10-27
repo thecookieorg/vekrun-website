@@ -212,7 +212,8 @@ test.describe('other pages', () => {
     await expect(page.getByRole('link', { name: /sign up|start trial|subscribe|buy/i })).toHaveCount(0);
     await expect(page.getByRole('button', { name: /sign up|start trial|subscribe|buy|continue with|register interest|checkout/i })).toHaveCount(0);
     await expect(page.getByRole('link', { name: /register interest|checkout|pricing calculator/i })).toHaveCount(0);
-    await expect(page.getByText('Proposed launch pricing · Cloud is in development')).toBeVisible();
+    await expect(page.locator('#plans, [data-pricing-calc]')).toHaveCount(0);
+    await expect(page.getByText(/\$99|per month|active member|launch pricing/i)).toHaveCount(0);
     const roots = page.locator('[data-demo-root]');
     const n = await roots.count();
     expect(n).toBeGreaterThanOrEqual(7);
@@ -263,27 +264,8 @@ test.describe('other pages', () => {
     await expect(wf).toHaveAttribute('data-current', '4');
   });
 
-  test('the Cloud pricing calculator follows the proposed formula and works from the keyboard', async ({ page }) => {
+  test('the Cloud interest band and FAQ work', async ({ page }) => {
     await page.goto('/cloud/');
-    const calc = page.locator('[data-pricing-calc]');
-    await calc.scrollIntoViewIfNeeded();
-    const monthly = calc.locator('[data-pc-monthly]');
-    const annual = calc.locator('[data-pc-annual]');
-    const num = calc.getByLabel('Active members, typed');
-    for (const [n, cost] of [[3, '$99'], [5, '$99'], [10, '$194'], [20, '$384'], [30, '$574'], [50, '$954'], [100, '$1,904'], [250, '$4,754']] as const) {
-      await num.fill(String(n));
-      await expect(monthly).toHaveText(cost);
-      await expect(calc.locator('[data-pc-enterprise]')).toBeVisible({ visible: n >= 50 });
-    }
-    await expect(annual).toContainText('$57,048');
-    await num.fill('999'); await num.blur();
-    await expect(monthly).toHaveText('$4,754');
-    const range = calc.getByLabel('Active members', { exact: true });
-    await range.focus();
-    await page.keyboard.press('Home');
-    await expect(monthly).toHaveText('$99');
-    await page.keyboard.press('End');
-    await expect(monthly).toHaveText('$4,754');
     await expect(page.getByText('Register interest · coming soon')).toBeVisible();
     const faq = page.locator('#faq details').first();
     await faq.locator('summary').click();

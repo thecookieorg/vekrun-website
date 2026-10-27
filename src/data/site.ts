@@ -66,22 +66,6 @@ export const cloud = {
   status: 'planned' as 'planned' | 'in-progress' | 'implemented' | 'released',
   statusLabel: 'In development',
   roadmapHref: '/roadmap/#cloud',
-  /**
-   * Proposed launch pricing (Marko, 2026-10-22). Nothing can be bought: there is no
-   * billing, checkout, trial or subscription. Monthly prices only; no annual discount
-   * has been decided, so none is shown or implied anywhere.
-   */
-  pricing: {
-    label: 'Proposed launch pricing · Cloud is in development',
-    currency: 'US$',
-    teams: { base: 99, includedMembers: 5, perExtraMember: 19, calculatorMin: 1, calculatorMax: 250, enterpriseFrom: 50 },
-    enterpriseStartingTarget: 12000,
-  },
-  tiers: [
-    { id: 'community', name: 'Community', kicker: 'Free and open source', price: '$0', per: 'forever', summary: 'Individual and self-managed engineering work. The complete desktop application, with nothing held back.', includes: ['Modern terminal', 'Bring your own AI models', 'AI coding agents', 'Factory and Council', 'Board and Start Work', 'Insights', 'Code reviews', 'Local and self-managed execution', 'No account required'], note: 'No account. No subscription. No feature restrictions.' },
-    { id: 'teams', name: 'Vekrun Cloud Teams', kicker: 'Shared engineering coordination', price: '$99', per: 'per organization per month', sub: 'Includes 5 active members. +$19 per additional active member per month.', summary: 'Everything in Community, plus the organization layer.', includes: ['Organization workspaces', 'Shared projects and Board', 'Team assignments', 'Shared Factory queues', 'Project manager dashboards', 'Centralized approvals', 'Engineering activity and reports', 'Organization model policies', 'Team spending controls', 'Selective desktop synchronization', 'Shared investigations and reviews', 'Company-controlled workers', 'Unlimited read-only viewers, under fair use'], note: 'AI inference and customer-managed worker infrastructure are not included. This is a coordination subscription, not a bundle of model tokens.' },
-    { id: 'enterprise', name: 'Enterprise', kicker: 'Advanced organization control', price: 'Custom pricing', per: 'starting target $12,000 a year', summary: 'Everything in Teams, plus planned identity, governance, deployment and support for larger organizations.', includes: ['SAML and OIDC single sign-on', 'SCIM provisioning', 'Advanced roles and permissions', 'Centralized identity governance', 'Advanced auditing and exports', 'Private deployment options', 'Organization-wide governance', 'Priority support', 'Contractual service commitments where available'], note: 'An indicative starting point, not a published offer. Nothing here is operational today.' },
-  ],
 } as const;
 
 export type NavItem = { label: string; href: string; description?: string };
