@@ -12,19 +12,19 @@ import { site } from '@/data/site';
 const platformLabel: Record<string, string> = { macos: 'macOS', windows: 'Windows', linux: 'Linux' };
 const archLabel: Record<string, string> = { arm64: 'Apple Silicon / ARM64', x64: 'Intel / x64' };
 const targets = [
-  { name: 'macOS', detail: 'Apple Silicon first. Intel if it can be supported and signed at release time.' },
-  { name: 'Windows', detail: 'A signed installer with PowerShell, cmd and WSL support.' },
-  { name: 'Linux', detail: 'Package format to be chosen before the first release.' },
+  { name: 'macOS', detail: 'First. Apple Silicon, signed and notarised. The development build is tested here today.' },
+  { name: 'Windows', detail: 'A signed installer, after hands-on verification on real Windows machines.' },
+  { name: 'Linux', detail: 'After hands-on verification. Package format to be chosen before release.' },
 ];
-const columns = ['Version', 'Release date', 'Platform', 'Architecture', 'Package format', 'Download size', 'SHA-256 checksum', 'Signing or notarisation', 'Release notes', 'GitHub release'];
+const columns = ['Version', 'Release date', 'Platform', 'Architecture', 'Package format', 'Download size', 'SHA-256 checksum', 'Signing or notarisation', 'Release notes'];
 const title = 'Download';
 const description = releases.length
   ? 'Download Vekrun for macOS, Windows and Linux. Signed builds with checksums and release notes.'
-  : 'There is no public Vekrun release yet. Downloads appear here when signed builds exist.';
+  : 'There is no public Vekrun release yet. Vekrun Personal will be a free download when signed builds exist.';
 ---
 <Base title={title} description={description}>
   {releases.length === 0 ? (
-    <PageHero eyebrow="Download" title="No public release yet." lede="Downloads appear on this page when signed builds exist. Until then you can follow the roadmap or build from source." cta={{ label: 'See the roadmap', href: '/roadmap/' }} secondary={{ label: 'Build from source', href: '/docs/getting-started/installation/' }} align="left">
+    <PageHero eyebrow="Download" title="No public release yet." lede="Vekrun Personal will be free to download and use when signed builds exist. They will appear on this page, with checksums and release notes. There is no source build to download: Vekrun is proprietary software." cta={{ label: 'See the roadmap', href: '/roadmap/' }} secondary={{ label: 'Explore AI Factory', href: '/features/factory/' }} align="left">
       <Fragment slot="status"><StatusBadge status="in-development" /><span class="text-[0.8125rem] text-text-3">as of {site.status.asOf}</span></Fragment>
     </PageHero>
   ) : (
@@ -44,7 +44,7 @@ const description = releases.length
           ))}
         </ul>
         <p class="mt-4 max-w-3xl text-[0.875rem] leading-relaxed text-text-3">
-          A release ships only when it has been tested on all three platforms, with signed installers and a working update path.
+          A platform gets a download only when it has a signed installer, hands-on testing and a working update path. Vekrun Teams is distributed to licensed organizations separately when it exists.
         </p>
       </Section>
 
@@ -65,7 +65,6 @@ const description = releases.length
         <p class="text-[0.875rem] text-text-2">
           Released <time datetime={r.data.date}>{r.data.date}</time>.
           <a href={r.data.notes} class="ml-2 text-accent underline underline-offset-2" target="_blank" rel="noopener noreferrer">Release notes</a>
-          <a href={r.data.githubRelease} class="ml-2 text-accent underline underline-offset-2" target="_blank" rel="noopener noreferrer">GitHub release</a>
         </p>
       </div>
       <div class="mt-6 overflow-x-auto rounded-lg border border-border">

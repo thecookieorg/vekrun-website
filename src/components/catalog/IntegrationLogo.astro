@@ -14,7 +14,7 @@ const { id, name, monogram, size = 'md', class: className = '' } = Astro.props;
 
 type Icon = { title: string; hex: string; path: string };
 const map: Record<string, Icon> = {
-  anthropic: siClaude, 'claude-code': siClaude, gemini: siGooglegemini, 'gemini-cli': siGooglegemini,
+  anthropic: siClaude, 'claude-code': siClaude, gemini: siGooglegemini, 'gemini-cli': siGooglegemini, 'github-cli': siGithub,
   ollama: siOllama, 'lm-studio': siLmstudio, openrouter: siOpenrouter,
   linear: siLinear, jira: siJira, asana: siAsana, 'github-issues': siGithub, github: siGithub,
   'gitlab-issues': siGitlab, gitlab: siGitlab, confluence: siConfluence, notion: siNotion,

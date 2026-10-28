@@ -1,0 +1,51 @@
+---
+import Base from '@/layouts/Base.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import MobileHost from '@/components/factory/MobileHost.astro';
+import CapabilityStatus from '@/components/CapabilityStatus.astro';
+
+const can = [
+  ['Assign an outcome', 'Start a job from wherever you are, in any connected project.'],
+  ['Follow jobs', 'See each job’s stage, environment and worker as it runs.'],
+  ['Answer the Inbox', 'Approve, decline or answer, with the same context as on the desktop.'],
+  ['Read Proof Packs and Insights', 'Check the evidence before you review, and see what shipped.'],
+  ['See your Host', 'Know whether your machine or Coordinator is reachable and busy.'],
+];
+---
+<Base title="Mobile and Host" fullTitle="Vekrun Mobile and Keep Host Awake · Vekrun" description="Vekrun Mobile is a planned iOS and Android companion that pairs securely with your own Host or self-hosted Coordinator. Keep Host Awake keeps the Host reachable while it runs, even with no jobs, without overriding your OS power settings.">
+  <PageHero eyebrow="Mobile and Host" title="Your Factory," accent="within reach." lede="A planned iOS and Android companion for assigning work, following jobs and answering the Inbox, paired with a Host that stays reachable while it runs." align="left" />
+
+  <section class="section-pad" aria-labelledby="mh-title">
+    <div class="container-site">
+      <h2 id="mh-title" class="sr-only">Vekrun Mobile and the Host</h2>
+      <MobileHost />
+    </div>
+  </section>
+
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="can-title">
+    <div class="container-site">
+      <SectionHeading id="can-title" kicker="From your phone" title="What Vekrun Mobile is for." class="reveal" />
+      <dl class="facts facts-grid facts-lg reveal-group mt-10">{can.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+    </div>
+  </section>
+
+  <section class="section-pad rule" aria-labelledby="awake-title">
+    <div class="container-site">
+      <div class="grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+        <div class="reveal">
+          <p class="kicker">Keep Host Awake</p>
+          <h2 id="awake-title" class="heading-2 mt-3 text-text">Reachable while it runs. Honest about the rest.</h2>
+        </div>
+        <dl class="facts facts-lg reveal-group">
+          <div><dt>Prevents idle sleep</dt><dd>The background Host keeps the computer from sleeping automatically while it runs, even when no job is active.</dd></div>
+          <div><dt>The screen can still turn off</dt><dd>Display sleep and screen lock work as usual.</dd></div>
+          <div><dt>Your OS stays in charge</dt><dd>Closing the lid, shutting down and critical battery behave as your operating system decides. A phone cannot wake a sleeping computer.</dd></div>
+          <div><dt>Private connectivity</dt><dd>Remote access needs a secure, authorized connection to your network. No hosted Vekrun service is required.</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <CapabilityStatus keys={['mobile', 'keepAwake', 'hostService', 'workers']} />
+</Base>

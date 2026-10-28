@@ -1,0 +1,48 @@
+---
+/**
+ * Vekrun Mobile beside the Host that keeps it reachable. A phone frame with the
+ * Inbox and a running job, and a Host card stating exactly what Keep Host Awake
+ * does and does not do. Both are planned; the figure says so.
+ */
+import ConceptNotice from '@/components/ConceptNotice.astro';
+---
+<div class="mh">
+  <div class="mh-phone" aria-hidden="true">
+    <div class="mh-screen">
+      <p class="mh-top"><span>9:41</span><span class="mh-host"><i></i>Host · studio-mac</span></p>
+      <p class="mh-h">Inbox</p>
+      <div class="mh-card is-warn"><b>Review PR #482</b><span>acme-web · Proof Pack verified</span><em>Open review</em></div>
+      <div class="mh-card"><b>Allow a staging migration?</b><span>billing · needs Sam or you</span><em>Decide</em></div>
+      <p class="mh-h">Running</p>
+      <div class="mh-job"><span>Add CSV export to reports</span><span class="bar" style="--w: 60%"><i></i></span><small>acme-api · Testing</small></div>
+      <div class="mh-compose">Assign an outcome…</div>
+    </div>
+  </div>
+  <div class="mh-copy">
+    <dl class="facts facts-lg">
+      <div><dt>Vekrun Mobile for iOS and Android</dt><dd>Assign work, follow jobs, answer the Inbox, read Proof Packs and Insights, and see whether your Host is reachable.</dd></div>
+      <div><dt>Paired with your own Host</dt><dd>It connects securely to your machine or your organization’s self-hosted Coordinator over a private network you authorize. No hosted Vekrun service is involved.</dd></div>
+      <div><dt>Keep Host Awake</dt><dd>While the Host runs it prevents automatic idle sleep, even when no job is active. The screen can still turn off and lock. Closing the lid, shutting down and critical battery stay under your operating system’s control, and a phone cannot wake a sleeping computer.</dd></div>
+    </dl>
+    <ConceptNotice class="mt-6" text="Illustrative product concept. Vekrun Mobile and Keep Host Awake are planned. There are no app store releases." />
+  </div>
+</div>
+
+<style>
+  .mh { display: grid; gap: 2.5rem; align-items: center; }
+  @media (min-width: 52rem) { .mh { grid-template-columns: minmax(0, 20rem) minmax(0, 1fr); gap: 4rem; } }
+  .mh-phone { justify-self: center; width: min(19rem, 100%); padding: 0.6rem; border: 1px solid var(--border-strong); border-radius: 2.4rem; background: var(--bg-elevated); box-shadow: var(--shadow-window), var(--glow); }
+  .mh-screen { display: grid; gap: 0.55rem; padding: 1rem 0.9rem 1.1rem; border-radius: 1.9rem; background: var(--bg); min-height: 30rem; align-content: start; }
+  .mh-top { margin: 0 0 0.3rem; display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-2); font-variant-numeric: tabular-nums; }
+  .mh-host { display: inline-flex; align-items: center; gap: 0.35rem; }
+  .mh-host i { width: 0.4rem; height: 0.4rem; border-radius: 50%; background: var(--ok); }
+  .mh-h { margin: 0.4rem 0 0; font-size: 0.95rem; font-weight: 620; color: var(--text); letter-spacing: -0.01em; }
+  .mh-card { display: grid; gap: 0.15rem; padding: 0.7rem 0.75rem; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+  .mh-card.is-warn { border-color: color-mix(in srgb, var(--warn) 40%, var(--border)); }
+  .mh-card b { font-size: 0.8rem; font-weight: 580; color: var(--text); }
+  .mh-card span { font-size: 0.68rem; color: var(--text-3); }
+  .mh-card em { margin-top: 0.35rem; justify-self: start; padding: 0.2rem 0.55rem; border-radius: 6px; background: var(--surface-3); font-style: normal; font-size: 0.68rem; color: var(--text); }
+  .mh-job { display: grid; gap: 0.35rem; padding: 0.7rem 0.75rem; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); font-size: 0.78rem; color: var(--text); }
+  .mh-job small { font-size: 0.66rem; color: var(--text-3); }
+  .mh-compose { margin-top: 0.4rem; padding: 0.6rem 0.8rem; border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border)); border-radius: 999px; font-size: 0.75rem; color: var(--text-3); }
+</style>

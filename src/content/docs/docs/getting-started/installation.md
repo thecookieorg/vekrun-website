@@ -1,35 +1,24 @@
 ---
 title: Installation
-description: There are no public builds yet. Here is what that means and how to build Vekrun from source.
+description: There is no public Vekrun release yet. What will be installed, on which platforms, and what it will cost.
 sidebar:
   order: 1
 ---
 
 :::note[Planned]
-Signed installers for macOS, Windows and Linux are not built yet. The [download page](/download/) lists releases only when they exist. See the [roadmap](/roadmap/).
+Signed installers do not exist yet. The [download page](/download/) lists a release only when there is one. See the [roadmap](/roadmap/).
 :::
 
-## Building from source
+## What you will install
 
-The source repository is not yet public. Once it is, these are the supported steps, taken from the project README.
+Vekrun Personal is a native desktop app with a background Host. It will be free to use. You bring your own coding CLI logins, model or API accounts, local models, Git access and compute; Vekrun does not bundle paid inference.
 
-You need:
-
-- Rust stable, installed through [rustup](https://rustup.rs).
-- Node 22 or newer and pnpm 12.
-- The [Tauri 2 prerequisites](https://tauri.app/start/prerequisites/) for your operating system.
-
-```bash
-pnpm install
-cargo test --workspace --exclude vekrun-desktop   # also generates the TypeScript bindings
-pnpm -r typecheck && pnpm -r lint && pnpm -r test
-pnpm dev                                          # launches the desktop app
-```
-
-Run the `cargo test` step once before `pnpm dev`; it generates files the desktop app needs.
+Vekrun is proprietary software. There is no public source code to build from.
 
 ## Platforms
 
-macOS, Windows and Linux are all targets. Only macOS has been used by hand so far. Windows and Linux builds compiled and passed their tests in automated checks early in the project (October 2026); those checks are paused at the moment, so later work has not been verified there, and passing automated checks is not the same as someone having used the application.
+macOS comes first, on Apple Silicon. Windows and Linux follow once they have been verified by hand on real machines. Today only macOS is tested; earlier automated checks on Windows and Linux are paused.
 
-Contributors will find the full checks and the merge gate under [Contributing](/docs/advanced/contributing/).
+## Teams
+
+Vekrun Teams is a self-hosted Coordinator for organizations. It is planned, and is distributed separately to licensed organizations once it exists. See [Vekrun Teams](/teams/).

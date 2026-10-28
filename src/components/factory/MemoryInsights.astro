@@ -1,0 +1,110 @@
+---
+/**
+ * Engineering Memory (a question answered from linked sources) beside Engineering
+ * Insights (verifiable delivery metrics with a 24h / 7d / 14d / 30d / All time
+ * control). Every number is illustrative and says so. The range control is a
+ * real radio group; it only swaps the illustrative figures.
+ */
+import Window from '@/components/mock/Window.astro';
+import ConceptNotice from '@/components/ConceptNotice.astro';
+interface Props { class?: string; id?: string }
+const { class: className = '', id } = Astro.props;
+const ranges = ['24h', '7d', '14d', '30d', 'All time'] as const;
+const data: Record<(typeof ranges)[number], string[]> = {
+  '24h': ['3', '2', '1', '3h 10m', '1 of 6', '$18'],
+  '7d': ['17', '9', '4', '5h 40m', '4 of 31', '$126'],
+  '14d': ['31', '15', '8', '6h 05m', '7 of 58', '$241'],
+  '30d': ['64', '29', '15', '6h 30m', '12 of 117', '$498'],
+  'All time': ['212', '98', '47', '7h 15m', '41 of 402', '$1,630'],
+};
+const lines: Record<(typeof ranges)[number], string> = { '24h': '+1.2k −640', '7d': '+8.4k −3.1k', '14d': '+15k −6.2k', '30d': '+31k −12k', 'All time': '+104k −41k' };
+const metrics = ['Pull requests merged', 'Bugs fixed and verified', 'Features delivered', 'Median time to review', 'Jobs needing rework', 'Model spend reported'];
+const start = '7d';
+---
+<div class:list={['mi', className]} id={id}>
+  <Window title="Engineering Memory" crumbs={['acme-web']} class="mi-mem">
+    <div class="mi-body">
+      <p class="mi-q"><span class="mi-q-k">Ask</span>Why did we round discounts per line instead of on the total?</p>
+      <div class="mi-a">
+        <p>Plan v2 for <b>PAY-77</b> chose per-line rounding so invoices match the payment provider’s receipts. Sam approved it on Oct 22 after the Council flagged a mismatch on mixed currencies. The fix in PR #482 keeps that rule and adds the missing test.</p>
+        <ul class="mi-src" aria-label="Sources">
+          <li><span class="pill is-info">decision</span>Plan v2 · approved by Sam · Oct 22</li>
+          <li><span class="pill is-muted">ticket</span>Jira PAY-77</li>
+          <li><span class="pill is-muted">change</span>PR #455 · a91f3c2 · PR #482</li>
+          <li><span class="pill is-ok">evidence</span>Proof Pack · browser run, 3 screenshots</li>
+        </ul>
+      </div>
+      <ol class="mi-journal" aria-label="Journal">
+        <li><time>Oct 22 14:02</time>Council review: per-line vs total rounding</li>
+        <li><time>Oct 22 14:20</time>Plan v2 approved by Sam</li>
+        <li><time>Oct 28 09:41</time>Honeybadger: checkout total error, 312 events</li>
+        <li><time>Oct 28 10:12</time>Proof Pack attached to PR #482</li>
+      </ol>
+    </div>
+  </Window>
+
+  <Window title="Insights" crumbs={['acme-web', 'Delivery']} class="mi-ins" data-insights data-range={start}>
+    <div class="mi-body">
+      <div class="seg mi-seg" role="radiogroup" aria-label="Reporting period">
+        {ranges.map((r) => <button type="button" class="seg-btn" role="radio" aria-checked={r === start ? 'true' : 'false'} tabindex={r === start ? 0 : -1} data-range-btn={r}>{r}</button>)}
+      </div>
+      <dl class="mi-stats" aria-live="polite">
+        {metrics.map((m, i) => <div><dt>{m}</dt><dd data-metric={i}>{data[start][i]}</dd></div>)}
+      </dl>
+      <p class="mi-lines">Lines changed <b data-lines>{lines[start]}</b> <span>activity, not a measure of productivity</span></p>
+      <p class="mi-illus">Illustrative data</p>
+    </div>
+    <script type="application/json" data-insights-data set:html={JSON.stringify({ data, lines })}></script>
+  </Window>
+  <ConceptNotice class="mi-note" text="Illustrative product concept with invented numbers. Execution history, scoped memory and an audit journal exist in the development build; searchable memory is in development and Insights reporting is planned." />
+</div>
+
+<style>
+  .mi { display: grid; gap: 1.25rem; }
+  @media (min-width: 64rem) { .mi { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); } }
+  .mi-note { grid-column: 1 / -1; }
+  .mi-body { padding: 1.1rem 1.2rem 1.2rem; }
+  .mi-q { margin: 0; display: flex; gap: 0.6rem; align-items: baseline; padding: 0.65rem 0.8rem; border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--border)); border-radius: 10px; background: color-mix(in srgb, var(--accent) 5%, var(--surface)); font-size: 0.9rem; font-weight: 540; color: var(--text); }
+  .mi-q-k { flex-shrink: 0; font-size: 0.68rem; color: var(--accent); font-weight: 600; }
+  .mi-a { margin-top: 0.9rem; font-size: 0.85rem; line-height: 1.55; color: var(--text-2); }
+  .mi-a p { margin: 0; }
+  .mi-a b { color: var(--text); font-weight: 560; }
+  .mi-src { margin: 0.8rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.35rem; font-size: 0.78rem; color: var(--text); }
+  .mi-src li { display: flex; align-items: center; gap: 0.55rem; }
+  .mi-src .pill { min-width: 4.6rem; justify-content: center; }
+  .mi-journal { margin: 1rem 0 0; padding: 0.8rem 0 0; list-style: none; border-top: 1px solid var(--border); display: grid; gap: 0.3rem; font-size: 0.76rem; color: var(--text-2); }
+  .mi-journal time { display: inline-block; min-width: 6.6rem; font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-3); }
+  .mi-seg { margin-bottom: 1rem; }
+  .mi-stats { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--border); }
+  @media (min-width: 40rem) { .mi-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .mi-stats div { padding: 0.75rem 0.85rem; background: var(--surface); }
+  .mi-stats dt { font-size: 0.7rem; color: var(--text-3); }
+  .mi-stats dd { margin: 0.25rem 0 0; font-size: 1.35rem; font-weight: 600; letter-spacing: -0.03em; color: var(--text); font-variant-numeric: tabular-nums; }
+  .mi-lines { margin: 0.9rem 0 0; font-size: 0.78rem; color: var(--text-2); }
+  .mi-lines b { font-family: var(--font-mono); font-weight: 500; color: var(--text); }
+  .mi-lines span { display: block; color: var(--text-3); font-size: 0.7rem; }
+  .mi-illus { margin: 0.7rem 0 0; display: inline-block; padding: 0.15rem 0.5rem; border: 1px dashed var(--border-strong); border-radius: 999px; font-size: 0.66rem; color: var(--text-3); }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-insights]').forEach((root) => {
+    const raw = root.querySelector<HTMLScriptElement>('[data-insights-data]');
+    if (!raw) return;
+    const { data, lines } = JSON.parse(raw.textContent ?? '{}') as { data: Record<string, string[]>; lines: Record<string, string> };
+    const btns = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-range-btn]'));
+    const set = (r: string, focus = false) => {
+      root.dataset.range = r;
+      btns.forEach((b) => { const on = b.dataset.rangeBtn === r; b.setAttribute('aria-checked', String(on)); b.tabIndex = on ? 0 : -1; if (on && focus) b.focus(); });
+      root.querySelectorAll<HTMLElement>('[data-metric]').forEach((el) => { el.textContent = data[r]?.[Number(el.dataset.metric)] ?? ''; });
+      root.querySelector<HTMLElement>('[data-lines]')!.textContent = lines[r] ?? '';
+    };
+    btns.forEach((b, i) => {
+      b.addEventListener('click', () => set(b.dataset.rangeBtn!));
+      b.addEventListener('keydown', (e) => {
+        const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
+        if (!d) return; e.preventDefault();
+        set(btns[(i + d + btns.length) % btns.length]!.dataset.rangeBtn!, true);
+      });
+    });
+  });
+</script>

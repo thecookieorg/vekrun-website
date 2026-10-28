@@ -1,0 +1,59 @@
+---
+import Base from '@/layouts/Base.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import Button from '@/components/Button.astro';
+import ApprovalsDemo from '@/components/org/ApprovalsDemo.astro';
+import CapabilityStatus from '@/components/CapabilityStatus.astro';
+
+const kinds = [
+  { title: 'Questions', body: 'A job needs a decision only you can make, such as which behaviour is correct.' },
+  { title: 'Approvals', body: 'A plan, spend above your threshold, or a command your policy reserves for a person.' },
+  { title: 'Reviews', body: 'A pull request with its Proof Pack, waiting for the review your branch rules require.' },
+  { title: 'Exceptions and blocks', body: 'A failing environment, a missing permission, a job that stopped to re-examine its premise.' },
+];
+const card = [
+  ['Why it needs you', 'The policy or the uncertainty that stopped the job, in one sentence.'],
+  ['Who can act', 'You, or the people your organization’s roles allow. Everyone else sees it read-only.'],
+  ['What happens next', 'Exactly what approving, declining or answering will do, before you do it.'],
+];
+---
+<Base title="Inbox" fullTitle="Inbox: the decisions that need a person · Vekrun" description="Vekrun's Inbox holds only the human decisions: approvals, questions, pull request reviews, policy exceptions and blocked jobs, each with why it needs you, who can act and what happens next.">
+  <PageHero eyebrow="Inbox" title="Agents do the routine work." accent="You make the calls that matter." lede="One place for every decision that needs a person: approvals, questions, reviews, exceptions and blocks. Each says why it needs you, who can act and what will happen." cta={{ label: 'What reaches the Inbox', href: '#kinds' }} secondary={{ label: 'How the Factory works', href: '/features/factory/' }} wide>
+    <ApprovalsDemo />
+  </PageHero>
+
+  <section id="kinds" class="section-pad rule scroll-mt-16" aria-labelledby="kinds-title">
+    <div class="container-site">
+      <SectionHeading id="kinds-title" kicker="What reaches the Inbox" title="Four kinds of decision. Nothing else." lede="Routine progress stays on the job. The Inbox is for the moments a person is actually needed." class="reveal" />
+      <ul class="ruled-grid reveal-group mt-10 sm:grid-cols-2 lg:grid-cols-4" aria-label="Kinds of decision">
+        {kinds.map((k) => <li class="p-6"><h3 class="heading-3 text-text">{k.title}</h3><p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">{k.body}</p></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="card-title">
+    <div class="container-site">
+      <div class="grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+        <div class="reveal">
+          <p class="kicker">Every request is explained</p>
+          <h2 id="card-title" class="heading-2 mt-3 text-text">Decide quickly, because the context is already there.</h2>
+        </div>
+        <dl class="facts facts-lg reveal-group">{card.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="rule">
+    <div class="container-site py-14 sm:py-16">
+      <dl class="facts facts-grid facts-lg reveal-group">
+        <div><dt>Branch protection still applies</dt><dd>An approval in Vekrun never overrides the review rules on your repository.</dd></div>
+        <div><dt>No silent production deploys</dt><dd>Deployment actions run only under an explicit policy and an explicit approval.</dd></div>
+        <div><dt>From your phone, later</dt><dd>Vekrun Mobile is planned to answer the Inbox from anywhere, paired with your own Host.</dd></div>
+      </dl>
+      <div class="mt-8 flex flex-wrap gap-3 reveal"><Button href="/features/mobile/" variant="secondary">Mobile and Host</Button><Button href="/teams/" variant="ghost">Approvals for a team</Button></div>
+    </div>
+  </section>
+
+  <CapabilityStatus keys={['inbox', 'aiReview', 'audit', 'budgets', 'mobile']} />
+</Base>

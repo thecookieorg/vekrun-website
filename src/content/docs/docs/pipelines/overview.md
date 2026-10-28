@@ -1,19 +1,19 @@
 ---
 title: Overview
-description: Failed builds, deployments and security findings as starting points for engineering work, all planned.
+description: Failed builds, deployments and security findings as starting points for engineering work.
 sidebar:
   order: 1
 ---
 
-:::note[Planned]
-Everything in this section is approved scope that is not built yet. These pages describe the intent. See the [roadmap](/roadmap/).
+:::note[In development]
+Reading CI runs, deployments and code-scanning findings exists in the development build and is tested against recorded responses. Each page says what is planned. See the [roadmap](/roadmap/#delivery).
 :::
 
-Vekrun already turns a ticket or a production error into a reviewed change. This section covers the three other starting points that are coming.
+Vekrun already turns a ticket or a production error into a reviewed change. This section covers three other starting points.
 
 ## Failed build to working code
 
-Open a failed CI run, see which job and test broke, let an agent investigate the failure against the exact commit, and repair it manually, with an AI agent or with Factory. Local tests run before the next CI result is read. See [CI/CD](/docs/pipelines/ci-cd/) and [Local testing](/docs/pipelines/local-testing/).
+Open a failed CI run, see which job and test broke, let an agent investigate the failure against the exact commit, and repair it yourself or with a Factory job. Local tests run before the next CI result is read. See [CI/CD](/docs/pipelines/ci-cd/) and [Local testing](/docs/pipelines/local-testing/).
 
 ## Deploy and observe
 

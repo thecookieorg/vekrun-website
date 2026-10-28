@@ -1,6 +1,6 @@
 ---
 /**
- * AI Teams centerpiece: a ticket runs through Planner → (Council, optional) →
+ * The AI Factory with several agents on one job: a ticket runs through Planner → (Council, optional) →
  * two Developers on their own branches → Tester → Reviewer → You, with a Council
  * panel that shows three positions and one recorded disagreement.
  */
@@ -16,7 +16,7 @@ const lanes = [
 ];
 ---
 <figure class="tr" data-demo-root="team-run">
-  <Window title="AI Teams" crumbs={['acme-api', 'VEK-129 Replace the retry queue']}>
+  <Window title="AI Factory" crumbs={['acme-api', 'VEK-129 Replace the retry queue']}>
     <span slot="status" class="hidden sm:inline-flex items-center gap-1.5"><span class="live-dot" aria-hidden="true"></span><span data-field="phase">Merged</span></span>
     <div class="tr-rail" role="list" aria-label="Stages">
       {lanes.map((l) => (
@@ -39,7 +39,7 @@ const lanes = [
       <p class="tr-summary" data-t="4600"><strong>Recorded disagreement.</strong> Two of three favour the queue worker. Your decision: queue worker, with a gateway cap as a follow-up.</p>
     </div>
   </Window>
-  <DemoControls notice="Product preview. Plans with approval, Council sessions, parallel agents on separate branches, a separate checking agent and merge previews work in the development build on macOS." />
+  <DemoControls notice="Illustrative product concept. Plans with approval, Council sessions, parallel agents on separate branches, a separate checking agent and merge previews work in the development build on macOS." />
 </figure>
 
 <style is:global>

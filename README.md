@@ -3,7 +3,7 @@
 The official website for [Vekrun](https://vekrunapp.com): a static Astro site
 with Starlight documentation, deployed to GitHub Pages.
 
-**Your terminal. Your models. Your rules.**
+**Tell Vekrun what needs to ship.** Vekrun is an AI software engineering Factory.
 
 ## Stack
 
@@ -80,4 +80,6 @@ and [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for hosting, DNS and rollback.
 
 ## License
 
-Apache License 2.0. See [LICENSE](LICENSE).
+The source of this website is licensed under the Apache License 2.0; see [LICENSE](LICENSE).
+That licence covers the website only. The Vekrun product is proprietary software and is not
+open source; see https://vekrunapp.com/license/.

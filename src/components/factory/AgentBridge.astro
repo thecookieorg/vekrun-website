@@ -1,0 +1,52 @@
+---
+/**
+ * Bring your own AI: the coding CLIs and model routes Vekrun works with, each with
+ * its real catalog status, and the one bridge from a signed-in host CLI into a
+ * job's isolated environment.
+ */
+import { getEntry } from 'astro:content';
+import IntegrationLogo from '@/components/catalog/IntegrationLogo.astro';
+import StatusBadge from '@/components/StatusBadge.astro';
+const ids = ['claude-code', 'codex', 'gemini-cli', 'openrouter', 'ollama', 'lm-studio'];
+const kinds: Record<string, string> = { 'claude-code': 'Coding CLI', codex: 'Coding CLI', 'gemini-cli': 'Coding CLI', openrouter: 'API gateway, billed separately', ollama: 'Local runtime', 'lm-studio': 'Local runtime' };
+const entries = (await Promise.all(ids.map((id) => getEntry('integrations', id)))).filter((e) => !!e);
+---
+<div class="ab">
+  <ul class="ab-list" aria-label="Coding agents and models">
+    {entries.map((e) => (
+      <li>
+        <IntegrationLogo id={e.id} name={e.data.name} monogram={e.data.monogram} size="sm" />
+        <span class="ab-n">{e.data.name}<small>{kinds[e.id]}</small></span>
+        <StatusBadge status={e.data.status} compact />
+      </li>
+    ))}
+  </ul>
+  <figure class="ab-flow" aria-label="How a signed-in CLI reaches an isolated environment">
+    <div class="ab-box is-host"><b>Your Host</b><span>Claude Code, Codex or Gemini CLI, signed in as you. Logins never leave this machine.</span></div>
+    <div class="ab-wire" aria-hidden="true"><i></i></div>
+    <div class="ab-box is-bridge"><b>Vekrun MCP bridge</b><span>One first-party bridge carries commands, file changes and test runs.</span></div>
+    <div class="ab-wire" aria-hidden="true"><i></i></div>
+    <div class="ab-box is-vm"><b>The job’s isolated environment</b><span>Its own repository copy, branch, services and test data.</span></div>
+    <figcaption>Planned architecture. Today Claude Code runs on the host’s files; the bridge and per-job environments are being built.</figcaption>
+  </figure>
+</div>
+
+<style>
+  .ab { display: grid; gap: 1.5rem; }
+  @media (min-width: 64rem) { .ab { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2.5rem; align-items: start; } }
+  .ab-list { margin: 0; padding: 0; list-style: none; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); overflow: hidden; }
+  .ab-list li { display: flex; align-items: center; gap: 0.8rem; padding: 0.75rem 1rem; }
+  .ab-list li + li { border-top: 1px solid var(--border); }
+  .ab-n { flex: 1; min-width: 0; font-size: 0.92rem; font-weight: 540; color: var(--text); }
+  .ab-n small { display: block; font-weight: 400; font-size: 0.75rem; color: var(--text-3); }
+  .ab-flow { margin: 0; display: grid; gap: 0; }
+  .ab-box { display: grid; gap: 0.2rem; padding: 0.85rem 1rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+  .ab-box b { font-size: 0.95rem; font-weight: 580; color: var(--text); }
+  .ab-box span { font-size: 0.82rem; line-height: 1.45; color: var(--text-2); }
+  .ab-box.is-host { border-left: 3px solid var(--accent); }
+  .ab-box.is-bridge { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); background: color-mix(in srgb, var(--accent) 6%, var(--surface)); }
+  .ab-box.is-vm { border-left: 3px solid var(--cloud); }
+  .ab-wire { height: 1.4rem; display: flex; justify-content: center; }
+  .ab-wire i { width: 1px; height: 100%; background: linear-gradient(var(--accent), var(--cloud)); }
+  .ab-flow figcaption { margin-top: 0.8rem; font-size: 0.8rem; line-height: 1.5; color: var(--text-3); }
+</style>

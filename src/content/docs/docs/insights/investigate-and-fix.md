@@ -30,6 +30,6 @@ The report is saved on the issue and starts an investigation with its own status
 
 ## Convene Council
 
-For a contested or high-impact issue, Convene Council runs an incident council with investigator, architect, performance, security and challenger roles. Members receive the same redacted evidence as data, disagree on the record, and the report is linked to the investigation. See [Council](/docs/ai-teams/council/).
+For a contested or high-impact issue, Convene Council runs an incident council with investigator, architect, performance, security and challenger roles. Members receive the same redacted evidence as data, disagree on the record, and the report is linked to the investigation. See [Council](/docs/factory/council/).
 
 Everything here works in the development build on macOS against recorded provider data.

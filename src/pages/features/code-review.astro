@@ -6,8 +6,7 @@ import Button from '@/components/Button.astro';
 import StatusBadge from '@/components/StatusBadge.astro';
 import ReviewInbox from '@/components/features/ReviewInbox.astro';
 import Steps from '@/components/features/Steps.astro';
-import WhereThisStands from '@/components/features/WhereThisStands.astro';
-import CloudCallout from '@/components/cloud/CloudCallout.astro';
+import CapabilityStatus from '@/components/CapabilityStatus.astro';
 import { Inbox, ScanSearch, Users, CheckCircle2 } from '@lucide/astro';
 
 const intended: { text: string; status: 'available' | 'planned' }[] = [
@@ -32,8 +31,8 @@ const workflow = [
   { title: 'Comment and approve', body: 'Your comments go to GitHub or GitLab as yours. Approval is a button you press.' },
 ];
 ---
-<Base title="Code reviews" description="Pull requests waiting for you, the diff, AI findings and your comments in one place. Compare findings from several models when it matters, and approve without leaving your workspace.">
-  <PageHero eyebrow="Code reviews" title="Review where" accent="you write code." lede="Pull requests waiting for you, the diff, AI findings and your comments, side by side. Compare several models when a change is contested. You approve." cta={{ label: 'How AI Teams verify work', href: '/ai-teams/' }} secondary={{ label: 'Review docs', href: '/docs/git/ai-reviews/' }} wide>
+<Base title="Code review" fullTitle="Code review: pull requests, findings and your verdict · Vekrun" description="An advanced tool in Vekrun: pull requests waiting for you, the diff, AI findings and your comments in one place, with findings from several models when a change is contested.">
+  <PageHero eyebrow="Advanced tools · Code review" title="Review with the evidence" accent="beside the diff." lede="Pull requests waiting for you, the diff, AI findings and your comments, side by side. Factory pull requests arrive with their Proof Pack. You decide." cta={{ label: 'How verification works', href: '/features/verification/' }} secondary={{ label: 'Review docs', href: '/docs/git/ai-reviews/' }} wide>
     <ReviewInbox />
   </PageHero>
 
@@ -79,7 +78,6 @@ const workflow = [
     </div>
   </section>
 
-  <CloudCallout class="py-12 sm:py-14" text="Review requests routed to the right teammate, with AI findings beside the diff and project status updated when it merges." />
 
-  <WhereThisStands>AI review of local branches and diffs, and review councils across several models, work in the development build on macOS. The Review Inbox for GitHub pull requests and GitLab merge requests, Review with AI on a pull request, inline comments and submitting a verdict through the provider are planned and high priority; none has started in source. GitHub and GitLab stay the source of truth for submitted reviews.</WhereThisStands>
+  <CapabilityStatus keys={['aiReview', 'prCreation', 'inbox']} />
 </Base>

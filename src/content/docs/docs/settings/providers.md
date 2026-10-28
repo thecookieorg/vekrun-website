@@ -15,4 +15,4 @@ Each provider's models are listed with what Vekrun knows about them: context siz
 
 Usage is tracked per session, project and task. Vekrun's own estimate cannot cap a provider's actual bill unless the provider offers that control, and the interface says so.
 
-See [Connecting AI](/docs/getting-started/connecting-ai/) and [Choosing models](/docs/ai-coding/choosing-models/).
+See [Connecting AI](/docs/getting-started/connecting-tools/) and [Choosing models](/docs/ai-coding/choosing-models/).

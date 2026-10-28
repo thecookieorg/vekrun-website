@@ -1,0 +1,41 @@
+---
+/**
+ * How one engineering job moves: seven stations from goal to memory. A static,
+ * readable sequence; the connecting line draws once when it scrolls into view.
+ */
+import { Target, Map, Box, Cpu, ShieldCheck, GitPullRequest, Library } from '@lucide/astro';
+const steps = [
+  { i: Target, t: 'Goal or incident', d: 'An outcome you describe, a ticket, or a production error.' },
+  { i: Map, t: 'Context and plan', d: 'Vekrun reads the repository and its memory, and plans when a plan helps.' },
+  { i: Box, t: 'Isolated environment', d: 'Its own branch, services, test data and preview.' },
+  { i: Cpu, t: 'Coding agent via Vekrun', d: 'Your signed-in CLI works in that environment through one Vekrun bridge.' },
+  { i: ShieldCheck, t: 'Tests and verification', d: 'Checks run, then an independent verifier compares the result with the goal.' },
+  { i: GitPullRequest, t: 'Proof Pack and PR', d: 'The pull request opens with its evidence. A person reviews.' },
+  { i: Library, t: 'Engineering Memory', d: 'Decisions, changes and results are recorded for next time.' },
+];
+---
+<ol class="jf reveal-group">
+  {steps.map((s, n) => (
+    <li class="jf-step">
+      <span class="jf-i"><s.i class="h-4 w-4" aria-hidden="true" /></span>
+      <span class="jf-n">{n + 1}</span>
+      <h3 class="jf-t">{s.t}</h3>
+      <p class="jf-d">{s.d}</p>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .jf { margin: 0; padding: 0; list-style: none; display: grid; gap: 1.25rem; position: relative; }
+  @media (min-width: 40rem) { .jf { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 64rem) { .jf { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.75rem; } .jf::before { content: ''; position: absolute; left: 1.1rem; right: 1.1rem; top: 1.1rem; height: 1px; background: linear-gradient(90deg, var(--accent), var(--cloud)); opacity: 0.45; transform-origin: left; } .jf:global(.is-visible)::before { animation: grow-x 1200ms var(--ease-out) both; } }
+  @media (prefers-reduced-motion: reduce) { .jf::before { animation: none !important; } }
+  .jf-step { position: relative; display: grid; grid-template-columns: auto 1fr; column-gap: 0.75rem; align-items: start; align-content: start; }
+  @media (min-width: 64rem) { .jf-step { grid-template-columns: 1fr; row-gap: 0.75rem; } }
+  .jf-i { position: relative; z-index: 1; grid-row: span 3; display: inline-flex; align-items: center; justify-content: center; width: 2.2rem; height: 2.2rem; border-radius: 10px; border: 1px solid var(--border-strong); background: var(--bg); color: var(--accent); }
+  @media (min-width: 64rem) { .jf-i { grid-row: auto; } }
+  .jf-step:nth-child(n + 5) .jf-i { color: var(--cloud-strong); }
+  .jf-n { font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-3); }
+  .jf-t { margin: 0; font-size: 0.98rem; font-weight: 580; letter-spacing: -0.01em; color: var(--text); }
+  .jf-d { margin: 0.25rem 0 0; font-size: 0.84rem; line-height: 1.5; color: var(--text-2); }
+</style>

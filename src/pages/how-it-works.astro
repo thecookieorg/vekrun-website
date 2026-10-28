@@ -1,0 +1,68 @@
+---
+/**
+ * How it works: the product flow from setup to delivery, then what runs where.
+ */
+import Base from '@/layouts/Base.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import Button from '@/components/Button.astro';
+import JobFlow from '@/components/factory/JobFlow.astro';
+import AgentBridge from '@/components/factory/AgentBridge.astro';
+import Steps from '@/components/features/Steps.astro';
+import CapabilityStatus from '@/components/CapabilityStatus.astro';
+
+const setup = [
+  { title: 'Install Vekrun', body: 'A native desktop app with a background Host. Free for individuals when released.' },
+  { title: 'Connect your tools', body: 'Vekrun finds Claude Code, Codex, Gemini CLI and GitHub CLI, and connects your Git host, trackers, monitoring and models.' },
+  { title: 'Import a repository', body: 'Browse your repositories, clone any you can access by URL, or open one already on your machine.' },
+  { title: 'Validate its environment', body: 'Environment Discovery works out how the project runs and saves a verified recipe.' },
+  { title: 'Assign your first outcome', body: 'Describe what should be true. Approve the plan if one is proposed.' },
+  { title: 'Inspect the Proof Pack', body: 'Review the evidence and the pull request. Then connect your phone or your team, when you want to.' },
+];
+const where = [
+  ['On your machine', 'The Vekrun app and Host, your signed-in coding CLIs, your keys in the system keychain, your personal projects and memory.'],
+  ['In each job’s environment', 'A copy of the repository on its own branch, the project’s services and test data, and the commands the agent runs.'],
+  ['On your team’s servers, with Teams', 'The shared Coordinator, organization data store, workers, audit and reports.'],
+  ['At your model providers', 'The prompts and code a job sends them, under your accounts and their terms. Local models keep that on your hardware.'],
+];
+---
+<Base title="How it works" fullTitle="How Vekrun works: from an outcome to a verified pull request · Vekrun" description="How the Vekrun AI Factory works: connect your coding CLIs and repositories, validate an environment, assign an outcome, and get a verified pull request with a Proof Pack, while your policies and reviews stay in charge.">
+  <PageHero eyebrow="How it works" title="From an outcome" accent="to a verified pull request." lede="What happens between telling Vekrun what needs to ship and reviewing the result, and what runs where along the way." align="left" cta={{ label: 'Explore AI Factory', href: '/features/factory/' }} />
+
+  <section class="section-pad" aria-labelledby="job-title">
+    <div class="container-wide">
+      <SectionHeading id="job-title" kicker="One job, seven stations" title="What the Factory does with an outcome." class="reveal" />
+      <div class="mt-12"><JobFlow /></div>
+    </div>
+  </section>
+
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="setup-title">
+    <div class="container-site">
+      <SectionHeading id="setup-title" kicker="Getting started" title="Six steps to your first verified change." class="reveal" />
+      <Steps steps={setup} columns={3} class="reveal-group mt-12" />
+    </div>
+  </section>
+
+  <section class="section-pad rule" aria-labelledby="bridge-title">
+    <div class="container-site">
+      <SectionHeading id="bridge-title" kicker="Agents and environments" title="Signed in on the Host. Working in the job." lede="Your coding CLIs keep their sign-in on your machine. Their work reaches each job’s isolated environment through one Vekrun bridge." class="reveal" />
+      <div class="reveal mt-10"><AgentBridge /></div>
+    </div>
+  </section>
+
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="where-title">
+    <div class="container-site">
+      <div class="grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+        <div class="reveal">
+          <p class="kicker">What runs where</p>
+          <h2 id="where-title" class="heading-2 mt-3 text-text">Your machines. Your accounts. Your rules.</h2>
+          <p class="lede mt-4">Vekrun runs on infrastructure you control. When you use an external model provider, it receives what the job sends; choose providers and policies accordingly.</p>
+          <div class="mt-7 flex flex-wrap gap-3"><Button href="/security/" variant="secondary">Security</Button><Button href="/privacy/" variant="ghost">Privacy</Button></div>
+        </div>
+        <dl class="facts facts-lg reveal-group">{where.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+      </div>
+    </div>
+  </section>
+
+  <CapabilityStatus keys={['coordinator', 'isolatedVm', 'mcpBridge', 'envDiscovery', 'projectImport', 'cliSetup', 'verifier', 'proofPacks', 'memory']} />
+</Base>

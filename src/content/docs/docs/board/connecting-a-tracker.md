@@ -5,13 +5,13 @@ sidebar:
   order: 1
 ---
 
-:::note[Planned]
-Connecting Linear, Jira, Asana, GitHub Issues or GitLab Issues is not built yet. The Board runs on a local ticket list in the development build. See the [roadmap](/roadmap/) and the [integrations catalog](/integrations/).
+:::note[In development]
+Adapters for Linear, Jira, Asana, GitHub Issues and GitLab Issues exist in the development build and are tested against recorded responses. They have not yet run against the live services. See the [roadmap](/roadmap/#board) and the [integrations catalog](/integrations/).
 :::
 
 ## The idea
 
-Your tracker stays the system of record. Vekrun connects to it, shows the tickets assigned to you, and turns any of them into a branch, a worktree, a terminal and, if you want, an agent. Finished work and status changes go back to the tracker with your approval.
+Your tracker stays the system of record. Vekrun connects to it, shows the tickets assigned to you, and turns any of them into a Factory job, or a branch you work on yourself. Finished work and status changes go back to the tracker with your approval.
 
 ## How connecting will work
 

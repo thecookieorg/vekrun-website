@@ -5,11 +5,11 @@ sidebar:
   order: 3
 ---
 
-:::note[Planned]
-Docker integration and framework-aware testing are approved scope and not built yet. See the [roadmap](/roadmap/).
+:::note[In development]
+Environment Discovery finds and runs Docker Compose, native and hybrid projects in the development build; see [Validating the environment](/docs/getting-started/validating-the-environment/). Reusable Environment Recipes and framework-aware testing are planned. See the [roadmap](/roadmap/#environments).
 :::
 
-These are local developer tools, not account integrations. Nothing here needs a cloud account.
+These are local developer tools, not account integrations.
 
 ## Docker and Compose
 

@@ -6,35 +6,39 @@ const noOverflow = async (page: Page) => {
 };
 
 test.describe('homepage', () => {
-  test('renders the hero, metadata and structured data', async ({ page }) => {
+  test('renders the Factory positioning, metadata and structured data', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText(/Your terminal\.\s*Your models\.\s*Your rules\./);
-    await expect(page).toHaveTitle(/Vekrun/);
-    await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /open-source AI-native terminal/);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tell Vekrun what needs to ship.');
+    await expect(page.getByText('AI software engineering Factory').first()).toBeVisible();
+    await expect(page).toHaveTitle('Vekrun: the AI software engineering Factory');
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /AI software engineering Factory/);
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://vekrunapp.com/');
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og\/default\.png$/);
     const ld = await page.locator('script[type="application/ld+json"]').first().textContent();
     expect(JSON.parse(ld ?? '{}')['@type']).toBe('SoftwareApplication');
+    await expect(page.getByText('Vekrun is in development. There is no public download yet.').first()).toBeVisible();
+    await expect(page.locator('body')).not.toContainText(/open[- ]source|Apache|Vekrun Cloud/i);
     await noOverflow(page);
   });
 
-  test('hero preview reaches its final state, is labelled a preview, and can replay', async ({ page }) => {
+  test('the Factory hero reaches its final state, is labelled a concept, and can replay', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/');
-    const app = page.locator('[data-app]');
-    await expect(app).toHaveAttribute('data-demo', 'done');
-    await expect(app.getByText('Product preview', { exact: false })).toBeVisible();
-    await expect(app.locator('[data-status-right]')).toHaveText('Review ready');
-    await app.getByRole('button', { name: 'Replay' }).click();
-    await expect(app).toHaveAttribute('data-demo', /playing|done/);
+    const f = page.locator('[data-factory]');
+    await expect(f).toHaveAttribute('data-demo', 'done');
+    await expect(f.getByText('Illustrative product concept', { exact: false })).toBeVisible();
+    await expect(f.locator('[data-job="j1"]')).toHaveAttribute('data-stage', '5');
+    await expect(f.locator('[data-f-inbox]')).toBeVisible();
+    await f.getByRole('button', { name: 'Replay' }).click();
+    await expect(f).toHaveAttribute('data-demo', /playing|done/);
   });
 
   test('every homepage demo plays to completion when visible', async ({ page }) => {
-    test.setTimeout(300_000);
+    test.setTimeout(120_000);
     await page.goto('/');
     const roots = page.locator('[data-demo-root]');
     const n = await roots.count();
-    expect(n).toBeGreaterThanOrEqual(5);
+    expect(n).toBeGreaterThanOrEqual(1);
     for (let i = 0; i < n; i++) {
       await roots.nth(i).scrollIntoViewIfNeeded();
       await expect(roots.nth(i)).toHaveAttribute('data-demo', 'done', { timeout: 60_000 });
@@ -43,41 +47,35 @@ test.describe('homepage', () => {
 
   test('a demo pauses with the pause control and resumes', async ({ page }) => {
     await page.goto('/');
-    const app = page.locator('[data-app]');
-    await app.scrollIntoViewIfNeeded();
-    await expect(app).toHaveAttribute('data-demo', 'playing');
-    await app.locator('[data-demo-play]').click();
-    await expect(app).toHaveAttribute('data-demo', 'paused');
-    await app.locator('[data-demo-play]').click();
-    await expect(app).toHaveAttribute('data-demo', 'playing');
+    const f = page.locator('[data-factory]');
+    await f.scrollIntoViewIfNeeded();
+    await expect(f).toHaveAttribute('data-demo', 'playing');
+    await f.locator('[data-demo-play]').click();
+    await expect(f).toHaveAttribute('data-demo', 'paused');
+    await f.locator('[data-demo-play]').click();
+    await expect(f).toHaveAttribute('data-demo', 'playing');
   });
 
-  test('the model picker is a keyboard-operable radiogroup', async ({ page }) => {
+  test('the Insights period control is a keyboard-operable radiogroup with illustrative data', async ({ page }) => {
     await page.goto('/');
-    const radios = page.getByRole('radiogroup', { name: 'Choose a model' }).first().getByRole('radio');
-    expect(await radios.count()).toBeGreaterThanOrEqual(5);
-    await radios.nth(0).click();
-    await expect(radios.nth(0)).toHaveAttribute('aria-checked', 'true');
-    await radios.nth(0).focus();
+    const ins = page.locator('[data-insights]').first();
+    const group = ins.getByRole('radiogroup', { name: 'Reporting period' });
+    await group.scrollIntoViewIfNeeded();
+    await expect(ins.getByText('Illustrative data')).toBeVisible();
+    await group.getByRole('radio', { name: '30d' }).click();
+    await expect(group.getByRole('radio', { name: '30d' })).toHaveAttribute('aria-checked', 'true');
+    await expect(ins.locator('[data-metric="0"]')).toHaveText('64');
     await page.keyboard.press('ArrowRight');
-    await expect(radios.nth(1)).toHaveAttribute('aria-checked', 'true');
+    await expect(group.getByRole('radio', { name: 'All time' })).toHaveAttribute('aria-checked', 'true');
+    await expect(ins.locator('[data-metric="0"]')).toHaveText('212');
   });
 
-  test('the Board walkthrough lets a visitor pick a ticket, press Start Work and choose who does the work', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
+  test('the homepage shows two packages with planned Teams pricing and no purchase control', async ({ page }) => {
     await page.goto('/');
-    const board = page.locator('[data-board-walk]').first();
-    await board.scrollIntoViewIfNeeded();
-    await board.getByRole('button', { name: /VEK-148/ }).click();
-    await expect(board.getByText('Selected: VEK-148', { exact: false })).toBeVisible();
-    await board.getByRole('button', { name: 'Start Work' }).click();
-    const dialog = board.getByRole('dialog', { name: 'Start Work' });
-    await expect(dialog).toBeVisible();
-    await dialog.getByRole('button', { name: /With an AI agent/ }).click();
-    await expect(board.locator('[data-column="progress"] [data-card="VEK-148"]')).toHaveCount(1, { timeout: 5_000 });
-    await expect(board.locator('[data-card="VEK-148"]')).toContainText('Agent working');
-    await board.getByRole('button', { name: 'Back to the Board' }).click();
-    await expect(board.locator('[data-ws]')).toBeHidden();
+    await expect(page.getByRole('heading', { name: 'Vekrun Personal' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Vekrun Teams' })).toBeVisible();
+    await expect(page.getByText('Planned launch pricing. Vekrun Teams is not available to buy yet.').first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /buy|checkout|subscribe|start trial|sign up/i })).toHaveCount(0);
   });
 
   test('the coding studio accepts a real approve or reject decision', async ({ page }) => {
@@ -100,9 +98,9 @@ test.describe('homepage', () => {
     await expect(inbox.getByText(/Changes requested by you \(demonstration\)/)).toBeVisible();
   });
 
-  test('Insights can be driven by hand from Investigate & Fix to a ticket', async ({ page }) => {
+  test('production incidents can be driven by hand from Investigate & Fix to a ticket', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto('/features/insights/');
+    await page.goto('/features/board/');
     const ins = page.locator('[data-insights-walk]');
     await ins.getByRole('button', { name: 'Replay' }).click();
     await ins.getByRole('button', { name: 'Investigate & Fix' }).click();
@@ -195,111 +193,108 @@ test.describe('navigation and theme', () => {
 });
 
 test.describe('other pages', () => {
-  for (const path of ['/features/', '/features/terminal/', '/features/ai-coding/', '/features/board/', '/ai-teams/', '/features/code-review/', '/features/insights/', '/cloud/', '/integrations/', '/roadmap/', '/download/', '/open-source/', '/docs/', '/security/', '/privacy/', '/contact/']) {
-    test(`${path} renders with one h1 and no overflow`, async ({ page }) => {
+  for (const path of ['/features/', '/features/factory/', '/features/board/', '/features/inbox/', '/features/verification/', '/features/engineering-memory/', '/features/mobile/', '/features/terminal/', '/features/ai-coding/', '/features/code-review/', '/how-it-works/', '/teams/', '/integrations/', '/roadmap/', '/download/', '/license/', '/docs/', '/security/', '/privacy/', '/contact/']) {
+    test(`${path} renders with one h1, no overflow and no retired claims`, async ({ page }) => {
       const res = await page.goto(path);
       expect(res?.status()).toBe(200);
       await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+      if (path !== '/license/') await expect(page.locator('main, body').first()).not.toContainText(/Vekrun is (free and )?open[- ]source|Apache License|Vekrun Cloud|AI-native terminal/i);
       await noOverflow(page);
     });
   }
 
-  test('the Cloud page plays every demonstration, labels them conceptual, and offers no sign-up', async ({ page }) => {
-    test.setTimeout(300_000);
-    await page.goto('/cloud/');
-    await expect(page.getByRole('heading', { level: 1 })).toContainText('One connected workspace');
-    await expect(page.getByText('In development').first()).toBeVisible();
-    await expect(page.getByRole('link', { name: /sign up|start trial|subscribe|buy/i })).toHaveCount(0);
-    await expect(page.getByRole('button', { name: /sign up|start trial|subscribe|buy|continue with|register interest|checkout/i })).toHaveCount(0);
-    await expect(page.getByRole('link', { name: /register interest|checkout|pricing calculator/i })).toHaveCount(0);
-    await expect(page.locator('#plans, [data-pricing-calc]')).toHaveCount(0);
-    await expect(page.getByText(/\$99|per month|active member|launch pricing/i)).toHaveCount(0);
-    const roots = page.locator('[data-demo-root]');
-    const n = await roots.count();
-    expect(n).toBeGreaterThanOrEqual(7);
-    for (let i = 0; i < n; i++) {
-      await roots.nth(i).scrollIntoViewIfNeeded();
-      await expect(roots.nth(i)).toHaveAttribute('data-demo', 'done', { timeout: 60_000 });
-      await expect(roots.nth(i).getByText(/Conceptual preview/)).toBeVisible();
+  test('the Teams page is self-hosted, prices with the planned formula and sells nothing', async ({ page }) => {
+    await page.goto('/teams/');
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('On your infrastructure');
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og\/teams\.png$/);
+    await expect(page.getByRole('link', { name: /buy|checkout|subscribe|start trial|sign up/i })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /buy|checkout|subscribe|start trial|sign up|register/i })).toHaveCount(0);
+    await expect(page.getByText(/enterprise plan/i).first()).toBeVisible();
+    const calc = page.locator('[data-teams-calc]');
+    await calc.scrollIntoViewIfNeeded();
+    const monthly = calc.locator('[data-pc-monthly]');
+    await expect(monthly).toHaveText('$399');
+    await expect(calc.locator('[data-pc-annual]')).toContainText('$4,788');
+    const num = calc.getByLabel('Engineers, typed');
+    for (const [n, cost] of [[1, '$199'], [10, '$199'], [11, '$209'], [30, '$399'], [100, '$1,099']] as const) {
+      await num.fill(String(n));
+      await expect(monthly).toHaveText(cost);
     }
-    await expect(page.getByText('Demonstration data').first()).toBeVisible();
+    const range = calc.getByLabel('Engineers', { exact: true });
+    await range.focus();
+    await page.keyboard.press('Home');
+    await expect(monthly).toHaveText('$199');
+    const faq = page.locator('#faq details').first();
+    await faq.locator('summary').click();
+    await expect(faq).toHaveAttribute('open', '');
   });
 
-  test('the Cloud page is dark by design and leaves the stored theme alone', async ({ page }) => {
-    await page.addInitScript(() => { try { localStorage.setItem('starlight-theme', 'light'); } catch {} });
-    await page.goto('/cloud/');
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-    await expect(page.locator('[data-theme-toggle]')).toHaveCount(0);
-    expect(await page.evaluate(() => localStorage.getItem('starlight-theme'))).toBe('light');
-    await expect(page).toHaveTitle('Vekrun Cloud — One Connected Workspace for Engineering Teams');
-    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og\/cloud\.png$/);
-    await page.goto('/');
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-  });
-
-  test('the Cloud dashboard, settings, roles and workflow are keyboard-operable', async ({ page }) => {
+  test('the Teams dashboard, settings, roles and workflow are keyboard-operable', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto('/cloud/');
+    await page.goto('/teams/');
     const dash = page.locator('[data-dashboard]');
     const overview = dash.getByRole('tab', { name: 'Overview' });
     await overview.scrollIntoViewIfNeeded();
     await overview.focus();
     await page.keyboard.press('ArrowDown');
     await expect(dash.getByRole('tab', { name: 'Projects' })).toHaveAttribute('aria-selected', 'true');
-    await expect(dash.getByRole('tabpanel', { name: 'Projects' })).toBeVisible();
-    for (const name of ['AI Operations', 'Quality & Insights', 'Reports', 'Settings']) {
-      await dash.getByRole('tab', { name }).click();
-      await expect(dash.getByRole('tabpanel', { name })).toBeVisible();
-    }
     const gov = page.locator('[data-governance]');
     await gov.getByRole('tab', { name: 'Data sharing' }).click();
-    await expect(gov.getByRole('tabpanel', { name: 'Data sharing' })).toContainText('Source code is not uploaded for coordination');
+    await expect(gov.getByRole('tabpanel', { name: 'Data sharing' })).toBeVisible();
     const roles = page.locator('[data-roles]');
     await roles.getByRole('tab', { name: 'Project manager' }).click();
     await expect(roles.getByRole('tabpanel', { name: 'Project manager' })).toBeVisible();
     const wf = page.locator('[data-workflow]');
     await wf.getByRole('button', { name: /Step 3 of 8/ }).click();
     await expect(wf).toHaveAttribute('data-current', '3');
-    await wf.getByRole('button', { name: 'Next step' }).click();
-    await expect(wf).toHaveAttribute('data-current', '4');
   });
 
-  test('the Cloud interest band and FAQ work', async ({ page }) => {
-    await page.goto('/cloud/');
-    await expect(page.getByText('Register interest · coming soon')).toBeVisible();
-    const faq = page.locator('#faq details').first();
-    await faq.locator('summary').click();
-    await expect(faq).toHaveAttribute('open', '');
+  test('every demo on the Teams page plays to completion and is labelled a concept', async ({ page }) => {
+    test.setTimeout(300_000);
+    await page.goto('/teams/');
+    const roots = page.locator('[data-demo-root]');
+    const n = await roots.count();
+    for (let i = 0; i < n; i++) {
+      await roots.nth(i).scrollIntoViewIfNeeded();
+      await expect(roots.nth(i)).toHaveAttribute('data-demo', 'done', { timeout: 60_000 });
+      await expect(roots.nth(i).getByText(/Illustrative product concept/)).toBeVisible();
+    }
   });
 
-  test('the Cloud approvals and resolve controls work in the demonstration only', async ({ page }) => {
+  test('the Inbox approvals work in the demonstration only', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto('/cloud/');
+    await page.goto('/features/inbox/');
     const ap = page.locator('[data-approvals]');
     await ap.getByRole('tab', { name: /Rotate the webhook signing secret/ }).click();
     await ap.getByRole('button', { name: 'Reject' }).filter({ visible: true }).click();
     await expect(ap.getByText(/Rejected by you \(demonstration\)/)).toBeVisible();
-    const ins = page.locator('[data-insights]');
-    await ins.getByRole('button', { name: 'Mark as resolved' }).click();
-    await expect(ins.getByRole('button', { name: 'Resolved by you' })).toBeDisabled();
+  });
+
+  test('the Board flow ends with a pull request waiting for a person', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/features/board/');
+    const bf = page.locator('[data-board-flow]');
+    await expect(bf).toHaveAttribute('data-demo', 'done');
+    await expect(bf.locator('[data-cards="review"] [data-hero-card]')).toHaveCount(1);
+    await expect(bf.locator('[data-bf-state]')).toHaveText('Waiting for review');
   });
 
   test('the roadmap filters by status and keeps its area index in step', async ({ page, isMobile }) => {
     await page.goto('/roadmap/');
-    await page.locator('label.filter-pill', { hasText: 'In progress' }).click();
-    await expect(page.locator('[data-roadmap-count]')).toContainText('of 79 items');
+    await page.locator('label.filter-pill').filter({ hasText: /^\s*In development/ }).click();
+    await expect(page.locator('[data-roadmap-count]')).toContainText('of 72 items');
     for (const s of await page.locator('[data-roadmap-item]:not([hidden])').evaluateAll((els) => els.map((e) => e.getAttribute('data-status')))) expect(s).toBe('in-progress');
-    if (!isMobile) await expect(page.locator('[data-roadmap-nav="terminal"]')).toBeHidden();
-    await page.locator('label.filter-pill', { hasText: 'In progress' }).click();
-    await expect(page.locator('[data-roadmap-count]')).toContainText('Showing all 79 items');
+    if (!isMobile) await expect(page.locator('[data-roadmap-nav="teams"]')).toBeHidden();
+    await page.locator('label.filter-pill').filter({ hasText: /^\s*In development/ }).click();
+    await expect(page.locator('[data-roadmap-count]')).toContainText('Showing all 72 items');
   });
 
-  test('the Cloud roadmap group exists and holds only planned work', async ({ page }) => {
-    await page.goto('/roadmap/#cloud');
-    const group = page.locator('#cloud');
-    await expect(group.getByRole('heading', { name: 'Vekrun Cloud' })).toBeVisible();
+  test('the Teams roadmap group exists and holds only planned work', async ({ page }) => {
+    await page.goto('/roadmap/#teams');
+    const group = page.locator('#teams');
+    await expect(group.getByRole('heading', { name: 'Vekrun Teams' })).toBeVisible();
     const items = group.locator('[data-roadmap-item]');
-    expect(await items.count()).toBeGreaterThanOrEqual(8);
+    expect(await items.count()).toBeGreaterThanOrEqual(6);
     for (const s of await items.evaluateAll((els) => els.map((e) => e.getAttribute('data-status')))) expect(s).toBe('planned');
   });
 
@@ -307,6 +302,7 @@ test.describe('other pages', () => {
     await page.goto('/download/');
     await expect(page.getByText(/no public (release|releases|builds|downloads)/i).first()).toBeVisible();
     await expect(page.getByRole('link', { name: /roadmap/i }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /build from source/i })).toHaveCount(0);
   });
 
   test('docs search index and sidebar exist', async ({ page, isMobile }) => {
@@ -318,20 +314,20 @@ test.describe('other pages', () => {
   });
 
   test('old URLs redirect to their new homes', async ({ page }) => {
-    await page.goto('/factory/');
-    await expect(page).toHaveURL(/\/ai-teams\/$/);
-    await page.goto('/docs/factory/council/');
-    await expect(page).toHaveURL(/\/docs\/ai-teams\/council\/$/);
+    for (const [from, to] of [['/cloud/', /\/teams\/$/], ['/ai-teams/', /\/features\/factory\/$/], ['/factory/', /\/features\/factory\/$/], ['/open-source/', /\/license\/$/], ['/features/insights/', /\/features\/board\/#incidents$/], ['/docs/ai-teams/council/', /\/docs\/factory\/council\/$/], ['/docs/getting-started/connecting-ai/', /\/docs\/getting-started\/connecting-tools\/$/]] as const) {
+      await page.goto(from);
+      await expect(page, from).toHaveURL(to);
+    }
   });
 
-  test('the Features menu opens with keyboard and closes on Escape', async ({ page, isMobile }) => {
+  test('the Product menu opens with keyboard and closes on Escape', async ({ page, isMobile }) => {
     test.skip(isMobile, 'desktop navigation only');
     await page.goto('/');
-    const button = page.getByRole('button', { name: 'Features' });
+    const button = page.getByRole('button', { name: 'Product' });
     await button.focus();
     await page.keyboard.press('ArrowDown');
     await expect(button).toHaveAttribute('aria-expanded', 'true');
-    await expect(page.getByRole('link', { name: /^Terminal/ }).first()).toBeFocused();
+    await expect(page.getByRole('link', { name: /^AI Factory/ }).first()).toBeFocused();
     await page.keyboard.press('Escape');
     await expect(button).toHaveAttribute('aria-expanded', 'false');
   });

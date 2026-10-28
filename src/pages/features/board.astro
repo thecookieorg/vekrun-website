@@ -3,63 +3,70 @@ import Base from '@/layouts/Base.astro';
 import PageHero from '@/components/PageHero.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import Button from '@/components/Button.astro';
-import BoardWalkthrough from '@/components/features/BoardWalkthrough.astro';
+import BoardFlow from '@/components/factory/BoardFlow.astro';
+import InsightsWalkthrough from '@/components/features/InsightsWalkthrough.astro';
 import Steps from '@/components/features/Steps.astro';
-import WhereThisStands from '@/components/features/WhereThisStands.astro';
-import CloudCallout from '@/components/cloud/CloudCallout.astro';
+import CapabilityStatus from '@/components/CapabilityStatus.astro';
 
-const steps = [
-  { title: 'Connect your tracker', body: 'Jira, Linear, Asana, GitHub or GitLab. Several accounts if you have them. Production errors from Insights can land here too.' },
-  { title: 'See your tickets', body: 'Everything assigned to you in one Kanban, each card linked to the original.' },
-  { title: 'Press Start Work', body: 'A branch, a separate working copy and a terminal in it. One click.' },
-  { title: 'Choose who does the work', body: 'You, an AI agent with the ticket as its brief, or an AI team.' },
-  { title: 'Review and deliver', body: 'Diffs and tests collect on the ticket. The pull request links back; the ticket moves when you confirm.' },
+const sources = [
+  { title: 'Trackers', body: 'Jira, Linear and Asana tickets, and GitHub and GitLab issues, assigned to you or your team.' },
+  { title: 'Pull requests', body: 'Review requests and changes waiting on someone, next to the work they belong to.' },
+  { title: 'Production monitoring', body: 'Sentry, Honeybadger, Datadog and AppSignal errors and performance problems.' },
 ];
-const ways = [
-  { title: 'Work manually', body: 'Branch, working copy, terminal. The ticket stays beside it. No AI involved.' },
-  { title: 'With an AI agent', body: 'The ticket becomes the brief. The agent plans, proposes diffs and runs the tests you allow.' },
-  { title: 'Delegate to an AI team', body: 'A plan you approve, agents building in parallel, a separate check before review.' },
+const steps = [
+  { title: 'An incident arrives', body: 'Duplicate alerts from the same problem become one shared Work Item, linked to the original events.' },
+  { title: 'A ticket is mapped', body: 'Your workflow creates or links the ticket in Jira, Linear or Asana, with status kept in step where the provider allows.' },
+  { title: 'The Factory is authorized', body: 'Someone with permission starts the job, or your workflow does under a policy you set.' },
+  { title: 'A verified pull request opens', body: 'With its Proof Pack: tests, browser checks, the revision and the verifier’s notes.' },
+  { title: 'A person reviews, then Vekrun watches', body: 'Your review rules decide the merge. After the deploy, the Board shows whether the error stopped.' },
 ];
 ---
-<Base title="Board" description="See the tickets assigned to you from Jira, Linear, Asana, GitHub or GitLab in one Kanban. Press Start Work and you have a branch, a terminal and, if you want, an AI agent.">
-  <PageHero eyebrow="Board and Start Work" title="Your tasks," accent="ready to build." lede="Your assigned tickets in one place. Pick one, press Start Work, and you have a branch, a terminal and, if you want, an AI agent. Your tasks, your terminal and your AI, all connected." cta={{ label: 'See the trackers', href: '/integrations/?category=project-management' }} secondary={{ label: 'Board docs', href: '/docs/board/start-work/' }} wide>
-    <BoardWalkthrough />
+<Base title="Board" fullTitle="Board: tickets, pull requests and production incidents as one stream of work · Vekrun" description="Vekrun's Board brings Jira, Linear, Asana, GitHub and GitLab work together with production incidents from Sentry, Honeybadger, Datadog and AppSignal, and turns them into authorized Factory jobs and verified pull requests.">
+  <PageHero eyebrow="Board" title="Every source of engineering work." accent="One Board." lede="Tickets, pull requests and production incidents across your repositories, in one place. Each can become a Factory job, with a verified pull request at the end and a person deciding what merges." cta={{ label: 'Follow an incident', href: '#incidents' }} secondary={{ label: 'Trackers and monitoring', href: '/integrations/?category=project-management' }} wide>
+    <BoardFlow />
   </PageHero>
 
-  <section class="section-pad rule bg-bg-elevated" aria-labelledby="ways-title">
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="sources-title">
     <div class="container-site">
-      <SectionHeading id="ways-title" kicker="Start Work" title="One question: who does the work?" lede="Start Work asks it once. The branch, the working copy and the terminal are the same whichever you choose." class="reveal" />
-      <ol class="ruled-grid reveal-group mt-10 sm:grid-cols-3" aria-label="Ways of working">
-        {ways.map((w, i) => (
+      <SectionHeading id="sources-title" kicker="Shared intake" title="Work arrives from three places." lede="Your trackers stay the system of record. The Board connects what they hold to the work that resolves it." class="reveal" />
+      <ul class="ruled-grid reveal-group mt-10 sm:grid-cols-3" aria-label="Sources of work">
+        {sources.map((s) => (
           <li class="p-6">
-            <span class="font-mono text-xs text-accent" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-            <h3 class="heading-3 mt-2 text-text">{w.title}</h3>
-            <p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">{w.body}</p>
+            <h3 class="heading-3 text-text">{s.title}</h3>
+            <p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">{s.body}</p>
           </li>
         ))}
-      </ol>
+      </ul>
     </div>
   </section>
 
   <section class="section-pad rule" aria-labelledby="flow-title">
     <div class="container-site">
-      <SectionHeading id="flow-title" kicker="Ticket to delivered" title="Five steps. The middle one is a single click." class="reveal" />
+      <SectionHeading id="flow-title" kicker="Incident to verified fix" title="Five steps, and the last one is yours." class="reveal" />
       <Steps steps={steps} columns={4} class="reveal-group mt-12" />
     </div>
   </section>
 
-  <section class="rule bg-bg-elevated">
-    <div class="container-site py-14 sm:py-16">
-      <dl class="facts facts-grid facts-lg reveal-group">
-        <div><dt>Your tracker stays in charge</dt><dd>Jira, Linear and Asana remain the system of record. Vekrun changes a ticket only when you confirm.</dd></div>
-        <div><dt>Columns that match your workflow</dt><dd>Map each tracker’s statuses to your columns, or add your own.</dd></div>
-        <div><dt>No AI required</dt><dd>The Board and Start Work need no model connection, and your tickets are cached for offline reading.</dd></div>
-      </dl>
-      <div class="mt-8 reveal"><Button href="/ai-teams/" variant="secondary">Hand a bigger ticket to an AI team</Button></div>
+  <section id="incidents" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="incidents-title">
+    <div class="container-site">
+      <SectionHeading id="incidents-title" kicker="Production incidents" title="From production error to verified fix." lede="Open an error, see its likely cause, and choose what happens next: a ticket, a plan, or a Factory job. Try it in the demonstration." class="reveal" />
+      <div class="reveal mt-10"><InsightsWalkthrough /></div>
     </div>
   </section>
 
-  <CloudCallout class="py-12 sm:py-14" text="A shared Board across your organization, with assignments and plans every developer on the project can see." />
+  <section class="rule">
+    <div class="container-site py-14 sm:py-16">
+      <dl class="facts facts-grid facts-lg reveal-group">
+        <div><dt>Configurable workflows</dt><dd>Decide what an incoming incident or ticket does. Mappings for status and custom fields depend on what each provider supports.</dd></div>
+        <div><dt>Your identity, your permissions</dt><dd>Changes to a tracker or repository are made as the person who authorized them, within your organization’s permissions.</dd></div>
+        <div><dt>Reviews stay with people</dt><dd>GitHub and GitLab review rules and branch protections apply. Vekrun never merges around them.</dd></div>
+      </dl>
+      <div class="mt-8 flex flex-wrap gap-3 reveal">
+        <Button href="/features/factory/" variant="secondary">How the Factory runs a job</Button>
+        <Button href="/teams/" variant="ghost">A shared Board for your team</Button>
+      </div>
+    </div>
+  </section>
 
-  <WhereThisStands>The Board, Start Work and all three ways of working run in the development build on macOS. Adapters for Jira, Linear, Asana, GitHub and GitLab exist and are tested against recorded responses, and a ticket created from a monitoring issue shows its investigation stage on its card. Running the trackers against live services, pull-request links and status updates are planned.</WhereThisStands>
+  <CapabilityStatus keys={['board', 'statusSync', 'monitoring', 'incidentDedupe', 'prCreation', 'aiReview']} />
 </Base>

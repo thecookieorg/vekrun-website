@@ -1,0 +1,123 @@
+---
+/**
+ * The flagship: the AI Factory. What the user experiences first (an outcome, a
+ * plan, jobs, evidence), then how it is built, with the architecture in an
+ * expandable section rather than the headline.
+ */
+import Base from '@/layouts/Base.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import Button from '@/components/Button.astro';
+import FactoryHero from '@/components/factory/FactoryHero.astro';
+import CoordinatorChat from '@/components/factory/CoordinatorChat.astro';
+import ParallelLanes from '@/components/factory/ParallelLanes.astro';
+import AgentBridge from '@/components/factory/AgentBridge.astro';
+import TeamRunDemo from '@/components/features/TeamRunDemo.astro';
+import CapabilityStatus from '@/components/CapabilityStatus.astro';
+
+const env = [
+  { title: 'Docker Compose projects', body: 'Vekrun reads your Compose file, starts the services a job needs and waits for their health checks.' },
+  { title: 'Native applications', body: 'Rails, Node and Next.js, Python and similar projects start the way your team starts them, with their own databases and seeds.' },
+  { title: 'Hybrid projects', body: 'Some services in containers and the app running natively. Discovery handles the mix and records what worked.' },
+];
+const control = [
+  ['Approvals where you want them', 'Plans, spend above a threshold, production commands and merges can each require a person.'],
+  ['Take over at any point', 'Pause a job, open its terminal or diff, change something by hand, and hand it back.'],
+  ['Failures lead to diagnosis', 'When fixes keep failing, the job stops retrying and re-examines its premise instead.'],
+  ['Budgets jobs cannot exceed', 'Spend limits per job and per period, with actual cost where the provider reports it.'],
+];
+const faq = [
+  ['Where do Claude Code, Codex and Gemini CLI run?', 'On your Host, signed in as you. Vekrun never copies their logins anywhere. Their commands, file changes and tests are carried into the job’s isolated environment through one first-party Vekrun MCP bridge. That bridge is planned; today Claude Code works on the host’s files.'],
+  ['Is there one VM per branch?', 'No. There is one isolated environment per active Work Item, created when the job needs it and released when it is done. Scheduling respects the machine’s real capacity and the order jobs depend on.'],
+  ['Do my Git credentials go into the environment?', 'No. A repository manager on the Host seeds each job with the code it needs, so your Git credentials stay on the Host.'],
+  ['What happens when a provider hits its limit?', 'The job can move to another capable worker. Vekrun Context Handoff rebuilds the task’s state from its journal, environment and memory so the next worker continues rather than starts over. A simpler fallback exists today; Context Handoff is planned.'],
+  ['Can agents merge to protected branches?', 'No. Pull requests follow your review rules and branch protections. Vekrun prepares the evidence; a person decides.'],
+];
+---
+<Base title="AI Factory" fullTitle="AI Factory: assign an outcome, get verified work · Vekrun" description="The Vekrun AI Factory takes an outcome, plans it, runs it in an isolated environment with your signed-in coding agents, verifies it independently and opens a pull request with its evidence. Several jobs across several projects, with you in control.">
+  <PageHero eyebrow="AI Factory" title="Give it the outcome." accent="Get verified work." lede="Describe what needs to ship. The Coordinator asks what it needs, plans when a plan helps, picks a qualified worker, runs the job in its own environment, tests it, has it independently verified and opens the pull request with the evidence attached." cta={{ label: 'How a job works', href: '#goal' }} secondary={{ label: 'Self-hosted Teams', href: '/teams/' }} wide>
+    <FactoryHero />
+  </PageHero>
+
+  <section id="goal" class="section-pad rule scroll-mt-16" aria-labelledby="goal-title">
+    <div class="container-site">
+      <div class="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16 lg:items-center">
+        <div class="reveal">
+          <p class="kicker">Goal first</p>
+          <h2 id="goal-title" class="heading-2 mt-3 text-text">Say what should be true. Not how to type it.</h2>
+          <p class="lede mt-4">The Coordinator works like a chief of staff for engineering work. It reads the repository and its memory, asks the questions that change the result, and shows you a plan you can edit before anything runs.</p>
+          <p class="mt-5 text-[0.95rem] leading-relaxed text-text-2">For hard problems, ask the Council: several models challenge a plan or a diagnosis, and their disagreements are recorded.</p>
+        </div>
+        <div class="reveal min-w-0"><CoordinatorChat /></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="team-title">
+    <div class="container-wide">
+      <SectionHeading id="team-title" kicker="Several agents, one job" title="Plan, build in parallel, test, review." lede="Larger work splits into tasks on separate branches, with a separate agent checking the result before it reaches you." class="reveal" />
+      <div class="reveal mt-10"><TeamRunDemo /></div>
+    </div>
+  </section>
+
+  <section class="section-pad rule" aria-labelledby="env-title">
+    <div class="container-site">
+      <SectionHeading id="env-title" kicker="Real environments" title="Every job gets its own place to run." lede="Environment Discovery works out how your project starts and saves a verified Environment Recipe for every job after it. It covers most projects; some will need a hint from you." class="reveal" />
+      <ul class="ruled-grid reveal-group mt-10 sm:grid-cols-3" aria-label="Kinds of projects">
+        {env.map((e) => <li class="p-6"><h3 class="heading-3 text-text">{e.title}</h3><p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">{e.body}</p></li>)}
+      </ul>
+      <p class="reveal mt-6 text-[0.9rem] text-text-3">Import a project by browsing your GitHub or GitLab repositories, cloning any repository you can access by URL, or opening one already on your machine. Fork & Clone is there when you want to contribute upstream; it is never required.</p>
+    </div>
+  </section>
+
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="parallel-title">
+    <div class="container-site">
+      <div class="grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16 lg:items-center">
+        <div class="reveal">
+          <p class="kicker">Many projects at once</p>
+          <h2 id="parallel-title" class="heading-2 mt-3 text-text">Separate repositories, branches and services. One queue.</h2>
+          <p class="lede mt-4">Run a fix in one project while a feature builds in another. Jobs wait for capacity and for the jobs they depend on, instead of colliding.</p>
+        </div>
+        <div class="reveal"><ParallelLanes /></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-pad rule" aria-labelledby="agents-title">
+    <div class="container-site">
+      <SectionHeading id="agents-title" kicker="Your agents as workers" title="Signed in on your machine. Working in the job’s environment." lede="Vekrun chooses a capable worker for each task, keeps your coding CLIs current where the vendor supports it, and hands work over safely when a provider reaches its limit." class="reveal" />
+      <div class="reveal mt-10"><AgentBridge /></div>
+    </div>
+  </section>
+
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="control-title">
+    <div class="container-site">
+      <SectionHeading id="control-title" kicker="You stay in control" title="Agents do the routine work. People make the consequential calls." class="reveal" />
+      <dl class="facts facts-grid facts-lg reveal-group mt-10">
+        {control.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+      </dl>
+      <div class="mt-8 flex flex-wrap gap-3 reveal">
+        <Button href="/features/inbox/" variant="secondary">The Inbox</Button>
+        <Button href="/features/verification/" variant="secondary">Verification and Proof Packs</Button>
+        <Button href="/features/terminal/" variant="ghost">Take over in the terminal</Button>
+      </div>
+    </div>
+  </section>
+
+  <section id="architecture" class="section-pad rule scroll-mt-16" aria-labelledby="arch-title">
+    <div class="container-site">
+      <div class="grid gap-8 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-16">
+        <div class="reveal">
+          <p class="kicker">Under the hood</p>
+          <h2 id="arch-title" class="heading-2 mt-3 text-text">How the pieces fit.</h2>
+          <p class="lede mt-4">For engineers who want the architecture before the experience.</p>
+        </div>
+        <div class="reveal faq">
+          {faq.map(([q, a]) => <details class="faq-i"><summary>{q}<svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></summary><p>{a}</p></details>)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CapabilityStatus keys={['coordinator', 'concurrentJobs', 'council', 'isolatedVm', 'mcpBridge', 'envDiscovery', 'envRecipes', 'projectImport', 'claudeCode', 'codex', 'geminiCli', 'routing', 'failover', 'contextHandoff', 'verifier']} title="Where the Factory stands." />
+</Base>

@@ -5,7 +5,7 @@ import SectionHeading from '@/components/SectionHeading.astro';
 import Button from '@/components/Button.astro';
 import TerminalShowcase from '@/components/features/TerminalShowcase.astro';
 import Steps from '@/components/features/Steps.astro';
-import WhereThisStands from '@/components/features/WhereThisStands.astro';
+import CapabilityStatus from '@/components/CapabilityStatus.astro';
 import { Columns2, Network, Search, Keyboard, Palette, History } from '@lucide/astro';
 
 const benefits = [
@@ -23,8 +23,8 @@ const workflow = [
   { title: 'Come back tomorrow', body: 'Close the window. Tabs, panes and scrollback are there when you return.' },
 ];
 ---
-<Base title="Terminal" description="A modern terminal with tabs, splits, SSH, search and session restore. It works without any AI connected, and when you want help, the AI reads the output you already have.">
-  <PageHero eyebrow="Terminal" title="A terminal you can" accent="live in." lede="Tabs, splits, SSH and search, fast and familiar. It works with no AI connected. When you want help, it reads the output you already have." cta={{ label: 'See what works today', href: '#status' }} secondary={{ label: 'Terminal docs', href: '/docs/terminal/tabs-and-panes/' }} wide>
+<Base title="Terminal and SSH" fullTitle="Terminal and SSH: take over a job by hand · Vekrun" description="An advanced tool in Vekrun: a terminal with tabs, splits, SSH, search and session restore for troubleshooting and taking over a Factory job, locally or on a remote machine.">
+  <PageHero eyebrow="Advanced tools · Terminal and SSH" title="Step into any job." accent="Take over by hand." lede="The Factory does the routine work. When you want to look for yourself, open a terminal in the job’s project, locally or over SSH, with tabs, splits, search and session restore." cta={{ label: 'See what works today', href: '#status' }} secondary={{ label: 'Terminal docs', href: '/docs/terminal/tabs-and-panes/' }} wide>
     <TerminalShowcase />
   </PageHero>
 
@@ -60,5 +60,5 @@ const workflow = [
     </div>
   </section>
 
-  <div id="status"><WhereThisStands>Tabs, splits, search, session restore, shell integration, SSH and the settings above work in the development build on macOS. Remote file editing and transfers are planned.</WhereThisStands></div>
+  <div id="status"><CapabilityStatus keys={['terminal', 'codeView']} /></div>
 </Base>

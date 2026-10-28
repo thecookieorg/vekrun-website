@@ -1,0 +1,10 @@
+---
+/** A miniature identity: a person (round, hued), an agent (mint square) or a worker (blue square). */
+import { people } from '@/data/org-demo';
+interface Props { who?: keyof typeof people; label?: string; kind?: 'person' | 'agent' | 'worker'; size?: 'sm' | 'md' | 'lg'; class?: string }
+const { who, label, kind = 'person', size = 'md', class: className = '' } = Astro.props;
+const p = who ? people[who] : undefined;
+const text = p?.ini ?? label ?? '';
+const title = p?.name ?? label ?? '';
+---
+<span class:list={['avatar', kind === 'agent' && 'is-agent', kind === 'worker' && 'is-worker', size === 'sm' && 'is-sm', size === 'lg' && 'is-lg', className]} style={p ? `--h: ${p.hue}` : undefined} title={title} aria-label={title} role="img">{text}</span>

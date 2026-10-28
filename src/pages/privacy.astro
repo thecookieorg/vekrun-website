@@ -3,10 +3,10 @@ import Base from '@/layouts/Base.astro';
 import Section from '@/components/Section.astro';
 import PageHero from '@/components/PageHero.astro';
 const title = 'Privacy';
-const description = 'This website sets no cookies and runs no analytics. The application keeps your work on your machine and shows you what it sends to AI providers.';
+const description = 'This website sets no cookies and runs no analytics. Vekrun Personal keeps your work on your machine, Vekrun Teams on your own servers, and model providers receive only what a job sends them.';
 ---
 <Base title={title} description={description}>
-  <PageHero eyebrow="Privacy" title="Nothing here watches you." lede="No cookies, no analytics, no trackers. The application follows the same rule." align="left" />
+  <PageHero eyebrow="Privacy" title="Nothing here watches you." lede="No cookies, no analytics, no trackers on this site. In the product, your work stays on machines you control, and you decide what reaches a model provider." align="left" />
   <Section padded="tight" class="pb-24">
     <div class="prose-site max-w-3xl text-[1.0625rem] leading-relaxed">
       <h2 class="!mt-0">This website</h2>
@@ -18,13 +18,26 @@ const description = 'This website sets no cookies and runs no analytics. The app
       </ul>
       <p>If analytics are ever added, this page will say exactly what is collected before they are turned on.</p>
 
-      <h2>The application</h2>
+      <h2>Vekrun Personal</h2>
       <ul>
-        <li>No Vekrun account and no Vekrun server your data passes through.</li>
-        <li>Sessions, memory and history are stored on your machine. You can delete them and remove API keys at any time.</li>
-        <li>Before anything is sent to an AI provider, you can see exactly what will be sent. The first time you use a provider, nothing goes out until you confirm.</li>
+        <li>No Vekrun account is needed, and your work passes through no Vekrun server.</li>
+        <li>Projects, jobs, Engineering Memory, logs and audit history are stored on your machine. You can delete them and remove keys at any time.</li>
+        <li>Keys live in your operating system’s keychain and are kept out of logs.</li>
         <li>Usage reporting is off unless you turn it on.</li>
-        <li>What you send to a provider is covered by that provider's terms.</li>
+      </ul>
+
+      <h2>Vekrun Teams</h2>
+      <ul>
+        <li>The Coordinator, organization data store, workers, memory and audit history run on infrastructure your organization controls.</li>
+        <li>Vekrun ships the software, licences, updates and support. It does not operate your servers or receive your code through them.</li>
+        <li>Your organization sets access, retention and data-sharing policies, and is responsible for the servers it runs.</li>
+      </ul>
+
+      <h2>Model providers and connected services</h2>
+      <ul>
+        <li>When a job uses an external model provider, that provider receives the prompts and the code the job sends it, under your account and its terms. Local models keep that on your hardware.</li>
+        <li>Before anything is sent to a provider you can see what will be sent, and your policies decide which providers are allowed.</li>
+        <li>Trackers, Git hosts and monitoring services you connect receive what the actions you authorize need.</li>
       </ul>
     </div>
   </Section>

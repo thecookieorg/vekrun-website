@@ -1,0 +1,189 @@
+---
+/**
+ * "An AI engineering team that works with your team." The organization's Factory
+ * as an operations view: the shared queue, one job in detail with its agents and
+ * event timeline, and the workers and budget beside it. The job pauses for a
+ * human approval and continues after it. Final state in markup. Conceptual.
+ */
+import Browser from './Browser.astro';
+import Avatar from './Avatar.astro';
+import DemoControls from '@/components/mock/DemoControls.astro';
+import { workers, budget } from '@/data/org-demo';
+
+const queue = [
+  { id: 'VEK-145', t: 'Payment webhooks', w: 'build-3', s: 'in review', tone: 'info', p: 100, live: true },
+  { id: 'VEK-140', t: 'Retry failed exports', w: 'build-2', s: 'verifying', tone: 'cloud', p: 92 },
+  { id: 'VEK-147', t: 'Nightly dependency check', w: 'Alex’s machine', s: 'needs approval', tone: 'warn', p: 40 },
+  { id: 'VEK-151', t: 'Audit log export', w: '—', s: 'queued', tone: 'muted', p: 0 },
+];
+const timeline = [
+  { t: 600, who: 'dana', k: 'Queued by Dana', s: 'plan requested · acme-api' },
+  { t: 1400, who: 'sam', k: 'Plan approved by Sam', s: '4 steps · estimated $12 · verification required' },
+  { t: 2200, who: 'W', k: 'Worker build-3 claimed the job', s: 'company build machine · allowed: tests, pull requests' },
+  { t: 3000, who: 'D', k: 'Developer agent · step 1 of 4', s: 'webhook signature verification' },
+  { t: 4200, who: 'D', k: 'Developer agent · step 4 of 4 · done', s: '6 files changed' },
+  { t: 5000, who: 'T', k: 'Testing agent · 24 tests passed', s: 'verified against the approved plan' },
+  { t: 6000, who: 'R', k: 'Review agent · 1 finding', s: 'retries could double-charge without an idempotency key' },
+  { t: 6800, who: 'alex', k: 'Approval requested from Alex', s: 'the change touches the payment path · policy: a person decides' },
+  { t: 9000, who: 'alex', k: 'Alex approved', s: 'developer agent applying the idempotency key' },
+  { t: 10200, who: 'T', k: 'Testing agent · 26 tests passed', s: 'including 2 new idempotency tests' },
+  { t: 11000, who: 'W', k: 'Pull request #220 opened', s: 'review requested from Priya · job cost $11.40' },
+];
+---
+<figure class="fo" data-demo-root="factory-ops" data-factory>
+  <Browser path="/acme/factory" class="fo-browser">
+    <span slot="status" class="live"><i></i><span data-fo-live>2 jobs running</span></span>
+    <span slot="status" class="hidden md:inline">${budget.used} of ${budget.total} {budget.period}</span>
+    <div class="fo-body">
+      <!-- Shared queue -->
+      <aside class="fo-queue" aria-label="Shared Factory queue">
+        <p class="fo-h">Shared queue <small>Platform team</small></p>
+        <ul class="fo-cards">
+          {queue.map((q) => (
+            <li class:list={['fo-card', q.live && 'is-live']} data-q={q.id}>
+              <span class="fo-card-top"><span class="fo-mono">{q.id}</span><span class:list={['pill', `is-${q.tone}`]} data-q-state>{q.s}</span></span>
+              <span class="fo-card-t">{q.t}</span>
+              <span class="bar" style={`--w: ${q.p}%`} data-q-prog><i></i></span>
+              <span class="fo-card-w"><Avatar kind="worker" label="W" size="sm" /><span data-q-worker>{q.w}</span></span>
+            </li>
+          ))}
+        </ul>
+      </aside>
+
+      <!-- The job -->
+      <section class="fo-detail" aria-label="Job detail">
+        <header class="fo-head">
+          <div><span class="fo-mono">VEK-145</span><h4>Payment webhooks</h4><p>acme-api · requested by Dana · plan approved by Sam · budget $12</p></div>
+          <span class="pill is-info fo-status" data-fo-status>In review</span>
+        </header>
+        <ul class="fo-agents" aria-label="Agents on this job">
+          <li><Avatar kind="agent" label="D" /><span>Developer agent<small data-ag="dev">done · 7 files changed</small></span></li>
+          <li><Avatar kind="agent" label="T" /><span>Testing agent<small data-ag="test">26 passed</small></span></li>
+          <li><Avatar kind="agent" label="R" /><span>Review agent<small data-ag="rev">1 finding · resolved</small></span></li>
+        </ul>
+        <ol class="fo-timeline" aria-label="Events">
+          {timeline.map((e) => (
+            <li data-t={e.t}>
+              {e.who.length > 1 ? <Avatar who={e.who as 'dana'} size="sm" /> : <Avatar kind={e.who === 'W' ? 'worker' : 'agent'} label={e.who} size="sm" />}
+              <span><b>{e.k}</b><small>{e.s}</small></span>
+            </li>
+          ))}
+        </ol>
+        <div class="fo-approval" data-t="6800">
+          <p class="fo-approval-h"><span class="pill is-warn">Approval</span>Add an idempotency key to webhook retries</p>
+          <dl><div><dt>Repository</dt><dd>acme-api · payments/webhooks.rb</dd></div><div><dt>Why a person</dt><dd>touches the payment path</dd></div><div><dt>Cost</dt><dd>about $1.20 more</dd></div><div><dt>Risk</dt><dd><span class="pill is-warn">medium</span></dd></div></dl>
+          <p class="fo-approval-r"><Avatar who="alex" size="sm" /><span data-fo-approval>Approved by Alex · continuing</span></p>
+        </div>
+      </section>
+
+      <!-- Workers and budget -->
+      <aside class="fo-side" aria-label="Workers and budget">
+        <p class="fo-h">Workers</p>
+        <ul class="fo-workers">
+          {workers.map((w) => <li><Avatar kind="worker" label={w.kind === 'shared' ? 'W' : 'P'} size="sm" /><span>{w.id}<small>{w.where}</small></span><span class:list={['pill', w.state === 'busy' ? 'is-cloud' : w.state === 'idle' ? 'is-ok' : 'is-muted']} data-w={w.id}>{w.state}</span></li>)}
+        </ul>
+        <p class="fo-h">Team budget <small>{budget.period}</small></p>
+        <p class="fo-budget"><b data-fo-spent>${budget.used + 12}</b><span> of ${budget.total}</span></p>
+        <span class="bar" data-fo-budget style={`--w: ${Math.round(((budget.used + 12) / budget.total) * 100)}%`}><i></i></span>
+        <p class="fo-policy">Shared workers may run tests and open pull requests. They do not merge, and they use only the organization-managed credentials they are granted.</p>
+      </aside>
+    </div>
+  </Browser>
+  <DemoControls notice="Illustrative product concept with demonstration data. Shared queues, approved workers, team approvals and team budgets are planned Vekrun Teams capabilities; today Factory runs locally or on machines you own, with the same agents." />
+</figure>
+
+<style>
+  .fo { margin: 0; }
+  .fo-browser { font-size: 0.76rem; }
+  .fo-body { display: grid; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 48rem) { .fo-body { grid-template-columns: 15rem minmax(0, 1fr); } .fo-side { grid-column: 1 / -1; border-top: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem 1.5rem; } }
+  @media (min-width: 70rem) { .fo-body { grid-template-columns: 15rem minmax(0, 1fr) 14rem; } .fo-side { grid-column: auto; border-top: 0; display: flex; flex-direction: column; gap: 0.6rem; } }
+  .fo-h { margin: 0 0 0.5rem; font-size: 0.7rem; font-weight: 560; color: var(--text-2); display: flex; gap: 0.4rem; align-items: baseline; }
+  .fo-h small { font-weight: 400; color: var(--text-3); font-size: 0.64rem; }
+  .fo-mono { font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-3); }
+  .fo-queue { padding: 0.8rem; background: var(--bg-elevated); border-right: 1px solid var(--border); min-width: 0; }
+  @media (max-width: 47.9rem) { .fo-queue { border-right: 0; border-bottom: 1px solid var(--border); } .fo-cards { flex-direction: row !important; overflow-x: auto; scrollbar-width: none; padding-bottom: 0.2rem; } .fo-card { flex: 0 0 13rem; } }
+  .fo-cards { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.45rem; }
+  .fo-card { display: grid; gap: 0.35rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); padding: 0.55rem 0.65rem; transition: border-color var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out); }
+  .fo-card.is-live { border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent); }
+  .fo-card-top { display: flex; justify-content: space-between; align-items: center; gap: 0.4rem; }
+  .fo-card-t { color: var(--text); font-weight: 540; }
+  .fo-card-w { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--text-3); font-size: 0.66rem; }
+  .fo-detail { padding: 0.9rem; min-width: 0; display: grid; gap: 0.8rem; align-content: start; }
+  .fo-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.8rem; }
+  .fo-head h4 { margin: 0.1rem 0 0.15rem; font-size: 0.95rem; font-weight: 580; color: var(--text); letter-spacing: -0.01em; }
+  .fo-head p { margin: 0; color: var(--text-3); font-size: 0.68rem; }
+  .fo-status { flex: 0 0 auto; }
+  .fo-agents { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; }
+  @media (max-width: 30rem) { .fo-agents { grid-template-columns: 1fr; } }
+  .fo-agents li { display: flex; align-items: center; gap: 0.5rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface-2); padding: 0.45rem 0.55rem; color: var(--text); min-width: 0; }
+  .fo-agents small { display: block; color: var(--text-3); font-size: 0.64rem; font-family: var(--font-mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fo-agents li > span { min-width: 0; }
+  .fo-timeline { list-style: none; margin: 0; padding: 0; position: relative; display: flex; flex-direction: column; gap: 0.45rem; min-height: 15.5rem; }
+  .fo-timeline::before { content: ''; position: absolute; left: 0.6rem; top: 0.6rem; bottom: 0.6rem; width: 1px; background: var(--border); }
+  .fo-timeline li { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0.55rem; align-items: start; animation: rise-sm 360ms var(--ease-out) both; }
+  .fo-timeline li[hidden] { display: none; }
+  .fo-timeline b { display: block; color: var(--text); font-weight: 540; }
+  .fo-timeline small { display: block; color: var(--text-3); font-size: 0.66rem; }
+  .fo-approval { border: 1px solid color-mix(in srgb, var(--warn) 45%, var(--border)); border-radius: var(--radius-sm); background: color-mix(in srgb, var(--warn) 5%, var(--surface)); padding: 0.65rem 0.75rem; display: grid; gap: 0.5rem; animation: scale-in 400ms var(--ease-out) both; }
+  .fo-approval[hidden] { display: none; }
+  .fo-approval-h { margin: 0; display: flex; align-items: center; gap: 0.5rem; color: var(--text); font-weight: 540; }
+  .fo-approval dl { margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, auto)); gap: 0.5rem 1rem; }
+  @media (max-width: 40rem) { .fo-approval dl { grid-template-columns: 1fr 1fr; } }
+  .fo-approval dt { color: var(--text-3); font-size: 0.62rem; } .fo-approval dd { margin: 0; color: var(--text-2); font-size: 0.7rem; }
+  .fo-approval-r { margin: 0; display: flex; align-items: center; gap: 0.45rem; color: var(--text-2); padding-top: 0.45rem; border-top: 1px solid color-mix(in srgb, var(--warn) 25%, var(--border)); }
+  .fo-side { padding: 0.8rem; background: var(--bg-elevated); border-left: 1px solid var(--border); min-width: 0; }
+  @media (max-width: 69.9rem) { .fo-side { border-left: 0; } }
+  .fo-workers { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+  .fo-workers li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.45rem; color: var(--text); }
+  .fo-workers small { display: block; color: var(--text-3); font-size: 0.62rem; }
+  .fo-budget { margin: 0; color: var(--text-3); }
+  .fo-budget b { font-size: 1.2rem; font-weight: 600; letter-spacing: -0.02em; color: var(--text); }
+  .fo-policy { margin: 0.2rem 0 0; color: var(--text-3); font-size: 0.66rem; line-height: 1.45; }
+  @media (prefers-reduced-motion: reduce) { .fo-timeline li, .fo-approval { animation: none; } .fo-card { transition: none; } }
+</style>
+
+<script>
+  import { createSequence, type Step } from '@/scripts/sequence';
+
+  const root = document.querySelector<HTMLElement>('[data-factory]');
+  if (root) {
+    const timed = Array.from(root.querySelectorAll<HTMLElement>('[data-t]'));
+    const q = root.querySelector<HTMLElement>('[data-q="VEK-145"]')!;
+    const qState = q.querySelector<HTMLElement>('[data-q-state]')!;
+    const qProg = q.querySelector<HTMLElement>('[data-q-prog]')!;
+    const qWorker = q.querySelector<HTMLElement>('[data-q-worker]')!;
+    const status = root.querySelector<HTMLElement>('[data-fo-status]')!;
+    const live = root.querySelector<HTMLElement>('[data-fo-live]')!;
+    const ag = (k: string) => root.querySelector<HTMLElement>(`[data-ag="${k}"]`)!;
+    const approval = root.querySelector<HTMLElement>('[data-fo-approval]')!;
+    const spent = root.querySelector<HTMLElement>('[data-fo-spent]')!;
+    const budgetBar = root.querySelector<HTMLElement>('[data-fo-budget]')!;
+    const build3 = root.querySelector<HTMLElement>('[data-w="build-3"]')!;
+    const pill = (el: HTMLElement, text: string, tone: string) => { el.textContent = text; el.classList.remove('is-ok', 'is-warn', 'is-info', 'is-cloud', 'is-muted'); el.classList.add(`is-${tone}`); };
+
+    const reset = () => {
+      timed.forEach((n) => { n.hidden = true; });
+      pill(qState, 'queued', 'muted'); qProg.style.setProperty('--w', '0%'); qWorker.textContent = '—';
+      pill(status, 'Queued', 'muted'); live.textContent = '1 job running';
+      ag('dev').textContent = 'idle'; ag('test').textContent = 'idle'; ag('rev').textContent = 'idle';
+      approval.textContent = 'Waiting for Alex'; spent.textContent = '$184'; budgetBar.style.setProperty('--w', '31%');
+      pill(build3, 'idle', 'ok');
+    };
+    const show = (t: number) => timed.filter((n) => Number(n.dataset.t) === t).forEach((n) => { n.hidden = false; });
+    const steps: Step[] = [
+      { t: 600, run: () => show(600) },
+      { t: 1400, run: () => { show(1400); pill(qState, 'approved', 'ok'); pill(status, 'Approved', 'ok'); } },
+      { t: 2200, run: () => { show(2200); qWorker.textContent = 'build-3'; pill(qState, 'running', 'cloud'); pill(status, 'Running', 'cloud'); live.textContent = '2 jobs running'; pill(build3, 'busy', 'cloud'); } },
+      { t: 3000, run: () => { show(3000); ag('dev').textContent = 'implementing · step 1 of 4'; qProg.style.setProperty('--w', '20%'); } },
+      { t: 4200, run: () => { show(4200); ag('dev').textContent = 'done · 6 files changed'; ag('test').textContent = 'running 24 tests'; qProg.style.setProperty('--w', '55%'); } },
+      { t: 5000, run: () => { show(5000); ag('test').textContent = '24 passed'; ag('rev').textContent = 'reviewing'; qProg.style.setProperty('--w', '70%'); } },
+      { t: 6000, run: () => { show(6000); ag('rev').textContent = '1 finding'; } },
+      { t: 6800, run: () => { show(6800); pill(qState, 'needs approval', 'warn'); pill(status, 'Waiting for Alex', 'warn'); } },
+      { t: 9000, run: () => { show(9000); approval.textContent = 'Approved by Alex · continuing'; pill(qState, 'running', 'cloud'); pill(status, 'Running', 'cloud'); ag('dev').textContent = 'applying the change'; ag('rev').textContent = '1 finding · resolved'; qProg.style.setProperty('--w', '85%'); } },
+      { t: 10200, run: () => { show(10200); ag('dev').textContent = 'done · 7 files changed'; ag('test').textContent = '26 passed'; qProg.style.setProperty('--w', '95%'); } },
+      { t: 11000, run: () => { show(11000); pill(qState, 'in review', 'info'); pill(status, 'In review', 'info'); qProg.style.setProperty('--w', '100%'); spent.textContent = '$196'; budgetBar.style.setProperty('--w', '33%'); live.textContent = '1 job running'; pill(build3, 'idle', 'ok'); } },
+    ];
+    createSequence(root, steps, { reset });
+  }
+</script>
