@@ -1,7 +1,7 @@
 ---
 /**
- * Licence. Vekrun is proprietary. No binding terms are invented here: the
- * licence text is a marked placeholder until the owner supplies reviewed terms.
+ * Licence. Vekrun is proprietary, all rights reserved. This page states that
+ * plainly and describes the two planned packages; it is not a contract.
  */
 import Base from '@/layouts/Base.astro';
 import Section from '@/components/Section.astro';
@@ -9,33 +9,20 @@ import PageHero from '@/components/PageHero.astro';
 import { site, personal, teams, pricing, usd } from '@/data/site';
 const t = pricing.teams;
 ---
-<Base title="Licence" fullTitle="Licence: Vekrun is proprietary software · Vekrun" description="Vekrun is proprietary software. Vekrun Personal is planned to be free to use; Vekrun Teams is a paid self-hosted licence. Licence terms have not been published yet.">
+<Base title="Licence" fullTitle="Licence: Vekrun is proprietary software · Vekrun" description="Vekrun is proprietary software, all rights reserved. Vekrun Personal is planned to be free to use; Vekrun Teams is a paid self-hosted licence.">
   <PageHero eyebrow="Licence" title="Vekrun is proprietary software." lede={site.licence.summary} align="left" />
   <Section padded="tight" class="pb-24">
     <div class="prose-site max-w-3xl text-[1.0625rem] leading-relaxed">
-      <div class="placeholder" role="note">
-        <p class="placeholder-k">Licence terms: placeholder</p>
-        <p>{site.licence.termsStatus} Nothing on this page is a binding licence, and nothing has been publicly licensed or distributed.</p>
-      </div>
+      <p>Vekrun and its source code are owned by Vekrun. All rights reserved. The source code is not public.</p>
 
-      <h2>What is planned</h2>
+      <h2>The two packages</h2>
       <ul>
         <li><strong>{personal.name}</strong> is a downloadable desktop product, free to use. It is not a trial with hidden limits.</li>
         <li><strong>{teams.name}</strong> is one paid, self-hosted licence for organizations: {usd(t.base)} a month for up to {t.includedEngineers} engineers and {usd(t.perAdditionalEngineer)} a month for each additional engineer, as planned launch pricing. It cannot be bought yet.</li>
-        <li>The source code is not public and is not planned to be released as open source.</li>
       </ul>
 
       <h2>Third-party software and services</h2>
       <p>Vekrun works with tools and services you bring, such as coding CLIs, model providers, Git hosts and trackers. Their own licences and terms apply to your use of them.</p>
-
-      <h2>Earlier statements</h2>
-      <p>Earlier versions of this website described Vekrun as free and open source under a proposed Apache 2.0 licence. That plan was withdrawn before any release. No part of Vekrun was published under that licence.</p>
     </div>
   </Section>
 </Base>
-
-<style>
-  .placeholder { margin-bottom: 2rem; padding: 1rem 1.2rem; border: 1px dashed color-mix(in srgb, var(--warn) 55%, var(--border)); border-radius: var(--radius); background: color-mix(in srgb, var(--warn) 6%, var(--surface)); }
-  .placeholder p { margin: 0; font-size: 0.95rem; }
-  .placeholder .placeholder-k { margin-bottom: 0.3rem; font-size: 0.8125rem; font-weight: 600; color: var(--warn); }
-</style>

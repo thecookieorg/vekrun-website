@@ -22,7 +22,6 @@ export const site = {
   licence: {
     model: 'Proprietary',
     summary: 'Vekrun is proprietary software. Vekrun Personal is planned to be free to use; Vekrun Teams is a paid, self-hosted licence.',
-    termsStatus: 'Licence terms have not been published yet. They are being prepared and need owner and legal review.',
   },
   /** Public, verifiable project state. Update this when the status changes. */
   status: {

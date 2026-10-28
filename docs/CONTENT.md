@@ -10,8 +10,8 @@ status string.
 - `site.status` — the one-line status and the `asOf` reconciliation date
   shown across the site. Update the date whenever you reconcile.
 - `site.repo.public` — stays `false`: Vekrun is proprietary and the desktop
-  repository is private. `site.licence` holds the licence summary; the terms
-  are a marked placeholder on `/license/` until the owner supplies them.
+  repository is private. `site.licence` holds the licence summary shown on
+  `/license/`.
 - `site.contact.*` — `null` renders an honest "not published yet"; set a
   string to publish it.
 - `primaryNav`, `productPages`, `advancedPages`, `footerColumns` — navigation.
