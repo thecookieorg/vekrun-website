@@ -3,10 +3,8 @@ import Base from '@/layouts/Base.astro';
 import PageHero from '@/components/PageHero.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import Button from '@/components/Button.astro';
-import StatusBadge from '@/components/StatusBadge.astro';
 import CodingStudio from '@/components/features/CodingStudio.astro';
 import Steps from '@/components/features/Steps.astro';
-import CapabilityStatus from '@/components/CapabilityStatus.astro';
 
 const modes = [
   { name: 'Ask', body: 'Read-only. Questions about the code, the repository and your terminal output.' },
@@ -45,7 +43,7 @@ const workflow = [
         <dl class="facts facts-lg reveal-group">
           <div><dt>Hosted providers</dt><dd>Claude, OpenAI, Gemini and any OpenAI-compatible endpoint, with your own key. They bill you at their own rates.</dd></div>
           <div><dt>Local models</dt><dd>Ollama and LM Studio are detected on your machine. Free to run, nothing leaves your computer.</dd></div>
-          <div><dt>Coding-agent accounts <StatusBadge status="planned" compact class="ml-2 align-middle" /></dt><dd>Signing in with a coding-agent subscription you already have is planned.</dd></div>
+          <div><dt>Coding-agent accounts</dt><dd>Use the coding-agent subscription you already have, signed in on your own machine.</dd></div>
         </dl>
       </div>
     </div>
@@ -59,5 +57,4 @@ const workflow = [
     </div>
   </section>
 
-  <CapabilityStatus keys={['routing', 'failover', 'openrouter', 'codeView', 'budgets']} />
 </Base>

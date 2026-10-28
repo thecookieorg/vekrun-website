@@ -3,13 +3,13 @@
  * The Review Inbox: pull requests waiting for you on the left, the diff, the AI
  * findings and your decision on the right. The script reviews #88; the list is a
  * real tablist, so a visitor can open any request and decide on it. Final state
- * is in the markup. The inbox itself is planned; AI review of local branches works.
+ * is in the markup.
  */
 import Window from '@/components/mock/Window.astro';
 import DemoControls from '@/components/mock/DemoControls.astro';
 
 interface Props { notice?: string }
-const { notice = 'Illustrative product concept. AI review of local branches and review councils work in the development build; the pull-request inbox, inline comments and GitHub/GitLab submission are planned. Open any request and decide on it to try the flow.' } = Astro.props;
+const { notice = 'Illustrative product concept. Open any request and decide on it to try the flow.' } = Astro.props;
 
 type Row = { kind: 'ctx' | 'add' | 'del'; n: number; code: string };
 type Finding = { tone: 'err' | 'warn' | 'ok'; kind: string; text: string; loc: string };
@@ -132,10 +132,9 @@ const prs: { id: string; num: string; title: string; who: string; by: string; to
   .ri [data-t][hidden] { display: none; }
   .ri-findings { padding: 0.7rem 0.85rem; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 0.45rem; min-height: 7.5rem; }
   .ri-findings-head { margin: 0; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.72rem; color: var(--text-2); }
-  .ri-finding { display: grid; grid-template-columns: auto 1fr; gap: 0.15rem 0.6rem; align-items: baseline; font-size: 0.75rem; padding: 0.45rem 0.6rem; border: 1px solid var(--border); border-left-width: 3px; border-radius: var(--radius-sm); background: var(--surface-2); animation: rise-sm 360ms var(--ease-out) both; transition: opacity var(--dur); }
-  .ri-finding.tone-err { border-left-color: var(--danger); } .ri-finding.tone-warn { border-left-color: var(--warn); } .ri-finding.tone-ok { border-left-color: var(--ok); }
+  .ri-finding { display: grid; grid-template-columns: auto 1fr; gap: 0.15rem 0.6rem; align-items: baseline; font-size: 0.75rem; padding: 0.45rem 0.6rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface-2); animation: rise-sm 360ms var(--ease-out) both; transition: opacity var(--dur); }
   .ri-finding.is-dismissed { opacity: 0.4; }
-  .ri-finding.is-accepted { border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); border-left-color: var(--accent); }
+  .ri-finding.is-accepted { border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); }
   .ri-finding-kind { font-size: 0.66rem; font-weight: 560; color: var(--text-2); grid-row: span 3; align-self: start; padding-top: 0.15rem; }
   .ri-finding-text { color: var(--text); line-height: 1.4; }
   .ri-finding-loc { font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-3); }

@@ -9,7 +9,6 @@ import Button from '@/components/Button.astro';
 import JobFlow from '@/components/factory/JobFlow.astro';
 import AgentBridge from '@/components/factory/AgentBridge.astro';
 import Steps from '@/components/features/Steps.astro';
-import CapabilityStatus from '@/components/CapabilityStatus.astro';
 
 const setup = [
   { title: 'Install Vekrun', body: 'A native desktop app with a background Host. Free for individuals when released.' },
@@ -64,5 +63,4 @@ const where = [
     </div>
   </section>
 
-  <CapabilityStatus keys={['coordinator', 'isolatedVm', 'mcpBridge', 'envDiscovery', 'projectImport', 'cliSetup', 'verifier', 'proofPacks', 'memory']} />
 </Base>

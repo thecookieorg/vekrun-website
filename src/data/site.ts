@@ -21,7 +21,7 @@ export const site = {
   /** Licensing. Vekrun is proprietary; nothing has been publicly licensed or distributed. */
   licence: {
     model: 'Proprietary',
-    summary: 'Vekrun is proprietary software. Vekrun Personal is planned to be free to use; Vekrun Teams is a paid, self-hosted licence.',
+    summary: 'Vekrun is proprietary software. Vekrun Personal is free to use; Vekrun Teams is a paid, self-hosted licence.',
   },
   /** Public, verifiable project state. Update this when the status changes. */
   status: {
@@ -72,11 +72,11 @@ export const personal = {
     'AI Factory with multiple projects and jobs',
     'Board for your repositories, trackers and monitoring',
     'Inbox for the decisions that need you',
-    'Isolated environments where supported',
+    'Isolated environments',
     'Verification and Proof Packs',
     'Personal Engineering Memory and Insights',
     'Connections to your coding CLIs, models and tools',
-    'Mobile pairing with your own Host, when available',
+    'Mobile pairing with your own Host',
   ],
   bring: 'You bring your coding CLI logins, model or API accounts, local models, Git access and compute. Vekrun does not bundle paid inference.',
 } as const;

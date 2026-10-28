@@ -79,7 +79,7 @@ const isCurrent = (href: string) => !href.includes('#') && path === pageHref(hre
           <li class="mobile-row" style={`--i: ${i}`}>
             <a href={item.href} class="mobile-link" aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>
             {item.label === 'Product' && (
-              <ul class="mb-1 ml-3 grid grid-cols-2 border-l border-border pl-3">
+              <ul class="mb-1 ml-3 grid grid-cols-2 pl-3">
                 {productPages.map((f) => <li><a href={f.href} class="mobile-sublink" aria-current={isCurrent(f.href) ? 'page' : undefined}>{f.label}</a></li>)}
               </ul>
             )}

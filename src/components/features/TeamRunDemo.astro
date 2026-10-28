@@ -39,7 +39,7 @@ const lanes = [
       <p class="tr-summary" data-t="4600"><strong>Recorded disagreement.</strong> Two of three favour the queue worker. Your decision: queue worker, with a gateway cap as a follow-up.</p>
     </div>
   </Window>
-  <DemoControls notice="Illustrative product concept. Plans with approval, Council sessions, parallel agents on separate branches, a separate checking agent and merge previews work in the development build on macOS." />
+  <DemoControls notice="Illustrative product concept." />
 </figure>
 
 <style is:global>
@@ -65,7 +65,7 @@ const lanes = [
   .tr-pos { background: var(--surface); padding: 0.6rem 0.8rem; font-size: 0.75rem; color: var(--text-2); line-height: 1.45; animation: rise-sm 300ms var(--ease-out) both; }
   .tr-pos[hidden] { display: none; }
   .tr-pos-who { display: block; font-family: var(--font-mono); font-size: 0.64rem; color: var(--text-3); margin-bottom: 0.2rem; }
-  .tr-pos-dis { box-shadow: inset 3px 0 0 var(--warn); }
+  .tr-pos-dis { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--warn) 45%, transparent); }
   .tr-summary { margin: 0; padding: 0.6rem 0.8rem; border-top: 1px solid var(--border); font-size: 0.75rem; color: var(--text-2); }
   .tr-summary[hidden] { display: none; } .tr-summary strong { color: var(--text); font-weight: 560; }
   @media (prefers-reduced-motion: reduce) { .tr-council, .tr-pos { animation: none; } .tr-chip.is-moving { transition: none; } }

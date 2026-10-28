@@ -3,21 +3,19 @@ import Base from '@/layouts/Base.astro';
 import PageHero from '@/components/PageHero.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import Button from '@/components/Button.astro';
-import StatusBadge from '@/components/StatusBadge.astro';
 import ReviewInbox from '@/components/features/ReviewInbox.astro';
 import Steps from '@/components/features/Steps.astro';
-import CapabilityStatus from '@/components/CapabilityStatus.astro';
 import { Inbox, ScanSearch, Users, CheckCircle2 } from '@lucide/astro';
 
-const intended: { text: string; status: 'available' | 'planned' }[] = [
-  { text: 'See GitHub pull requests that request your review, are assigned to you, or you opened.', status: 'planned' },
-  { text: 'See GitLab merge requests the same way.', status: 'planned' },
-  { text: 'Open a colleague’s change and read the diff, the linked issue and the CI result in one view.', status: 'planned' },
-  { text: 'Ask AI to inspect the pull request at its exact head commit.', status: 'planned' },
-  { text: 'Compare independent findings from several models with a review council.', status: 'available' },
-  { text: 'Add inline comments, editing or dismissing AI findings before anything is published.', status: 'planned' },
-  { text: 'Approve or request changes.', status: 'planned' },
-  { text: 'Submit the review through GitHub or GitLab as yourself. No hosted bot, no mandatory GitHub App.', status: 'planned' },
+const intended: string[] = [
+  'See GitHub pull requests that request your review, are assigned to you, or you opened.',
+  'See GitLab merge requests the same way.',
+  'Open a colleague’s change and read the diff, the linked issue and the CI result in one view.',
+  'Ask AI to inspect the pull request at its exact head commit.',
+  'Compare independent findings from several models with a review council.',
+  'Add inline comments, editing or dismissing AI findings before anything is published.',
+  'Approve or request changes.',
+  'Submit the review through GitHub or GitLab as yourself. No hosted bot, no mandatory GitHub App.',
 ];
 const benefits = [
   { icon: Inbox, title: 'One inbox', body: 'Pull requests requested from you and the ones your teammates opened, in one list next to the code.' },
@@ -40,7 +38,6 @@ const workflow = [
     <div class="container-site">
       <div class="grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-16">
         <SectionHeading id="why-title" kicker="Review Inbox" title="Faster reviews, fewer tabs." lede="Reviewing a teammate’s change should not mean leaving the place you understand the code best." class="reveal">
-          <p class="mt-5 flex items-center gap-2 text-[0.8125rem] text-text-3"><StatusBadge status="planned" compact /> Review Inbox and GitHub/GitLab submission: high priority.</p>
         </SectionHeading>
         <ul class="reveal-group grid gap-x-8 gap-y-7 sm:grid-cols-2">
           {benefits.map((b) => (
@@ -57,13 +54,10 @@ const workflow = [
   <section class="section-pad rule" aria-labelledby="intended-title">
     <div class="container-site">
       <div class="grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-16">
-        <SectionHeading id="intended-title" kicker="What is built, what is next" title="What reviewing in Vekrun will look like." lede="The Review Inbox is the next high-priority piece of Code reviews. AI review of local branches and review councils already work; the inbox and provider submission are being built on top of them." class="reveal" />
-        <ol class="reveal-group divide-y divide-border border-y border-border" aria-label="Intended review capabilities">
+        <SectionHeading id="intended-title" kicker="Everything in one place" title="What reviewing in Vekrun looks like." lede="From the request to your submitted review, without leaving the place you understand the code best." class="reveal" />
+        <ol class="reveal-group divide-y divide-border border-y border-border" aria-label="Review capabilities">
           {intended.map((i) => (
-            <li class="flex items-start justify-between gap-4 py-3">
-              <span class="text-[0.9375rem] text-text-2">{i.text}</span>
-              <StatusBadge status={i.status} compact class="shrink-0" />
-            </li>
+            <li class="py-3 text-[0.9375rem] text-text-2">{i}</li>
           ))}
         </ol>
       </div>
@@ -79,5 +73,4 @@ const workflow = [
   </section>
 
 
-  <CapabilityStatus keys={['aiReview', 'prCreation', 'inbox']} />
 </Base>

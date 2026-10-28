@@ -5,7 +5,6 @@ import SectionHeading from '@/components/SectionHeading.astro';
 import Button from '@/components/Button.astro';
 import TerminalShowcase from '@/components/features/TerminalShowcase.astro';
 import Steps from '@/components/features/Steps.astro';
-import CapabilityStatus from '@/components/CapabilityStatus.astro';
 import { Columns2, Network, Search, Keyboard, Palette, History } from '@lucide/astro';
 
 const benefits = [
@@ -24,7 +23,7 @@ const workflow = [
 ];
 ---
 <Base title="Terminal and SSH" fullTitle="Terminal and SSH: take over a job by hand · Vekrun" description="An advanced tool in Vekrun: a terminal with tabs, splits, SSH, search and session restore for troubleshooting and taking over a Factory job, locally or on a remote machine.">
-  <PageHero eyebrow="Advanced tools · Terminal and SSH" title="Step into any job." accent="Take over by hand." lede="The Factory does the routine work. When you want to look for yourself, open a terminal in the job’s project, locally or over SSH, with tabs, splits, search and session restore." cta={{ label: 'See what works today', href: '#status' }} secondary={{ label: 'Terminal docs', href: '/docs/terminal/tabs-and-panes/' }} wide>
+  <PageHero eyebrow="Advanced tools · Terminal and SSH" title="Step into any job." accent="Take over by hand." lede="The Factory does the routine work. When you want to look for yourself, open a terminal in the job’s project, locally or over SSH, with tabs, splits, search and session restore." cta={{ label: 'Terminal docs', href: '/docs/terminal/tabs-and-panes/' }} secondary={{ label: 'Back to the Factory', href: '/features/factory/' }} wide>
     <TerminalShowcase />
   </PageHero>
 
@@ -60,5 +59,4 @@ const workflow = [
     </div>
   </section>
 
-  <div id="status"><CapabilityStatus keys={['terminal', 'codeView']} /></div>
 </Base>

@@ -4,7 +4,6 @@ import PageHero from '@/components/PageHero.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import Button from '@/components/Button.astro';
 import ApprovalsDemo from '@/components/org/ApprovalsDemo.astro';
-import CapabilityStatus from '@/components/CapabilityStatus.astro';
 
 const kinds = [
   { title: 'Questions', body: 'A job needs a decision only you can make, such as which behaviour is correct.' },
@@ -49,11 +48,10 @@ const card = [
       <dl class="facts facts-grid facts-lg reveal-group">
         <div><dt>Branch protection still applies</dt><dd>An approval in Vekrun never overrides the review rules on your repository.</dd></div>
         <div><dt>No silent production deploys</dt><dd>Deployment actions run only under an explicit policy and an explicit approval.</dd></div>
-        <div><dt>From your phone, later</dt><dd>Vekrun Mobile is planned to answer the Inbox from anywhere, paired with your own Host.</dd></div>
+        <div><dt>From your phone</dt><dd>Vekrun Mobile answers the Inbox from anywhere, paired with your own Host.</dd></div>
       </dl>
       <div class="mt-8 flex flex-wrap gap-3 reveal"><Button href="/features/mobile/" variant="secondary">Mobile and Host</Button><Button href="/teams/" variant="ghost">Approvals for a team</Button></div>
     </div>
   </section>
 
-  <CapabilityStatus keys={['inbox', 'aiReview', 'audit', 'budgets', 'mobile']} />
 </Base>

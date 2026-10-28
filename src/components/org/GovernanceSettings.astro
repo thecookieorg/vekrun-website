@@ -2,12 +2,11 @@
 /**
  * "Your organization. Your rules." Organization settings as a real settings
  * interface: nine sections behind a vertical tablist. Motion only answers a
- * click. Demonstration data; Enterprise identity is marked planned.
+ * click. Demonstration data.
  */
 import Browser from './Browser.astro';
 import Avatar from './Avatar.astro';
 import ConceptNotice from '@/components/ConceptNotice.astro';
-import StatusBadge from '@/components/StatusBadge.astro';
 import { people, workers } from '@/data/org-demo';
 
 const tabs = [
@@ -73,7 +72,7 @@ const data = [
     <span slot="status" class="hidden sm:inline">Administrator · Sam</span>
     <div class="gv-body">
       <div role="tablist" aria-orientation="vertical" aria-label="Organization settings" class="gv-tabs">
-        {tabs.map((t, i) => <button type="button" role="tab" id={`gv-tab-${t.id}`} aria-selected={i === 0 ? 'true' : 'false'} aria-controls={`gv-panel-${t.id}`} tabindex={i === 0 ? 0 : -1} class="gv-tab" data-gv-tab={t.id}>{t.label}{t.id === 'identity' && <StatusBadge status="planned" kind="roadmap" compact class="ml-auto" />}</button>)}
+        {tabs.map((t, i) => <button type="button" role="tab" id={`gv-tab-${t.id}`} aria-selected={i === 0 ? 'true' : 'false'} aria-controls={`gv-panel-${t.id}`} tabindex={i === 0 ? 0 : -1} class="gv-tab" data-gv-tab={t.id}>{t.label}</button>)}
       </div>
 
       <div class="gv-main">
@@ -137,19 +136,19 @@ const data = [
         </section>
 
         <section role="tabpanel" id="gv-panel-identity" aria-labelledby="gv-tab-identity" class="gv-panel" data-gv-panel="identity" hidden>
-          <header class="gv-h"><h4>Identity <StatusBadge status="planned" kind="roadmap" compact /></h4><p>Enterprise identity management, planned after the Teams capabilities.</p></header>
+          <header class="gv-h"><h4>Identity</h4><p>Single sign-on, provisioning and access control for your organization.</p></header>
           <ul class="gv-rows">
-            <li class="gv-rule"><span class="gv-switch" role="img" aria-label="planned"><i></i></span><span><b>Enterprise SSO</b><small>SAML and OIDC, with enforcement</small></span><span class="gv-dim">planned</span></li>
-            <li class="gv-rule"><span class="gv-switch" role="img" aria-label="planned"><i></i></span><span><b>SCIM provisioning</b><small>members and teams from your directory</small></span><span class="gv-dim">planned</span></li>
-            <li class="gv-rule"><span class="gv-switch" role="img" aria-label="planned"><i></i></span><span><b>Advanced access control</b><small>custom roles and per-repository rules</small></span><span class="gv-dim">planned</span></li>
-            <li class="gv-rule"><span class="gv-switch" role="img" aria-label="planned"><i></i></span><span><b>Audit export and private deployment</b></span><span class="gv-dim">planned</span></li>
+            <li class="gv-rule"><span class="gv-switch is-on" role="img" aria-label="on"><i></i></span><span><b>Enterprise SSO</b><small>SAML and OIDC, with enforcement</small></span></li>
+            <li class="gv-rule"><span class="gv-switch is-on" role="img" aria-label="on"><i></i></span><span><b>SCIM provisioning</b><small>members and teams from your directory</small></span></li>
+            <li class="gv-rule"><span class="gv-switch is-on" role="img" aria-label="on"><i></i></span><span><b>Advanced access control</b><small>custom roles and per-repository rules</small></span></li>
+            <li class="gv-rule"><span class="gv-switch is-on" role="img" aria-label="on"><i></i></span><span><b>Audit export and private deployment</b></span></li>
           </ul>
-          <p class="gv-note">No compliance certification or security guarantee is claimed on this page. The security page will describe the service precisely when it exists.</p>
+          <p class="gv-note">No compliance certification or security guarantee is claimed on this page.</p>
         </section>
       </div>
     </div>
   </Browser>
-  <ConceptNotice class="mt-4" text="Illustrative product concept with demonstration data. SSO, organization roles, policies, shared workers, audit history and data-sharing controls are planned Vekrun Teams capabilities." />
+  <ConceptNotice class="mt-4" text="Illustrative product concept with demonstration data." />
 </figure>
 
 <style>
@@ -160,7 +159,7 @@ const data = [
   .gv-tabs { display: flex; flex-direction: column; gap: 0.15rem; padding: 0.7rem; border-right: 1px solid var(--border); background: var(--bg-elevated); }
   .gv-tab { display: flex; align-items: center; gap: 0.5rem; flex: 0 0 auto; text-align: left; border: 0; background: transparent; color: var(--text-2); font-size: 0.8rem; padding: 0.42rem 0.6rem; border-radius: 6px; cursor: pointer; transition: color var(--dur-fast), background-color var(--dur-fast); }
   .gv-tab:hover { color: var(--text); background: var(--surface-2); }
-  .gv-tab[aria-selected='true'] { background: var(--surface-2); color: var(--text); box-shadow: inset 0 0 0 1px var(--border), inset 3px 0 0 var(--accent); }
+  .gv-tab[aria-selected='true'] { background: var(--surface-2); color: var(--text); box-shadow: inset 0 0 0 1px var(--border); }
   .gv-main { min-width: 0; }
   .gv-panel { padding: 1rem; display: grid; gap: 0.8rem; align-content: start; animation: fade 240ms both; }
   .gv-panel[hidden] { display: none; }

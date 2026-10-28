@@ -10,7 +10,7 @@ import Window from '@/components/mock/Window.astro';
 import DemoControls from '@/components/mock/DemoControls.astro';
 
 interface Props { notice?: string }
-const { notice = 'Illustrative product concept. Claude, OpenAI, Gemini and OpenAI-compatible keys, Ollama and LM Studio detection, agent modes, diffs shown before writes, allowed commands and switching models per task work in the development build on macOS. Coding-agent accounts are planned.' } = Astro.props;
+const { notice = 'Illustrative product concept.' } = Astro.props;
 
 const providers = [
   { id: 'claude', mono: 'Cl', name: 'Claude', model: 'Claude · Sonnet', mode: 'key', billed: 'Billed by Anthropic' },
@@ -32,7 +32,6 @@ const providers = [
           <span class="cs-mono" aria-hidden="true">{p.mono}</span><span class="cs-name">{p.name}</span>
         </button>
       ))}
-      <span class="cs-opt cs-opt-planned" aria-disabled="true" title="Planned"><span class="cs-mono" aria-hidden="true">Ac</span><span class="cs-name">Coding-agent accounts</span><span class="cs-planned">Planned</span></span>
       <span class="cs-keys">Keys stay in your OS keychain</span>
     </div>
 
@@ -92,11 +91,8 @@ const providers = [
   .cs-opt:hover { color: var(--text); border-color: var(--border-strong); transform: translateY(-1px); }
   .cs-opt[aria-checked='true'] { color: var(--text); border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 8px 24px -12px color-mix(in srgb, var(--accent) 60%, transparent); background: var(--accent-soft); }
   .cs-opt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .cs-opt-planned { cursor: default; opacity: 0.6; }
-  .cs-opt-planned:hover { transform: none; border-color: var(--border); color: var(--text-2); }
   .cs-mono { display: inline-flex; width: 1.35rem; height: 1.35rem; align-items: center; justify-content: center; border-radius: 6px; background: var(--surface-3); border: 1px solid var(--border); font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-2); }
   .cs-opt[aria-checked='true'] .cs-mono { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 50%, transparent); }
-  .cs-planned { font-size: 0.62rem; color: var(--text-3); border: 1px solid var(--border-strong); border-radius: 999px; padding: 0.02rem 0.35rem; }
   .cs-keys { margin-left: auto; font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-3); }
   @media (max-width: 47.9rem) { .cs-keys { display: none; } }
   .cs-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1px; background: var(--border); min-height: 20rem; }
