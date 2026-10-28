@@ -6,7 +6,6 @@ import Button from '@/components/Button.astro';
 import BoardFlow from '@/components/factory/BoardFlow.astro';
 import InsightsWalkthrough from '@/components/features/InsightsWalkthrough.astro';
 import Steps from '@/components/features/Steps.astro';
-import CapabilityStatus from '@/components/CapabilityStatus.astro';
 
 const sources = [
   { title: 'Trackers', body: 'Jira, Linear and Asana tickets, and GitHub and GitLab issues, assigned to you or your team.' },
@@ -68,5 +67,4 @@ const steps = [
     </div>
   </section>
 
-  <CapabilityStatus keys={['board', 'statusSync', 'monitoring', 'incidentDedupe', 'prCreation', 'aiReview']} />
 </Base>

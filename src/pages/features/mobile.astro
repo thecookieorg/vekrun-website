@@ -3,7 +3,6 @@ import Base from '@/layouts/Base.astro';
 import PageHero from '@/components/PageHero.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import MobileHost from '@/components/factory/MobileHost.astro';
-import CapabilityStatus from '@/components/CapabilityStatus.astro';
 
 const can = [
   ['Assign an outcome', 'Start a job from wherever you are, in any connected project.'],
@@ -13,8 +12,8 @@ const can = [
   ['See your Host', 'Know whether your machine or Coordinator is reachable and busy.'],
 ];
 ---
-<Base title="Mobile and Host" fullTitle="Vekrun Mobile and Keep Host Awake · Vekrun" description="Vekrun Mobile is a planned iOS and Android companion that pairs securely with your own Host or self-hosted Coordinator. Keep Host Awake keeps the Host reachable while it runs, even with no jobs, without overriding your OS power settings.">
-  <PageHero eyebrow="Mobile and Host" title="Your Factory," accent="within reach." lede="A planned iOS and Android companion for assigning work, following jobs and answering the Inbox, paired with a Host that stays reachable while it runs." align="left" />
+<Base title="Mobile and Host" fullTitle="Vekrun Mobile and Keep Host Awake · Vekrun" description="Vekrun Mobile is an iOS and Android companion that pairs securely with your own Host or self-hosted Coordinator. Keep Host Awake keeps the Host reachable while it runs, even with no jobs, without overriding your OS power settings.">
+  <PageHero eyebrow="Mobile and Host" title="Your Factory," accent="within reach." lede="An iOS and Android companion for assigning work, following jobs and answering the Inbox, paired with a Host that stays reachable while it runs." align="left" />
 
   <section class="section-pad" aria-labelledby="mh-title">
     <div class="container-site">
@@ -47,5 +46,4 @@ const can = [
     </div>
   </section>
 
-  <CapabilityStatus keys={['mobile', 'keepAwake', 'hostService', 'workers']} />
 </Base>

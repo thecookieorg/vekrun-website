@@ -422,7 +422,7 @@
 
 /* Facts: a definition list with a hairline on the left. */
 .facts { display: grid; gap: 1rem; }
-.facts > div, .facts > li { display: grid; gap: 0.2rem; padding-left: 1rem; border-left: 2px solid var(--border-strong); list-style: none; }
+.facts > div, .facts > li { display: grid; gap: 0.2rem; list-style: none; }
 .facts dt, .facts b { color: var(--text); font-weight: 560; font-size: 0.95rem; }
 .facts dd, .facts span { margin: 0; color: var(--text-2); font-size: 0.9rem; line-height: 1.5; }
 .facts-lg { gap: 1.4rem; }

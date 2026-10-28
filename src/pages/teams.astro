@@ -15,7 +15,6 @@ import GovernanceSettings from '@/components/org/GovernanceSettings.astro';
 import RoleSwitcher from '@/components/org/RoleSwitcher.astro';
 import PlanCards from '@/components/teams/PlanCards.astro';
 import TeamsCalculator from '@/components/teams/TeamsCalculator.astro';
-import CapabilityStatus from '@/components/CapabilityStatus.astro';
 import { site, teams, pricing, usd, teamsMonthly } from '@/data/site';
 
 const t = pricing.teams;
@@ -57,7 +56,7 @@ const faq = [
           <Button href="#where" size="lg" variant="secondary">What runs where</Button>
         </div>
         <p class="enter mt-6 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[0.9rem] text-text-2" style="--i: 3">
-          <span class="inline-flex items-center gap-2 rounded-full border border-border bg-surface/70 px-3 py-1 text-[0.8125rem] backdrop-blur"><span class="h-1.5 w-1.5 rounded-full bg-warn" aria-hidden="true"></span>Planned · not available to buy yet</span>
+          <span class="inline-flex items-center gap-2 rounded-full border border-border bg-surface/70 px-3 py-1 text-[0.8125rem] backdrop-blur"><span class="h-1.5 w-1.5 rounded-full bg-warn" aria-hidden="true"></span>Planned launch pricing</span>
           <span>{usd(t.base)} a month for up to {t.includedEngineers} engineers. SSO included.</span>
         </p>
       </div>
@@ -189,7 +188,6 @@ const faq = [
     </div>
   </section>
 
-  <CapabilityStatus keys={['teamsCoordinator', 'sso', 'orgRoles', 'workers', 'inbox', 'audit', 'insights']} title="Vekrun Teams is planned." />
 </Base>
 
 <style>
@@ -204,8 +202,7 @@ const faq = [
   .flow-box { display: grid; gap: 0.15rem; padding: 0.8rem 0.95rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
   .flow-box b { color: var(--text); font-weight: 560; font-size: 0.95rem; }
   .flow-box span { color: var(--text-3); font-size: 0.8rem; }
-  .flow-box.is-mint { border-left: 3px solid var(--accent); }
-  .flow-box.is-blue { border-left: 3px solid var(--cloud); background: color-mix(in srgb, var(--cloud) 6%, var(--surface)); }
+  .flow-box.is-blue { background: color-mix(in srgb, var(--cloud) 6%, var(--surface)); }
   .flow-link { display: flex; align-items: center; gap: 0.6rem; padding-left: 1.4rem; color: var(--text-3); font-family: var(--font-mono); font-size: 0.66rem; }
   .flow-link::before { content: ''; width: 1px; height: 1.4rem; background: linear-gradient(var(--accent), var(--cloud)); }
 </style>

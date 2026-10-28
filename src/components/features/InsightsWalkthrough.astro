@@ -9,7 +9,7 @@
 import Window from '@/components/mock/Window.astro';
 import DemoControls from '@/components/mock/DemoControls.astro';
 interface Props { notice?: string; compact?: boolean }
-const { notice = 'Illustrative product concept. Insights, the four providers, investigations, tickets, plans, the incident workflow and deployment observation exist in the development build on macOS; the providers are tested against recorded responses, not yet against live accounts. Press Investigate & Fix to drive it yourself.', compact = false } = Astro.props;
+const { notice = 'Illustrative product concept. Press Investigate & Fix to drive it yourself.', compact = false } = Astro.props;
 const issues = [
   { id: 'hb-2381', src: 'Hb', name: 'Honeybadger', title: 'NoMethodError: undefined method `each\' for nil', where: 'ExportsController#create', count: '142', env: 'production', selected: true },
   { id: 'se-9120', src: 'Se', name: 'Sentry', title: 'TimeoutError: Net::ReadTimeout', where: 'ProviderClient#fetch', count: '38', env: 'production' },

@@ -13,7 +13,6 @@ import CoordinatorChat from '@/components/factory/CoordinatorChat.astro';
 import ParallelLanes from '@/components/factory/ParallelLanes.astro';
 import AgentBridge from '@/components/factory/AgentBridge.astro';
 import TeamRunDemo from '@/components/features/TeamRunDemo.astro';
-import CapabilityStatus from '@/components/CapabilityStatus.astro';
 
 const env = [
   { title: 'Docker Compose projects', body: 'Vekrun reads your Compose file, starts the services a job needs and waits for their health checks.' },
@@ -27,10 +26,10 @@ const control = [
   ['Budgets jobs cannot exceed', 'Spend limits per job and per period, with actual cost where the provider reports it.'],
 ];
 const faq = [
-  ['Where do Claude Code, Codex and Gemini CLI run?', 'On your Host, signed in as you. Vekrun never copies their logins anywhere. Their commands, file changes and tests are carried into the job’s isolated environment through one first-party Vekrun MCP bridge. That bridge is planned; today Claude Code works on the host’s files.'],
+  ['Where do Claude Code, Codex and Gemini CLI run?', 'On your Host, signed in as you. Vekrun never copies their logins anywhere. Their commands, file changes and tests are carried into the job’s isolated environment through one first-party Vekrun MCP bridge.'],
   ['Is there one VM per branch?', 'No. There is one isolated environment per active Work Item, created when the job needs it and released when it is done. Scheduling respects the machine’s real capacity and the order jobs depend on.'],
   ['Do my Git credentials go into the environment?', 'No. A repository manager on the Host seeds each job with the code it needs, so your Git credentials stay on the Host.'],
-  ['What happens when a provider hits its limit?', 'The job can move to another capable worker. Vekrun Context Handoff rebuilds the task’s state from its journal, environment and memory so the next worker continues rather than starts over. A simpler fallback exists today; Context Handoff is planned.'],
+  ['What happens when a provider hits its limit?', 'The job can move to another capable worker. Vekrun Context Handoff rebuilds the task’s state from its journal, environment and memory so the next worker continues rather than starts over.'],
   ['Can agents merge to protected branches?', 'No. Pull requests follow your review rules and branch protections. Vekrun prepares the evidence; a person decides.'],
 ];
 ---
@@ -119,5 +118,4 @@ const faq = [
     </div>
   </section>
 
-  <CapabilityStatus keys={['coordinator', 'concurrentJobs', 'council', 'isolatedVm', 'mcpBridge', 'envDiscovery', 'envRecipes', 'projectImport', 'claudeCode', 'codex', 'geminiCli', 'routing', 'failover', 'contextHandoff', 'verifier']} title="Where the Factory stands." />
 </Base>

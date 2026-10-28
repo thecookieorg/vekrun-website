@@ -7,22 +7,20 @@ import Base from '@/layouts/Base.astro';
 import PageHero from '@/components/PageHero.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import Button from '@/components/Button.astro';
-import StatusBadge from '@/components/StatusBadge.astro';
 import { advancedPages } from '@/data/site';
-import { capabilities, type CapabilityKey } from '@/data/capabilities';
 import { Factory, SquareKanban, Inbox, Box, ShieldCheck, Library, Plug, Smartphone, ArrowUpRight } from '@lucide/astro';
 
-const items: { icon: typeof Factory; title: string; body: string; href: string; status: CapabilityKey }[] = [
-  { icon: SquareKanban, title: 'Board', body: 'Tickets, pull requests and production incidents across repositories, each one a Factory job away from a verified fix.', href: '/features/board/', status: 'board' },
-  { icon: Inbox, title: 'Inbox', body: 'Only the decisions that need a person: approvals, questions, reviews, exceptions and blocks.', href: '/features/inbox/', status: 'inbox' },
-  { icon: Box, title: 'Isolated environments', body: 'One environment per Work Item, started from a verified recipe for Docker, native and hybrid projects.', href: '/features/factory/#env-title', status: 'isolatedVm' },
-  { icon: ShieldCheck, title: 'Verification and Proof Packs', body: 'Executable checks, browser runs and an independent verifier, attached to the pull request.', href: '/features/verification/', status: 'verifier' },
-  { icon: Library, title: 'Engineering Memory and Insights', body: 'A searchable record of every decision, and delivery reporting from verifiable work.', href: '/features/engineering-memory/', status: 'memory' },
-  { icon: Plug, title: 'Connections', body: 'Coding CLIs, models, OpenRouter, trackers, monitoring and CI, discovered and kept current.', href: '/integrations/#connections', status: 'cliSetup' },
-  { icon: Smartphone, title: 'Mobile and Host', body: 'Assign and approve from your phone, with a Host that stays reachable while it runs.', href: '/features/mobile/', status: 'mobile' },
+const items: { icon: typeof Factory; title: string; body: string; href: string }[] = [
+  { icon: SquareKanban, title: 'Board', body: 'Tickets, pull requests and production incidents across repositories, each one a Factory job away from a verified fix.', href: '/features/board/' },
+  { icon: Inbox, title: 'Inbox', body: 'Only the decisions that need a person: approvals, questions, reviews, exceptions and blocks.', href: '/features/inbox/' },
+  { icon: Box, title: 'Isolated environments', body: 'One environment per Work Item, started from a verified recipe for Docker, native and hybrid projects.', href: '/features/factory/#env-title' },
+  { icon: ShieldCheck, title: 'Verification and Proof Packs', body: 'Executable checks, browser runs and an independent verifier, attached to the pull request.', href: '/features/verification/' },
+  { icon: Library, title: 'Engineering Memory and Insights', body: 'A searchable record of every decision, and delivery reporting from verifiable work.', href: '/features/engineering-memory/' },
+  { icon: Plug, title: 'Connections', body: 'Coding CLIs, models, OpenRouter, trackers, monitoring and CI, discovered and kept current.', href: '/integrations/#connections' },
+  { icon: Smartphone, title: 'Mobile and Host', body: 'Assign and approve from your phone, with a Host that stays reachable while it runs.', href: '/features/mobile/' },
 ];
 ---
-<Base title="Product" fullTitle="Product: the AI Factory and everything around it · Vekrun" description="Vekrun's capabilities: the AI Factory, Board, Inbox, isolated environments, verification and Proof Packs, Engineering Memory and Insights, Connections and Mobile, each with its honest status.">
+<Base title="Product" fullTitle="Product: the AI Factory and everything around it · Vekrun" description="Vekrun's capabilities: the AI Factory, Board, Inbox, isolated environments, verification and Proof Packs, Engineering Memory and Insights, Connections and Mobile.">
   <PageHero eyebrow="Product" title="One Factory." accent="Everything a job needs around it." lede="Vekrun coordinates engineering work end to end. The Factory runs the jobs; the Board, Inbox, verification and memory make the results trustworthy and the work visible." align="left" />
 
   <section class="section-pad" aria-labelledby="factory-title">
@@ -33,7 +31,7 @@ const items: { icon: typeof Factory; title: string; body: string; href: string; 
           <p class="kicker">The core</p>
           <h2 id="factory-title" class="heading-2 mt-2 text-text">AI Factory</h2>
           <p class="lede mt-3 max-w-2xl">Describe the outcome. The Coordinator plans it, runs it with your signed-in coding agents in its own environment, verifies it and opens the pull request with the evidence, across several projects at once.</p>
-          <p class="mt-5 flex flex-wrap items-center gap-3"><StatusBadge status={capabilities.coordinator.status} compact /><span class="inline-flex items-center gap-1.5 text-[0.9375rem] font-[540] text-accent">Explore the AI Factory<ArrowUpRight class="icon-nudge h-4 w-4" aria-hidden="true" /></span></p>
+          <p class="mt-5 flex flex-wrap items-center gap-3"><span class="inline-flex items-center gap-1.5 text-[0.9375rem] font-[540] text-accent">Explore the AI Factory<ArrowUpRight class="icon-nudge h-4 w-4" aria-hidden="true" /></span></p>
         </div>
       </a>
 
@@ -44,12 +42,10 @@ const items: { icon: typeof Factory; title: string; body: string; href: string; 
               <it.icon class="h-5 w-5 text-accent" aria-hidden="true" />
               <h3 class="cap-t">{it.title}<ArrowUpRight class="icon-nudge h-3.5 w-3.5 text-text-3" aria-hidden="true" /></h3>
               <p class="cap-d">{it.body}</p>
-              <StatusBadge status={capabilities[it.status].status} compact class="cap-s" />
             </a>
           </li>
         ))}
       </ul>
-      <p class="mt-5 text-[0.8125rem] text-text-3">Each badge shows the status of the capability’s core. Pages list every part separately.</p>
     </div>
   </section>
 
@@ -76,6 +72,5 @@ const items: { icon: typeof Factory; title: string; body: string; href: string; 
   .cap:hover { background: var(--surface-2); }
   .cap-t { margin: 0.4rem 0 0; display: inline-flex; align-items: center; gap: 0.35rem; font-size: 1.05rem; font-weight: 580; color: var(--text); }
   .cap-d { margin: 0; font-size: 0.9rem; line-height: 1.55; color: var(--text-2); }
-  .cap :global(.cap-s) { margin-top: auto; align-self: flex-start; }
   .cap-d { flex: 1; }
 </style>

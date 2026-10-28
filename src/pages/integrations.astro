@@ -3,11 +3,9 @@ import Base from '@/layouts/Base.astro';
 import PageHero from '@/components/PageHero.astro';
 import IntegrationCatalog from '@/components/catalog/IntegrationCatalog.astro';
 import IntegrationLogo from '@/components/catalog/IntegrationLogo.astro';
-import StatusBadge from '@/components/StatusBadge.astro';
 import { getCollection } from 'astro:content';
 import { site } from '@/data/site';
 import SectionHeading from '@/components/SectionHeading.astro';
-import CapabilityStatus from '@/components/CapabilityStatus.astro';
 import { ArrowUpRight } from '@lucide/astro';
 
 const title = 'Integrations';
@@ -36,14 +34,13 @@ const featured = [
               <li class="feat-item">
                 <IntegrationLogo id={e.id} name={e.data.name} monogram={e.data.monogram} />
                 <span class="feat-name">{e.data.name}</span>
-                <StatusBadge status={e.data.status} compact class="feat-status" />
               </li>
             ))}
           </ul>
         </section>
       ))}
     </div>
-    <p class="mt-6 text-center text-[0.75rem] text-text-3">Logos are trademarks of their owners and indicate compatibility, not endorsement. {site.status.line}</p>
+    <p class="mt-6 text-center text-[0.75rem] text-text-3">Logos are trademarks of their owners and indicate compatibility, not endorsement.</p>
   </PageHero>
 
   <div class="pb-20">
@@ -77,7 +74,6 @@ const featured = [
     </div>
   </section>
 
-  <CapabilityStatus keys={['claudeCode', 'codex', 'geminiCli', 'cliSetup', 'cliInstall', 'githubCli', 'openrouter', 'contextHandoff', 'envDiscovery', 'envRecipes']} />
 </Base>
 
 <style>
@@ -90,10 +86,9 @@ const featured = [
   .feat-blurb { margin: 0.25rem 0 0; font-size: 0.85rem; line-height: 1.45; color: var(--text-3); }
   .feat-all { display: inline-flex; align-items: center; gap: 0.2rem; flex: 0 0 auto; font-size: 0.8125rem; font-weight: 540; color: var(--accent); }
   .feat-items { list-style: none; padding: 0; display: grid; gap: 0.5rem; }
-  .feat-item { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: 'logo name' 'logo status'; column-gap: 0.75rem; row-gap: 0.25rem; align-items: center; padding: 0.6rem 0.7rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-2); min-width: 0; transition: border-color var(--dur-fast), transform var(--dur) var(--ease-out); }
+  .feat-item { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: 'logo name'; column-gap: 0.75rem; align-items: center; padding: 0.6rem 0.7rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-2); min-width: 0; transition: border-color var(--dur-fast), transform var(--dur) var(--ease-out); }
   .feat-item > :first-child { grid-area: logo; }
   .feat-item:hover { border-color: var(--border-strong); transform: translateY(-2px); }
   .feat-name { grid-area: name; font-size: 0.875rem; font-weight: 560; color: var(--text); line-height: 1.2; }
-  .feat-item :global(.feat-status) { grid-area: status; justify-self: start; }
   @media (prefers-reduced-motion: reduce) { .feat-item { transition: none; } .feat-item:hover { transform: none; } }
 </style>

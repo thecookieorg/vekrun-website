@@ -4,7 +4,6 @@ import PageHero from '@/components/PageHero.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import Button from '@/components/Button.astro';
 import ProofPack from '@/components/factory/ProofPack.astro';
-import CapabilityStatus from '@/components/CapabilityStatus.astro';
 
 const layers = [
   { title: 'A real environment', body: 'The job runs in its own environment, started from a verified Environment Recipe with the project’s services, seeds and health checks.' },
@@ -40,5 +39,4 @@ const layers = [
     </div>
   </section>
 
-  <CapabilityStatus keys={['verifier', 'qualityGates', 'proofPacks', 'verificationProfiles', 'browserChecks', 'envDiscovery', 'envRecipes', 'isolatedVm']} />
 </Base>

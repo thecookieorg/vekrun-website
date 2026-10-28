@@ -2,7 +2,6 @@
 import { getCollection } from 'astro:content';
 import { Search, ExternalLink, BookOpen, X } from '@lucide/astro';
 import IntegrationLogo from './IntegrationLogo.astro';
-import StatusBadge from '@/components/StatusBadge.astro';
 import { availability, integrationCategories, connectionMethods, type IntegrationCategory, type Availability } from '@/data/site';
 
 const entries = await getCollection('integrations');
@@ -16,13 +15,11 @@ const byCategory = categoryOrder
     items: entries
       .filter((e) => e.data.category === key && e.data.status !== 'proposed')
       .sort((a, b) => rank(a.data.status) - rank(b.data.status) || a.data.name.localeCompare(b.data.name)),
-    /** Candidates that are not approved or scheduled. Listed compactly so they never look like committed support. */
-    proposed: entries.filter((e) => e.data.category === key && e.data.status === 'proposed').sort((a, b) => a.data.name.localeCompare(b.data.name)),
   }))
-  .filter((c) => c.items.length > 0 || c.proposed.length > 0);
+  .filter((c) => c.items.length > 0);
+const shown = byCategory.reduce((n, c) => n + c.items.length, 0);
 const searchText = (e: (typeof entries)[number]) =>
   [e.data.name, e.data.enables, ...e.data.connection.map((c) => connectionMethods[c]), e.data.note ?? ''].join(' ').toLowerCase();
-const dot: Record<string, string> = { ok: 'bg-ok', warn: 'bg-warn', muted: 'bg-text-3', faint: 'bg-border-strong' };
 /** Connection methods worth a footer line. "Built in" says nothing to a visitor. */
 const footer = (e: (typeof entries)[number]) => e.data.connection.filter((c) => c !== 'built-in').map((c) => connectionMethods[c]);
 ---
@@ -35,14 +32,6 @@ const footer = (e: (typeof entries)[number]) => e.data.connection.filter((c) => 
           <Search class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-3" aria-hidden="true" />
           <input type="search" name="q" placeholder="Search integrations" autocomplete="off" class="filter-input" data-catalog-search />
         </label>
-        <fieldset class="min-w-0">
-          <legend class="sr-only">Status</legend>
-          <div class="flex flex-wrap gap-1.5">
-            {statusOrder.map((s) => (
-              <label class="filter-pill"><input type="checkbox" name="status" value={s} class="sr-only" data-catalog-status /><span class:list={['h-1.5 w-1.5 rounded-full', dot[availability[s].tone]]} aria-hidden="true"></span>{availability[s].label}</label>
-            ))}
-          </div>
-        </fieldset>
       </div>
       <fieldset class="mt-3 min-w-0">
         <legend class="sr-only">Category</legend>
@@ -53,7 +42,7 @@ const footer = (e: (typeof entries)[number]) => e.data.connection.filter((c) => 
           ))}
         </div>
       </fieldset>
-      <p class="mt-2 text-[0.8125rem] text-text-3" aria-live="polite" data-catalog-count>Showing all {entries.length} integrations.</p>
+      <p class="mt-2 text-[0.8125rem] text-text-3" aria-live="polite" data-catalog-count>Showing all {shown} integrations.</p>
     </div>
   </form>
 
@@ -66,12 +55,11 @@ const footer = (e: (typeof entries)[number]) => e.data.connection.filter((c) => 
         </div>
         <ul class="reveal-group mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3" role="list">
           {c.items.map((e) => (
-            <li class="cat-card card card-hover group" data-catalog-item data-status={e.data.status} data-category={e.data.category} data-text={searchText(e)}>
+            <li class="cat-card card card-hover group" data-catalog-item data-category={e.data.category} data-text={searchText(e)}>
               <div class="flex items-start gap-3">
                 <IntegrationLogo id={e.id} name={e.data.name} monogram={e.data.monogram} />
                 <div class="min-w-0 flex-1">
                   <h3 class="text-[1rem] font-[580] leading-tight text-text">{e.data.name}</h3>
-                  <p class="mt-1.5"><StatusBadge status={e.data.status} compact /></p>
                 </div>
               </div>
               <p class="mt-3 text-[0.9rem] leading-relaxed text-text-2">{e.data.enables}</p>
@@ -88,19 +76,6 @@ const footer = (e: (typeof entries)[number]) => e.data.connection.filter((c) => 
             </li>
           ))}
         </ul>
-        {c.proposed.length > 0 && (
-          <div class="mt-5 rounded-xl border border-dashed border-border px-4 py-3" data-catalog-proposed>
-            <p class="text-[0.8125rem] text-text-3">Under consideration, not yet approved or scheduled:</p>
-            <ul class="mt-2 flex flex-wrap gap-2" role="list">
-              {c.proposed.map((e) => (
-                <li class="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-2.5 py-1.5 text-[0.8125rem] text-text-2" data-catalog-item data-status={e.data.status} data-category={e.data.category} data-text={searchText(e)} title={e.data.enables}>
-                  <IntegrationLogo id={e.id} name={e.data.name} monogram={e.data.monogram} size="sm" />
-                  {e.data.name}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
       </section>
     ))}
   </div>
@@ -129,7 +104,6 @@ const footer = (e: (typeof entries)[number]) => e.data.connection.filter((c) => 
   const root = document.querySelector<HTMLElement>('[data-catalog]');
   if (root) {
     const search = root.querySelector<HTMLInputElement>('[data-catalog-search]')!;
-    const statuses = Array.from(root.querySelectorAll<HTMLInputElement>('[data-catalog-status]'));
     const categories = Array.from(root.querySelectorAll<HTMLInputElement>('[data-catalog-category]'));
     const categoryAll = root.querySelector<HTMLInputElement>('[data-catalog-category-all]');
     const items = Array.from(root.querySelectorAll<HTMLElement>('[data-catalog-item]'));
@@ -141,11 +115,10 @@ const footer = (e: (typeof entries)[number]) => e.data.connection.filter((c) => 
 
     const apply = () => {
       const q = search.value.trim().toLowerCase();
-      const s = statuses.filter((c) => c.checked).map((c) => c.value);
       const cats = categories.filter((c) => c.checked).map((c) => c.value);
       let shown = 0;
       for (const el of items) {
-        const ok = (!q || (el.dataset.text ?? '').includes(q)) && (s.length === 0 || s.includes(el.dataset.status ?? '')) && (cats.length === 0 || cats.includes(el.dataset.category ?? ''));
+        const ok = (!q || (el.dataset.text ?? '').includes(q)) && (cats.length === 0 || cats.includes(el.dataset.category ?? ''));
         el.hidden = !ok;
         if (ok) shown++;
       }
@@ -155,23 +128,22 @@ const footer = (e: (typeof entries)[number]) => e.data.connection.filter((c) => 
         g.querySelector('.reveal-group')?.classList.add('is-visible');
       }
       empty.classList.toggle('hidden', shown > 0);
-      count.textContent = q || s.length || cats.length ? `Showing ${shown} of ${total} integrations.` : `Showing all ${total} integrations.`;
+      count.textContent = q || cats.length ? `Showing ${shown} of ${total} integrations.` : `Showing all ${total} integrations.`;
     };
 
-    // Deep links: /integrations/?category=project-management&status=available&q=linear
+    // Deep links: /integrations/?category=project-management&q=linear
     const params = new URLSearchParams(location.search);
     const q0 = params.get('q');
     if (q0) search.value = q0;
     for (const v of params.getAll('category')) { const c = categories.find((x) => x.value === v); if (c) { c.checked = true; c.parentElement?.scrollIntoView({ block: 'nearest', inline: 'center' }); } }
-    for (const v of params.getAll('status')) { const c = statuses.find((x) => x.value === v); if (c) c.checked = true; }
-    if (q0 || params.has('category') || params.has('status')) {
+    if (q0 || params.has('category')) {
       apply();
       root.querySelector<HTMLElement>('[data-catalog-group]:not([hidden])')?.scrollIntoView({ block: 'start' });
     }
 
     search.addEventListener('input', apply);
-    [...statuses, ...categories].forEach((c) => c.addEventListener('change', apply));
+    categories.forEach((c) => c.addEventListener('change', apply));
     categoryAll?.addEventListener('change', apply);
-    clear.addEventListener('click', () => { search.value = ''; [...statuses, ...categories].forEach((c) => (c.checked = false)); if (categoryAll) categoryAll.checked = true; apply(); search.focus(); });
+    clear.addEventListener('click', () => { search.value = ''; categories.forEach((c) => (c.checked = false)); if (categoryAll) categoryAll.checked = true; apply(); search.focus(); });
   }
 </script>
