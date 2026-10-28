@@ -1,0 +1,95 @@
+---
+/**
+ * A sample Proof Pack: the evidence a job attaches to its pull request.
+ * Honest states: pass, fail (then fixed, on an earlier revision) and not run,
+ * each with its reason. Static and clearly labelled as demonstration data.
+ */
+import Window from '@/components/mock/Window.astro';
+import ConceptNotice from '@/components/ConceptNotice.astro';
+interface Props { class?: string; full?: boolean }
+const { class: className = '', full = false } = Astro.props;
+const checks = [
+  { s: 'pass', t: 'Unit and request tests', d: '148 passed in 2m 14s' },
+  { s: 'pass', t: 'Checkout with a discount code', d: 'browser run · 6 steps · 3 screenshots' },
+  { s: 'pass', t: 'Feature Map: checkout totals', d: 'all 4 required behaviours exercised' },
+  { s: 'fail', t: 'Rounding on mixed currencies', d: 'failed on 7c2e01b · fixed on a91f3c2', old: true },
+  { s: 'skip', t: 'Load test', d: 'not run · no load profile configured' },
+];
+const label: Record<string, string> = { pass: 'pass', fail: 'fail', skip: 'not run' };
+const tone: Record<string, string> = { pass: 'is-ok', fail: 'is-danger', skip: 'is-muted' };
+---
+<figure class:list={['pp', className]}>
+  <Window title="Proof Pack" crumbs={['acme-web', 'Fix checkout total error']}>
+    <span slot="status" class="pp-rev">revision a91f3c2</span>
+    <div class="pp-grid">
+      <div class="pp-main">
+        <div class="pp-head">
+          <p class="pp-verdict"><span class="pill is-ok">verified</span> Ready for review</p>
+          <p class="pp-goal">Goal: checkout shows the right total when a discount code is applied. Source: Honeybadger, 312 events since Tuesday.</p>
+        </div>
+        <ul class="pp-checks" aria-label="Checks">
+          {checks.map((c) => (
+            <li class:list={[c.old && 'is-old']}>
+              <span class:list={['pill', tone[c.s]]}>{label[c.s]}</span>
+              <span class="pp-check-t">{c.t}<small>{c.d}</small></span>
+            </li>
+          ))}
+        </ul>
+        {full && (
+          <div class="pp-notes">
+            <p class="pp-k">Independent verifier</p>
+            <p>The change fixes the rounding in the discount path and adds a test for it. The verifier reran every check on a91f3c2 and confirmed the error no longer reproduces. One gap: no load profile exists for this project.</p>
+          </div>
+        )}
+      </div>
+      <div class="pp-side">
+        <p class="pp-k">Browser run</p>
+        <div class="pp-shots" aria-hidden="true">
+          <div class="pp-shot"><i></i><i></i><i></i><b>Cart</b></div>
+          <div class="pp-shot"><i></i><i></i><b>Code SAVE10</b></div>
+          <div class="pp-shot is-key"><i></i><i></i><i></i><b>Total $42.10</b></div>
+        </div>
+        <dl class="pp-dl">
+          <div><dt>Environment</dt><dd>env 17 · Docker and Rails</dd></div>
+          <div><dt>Worker</dt><dd>Claude Code on the Host</dd></div>
+          <div><dt>Pull request</dt><dd>#482 · draft · evidence linked</dd></div>
+          <div><dt>Merge</dt><dd>needs a person · branch protection</dd></div>
+        </dl>
+      </div>
+    </div>
+  </Window>
+  <ConceptNotice class="mt-4" text="Illustrative product concept with demonstration data. Proof Packs are planned; the independent verifier and structured test results exist in the development build." />
+</figure>
+
+<style>
+  .pp { margin: 0; }
+  .pp-rev { font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-3); }
+  .pp-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 48rem) { .pp-grid { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); } }
+  .pp-main { padding: 1.1rem 1.2rem; min-width: 0; }
+  .pp-side { padding: 1.1rem 1.2rem; border-top: 1px solid var(--border); background: color-mix(in srgb, var(--bg-elevated) 50%, var(--surface)); min-width: 0; }
+  @media (min-width: 48rem) { .pp-side { border-top: 0; border-left: 1px solid var(--border); } }
+  .pp-verdict { margin: 0; display: flex; align-items: center; gap: 0.6rem; font-size: 1rem; font-weight: 580; color: var(--text); }
+  .pp-goal { margin: 0.4rem 0 0; font-size: 0.82rem; line-height: 1.5; color: var(--text-2); }
+  .pp-checks { margin: 1rem 0 0; padding: 0; list-style: none; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .pp-checks li { display: flex; align-items: flex-start; gap: 0.7rem; padding: 0.6rem 0.8rem; background: var(--surface); }
+  .pp-checks li + li { border-top: 1px solid var(--border); }
+  .pp-checks li.is-old { opacity: 0.8; }
+  .pp-checks .pill { min-width: 3.9rem; justify-content: center; margin-top: 0.1rem; }
+  .pp-check-t { font-size: 0.85rem; color: var(--text); min-width: 0; }
+  .pp-check-t small { display: block; color: var(--text-3); font-size: 0.72rem; font-family: var(--font-mono); }
+  .pp-notes { margin-top: 1rem; font-size: 0.85rem; line-height: 1.55; color: var(--text-2); }
+  .pp-notes p { margin: 0; }
+  .pp-k { margin: 0 0 0.5rem !important; font-size: 0.72rem; font-weight: 560; color: var(--text-2); }
+  .pp-shots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.45rem; }
+  .pp-shot { display: grid; gap: 0.25rem; align-content: start; aspect-ratio: 4 / 5; padding: 0.45rem; border: 1px solid var(--border); border-radius: 7px; background: var(--bg); }
+  .pp-shot i { display: block; height: 0.3rem; border-radius: 2px; background: var(--surface-3); }
+  .pp-shot i:nth-child(2) { width: 65%; } .pp-shot i:nth-child(3) { width: 40%; }
+  .pp-shot b { margin-top: auto; font-size: 0.6rem; font-weight: 560; color: var(--text-3); }
+  .pp-shot.is-key { border-color: color-mix(in srgb, var(--ok) 50%, var(--border)); }
+  .pp-shot.is-key b { color: var(--ok); }
+  .pp-dl { margin: 1rem 0 0; display: grid; gap: 0.5rem; }
+  .pp-dl div { display: grid; gap: 0.05rem; }
+  .pp-dl dt { font-size: 0.68rem; color: var(--text-3); }
+  .pp-dl dd { margin: 0; font-size: 0.8rem; color: var(--text); }
+</style>

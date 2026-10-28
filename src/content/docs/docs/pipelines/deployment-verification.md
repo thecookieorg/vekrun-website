@@ -11,8 +11,8 @@ Insights already anchors its production observations on deployment markers from 
 
 ## Deployment platforms, planned
 
-:::note[Planned]
-Deployment integrations are approved scope and not built yet. See the [roadmap](/roadmap/).
+:::note[In development]
+Observing deployments exists in the development build and is tested against recorded responses. Deployment actions, which always need explicit policy and approval, are planned. See the [roadmap](/roadmap/#delivery).
 :::
 
 Planned first: Vercel, Cloudflare Workers and Pages, Railway, Render and Fly.io.

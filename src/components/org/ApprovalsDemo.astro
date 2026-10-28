@@ -1,0 +1,153 @@
+---
+/**
+ * "Stay in control without slowing everyone down." The organization's approval
+ * inbox: a list of real buttons on the left, the selected request on the right,
+ * and Approve / Reject that work in the demonstration. The script shows Sam
+ * approving the first request; the reader can decide the rest. Conceptual.
+ */
+import Browser from './Browser.astro';
+import Avatar from './Avatar.astro';
+import DemoControls from '@/components/mock/DemoControls.astro';
+
+type Req = { id: string; kind: string; tone: string; title: string; from: string; op: string; repo: string; ctx: string; cost: string; risk: string; riskTone: string; who: 'sam' | 'alex' | 'dana'; report?: boolean };
+const reqs: Req[] = [
+  { id: 'migration', kind: 'Permission', tone: 'warn', title: 'Run the exports migration in staging', from: 'Factory · VEK-140', op: 'rails db:migrate on the staging environment', repo: 'acme-api · db/migrate/20261021_add_export_retries.rb', ctx: 'The retry fix needs a new column. Staging only; production migrations always need a separate approval.', cost: 'about $0.40 · 2 minutes', risk: 'Medium', riskTone: 'warn', who: 'sam' },
+  { id: 'plan', kind: 'Plan', tone: 'info', title: 'VEK-152 Audit log pagination · 3 steps', from: 'Factory · requested by Dana', op: 'Execute a 3-step implementation plan with a shared worker', repo: 'acme-api · app/controllers/audit_logs_controller.rb', ctx: 'Cursor pagination, a regression test and a changelog entry. The plan was written by the developer agent and reviewed by the review agent.', cost: 'estimated $9', risk: 'Low', riskTone: 'ok', who: 'sam' },
+  { id: 'expensive', kind: 'Expensive', tone: 'warn', title: 'Refactor the exports module', from: 'Alex · AI operation', op: 'A multi-file refactor above the $25 threshold', repo: 'acme-api · app/services/exports/*', ctx: 'Policy: any single AI operation over $25 needs a lead. The estimate is from the plan; the real cost is shown when it finishes.', cost: 'estimated $38', risk: 'Low', riskTone: 'ok', who: 'sam' },
+  { id: 'secret', kind: 'Sensitive', tone: 'danger', title: 'Rotate the webhook signing secret', from: 'Priya · command', op: 'Rotate a production secret and restart the webhook workers', repo: 'infra · secrets/webhooks', ctx: 'Flagged as sensitive by policy. Vekrun never sees the secret itself; it asks whether the action may run on Priya’s machine.', cost: 'no AI cost', risk: 'High', riskTone: 'danger', who: 'sam' },
+  { id: 'review', kind: 'Review', tone: 'info', title: '#220 Payment webhooks', from: 'Factory via Alex', op: 'Approve the pull request for merge', repo: 'acme-api · 7 files · +212 −38', ctx: 'AI findings: 1, resolved with an idempotency key. 26 tests passed. Merging still needs a person by policy.', cost: '—', risk: 'Medium', riskTone: 'warn', who: 'alex' },
+  { id: 'report', kind: 'Report', tone: 'ok', title: 'VEK-140 verification report', from: 'Testing agent · completed', op: 'Nothing to approve: a completed verification for the record', repo: 'acme-api · #216', ctx: '18 tests, 3 new. The second agent re-ran the suite on a different worker and compared results with the plan. Merged by Priya.', cost: '$3.20 total', risk: 'None', riskTone: 'ok', who: 'dana', report: true },
+];
+---
+<figure class="ap" data-demo-root="approvals" data-approvals>
+  <Browser path="/acme/approvals" class="ap-browser is-compact">
+    <span slot="status" class="ap-count"><b data-ap-pending>4</b> pending</span>
+    <span slot="status" class="hidden sm:inline-flex items-center gap-1.5"><Avatar who="sam" size="sm" />Sam · engineering lead</span>
+    <div class="ap-body">
+      <div class="ap-list" role="tablist" aria-orientation="vertical" aria-label="Approval requests">
+        {reqs.map((r, i) => (
+          <button type="button" role="tab" id={`ap-tab-${r.id}`} aria-controls={`ap-panel-${r.id}`} aria-selected={i === 1 ? 'true' : 'false'} tabindex={i === 1 ? 0 : -1} class="ap-item" data-ap-item={r.id}>
+            <span class="ap-item-top"><span class:list={['pill', `is-${r.tone}`]}>{r.kind}</span><span class="ap-item-state" data-ap-state={r.id}>{r.id === 'migration' ? 'approved' : r.report ? 'done' : 'pending'}</span></span>
+            <span class="ap-item-t">{r.title}</span>
+            <span class="ap-item-from">{r.from}</span>
+          </button>
+        ))}
+      </div>
+      {reqs.map((r, i) => (
+        <section role="tabpanel" id={`ap-panel-${r.id}`} aria-labelledby={`ap-tab-${r.id}`} class="ap-panel" data-ap-panel={r.id} hidden={i !== 1}>
+          <header class="ap-head"><span class:list={['pill', `is-${r.tone}`]}>{r.kind}</span><h4>{r.title}</h4><p>{r.from}</p></header>
+          <dl class="ap-dl">
+            <div><dt>Requested operation</dt><dd>{r.op}</dd></div>
+            <div><dt>Affected repository</dt><dd class="ap-mono">{r.repo}</dd></div>
+            <div><dt>Context</dt><dd>{r.ctx}</dd></div>
+            <div class="ap-dl-row"><div><dt>Expected cost</dt><dd>{r.cost}</dd></div><div><dt>Risk level</dt><dd><span class:list={['pill', `is-${r.riskTone}`]}>{r.risk}</span></dd></div><div><dt>Decides</dt><dd class="ap-who"><Avatar who={r.who} size="sm" />{r.who === 'sam' ? 'Sam, lead' : r.who === 'alex' ? 'Alex, developer' : 'Dana, manager'}</dd></div></div>
+          </dl>
+          {r.report ? (
+            <p class="ap-done"><span class="pill is-ok">Verified</span>Kept for the record. Reports do not need a decision.</p>
+          ) : (
+            <div class="ap-actions">
+              <button type="button" class="ap-btn is-approve" data-approve={r.id}>Approve</button>
+              <button type="button" class="ap-btn is-reject" data-reject={r.id}>Reject</button>
+              <span class="ap-result" data-ap-result={r.id} aria-live="polite">{r.id === 'migration' ? 'Approved by Sam · Factory continued' : ''}</span>
+            </div>
+          )}
+        </section>
+      ))}
+    </div>
+  </Browser>
+  <DemoControls notice="Illustrative product concept with demonstration data. In the product an approval needs an authenticated, authorized person, and protected-branch rules still apply. Nothing on this page approves or runs anything." />
+</figure>
+
+<style>
+  .ap { margin: 0; }
+  .ap-browser { font-size: 0.76rem; }
+  .ap-count { color: var(--text-2); } .ap-count b { color: var(--warn); font-weight: 600; }
+  .ap-body { display: grid; grid-template-columns: minmax(0, 1fr); min-height: 24rem; }
+  @media (min-width: 48rem) { .ap-body { grid-template-columns: 17rem minmax(0, 1fr); } }
+  .ap-list { min-width: 0; display: flex; flex-direction: column; gap: 1px; background: var(--border); border-right: 1px solid var(--border); }
+  @media (max-width: 47.9rem) { .ap-list { flex-direction: row; overflow-x: auto; scrollbar-width: none; border-right: 0; border-bottom: 1px solid var(--border); } .ap-item { flex: 0 0 13rem; } }
+  .ap-item { display: grid; gap: 0.25rem; text-align: left; border: 0; background: var(--bg-elevated); padding: 0.65rem 0.8rem; cursor: pointer; color: var(--text-2); transition: background-color var(--dur-fast); min-width: 0; }
+  .ap-item:hover { background: var(--surface-2); }
+  .ap-item[aria-selected='true'] { background: var(--surface); color: var(--text); box-shadow: inset 3px 0 0 var(--accent); }
+  .ap-item-top { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
+  .ap-item-state { font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-3); }
+  .ap-item-state.is-ok { color: var(--ok); } .ap-item-state.is-danger { color: var(--danger); }
+  .ap-item-t { font-weight: 540; line-height: 1.3; }
+  .ap-item-from { font-size: 0.64rem; color: var(--text-3); }
+  .ap-panel { padding: 1rem 1.1rem; display: grid; gap: 0.9rem; align-content: start; animation: fade 240ms both; min-width: 0; }
+  .ap-panel[hidden] { display: none; }
+  .ap-head { display: grid; gap: 0.3rem; justify-items: start; }
+  .ap-head h4 { margin: 0; font-size: 1.05rem; font-weight: 580; color: var(--text); letter-spacing: -0.015em; }
+  .ap-head p { margin: 0; color: var(--text-3); }
+  .ap-dl { margin: 0; display: grid; gap: 0.6rem; }
+  .ap-dl dt { color: var(--text-3); font-size: 0.64rem; margin-bottom: 0.1rem; }
+  .ap-dl dd { margin: 0; color: var(--text-2); line-height: 1.45; }
+  .ap-mono { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text); word-break: break-word; }
+  .ap-dl-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; padding-top: 0.5rem; border-top: 1px solid var(--border); }
+  @media (max-width: 30rem) { .ap-dl-row { grid-template-columns: 1fr 1fr; } }
+  .ap-who { display: inline-flex; align-items: center; gap: 0.35rem; }
+  .ap-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; padding-top: 0.3rem; }
+  .ap-btn { height: 2rem; padding: 0 0.9rem; border-radius: 6px; font-size: 0.8rem; font-weight: 560; cursor: pointer; border: 1px solid var(--border-strong); background: var(--surface-2); color: var(--text); transition: transform var(--dur-fast), background-color var(--dur-fast), border-color var(--dur-fast), box-shadow var(--dur-fast); }
+  .ap-btn:active { transform: translateY(1px); }
+  .ap-btn.is-approve { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .ap-btn.is-approve:hover { background: var(--accent-strong); }
+  .ap-btn.is-approve.is-hot { box-shadow: 0 0 0 4px var(--accent-soft); }
+  .ap-btn.is-reject:hover { border-color: var(--danger); color: var(--danger); }
+  .ap-btn[disabled] { opacity: 0.45; cursor: default; }
+  .ap-result { color: var(--text-2); font-size: 0.74rem; }
+  .ap-result.is-ok { color: var(--ok); } .ap-result.is-danger { color: var(--danger); }
+  .ap-done { margin: 0; display: flex; align-items: center; gap: 0.5rem; color: var(--text-2); }
+  @media (prefers-reduced-motion: reduce) { .ap-panel { animation: none; } }
+</style>
+
+<script>
+  import { createSequence, type Step } from '@/scripts/sequence';
+
+  const root = document.querySelector<HTMLElement>('[data-approvals]');
+  if (root) {
+    const items = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-ap-item]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-ap-panel]'));
+    const pending = root.querySelector<HTMLElement>('[data-ap-pending]')!;
+    const state = (id: string) => root.querySelector<HTMLElement>(`[data-ap-state="${id}"]`)!;
+    const result = (id: string) => root.querySelector<HTMLElement>(`[data-ap-result="${id}"]`)!;
+    const approveBtn = (id: string) => root.querySelector<HTMLButtonElement>(`[data-approve="${id}"]`)!;
+    const rejectBtn = (id: string) => root.querySelector<HTMLButtonElement>(`[data-reject="${id}"]`)!;
+    const decided = new Set<string>();
+
+    const select = (id: string, focus = false) => {
+      items.forEach((b) => { const on = b.dataset.apItem === id; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; if (on && focus) b.focus(); });
+      panels.forEach((p) => { p.hidden = p.dataset.apPanel !== id; });
+    };
+    const count = () => { pending.textContent = String(5 - decided.size); };
+    const decide = (id: string, ok: boolean, by: string) => {
+      decided.add(id);
+      const s = state(id); s.textContent = ok ? 'approved' : 'rejected'; s.classList.toggle('is-ok', ok); s.classList.toggle('is-danger', !ok);
+      const r = result(id); r.textContent = ok ? `Approved by ${by}${id === 'migration' ? ' · Factory continued' : ''}` : `Rejected by ${by} · sent back with a note`; r.classList.toggle('is-ok', ok); r.classList.toggle('is-danger', !ok);
+      approveBtn(id).disabled = true; rejectBtn(id).disabled = true; count();
+    };
+    const undecide = (id: string) => {
+      decided.delete(id);
+      const s = state(id); s.textContent = 'pending'; s.classList.remove('is-ok', 'is-danger');
+      const r = result(id); r.textContent = ''; r.classList.remove('is-ok', 'is-danger');
+      approveBtn(id).disabled = false; rejectBtn(id).disabled = false; approveBtn(id).classList.remove('is-hot'); count();
+    };
+
+    items.forEach((b, i) => {
+      b.addEventListener('click', () => { seq.pause(); select(b.dataset.apItem!); });
+      b.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); seq.pause(); select(items[(i + 1) % items.length]!.dataset.apItem!, true); }
+        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); seq.pause(); select(items[(i - 1 + items.length) % items.length]!.dataset.apItem!, true); }
+      });
+    });
+    root.querySelectorAll<HTMLButtonElement>('[data-approve]').forEach((b) => b.addEventListener('click', () => { seq.pause(); decide(b.dataset.approve!, true, 'you (demonstration)'); }));
+    root.querySelectorAll<HTMLButtonElement>('[data-reject]').forEach((b) => b.addEventListener('click', () => { seq.pause(); decide(b.dataset.reject!, false, 'you (demonstration)'); }));
+
+    const reset = () => { ['migration', 'plan', 'expensive', 'secret', 'review'].forEach(undecide); select('migration'); };
+    const steps: Step[] = [
+      { t: 1800, run: () => approveBtn('migration').classList.add('is-hot') },
+      { t: 2500, run: () => { approveBtn('migration').classList.remove('is-hot'); decide('migration', true, 'Sam'); } },
+      { t: 4200, run: () => select('plan') },
+    ];
+    const seq = createSequence(root, steps, { reset });
+  }
+</script>

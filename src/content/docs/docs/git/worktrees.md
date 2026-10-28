@@ -10,7 +10,7 @@ A worktree is a second checkout of your repository in its own folder. Vekrun use
 ## Where they come from
 
 - **Start Work** on a ticket creates a worktree for it and opens a terminal there.
-- Every AI Team task gets its own worktree by default.
+- Every Factory task gets its own worktree by default.
 - You can add one yourself in the Git view, on a new or an existing branch.
 
 ## Managing them

@@ -5,7 +5,9 @@ sidebar:
   order: 1
 ---
 
-Insights is the workspace where production problems become engineering work. You connect the monitoring tools you already use, see their errors and performance problems inside Vekrun, and act on them: investigate, create a ticket, generate a fix plan, or hand the repair to an AI team.
+Insights is the workspace where production problems become engineering work. You connect the monitoring tools you already use, see their errors and performance problems inside Vekrun, and act on them: investigate, create a ticket, generate a fix plan, or hand the repair to the Factory.
+
+In the development build this area is called Insights. It is about production incidents; the separate Engineering Insights reporting on delivery is planned. Monitoring adapters are tested against recorded responses and have not yet run against live services.
 
 Your monitoring provider stays the source of truth. Vekrun reads from it, keeps a redacted local cache so you can work offline, and writes back only when you have turned that on.
 

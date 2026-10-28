@@ -9,7 +9,7 @@ import Window from '@/components/mock/Window.astro';
 import DemoControls from '@/components/mock/DemoControls.astro';
 
 interface Props { notice?: string }
-const { notice = 'Product preview. AI review of local branches and review councils work in the development build; the pull-request inbox, inline comments and GitHub/GitLab submission are planned. Open any request and decide on it to try the flow.' } = Astro.props;
+const { notice = 'Illustrative product concept. AI review of local branches and review councils work in the development build; the pull-request inbox, inline comments and GitHub/GitLab submission are planned. Open any request and decide on it to try the flow.' } = Astro.props;
 
 type Row = { kind: 'ctx' | 'add' | 'del'; n: number; code: string };
 type Finding = { tone: 'err' | 'warn' | 'ok'; kind: string; text: string; loc: string };

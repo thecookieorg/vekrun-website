@@ -1,132 +1,81 @@
 ---
+/**
+ * The capability overview. The Factory leads; the experiences around it follow
+ * in the order a job uses them; advanced tools sit at the end, secondary.
+ */
 import Base from '@/layouts/Base.astro';
 import PageHero from '@/components/PageHero.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
 import Button from '@/components/Button.astro';
-import Window from '@/components/mock/Window.astro';
-import { featurePages, site, cloud } from '@/data/site';
-import { ArrowUpRight } from '@lucide/astro';
+import StatusBadge from '@/components/StatusBadge.astro';
+import { advancedPages } from '@/data/site';
+import { capabilities, type CapabilityKey } from '@/data/capabilities';
+import { Factory, SquareKanban, Inbox, Box, ShieldCheck, Library, Plug, Smartphone, ArrowUpRight } from '@lucide/astro';
 
-const stories: Record<string, { title: string; body: string; next: string }> = {
-  terminal: { title: 'A terminal you can live in', body: 'Tabs, splits, SSH, search and session restore. It works all day with no AI connected, and when a command fails the agent reads the output you already have.', next: 'The terminal' },
-  'ai-coding': { title: 'Any model, every change approved', body: 'Claude, OpenAI, Gemini, an OpenAI-compatible endpoint or a model on your machine. Ask, plan, build, debug and review with every write shown as a diff first.', next: 'AI coding' },
-  board: { title: 'Your tickets become work', body: 'Assigned tickets in one Kanban. Press Start Work and you have a branch, a working copy and a terminal, with the ticket as context for you or an agent.', next: 'The Board' },
-  'ai-teams': { title: 'Hand off the work, keep the decisions', body: 'A planner drafts the steps, developers build on separate branches, a tester runs the suite, a reviewer checks the result. You approve the plan and the merge.', next: 'AI Teams' },
-  'code-review': { title: 'Review where you write code', body: 'Pull requests waiting for you, the diff, AI findings and your comments in one view. Compare several models when a change is contested.', next: 'Code reviews' },
-  insights: { title: 'From production error to verified fix', body: 'Connect Honeybadger, Sentry, Datadog or AppSignal. See errors and slow requests, let an agent investigate, then create a ticket, generate a plan or hand the fix to a team, and check production afterwards.', next: 'Insights' },
-};
+const items: { icon: typeof Factory; title: string; body: string; href: string; status: CapabilityKey }[] = [
+  { icon: SquareKanban, title: 'Board', body: 'Tickets, pull requests and production incidents across repositories, each one a Factory job away from a verified fix.', href: '/features/board/', status: 'board' },
+  { icon: Inbox, title: 'Inbox', body: 'Only the decisions that need a person: approvals, questions, reviews, exceptions and blocks.', href: '/features/inbox/', status: 'inbox' },
+  { icon: Box, title: 'Isolated environments', body: 'One environment per Work Item, started from a verified recipe for Docker, native and hybrid projects.', href: '/features/factory/#env-title', status: 'isolatedVm' },
+  { icon: ShieldCheck, title: 'Verification and Proof Packs', body: 'Executable checks, browser runs and an independent verifier, attached to the pull request.', href: '/features/verification/', status: 'verifier' },
+  { icon: Library, title: 'Engineering Memory and Insights', body: 'A searchable record of every decision, and delivery reporting from verifiable work.', href: '/features/engineering-memory/', status: 'memory' },
+  { icon: Plug, title: 'Connections', body: 'Coding CLIs, models, OpenRouter, trackers, monitoring and CI, discovered and kept current.', href: '/integrations/#connections', status: 'cliSetup' },
+  { icon: Smartphone, title: 'Mobile and Host', body: 'Assign and approve from your phone, with a Host that stays reachable while it runs.', href: '/features/mobile/', status: 'mobile' },
+];
 ---
-<Base title="Features" description="Vekrun in six parts: a terminal, AI coding with your own models, a Board for your tickets, AI Teams for larger work, code reviews in one place, and Insights from production error to verified fix.">
-  <PageHero eyebrow="Features" title="Six things Vekrun does." accent="One workspace." lede="Each works on its own. Together they take a ticket, or a production error, from assigned to merged without leaving the terminal." align="left" />
+<Base title="Product" fullTitle="Product: the AI Factory and everything around it · Vekrun" description="Vekrun's capabilities: the AI Factory, Board, Inbox, isolated environments, verification and Proof Packs, Engineering Memory and Insights, Connections and Mobile, each with its honest status.">
+  <PageHero eyebrow="Product" title="One Factory." accent="Everything a job needs around it." lede="Vekrun coordinates engineering work end to end. The Factory runs the jobs; the Board, Inbox, verification and memory make the results trustworthy and the work visible." align="left" />
 
-  <section class="container-site">
-    <ol class="fi-list" aria-label="Features">
-      {featurePages.map((f, i) => (
-        <li class="fi-row reveal">
-          <div class="fi-text">
-            <p class="kicker">{String(i + 1).padStart(2, '0')} · {f.label}</p>
-            <h2 class="heading-2 mt-3 text-text">{stories[f.key]!.title}</h2>
-            <p class="lede mt-4 measure">{stories[f.key]!.body}</p>
-            <a href={f.href} class="group link-slide mt-6 inline-flex items-center gap-1.5 text-[0.9375rem] font-[540] text-accent">{stories[f.key]!.next}<ArrowUpRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a>
-          </div>
-          <a href={f.href} class="fi-visual card card-hover" aria-hidden="true" tabindex="-1">
-            {f.key === 'terminal' && (
-              <Window title="acme-api" tabs={[{ label: 'api', active: true }, { label: 'ssh: staging' }]}>
-                <pre class="term fi-term">{`$ cargo build --release
-   Compiling acme-api v0.4.2
-    Finished release in 38.2s · exit 0
-$ `}<span class="term-cursor"></span></pre>
-              </Window>
-            )}
-            {f.key === 'ai-coding' && (
-              <Window title="Agents" crumbs={['Debug']}>
-                <span slot="status"><span class="live-dot" aria-hidden="true"></span> Claude · your key</span>
-                <div class="fi-chat window-mono">
-                  <p><span class="dim">You</span> Why does /me return 500 on an expired token?</p>
-                  <p><span class="info">Agent</span> Found <code>unwrap()</code> at session.rs:88. Proposed change · +4 −1 · <span class="warn">Approve?</span></p>
-                </div>
-              </Window>
-            )}
-            {f.key === 'board' && (
-              <Window title="Board" crumbs={['Assigned to you']}>
-                <div class="fi-kanban">
-                  <div><span>To do</span><i>Rate-limit the webhook endpoint</i><i>Fix the dark-mode flash</i></div>
-                  <div><span>In progress</span><i class="is-sel">Add GitHub OAuth login <b>Start Work</b></i></div>
-                  <div><span>In review</span><i>Replace the retry queue</i></div>
-                </div>
-              </Window>
-            )}
-            {f.key === 'ai-teams' && (
-              <Window title="AI Teams" crumbs={['VEK-129']}>
-                <div class="fi-lanes">
-                  {['Planner', 'Developers', 'Tester', 'Reviewer', 'You'].map((l, j) => <div><span>{l}</span>{j === 1 && <><i>feat/retry-worker</i><i>feat/retry-backoff</i></>}{j === 4 && <i class="is-ok">Merge preview · approve?</i>}</div>)}
-                </div>
-              </Window>
-            )}
-            {f.key === 'insights' && (
-              <Window title="Insights" crumbs={['acme-api', 'Errors']}>
-                <div class="fi-insight window-mono">
-                  <p class="fi-insight-row"><span class="fi-src">Hb</span><span class="fi-insight-title">NoMethodError in ExportsController#create</span><span class="dim">142 · 24h</span></p>
-                  <p class="fi-insight-row fi-insight-sub"><span class="warn">Likely cause 0.8</span> <span>rows is nil when a filter matches nothing · exports_controller.rb:48</span></p>
-                  <p class="fi-insight-row fi-insight-sub"><span class="ok">After deploy</span> <span>0 occurrences in 24h · improved</span></p>
-                </div>
-              </Window>
-            )}
-            {f.key === 'code-review' && (
-              <Window title="Reviews" crumbs={['#88']}>
-                <div class="fi-diff window-mono">
-                  <div class="diff-row diff-del"><span>42</span><span>- log.debug('oauth token', token);</span></div>
-                  <div class="diff-row diff-add"><span>42</span><span>+ log.debug('oauth exchange ok');</span></div>
-                  <p class="fi-finding"><span class="err">Security</span> token was logged at debug level · github.ts:42</p>
-                </div>
-              </Window>
-            )}
-          </a>
-        </li>
-      ))}
-    </ol>
+  <section class="section-pad" aria-labelledby="factory-title">
+    <div class="container-site">
+      <a href="/features/factory/" class="lead card card-hover group reveal">
+        <span class="lead-i"><Factory class="h-6 w-6" aria-hidden="true" /></span>
+        <div>
+          <p class="kicker">The core</p>
+          <h2 id="factory-title" class="heading-2 mt-2 text-text">AI Factory</h2>
+          <p class="lede mt-3 max-w-2xl">Describe the outcome. The Coordinator plans it, runs it with your signed-in coding agents in its own environment, verifies it and opens the pull request with the evidence, across several projects at once.</p>
+          <p class="mt-5 flex flex-wrap items-center gap-3"><StatusBadge status={capabilities.coordinator.status} compact /><span class="inline-flex items-center gap-1.5 text-[0.9375rem] font-[540] text-accent">Explore the AI Factory<ArrowUpRight class="icon-nudge h-4 w-4" aria-hidden="true" /></span></p>
+        </div>
+      </a>
+
+      <ul class="caps reveal-group" aria-label="Capabilities">
+        {items.map((it) => (
+          <li>
+            <a href={it.href} class="cap group">
+              <it.icon class="h-5 w-5 text-accent" aria-hidden="true" />
+              <h3 class="cap-t">{it.title}<ArrowUpRight class="icon-nudge h-3.5 w-3.5 text-text-3" aria-hidden="true" /></h3>
+              <p class="cap-d">{it.body}</p>
+              <StatusBadge status={capabilities[it.status].status} compact class="cap-s" />
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p class="mt-5 text-[0.8125rem] text-text-3">Each badge shows the status of the capability’s core. Pages list every part separately.</p>
+    </div>
   </section>
 
-  <section class="rule bg-bg-elevated">
-    <div class="container-site py-12">
-      <div class="flex flex-wrap items-center gap-4">
-        <Button href="/integrations/" variant="secondary">Browse integrations</Button>
-        <Button href={cloud.href} variant="secondary">For teams: {cloud.name}</Button>
-        <p class="text-[0.875rem] text-text-3">{site.status.line} <a href="/roadmap/" class="underline underline-offset-2 hover:text-text">See the roadmap.</a></p>
-      </div>
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="adv-title">
+    <div class="container-site">
+      <SectionHeading id="adv-title" kicker="Advanced tools" title="For troubleshooting and taking over." lede="A capable terminal, SSH, a code and diff view and review tools stay one click away when you want to step into a job yourself. Vekrun is not trying to replace your editor or your coding agent." class="reveal" />
+      <ul class="ruled-grid reveal-group mt-10 sm:grid-cols-3" aria-label="Advanced tools">
+        {advancedPages.map((a) => <li class="p-6"><a href={a.href} class="group block"><h3 class="heading-3 inline-flex items-center gap-1.5 text-text">{a.label}<ArrowUpRight class="icon-nudge h-3.5 w-3.5 text-text-3" aria-hidden="true" /></h3><p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">{a.description}</p></a></li>)}
+      </ul>
+      <div class="mt-10 reveal"><Button href="/how-it-works/" variant="secondary">See how it all works together</Button></div>
     </div>
   </section>
 </Base>
 
 <style>
-  .fi-list { list-style: none; margin: 0; padding: 0; }
-  .fi-row { display: grid; gap: 2rem; padding: 3.5rem 0; border-bottom: 1px solid var(--border); align-items: center; }
-  .fi-row:last-child { border-bottom: 0; }
-  @media (min-width: 64rem) { .fi-row { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 4rem; padding: 4.5rem 0; } .fi-row:nth-child(even) .fi-text { order: 2; } }
-  .fi-visual { display: block; padding: 1rem; background: color-mix(in srgb, var(--surface-2) 60%, var(--bg)); font-size: 0.75rem; }
-  .fi-visual :global(.window) { box-shadow: none; }
-  .fi-term { margin: 0; padding: 0.7rem 0.85rem; min-height: 6.5rem; }
-  .fi-chat { padding: 0.7rem 0.85rem; display: flex; flex-direction: column; gap: 0.5rem; color: var(--text-2); min-height: 6.5rem; }
-  .fi-chat p { margin: 0; } .fi-chat code { color: var(--text); }
-  .fi-kanban { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--border); min-height: 7rem; }
-  .fi-kanban > div { background: var(--surface); padding: 0.5rem; display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
-  .fi-kanban span, .fi-lanes span { font-size: 0.68rem; color: var(--text-3); }
-  .fi-kanban i, .fi-lanes i { font-style: normal; display: flex; flex-direction: column; gap: 0.25rem; background: var(--surface-2); border: 1px solid var(--border); border-radius: 5px; padding: 0.35rem 0.45rem; color: var(--text); font-size: 0.7rem; line-height: 1.3; }
-  .fi-kanban i.is-sel { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
-  .fi-kanban b { align-self: flex-start; background: var(--accent); color: var(--accent-ink); font-weight: 560; border-radius: 4px; padding: 0.12rem 0.4rem; font-size: 0.64rem; }
-  .fi-lanes { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1px; background: var(--border); min-height: 7rem; }
-  .fi-lanes > div { background: var(--surface); padding: 0.5rem; display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
-  .fi-lanes i { font-family: var(--font-mono); font-size: 0.62rem; }
-  .fi-lanes i.is-ok { border-color: color-mix(in srgb, var(--ok) 55%, transparent); font-family: var(--font-sans); }
-  .fi-diff { padding: 0.5rem 0.4rem; background: var(--term-bg); min-height: 6.5rem; }
-  .fi-finding { margin: 0.6rem 0.4rem 0; font-family: var(--font-sans); font-size: 0.72rem; color: var(--text-2); }
-  .fi-finding .err { color: var(--danger); }
-  @media (max-width: 40rem) { .fi-lanes { grid-template-columns: repeat(3, minmax(0, 1fr)); } .fi-lanes > div:nth-child(n + 4) { display: none; } }
-  .fi-row > * { min-width: 0; }
-  .fi-insight { padding: 0.6rem 0.75rem; display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.72rem; color: var(--text-2); min-width: 0; overflow: hidden; }
-  .fi-insight-row { display: flex; align-items: center; gap: 0.5rem; margin: 0; min-width: 0; }
-  .fi-insight-row > span { min-width: 0; }
-  .fi-insight-title { color: var(--text); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .fi-insight-sub { padding-left: 2rem; flex-wrap: wrap; }
-  .fi-src { font-size: 0.62rem; border: 1px solid color-mix(in srgb, var(--warn) 50%, transparent); color: var(--warn); border-radius: 4px; padding: 0 0.3rem; }
-  .fi-insight .dim { color: var(--text-3); } .fi-insight .warn { color: var(--warn); } .fi-insight .ok { color: var(--ok); }
+  .lead { display: grid; gap: 1.25rem; padding: 2rem; }
+  @media (min-width: 48rem) { .lead { grid-template-columns: auto 1fr; gap: 1.75rem; padding: 2.5rem; } }
+  .lead { background: linear-gradient(140deg, color-mix(in srgb, var(--accent) 8%, var(--surface)), var(--surface) 55%); }
+  .lead-i { display: inline-flex; align-items: center; justify-content: center; width: 3rem; height: 3rem; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border)); color: var(--accent); background: var(--bg); }
+  .caps { margin: 1.5rem 0 0; padding: 0; list-style: none; display: grid; gap: 1px; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--border); }
+  @media (min-width: 40rem) { .caps { grid-template-columns: repeat(2, minmax(0, 1fr)); } .caps li:last-child { grid-column: span 2; } }
+  @media (min-width: 64rem) { .caps { grid-template-columns: repeat(3, minmax(0, 1fr)); } .caps li:last-child { grid-column: span 3; } }
+  .cap { display: flex; flex-direction: column; height: 100%; gap: 0.5rem; padding: 1.5rem; background: var(--surface); transition: background-color var(--dur-fast); }
+  .cap:hover { background: var(--surface-2); }
+  .cap-t { margin: 0.4rem 0 0; display: inline-flex; align-items: center; gap: 0.35rem; font-size: 1.05rem; font-weight: 580; color: var(--text); }
+  .cap-d { margin: 0; font-size: 0.9rem; line-height: 1.55; color: var(--text-2); }
+  .cap :global(.cap-s) { margin-top: auto; align-self: flex-start; }
+  .cap-d { flex: 1; }
 </style>

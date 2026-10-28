@@ -1,0 +1,372 @@
+---
+/**
+ * "Finally, a clear view of engineering progress." The project manager's
+ * dashboard with seven real sections behind a tablist. Overview counts up and
+ * its activity feed arrives when the demo plays; charts grow when a panel opens.
+ * Every number is demonstration data and the window says so. Conceptual.
+ */
+import Browser from './Browser.astro';
+import Avatar from './Avatar.astro';
+import DemoControls from '@/components/mock/DemoControls.astro';
+import { people, projects, budget } from '@/data/org-demo';
+
+const sections = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'work', label: 'Work' },
+  { id: 'ai', label: 'AI Operations' },
+  { id: 'quality', label: 'Quality & Insights' },
+  { id: 'reports', label: 'Reports' },
+  { id: 'settings', label: 'Settings' },
+];
+const stats = [
+  { k: 'projects', n: 3, l: 'Active projects' },
+  { k: 'wip', n: 11, l: 'In progress' },
+  { k: 'blocked', n: 2, l: 'Blocked', tone: 'warn' },
+  { k: 'reviews', n: 4, l: 'Awaiting review', tone: 'info' },
+  { k: 'done', n: 9, l: 'Delivered this week', tone: 'ok' },
+  { k: 'jobs', n: 2, l: 'AI jobs running', tone: 'cloud' },
+];
+const weeks = [5, 6, 6, 8, 7, 9, 8, 11];
+const activity = [
+  { t: 'Merged', tone: 'ok', s: '#216 Retry failed exports · approved by Priya', at: 1900 },
+  { t: 'Approval', tone: 'warn', s: 'VEK-145 Payment webhooks · plan waiting on Sam', at: 2350 },
+  { t: 'Factory', tone: 'cloud', s: 'VEK-152 Audit log pagination · build-3 · step 2 of 3', at: 2800 },
+  { t: 'Blocked', tone: 'warn', s: 'VEK-139 Checkout redesign · waiting on a design review since Tuesday', at: 3250 },
+  { t: 'Investigation', tone: 'info', s: 'NoMethodError in ExportsController · fix in review · #221', at: 3700 },
+];
+const blockers = [
+  { id: 'VEK-139', t: 'Checkout redesign', why: 'waiting on a design review · 3 days', who: 'priya' },
+  { id: 'VEK-133', t: 'Billing export', why: 'waiting on API credentials', who: 'sam' },
+];
+const work = [
+  { id: 'VEK-152', t: 'Audit log pagination', who: 'alex', pri: 'High', how: 'AI-executed', pr: '#218', state: 'In review', tone: 'info' },
+  { id: 'VEK-145', t: 'Payment webhooks', who: 'sam', pri: 'High', how: 'AI-executed', pr: '—', state: 'Awaiting plan approval', tone: 'warn' },
+  { id: 'VEK-140', t: 'Retry failed exports', who: 'alex', pri: 'High', how: 'AI-assisted', pr: '#216', state: 'Merged', tone: 'ok' },
+  { id: 'VEK-139', t: 'Checkout redesign', who: 'priya', pri: 'High', how: 'Manual', pr: '—', state: 'Blocked', tone: 'warn' },
+  { id: 'VEK-128', t: 'Fix the dark-mode flash', who: 'priya', pri: 'Medium', how: 'Manual', pr: '#213', state: 'In progress', tone: 'info' },
+  { id: 'VEK-122', t: 'Audit log export', who: null, pri: 'Low', how: '—', pr: '—', state: 'Unassigned', tone: 'muted' },
+];
+const bottleneck = [{ p: 'acme-api', d: 0.8 }, { p: 'acme-web', d: 2.6 }, { p: 'infra', d: 0.4 }];
+const jobs14 = [2, 3, 2, 4, 5, 3, 6, 4, 5, 7, 6, 8, 7, 9];
+const teamBudget = [{ t: 'Platform', used: 112, total: 300 }, { t: 'Web', used: 38, total: 150 }, { t: 'Factory queues', used: 34, total: 150 }];
+const pct = Math.round((budget.used / budget.total) * 100);
+---
+<figure class="db" data-demo-root="dashboard" data-dashboard>
+  <Browser path="/acme/overview" class="db-browser">
+    <span slot="status" class="db-flag">Demonstration data</span>
+    <span slot="status" class="db-who"><Avatar who="dana" size="sm" /><span class="hidden sm:inline">{people.dana.short} · {people.dana.role.toLowerCase()}</span></span>
+    <div class="db-body">
+      <nav class="db-side" aria-label="Dashboard sections">
+        <p class="db-org" aria-hidden="true"><i></i>Acme Engineering</p>
+        <div role="tablist" aria-orientation="vertical" class="db-tabs">
+          {sections.map((s, i) => <button type="button" role="tab" id={`db-tab-${s.id}`} aria-selected={i === 0 ? 'true' : 'false'} aria-controls={`db-panel-${s.id}`} tabindex={i === 0 ? 0 : -1} class="db-tab" data-db-tab={s.id}>{s.label}</button>)}
+        </div>
+      </nav>
+
+      <div class="db-main">
+        <!-- Overview -->
+        <section role="tabpanel" id="db-panel-overview" aria-labelledby="db-tab-overview" class="db-panel" data-db-panel="overview">
+          <div class="db-stats">
+            {stats.map((s) => <div class="db-stat"><b class:list={[s.tone && `is-${s.tone}`]} data-count={s.n}>{s.n}</b><span>{s.l}</span></div>)}
+          </div>
+          <div class="db-grid2">
+            <div class="db-card">
+              <h4>Engineering throughput <small>delivered per week</small></h4>
+              <svg class="db-chart" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true">
+                {weeks.map((w, i) => <rect x={i * 25 + 4} y={56 - (w / 11) * 50} width="17" height={(w / 11) * 50} rx="2" class:list={['db-bar grow-y', i === weeks.length - 1 && 'is-now']} style={`animation-delay: ${i * 50}ms`} />)}
+                <line x1="0" y1="56.5" x2="200" y2="56.5" class="db-axis" />
+              </svg>
+              <p class="db-legend"><span>8 weeks ago</span><span>this week · <b>11</b></span></p>
+            </div>
+            <div class="db-card">
+              <h4>Work distribution <small>how work gets done</small></h4>
+              <div class="db-stack" role="img" aria-label="54% by people, 31% AI-assisted, 15% AI-executed">
+                <i style="--w: 54%" class="is-human grow-x"></i><i style="--w: 31%" class="is-assist grow-x"></i><i style="--w: 15%" class="is-exec grow-x"></i>
+              </div>
+              <ul class="db-keys"><li><i class="is-human"></i>People <b>54%</b></li><li><i class="is-assist"></i>AI-assisted <b>31%</b></li><li><i class="is-exec"></i>AI-executed, human-approved <b>15%</b></li></ul>
+            </div>
+          </div>
+          <div class="db-grid2">
+            <div class="db-card">
+              <h4>Blocked <small>needs a person</small></h4>
+              <ul class="db-rows">
+                {blockers.map((b) => <li><Avatar who={b.who as 'sam'} size="sm" /><span><span class="db-mono">{b.id}</span> {b.t}<small>{b.why}</small></span><span class="pill is-warn">blocked</span></li>)}
+              </ul>
+            </div>
+            <div class="db-card">
+              <h4>Activity</h4>
+              <ul class="db-feed" data-feed>
+                {activity.map((a) => <li data-t={a.at}><span class:list={['pill', `is-${a.tone}`]}>{a.t}</span><span>{a.s}</span></li>)}
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Projects -->
+        <section role="tabpanel" id="db-panel-projects" aria-labelledby="db-tab-projects" class="db-panel" data-db-panel="projects" hidden>
+          <table class="db-table">
+            <thead><tr><th>Project</th><th>Milestone</th><th>Completion</th><th class="db-hide-sm">Owner</th><th>Health</th><th class="db-hide-sm">Due</th></tr></thead>
+            <tbody>
+              {projects.map((p) => (
+                <tr><td class="db-mono">{p.name}</td><td>{p.milestone}</td><td><span class="db-prog"><span class="bar" style={`--w: ${p.pct}%`}><i></i></span><span class="db-pct">{p.pct}%</span></span></td><td class="db-hide-sm"><span class="db-person"><Avatar who={p.owner} size="sm" />{people[p.owner].short}</span></td><td><span class:list={['pill', `is-${p.tone}`]}>{p.health}</span></td><td class="db-hide-sm db-dim">{p.due}</td></tr>
+              ))}
+            </tbody>
+          </table>
+          <div class="db-grid2">
+            <div class="db-card">
+              <h4>Project completion <small>planned work delivered</small></h4>
+              {projects.map((p) => <p class="db-hbar"><span class="db-mono">{p.name}</span><span class="db-hbar-track"><i class="grow-x" style={`--w: ${p.pct}%`}></i></span><span class="db-pct">{p.pct}%</span></p>)}
+            </div>
+            <div class="db-card">
+              <h4>Milestones <small>next four weeks</small></h4>
+              <ul class="db-rows">
+                <li><span class="db-mono">Oct 24</span><span>Rate limits <small>infra · 2 tickets left</small></span><span class="pill is-info">this week</span></li>
+                <li><span class="db-mono">Nov 4</span><span>Webhooks v2 <small>acme-api · 5 tickets left</small></span><span class="pill is-ok">on track</span></li>
+                <li><span class="db-mono">Nov 11</span><span>Checkout redesign <small>acme-web · design review pending</small></span><span class="pill is-warn">at risk</span></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Work -->
+        <section role="tabpanel" id="db-panel-work" aria-labelledby="db-tab-work" class="db-panel" data-db-panel="work" hidden>
+          <p class="db-chips" aria-hidden="true"><span class="is-on">All · 23</span><span>People · 15</span><span>AI-executed · 5</span><span>Blocked · 2</span><span>Unassigned · 1</span></p>
+          <table class="db-table">
+            <thead><tr><th>Ticket</th><th>Assignee</th><th class="db-hide-sm">Priority</th><th>How</th><th class="db-hide-sm">Pull request</th><th>State</th></tr></thead>
+            <tbody>
+              {work.map((w) => <tr><td><span class="db-mono">{w.id}</span> {w.t}</td><td>{w.who ? <span class="db-person"><Avatar who={w.who as 'alex'} size="sm" />{people[w.who as 'alex'].short}</span> : <span class="db-dim">—</span>}</td><td class="db-hide-sm">{w.pri}</td><td><span class:list={['pill', w.how.startsWith('AI') ? 'is-cloud' : 'is-muted']}>{w.how}</span></td><td class="db-hide-sm db-mono">{w.pr}</td><td><span class:list={['pill', `is-${w.tone}`]}>{w.state}</span></td></tr>)}
+            </tbody>
+          </table>
+        </section>
+
+        <!-- AI Operations -->
+        <section role="tabpanel" id="db-panel-ai" aria-labelledby="db-tab-ai" class="db-panel" data-db-panel="ai" hidden>
+          <div class="db-grid2 db-grid2-wide">
+            <div>
+              <h4 class="db-h">Running Factory jobs</h4>
+              <ul class="db-jobs">
+                <li><span class="db-job-top"><span class="db-mono">VEK-152</span><span>Audit log pagination</span><span class="pill is-cloud">build-3</span></span><span class="bar" style="--w: 62%"><i></i></span><span class="db-job-meta"><Avatar kind="agent" label="D" size="sm" />Developer agent · step 2 of 3 · $4.10 of $9</span></li>
+                <li><span class="db-job-top"><span class="db-mono">VEK-140</span><span>Retry failed exports</span><span class="pill is-cloud">build-2</span></span><span class="bar" style="--w: 92%"><i></i></span><span class="db-job-meta"><Avatar kind="agent" label="T" size="sm" />Testing agent · 18 passed · verifying against the plan</span></li>
+              </ul>
+              <h4 class="db-h">Approval requests</h4>
+              <ul class="db-rows">
+                <li><span class="pill is-warn">Plan</span><span>VEK-145 Payment webhooks · 4 steps · estimated $12<small>waiting on Sam</small></span><Avatar who="sam" size="sm" /></li>
+                <li><span class="pill is-warn">Permission</span><span>Run the exports migration in staging<small>waiting on Alex</small></span><Avatar who="alex" size="sm" /></li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="db-h">Agents today</h4>
+              <ul class="db-rows">
+                <li><Avatar kind="agent" label="D" size="sm" /><span>Developer agent<small>6 jobs · 5 verified · 1 returned to a person</small></span><span class="pill is-ok">6</span></li>
+                <li><Avatar kind="agent" label="T" size="sm" /><span>Testing agent<small>14 runs · 0 failures missed</small></span><span class="pill is-ok">14</span></li>
+                <li><Avatar kind="agent" label="R" size="sm" /><span>Review agent<small>9 reviews · 3 findings confirmed by people</small></span><span class="pill is-ok">9</span></li>
+              </ul>
+              <h4 class="db-h">Spending <small>{budget.period}</small></h4>
+              <div class="db-ring-row">
+                <svg viewBox="0 0 40 40" class="db-ring" role="img" aria-label={`$${budget.used} of $${budget.total} used, ${pct}%`}>
+                  <circle cx="20" cy="20" r="16" class="db-ring-track" /><circle cx="20" cy="20" r="16" class="db-ring-fill" pathLength="100" style={`--p: ${pct}`} />
+                </svg>
+                <div><b class="db-big">${budget.used}</b><span class="db-dim"> of ${budget.total}</span><small>every job shows its cost before it starts</small></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Quality & Insights -->
+        <section role="tabpanel" id="db-panel-quality" aria-labelledby="db-tab-quality" class="db-panel" data-db-panel="quality" hidden>
+          <div class="db-grid2">
+            <div class="db-card">
+              <h4>Review bottlenecks <small>median wait, days</small></h4>
+              {bottleneck.map((b) => <p class="db-hbar"><span class="db-mono">{b.p}</span><span class="db-hbar-track"><i class:list={['grow-x', b.d > 2 && 'is-warn']} style={`--w: ${(b.d / 3) * 100}%`}></i></span><span class="db-pct">{b.d} d</span></p>)}
+              <p class="db-note">acme-web waits longest: one reviewer for four open pull requests.</p>
+            </div>
+            <div class="db-card">
+              <h4>Failing checks</h4>
+              <ul class="db-rows">
+                <li><span class="pill is-danger">CI</span><span>acme-web · main · lint<small>2 hours ago · Priya is looking</small></span></li>
+                <li><span class="pill is-warn">Flaky</span><span>infra · integration · 3 retries this week<small>candidate for an investigation</small></span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="db-card">
+            <h4>Production investigations <small>Honeybadger · AppSignal · Sentry · Datadog</small></h4>
+            <ul class="db-rows">
+              <li><span class="pill is-info">Fix in review</span><span>NoMethodError in ExportsController<small>142 in 24 h · Honeybadger · likely cause 0.8 · #221 waiting on Alex</small></span><Avatar who="priya" size="sm" /></li>
+              <li><span class="pill is-warn">Investigating</span><span>Slow /search · p95 2.4 s<small>AppSignal · since the index change · Sam</small></span><Avatar who="sam" size="sm" /></li>
+              <li><span class="pill is-ok">Monitoring</span><span>Timeout in BillingWorker<small>Sentry · fixed in v2.14.2 · 0 occurrences in 3 days · resolution pending a person</small></span><Avatar who="alex" size="sm" /></li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Reports -->
+        <section role="tabpanel" id="db-panel-reports" aria-labelledby="db-tab-reports" class="db-panel" data-db-panel="reports" hidden>
+          <div class="db-stats db-stats-4">
+            <div class="db-stat"><b>9</b><span>Delivered this week <em>up from 7</em></span></div>
+            <div class="db-stat"><b>1.4 d</b><span>Median review wait</span></div>
+            <div class="db-stat"><b>38%</b><span>Changes with agent-written code <em>all human-approved</em></span></div>
+            <div class="db-stat"><b>${budget.used}</b><span>AI spending <em>of ${budget.total} {budget.period}</em></span></div>
+          </div>
+          <div class="db-grid2">
+            <div class="db-card">
+              <h4>AI job activity <small>14 days</small></h4>
+              <svg class="db-chart" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true">
+                <path class="db-area" d={`M0 60 ${jobs14.map((v, i) => `L${(i / 13) * 200} ${58 - (v / 9) * 50}`).join(' ')} L200 60 Z`} />
+                <path class="db-line" d={`M${jobs14.map((v, i) => `${(i / 13) * 200} ${58 - (v / 9) * 50}`).join(' L')}`} pathLength="100" />
+              </svg>
+              <p class="db-legend"><span>2 jobs a day</span><span>now <b>9</b></span></p>
+            </div>
+            <div class="db-card">
+              <h4>Budget utilization <small>by team, {budget.period}</small></h4>
+              {teamBudget.map((t) => <p class="db-hbar"><span class="db-mono">{t.t}</span><span class="db-hbar-track"><i class="grow-x" style={`--w: ${Math.round((t.used / t.total) * 100)}%`}></i></span><span class="db-pct">${t.used} / ${t.total}</span></p>)}
+            </div>
+          </div>
+          <p class="db-note">Reports are built from shared tickets, plans, review status and job results. Nothing on a developer's machine is read to produce them.</p>
+        </section>
+
+        <!-- Settings -->
+        <section role="tabpanel" id="db-panel-settings" aria-labelledby="db-tab-settings" class="db-panel" data-db-panel="settings" hidden>
+          <dl class="db-dl">
+            <div><dt>Organization</dt><dd>Acme Engineering · <span class="db-mono">acme</span></dd></div>
+            <div><dt>Members</dt><dd>5 people, 3 teams, 2 shared workers · <span class="db-link">Organization settings</span></dd></div>
+            <div><dt>Policies</dt><dd>Plans, merges and production commands need a lead · company AI keys · $600 a week</dd></div>
+            <div><dt>Data sharing</dt><dd>Tickets, plans, review status and approved job summaries. Source code is not uploaded for coordination; personal credentials stay in each developer's local store.</dd></div>
+          </dl>
+        </section>
+      </div>
+    </div>
+  </Browser>
+  <DemoControls notice="Illustrative product concept with demonstration data. No real organization is shown; the team dashboard is a planned Vekrun Teams capability, served from your own Coordinator. Every section above is a working tab." />
+</figure>
+
+<style>
+  .db { margin: 0; }
+  .db-browser { font-size: 0.76rem; }
+  .db-flag { font-family: var(--font-mono); color: var(--warn); border: 1px solid color-mix(in srgb, var(--warn) 45%, transparent); border-radius: 999px; padding: 0.1rem 0.5rem; font-size: 0.62rem; }
+  .db-who { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--text-2); }
+  .db-body { display: grid; grid-template-columns: 11.5rem minmax(0, 1fr); min-height: 30rem; }
+  @media (max-width: 47.9rem) { .db-body { grid-template-columns: 1fr; min-height: 0; } }
+  .db-side { border-right: 1px solid var(--border); background: var(--bg-elevated); padding: 0.7rem; min-width: 0; display: flex; flex-direction: column; gap: 0.6rem; }
+  .db-org { margin: 0; display: flex; align-items: center; gap: 0.45rem; padding: 0.2rem 0.6rem; font-weight: 560; color: var(--text); }
+  .db-org i { width: 0.65rem; height: 0.65rem; border-radius: 3px; background: var(--accent-gradient); }
+  @media (max-width: 47.9rem) { .db-side { border-right: 0; border-bottom: 1px solid var(--border); padding: 0.5rem 0.6rem; } .db-org { display: none; } .db-tabs { flex-direction: row !important; overflow-x: auto; scrollbar-width: none; mask-image: linear-gradient(90deg, black 90%, transparent); } }
+  .db-tabs { display: flex; flex-direction: column; gap: 0.15rem; }
+  .db-tab { flex: 0 0 auto; text-align: left; border: 0; background: transparent; color: var(--text-2); font-size: 0.8rem; padding: 0.42rem 0.6rem; border-radius: 6px; cursor: pointer; white-space: nowrap; transition: color var(--dur-fast), background-color var(--dur-fast); }
+  .db-tab:hover { color: var(--text); background: var(--surface-2); }
+  .db-tab[aria-selected='true'] { background: var(--surface-2); color: var(--text); box-shadow: inset 0 0 0 1px var(--border), inset 3px 0 0 var(--accent); }
+  .db-main { min-width: 0; }
+  .db-panel { padding: 0.9rem; display: grid; gap: 0.9rem; animation: fade 240ms both; }
+  .db-panel[hidden] { display: none; }
+  .db-stats { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+  .db-stats-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  @media (max-width: 63.9rem) { .db-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } .db-stats-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 30rem) { .db-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .db-stat { background: var(--surface); padding: 0.65rem 0.75rem; display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+  .db-stat b { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; color: var(--text); font-variant-numeric: tabular-nums; }
+  .db-stat b.is-warn { color: var(--warn); } .db-stat b.is-info { color: var(--info); } .db-stat b.is-ok { color: var(--ok); } .db-stat b.is-cloud { color: var(--cloud-strong); }
+  .db-stat span { font-size: 0.66rem; color: var(--text-3); }
+  .db-stat em { display: block; font-style: normal; color: var(--text-3); opacity: 0.8; }
+  .db-grid2 { display: grid; gap: 0.9rem; }
+  @media (min-width: 48rem) { .db-grid2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .db-grid2-wide { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); } }
+  .db-card { border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); padding: 0.7rem 0.8rem; min-width: 0; display: grid; gap: 0.5rem; align-content: start; }
+  .db-card h4, .db-h { margin: 0; font-size: 0.7rem; font-weight: 560; color: var(--text-2); letter-spacing: 0; display: flex; gap: 0.4rem; align-items: baseline; flex-wrap: wrap; }
+  .db-h { margin: 0.9rem 0 0.4rem; } .db-h:first-child { margin-top: 0; }
+  .db-card h4 small, .db-h small { font-weight: 400; color: var(--text-3); font-size: 0.64rem; }
+  .db-chart { width: 100%; height: 4rem; overflow: visible; }
+  .db-bar { fill: color-mix(in srgb, var(--accent) 38%, var(--surface-3)); transform-box: fill-box; transform-origin: bottom; }
+  .db-bar.is-now { fill: var(--accent); }
+  .db-axis { stroke: var(--border-strong); stroke-width: 1; vector-effect: non-scaling-stroke; }
+  .db-area { fill: url(#wire-grad); opacity: 0.18; }
+  .db-line { fill: none; stroke: var(--accent); stroke-width: 1.5; vector-effect: non-scaling-stroke; stroke-dasharray: 100; stroke-dashoffset: 100; animation: db-draw 900ms var(--ease-out) forwards; }
+  @keyframes db-draw { to { stroke-dashoffset: 0; } }
+  .db-legend { margin: 0; display: flex; justify-content: space-between; font-size: 0.62rem; color: var(--text-3); }
+  .db-legend b { color: var(--text); font-weight: 560; }
+  .db-stack { display: flex; height: 0.7rem; border-radius: 999px; overflow: hidden; background: var(--surface-3); }
+  .db-stack i { display: block; width: var(--w); height: 100%; transform-origin: left; }
+  .is-human { background: var(--text-2); } .is-assist { background: var(--accent); } .is-exec { background: var(--cloud); }
+  .db-keys { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.3rem 0.9rem; font-size: 0.64rem; color: var(--text-2); }
+  .db-keys li { display: inline-flex; align-items: center; gap: 0.35rem; }
+  .db-keys i { width: 0.55rem; height: 0.55rem; border-radius: 2px; }
+  .db-keys b { color: var(--text); font-weight: 560; }
+  .db-rows { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+  .db-rows li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.6rem; background: var(--surface); padding: 0.45rem 0.6rem; color: var(--text); }
+  .db-rows li > span:nth-child(2) { min-width: 0; }
+  .db-rows small { display: block; color: var(--text-3); font-size: 0.64rem; }
+  .db-feed { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; min-height: 7rem; }
+  .db-feed li { display: flex; gap: 0.5rem; align-items: center; color: var(--text-2); animation: rise-sm 400ms var(--ease-out) both; }
+  .db-feed li > span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .db-feed li[hidden] { display: none; }
+  .db-table { width: 100%; border-collapse: collapse; }
+  .db-table th { text-align: left; font-weight: 540; font-size: 0.64rem; color: var(--text-3); padding: 0.35rem 0.5rem; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  .db-table td { padding: 0.5rem; border-bottom: 1px solid var(--border); color: var(--text-2); vertical-align: middle; }
+  .db-table tr:last-child td { border-bottom: 0; }
+  .db-table tbody tr:hover td { background: color-mix(in srgb, var(--surface-2) 60%, transparent); }
+  .db-mono { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text); }
+  .db-dim { color: var(--text-3); }
+  .db-prog { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .db-prog .bar { width: 4.5rem; }
+  .db-pct { font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-3); white-space: nowrap; }
+  .db-person { display: inline-flex; align-items: center; gap: 0.35rem; white-space: nowrap; }
+  @media (max-width: 47.9rem) { .db-hide-sm { display: none; } }
+  .db-chips { margin: 0; display: flex; flex-wrap: wrap; gap: 0.3rem; font-size: 0.66rem; }
+  .db-chips span { border: 1px solid var(--border); border-radius: 999px; padding: 0.2rem 0.55rem; color: var(--text-3); }
+  .db-chips span.is-on { color: var(--text); background: var(--surface-2); border-color: var(--border-strong); }
+  .db-jobs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+  .db-jobs li { display: grid; gap: 0.4rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); padding: 0.55rem 0.65rem; }
+  .db-job-top { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.5rem; color: var(--text); }
+  .db-job-meta { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--text-3); font-size: 0.66rem; }
+  .db-ring-row { display: flex; align-items: center; gap: 0.8rem; }
+  .db-ring { width: 3.4rem; height: 3.4rem; transform: rotate(-90deg); flex: 0 0 auto; }
+  .db-ring-track { fill: none; stroke: var(--surface-3); stroke-width: 4; }
+  .db-ring-fill { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linecap: round; stroke-dasharray: var(--p) 100; animation: db-ring 800ms var(--ease-out) both; }
+  @keyframes db-ring { from { stroke-dasharray: 0 100; } }
+  .db-big { font-size: 1.3rem; font-weight: 600; letter-spacing: -0.02em; color: var(--text); }
+  .db-ring-row small { display: block; color: var(--text-3); font-size: 0.64rem; }
+  .db-hbar { margin: 0; display: grid; grid-template-columns: 6rem minmax(0, 1fr) auto; align-items: center; gap: 0.5rem; }
+  .db-hbar-track { display: block; height: 0.5rem; border-radius: 999px; background: var(--surface-3); overflow: hidden; }
+  .db-hbar-track i { display: block; height: 100%; width: var(--w); border-radius: inherit; background: var(--accent-gradient); transform-origin: left; }
+  .db-hbar-track i.is-warn { background: var(--warn); }
+  .db-note { margin: 0; font-size: 0.68rem; color: var(--text-3); line-height: 1.45; }
+  .db-dl { margin: 0; display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+  .db-dl > div { display: grid; grid-template-columns: 8rem minmax(0, 1fr); gap: 0.6rem; background: var(--surface); padding: 0.55rem 0.7rem; }
+  .db-dl dt { color: var(--text-3); } .db-dl dd { margin: 0; color: var(--text-2); }
+  .db-link { color: var(--accent); }
+  @media (max-width: 40rem) { .db-dl > div { grid-template-columns: 1fr; gap: 0.1rem; } .db-hbar { grid-template-columns: 4.5rem minmax(0, 1fr) auto; } }
+  @media (prefers-reduced-motion: reduce) { .db-panel, .db-feed li, .db-line, .db-ring-fill { animation: none; } .db-line { stroke-dashoffset: 0; } }
+</style>
+
+<script>
+  import { createSequence, reducedMotion, type Step } from '@/scripts/sequence';
+
+  const root = document.querySelector<HTMLElement>('[data-dashboard]');
+  if (root) {
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-db-tab]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-db-panel]'));
+    const select = (id: string, focus = false) => {
+      tabs.forEach((t) => { const on = t.dataset.dbTab === id; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; if (on && focus) t.focus(); });
+      panels.forEach((p) => { p.hidden = p.dataset.dbPanel !== id; });
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(t.dataset.dbTab!));
+      t.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); select(tabs[(i + 1) % tabs.length]!.dataset.dbTab!, true); }
+        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); select(tabs[(i - 1 + tabs.length) % tabs.length]!.dataset.dbTab!, true); }
+        if (e.key === 'Home') { e.preventDefault(); select(tabs[0]!.dataset.dbTab!, true); }
+        if (e.key === 'End') { e.preventDefault(); select(tabs[tabs.length - 1]!.dataset.dbTab!, true); }
+      });
+    });
+
+    const counters = Array.from(root.querySelectorAll<HTMLElement>('[data-count]'));
+    const feed = Array.from(root.querySelectorAll<HTMLElement>('[data-feed] > li'));
+    const reduce = reducedMotion();
+    const reset = () => { counters.forEach((c) => { c.textContent = '0'; }); feed.forEach((f) => { f.hidden = true; }); };
+    const steps: Step[] = [];
+    counters.forEach((c, ci) => {
+      const target = Number(c.dataset.count);
+      const frames = reduce ? 1 : 12;
+      for (let f = 1; f <= frames; f++) steps.push({ t: 300 + ci * 110 + f * 55, run: () => { c.textContent = String(Math.round((target * f) / frames)); } });
+    });
+    feed.forEach((f) => steps.push({ t: Number(f.dataset.t), run: () => { f.hidden = false; } }));
+    createSequence(root, steps, { reset });
+  }
+</script>

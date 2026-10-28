@@ -9,34 +9,44 @@ status string.
 
 - `site.status` — the one-line status and the `asOf` reconciliation date
   shown across the site. Update the date whenever you reconcile.
-- `site.repo.public` — flip to `true` when the desktop repository is public.
-  GitHub links appear in the header, footer and hero only then.
+- `site.repo.public` — stays `false`: Vekrun is proprietary and the desktop
+  repository is private. `site.licence` holds the licence summary shown on
+  `/license/`.
 - `site.contact.*` — `null` renders an honest "not published yet"; set a
   string to publish it.
-- `primaryNav`, `footerColumns`, `featurePages` — navigation.
-- `availability` — the three statuses and what they mean. Reused everywhere:
-  `available` renders as "In development build", `in-development` as
-  "In progress", `planned` as "Planned". The roadmap maps `implemented` to
-  the first of these and adds `released` for public builds.
-- `site.headline` / `site.subheading` — homepage copy; `site.tagline` is the brand line.
+- `primaryNav`, `productPages`, `advancedPages`, `footerColumns` — navigation.
+- `pricing`, `teamsMonthly()`, `personal`, `teams` — the two packages and the
+  planned Teams price (199 USD for up to 10 engineers, plus 10 USD per
+  additional engineer). `pricing.purchasable` stays `false` until a real
+  checkout exists; purchase controls must not render before then.
+- `availability` — the status vocabulary, reused everywhere: `available`
+  renders as "Verified in development", `in-development` as "In development",
+  `planned` as "Planned", `proposed` as "Exploring". The roadmap maps
+  `implemented` to the first and adds `released` ("Available") for public builds.
+- `site.headline` / `site.subheading` / `site.eyebrow` — homepage copy;
+  `site.tagline` is the category line.
+
+`src/data/capabilities.ts` holds the status of each product capability. Every
+page's "Where this stands" block reads from it, so update a status there once.
 
 ## Integrations
 
 `src/content/data/integrations.json`. One object per integration; the schema
 is in `src/content.config.ts`. Each entry has a category by purpose
-(`ai-models`, `coding-tools`, `project-management`, `git-hosting`,
-`developer-services`), one `enables` sentence in user language, connection
+(`coding-clis`, `models`, `source-control`, `project-management`,
+`monitoring`, `ci-delivery`, `local-runtimes`, `services`), one `enables` sentence in user language, connection
 methods, a status and an optional note. Keep authentication details in the
 docs, not in the catalog.
 
-The unit tests refuse `available` for coding-agent accounts, MCP-only
-connections, project-management and developer-service entries until those are
-implemented, and reject engineering jargon in `enables`.
+The unit tests refuse `available` for coding CLIs other than Claude Code and
+for tracker, source-control, monitoring, delivery and model entries until they
+have run against the live service, and reject engineering jargon in `enables`.
 
 ## Roadmap
 
 `roadmap.json` is the public roadmap: user-facing entries grouped by `area`
-(`terminal`, `ai-coding`, `board`, `ai-teams`, `code-review`, `releases`),
+(`factory`, `environments`, `agents`, `board`, `inbox`, `verification`,
+`memory`, `host-mobile`, `teams`, `delivery`, `advanced`, `releases`),
 written as what you can do, with no milestone ids or engineering terms (the
 unit tests check). Every entry has a status, an `updated` date not later than
 `site.status.asOf`, and `verifiedOn` platforms; `implemented` requires at

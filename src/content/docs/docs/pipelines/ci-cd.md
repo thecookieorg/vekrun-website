@@ -1,12 +1,12 @@
 ---
 title: CI/CD
-description: GitHub Actions and GitLab CI/CD runs, failures and logs, with an Investigate Failure action, planned.
+description: GitHub Actions and GitLab CI/CD runs, failures and logs, with an Investigate Failure action.
 sidebar:
   order: 2
 ---
 
-:::note[Planned]
-CI/CD integration is approved scope and not built yet. See the [roadmap](/roadmap/).
+:::note[In development]
+Reading GitHub Actions and GitLab CI/CD runs exists in the development build and is tested against recorded responses. Running it against live services is still to come. See the [roadmap](/roadmap/#delivery).
 :::
 
 ## What it will cover

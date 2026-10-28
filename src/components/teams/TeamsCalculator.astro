@@ -1,0 +1,80 @@
+---
+/**
+ * The Vekrun Teams calculator: a local illustration of planned launch pricing,
+ * not a quote and not a checkout. Formula lives in site.ts (teamsMonthly):
+ * 199 + 10 × max(0, engineers − 10) USD per month. Markup carries the
+ * 30-engineer example so it reads without JavaScript.
+ */
+import { pricing, teamsMonthly, usd } from '@/data/site';
+const { base, includedEngineers, perAdditionalEngineer, calculatorMax } = pricing.teams;
+const start = 30;
+const monthly = teamsMonthly(start);
+---
+<div class="pc" data-teams-calc data-base={base} data-included={includedEngineers} data-extra={perAdditionalEngineer}>
+  <div class="pc-in">
+    <p class="pc-k">Estimate Vekrun Teams for your organization</p>
+    <label class="pc-label" for="pc-engineers">Engineers</label>
+    <div class="pc-controls">
+      <input id="pc-engineers" class="pc-range" type="range" min="1" max={calculatorMax} step="1" value={start} data-pc-range aria-describedby="pc-note" />
+      <input class="pc-num" type="number" min="1" max={calculatorMax} step="1" value={start} data-pc-num aria-label="Engineers, typed" />
+    </div>
+    <p id="pc-note" class="pc-note">{usd(base)} a month covers up to {includedEngineers} engineers. Each additional engineer is {usd(perAdditionalEngineer)} a month. SSO and every Teams capability are included.</p>
+  </div>
+  <dl class="pc-out" aria-live="polite">
+    <div><dt>Engineers</dt><dd data-pc-engineers>{start}</dd></div>
+    <div><dt>Included in {usd(base)}</dt><dd data-pc-included>{Math.min(start, includedEngineers)}</dd></div>
+    <div><dt>Additional engineers</dt><dd data-pc-paid>{Math.max(0, start - includedEngineers)} <small>× {usd(perAdditionalEngineer)} a month</small></dd></div>
+    <div class="pc-total"><dt>Per month</dt><dd data-pc-monthly>{usd(monthly)}</dd></div>
+    <div><dt>Twelve monthly payments</dt><dd data-pc-annual>{usd(monthly * 12)} <small>no annual discount</small></dd></div>
+  </dl>
+  <p class="pc-fine">{pricing.label} in US dollars. An illustration, not a quote: there is no checkout, trial or billing yet. Model and API usage and your own servers and workers are paid to their providers, not to Vekrun. Vekrun does not charge per pull request, bug, task or agent.</p>
+</div>
+
+<style>
+  .pc { display: grid; gap: 1.25rem 2.5rem; padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
+  @media (min-width: 64rem) { .pc { grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); padding: 1.75rem 2rem; } .pc-fine { grid-column: 1 / -1; } }
+  .pc-k { margin: 0 0 0.9rem; font-size: 1.05rem; font-weight: 580; color: var(--text); letter-spacing: -0.01em; }
+  .pc-label { display: block; font-size: 0.8125rem; color: var(--text-2); margin-bottom: 0.5rem; }
+  .pc-controls { display: grid; grid-template-columns: minmax(0, 1fr) 5.5rem; gap: 0.9rem; align-items: center; }
+  .pc-range { width: 100%; height: 1.5rem; margin: 0; background: transparent; accent-color: var(--accent); cursor: pointer; }
+  .pc-range:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 999px; }
+  .pc-num { height: 2.5rem; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface-2); color: var(--text); font-family: var(--font-mono); font-size: 0.95rem; padding: 0 0.7rem; text-align: right; font-variant-numeric: tabular-nums; }
+  .pc-num:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .pc-note { margin: 0.8rem 0 0; font-size: 0.8rem; color: var(--text-3); line-height: 1.45; }
+  .pc-out { margin: 0; display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; align-self: start; }
+  .pc-out > div { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: 0.6rem 0.9rem; background: var(--surface-2); }
+  .pc-out dt { color: var(--text-2); font-size: 0.875rem; }
+  .pc-out dd { margin: 0; color: var(--text); font-weight: 560; font-variant-numeric: tabular-nums; text-align: right; }
+  .pc-out small { display: block; font-weight: 400; color: var(--text-3); font-size: 0.72rem; }
+  .pc-total { background: color-mix(in srgb, var(--accent) 9%, var(--surface-2)) !important; }
+  .pc-total dt { color: var(--text); font-weight: 560; }
+  .pc-total dd { font-size: 1.6rem; letter-spacing: -0.03em; line-height: 1.1; }
+  .pc-fine { margin: 0; font-size: 0.78rem; color: var(--text-3); line-height: 1.5; }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-teams-calc]');
+  if (root) {
+    const base = Number(root.dataset.base), included = Number(root.dataset.included), extra = Number(root.dataset.extra);
+    const range = root.querySelector<HTMLInputElement>('[data-pc-range]')!;
+    const num = root.querySelector<HTMLInputElement>('[data-pc-num]')!;
+    const out = (k: string) => root.querySelector<HTMLElement>(`[data-pc-${k}]`)!;
+    const min = Number(range.min), max = Number(range.max);
+    const fmt = (n: number) => `$${n.toLocaleString('en-US')}`;
+    const render = (raw: number) => {
+      const engineers = Math.min(max, Math.max(min, Math.round(Number.isFinite(raw) ? raw : min)));
+      const paid = Math.max(0, engineers - included);
+      const monthly = base + paid * extra;
+      range.value = String(engineers); if (document.activeElement !== num) num.value = String(engineers);
+      out('engineers').textContent = String(engineers);
+      out('included').textContent = String(Math.min(engineers, included));
+      out('paid').innerHTML = `${paid} <small>× ${fmt(extra)} a month</small>`;
+      out('monthly').textContent = fmt(monthly);
+      out('annual').innerHTML = `${fmt(monthly * 12)} <small>no annual discount</small>`;
+    };
+    range.addEventListener('input', () => render(Number(range.value)));
+    num.addEventListener('input', () => { if (num.value !== '') render(Number(num.value)); });
+    num.addEventListener('blur', () => render(Number(num.value)));
+    render(Number(range.value));
+  }
+</script>

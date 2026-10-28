@@ -1,0 +1,44 @@
+---
+import Base from '@/layouts/Base.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import Button from '@/components/Button.astro';
+import ProofPack from '@/components/factory/ProofPack.astro';
+import CapabilityStatus from '@/components/CapabilityStatus.astro';
+
+const layers = [
+  { title: 'A real environment', body: 'The job runs in its own environment, started from a verified Environment Recipe with the project’s services, seeds and health checks.' },
+  { title: 'Verification Profiles and Feature Maps', body: 'A project describes what must keep working. Every job checks the parts it touched.' },
+  { title: 'Executable checks', body: 'The project’s own tests, plus targeted browser runs with screenshots and video where the change is visible.' },
+  { title: 'An independent verifier', body: 'A separate verifier compares the result with the goal on the exact revision, not the agent that wrote it.' },
+  { title: 'Quality gates', body: 'Your policy decides what must pass before work moves on, and records what was not run and why.' },
+  { title: 'Diagnosis, not endless retries', body: 'When fixes keep failing, the job stops and re-examines its premise, and tells you.' },
+];
+---
+<Base title="Verification" fullTitle="Verification and Proof Packs: trust the evidence · Vekrun" description="Vekrun verifies work in a real environment with executable checks, browser runs and an independent verifier, then attaches a Proof Pack to the pull request: pass, fail and not-run states on the exact revision.">
+  <PageHero eyebrow="Verification and Proof Packs" title="Trust the evidence," accent="not the agent’s confidence." lede="Agent-written code is not verified work. Vekrun runs the checks in a real environment, has an independent verifier inspect the result and attaches everything to the pull request as a Proof Pack." cta={{ label: 'What gets checked', href: '#layers' }} secondary={{ label: 'How the Factory works', href: '/features/factory/' }} wide>
+    <ProofPack full />
+  </PageHero>
+
+  <section id="layers" class="section-pad rule scroll-mt-16" aria-labelledby="layers-title">
+    <div class="container-site">
+      <SectionHeading id="layers-title" kicker="Layers of verification" title="Six layers between a change and your review." class="reveal" />
+      <ul class="ruled-grid reveal-group mt-10 sm:grid-cols-2 lg:grid-cols-3" aria-label="Layers of verification">
+        {layers.map((l) => <li class="p-6"><h3 class="heading-3 text-text">{l.title}</h3><p class="mt-2 text-[0.9375rem] leading-relaxed text-text-2">{l.body}</p></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="rule bg-bg-elevated">
+    <div class="container-site py-14 sm:py-16">
+      <dl class="facts facts-grid facts-lg reveal-group">
+        <div><dt>Honest states</dt><dd>Pass, fail and not run are shown as they are. A check that did not run never looks like a pass.</dd></div>
+        <div><dt>Tied to a revision</dt><dd>Evidence names the exact commit it was produced on. A new commit needs new evidence.</dd></div>
+        <div><dt>No guarantee of correctness</dt><dd>Verification raises confidence; it does not prove software correct. Your review and branch protections still decide.</dd></div>
+      </dl>
+      <div class="mt-8 reveal"><Button href="/features/inbox/" variant="secondary">Where reviews land</Button></div>
+    </div>
+  </section>
+
+  <CapabilityStatus keys={['verifier', 'qualityGates', 'proofPacks', 'verificationProfiles', 'browserChecks', 'envDiscovery', 'envRecipes', 'isolatedVm']} />
+</Base>

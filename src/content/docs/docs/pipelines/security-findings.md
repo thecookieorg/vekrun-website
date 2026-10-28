@@ -1,12 +1,12 @@
 ---
 title: Security findings
-description: Scanner findings become investigations and reviewable fixes, with an independent check and no automatic remediation, planned.
+description: Scanner findings become investigations and reviewable fixes, with an independent check and no automatic remediation.
 sidebar:
   order: 5
 ---
 
-:::note[Planned]
-Security and code-quality integrations are approved scope and not built yet. See the [roadmap](/roadmap/).
+:::note[In development]
+Reading GitHub Code Scanning findings exists in the development build and is tested against recorded responses. Semgrep, SonarQube and Snyk are planned. See the [roadmap](/roadmap/#delivery).
 :::
 
 ## Sources

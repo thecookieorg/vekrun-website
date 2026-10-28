@@ -1,20 +1,20 @@
 ---
 /** The global footer: the brand line, the product map, and the honest status row. */
 import Logo from './Logo.astro';
-import { footerColumns, site, cloud } from '@/data/site';
+import { footerColumns, site, teams } from '@/data/site';
 const year = new Date().getFullYear();
 ---
 <footer class="site-footer">
   <div class="container-site py-16">
-    <div class="grid gap-12 lg:grid-cols-[minmax(0,5fr)_repeat(3,minmax(0,2fr))] lg:gap-10">
+    <div class="grid gap-12 sm:grid-cols-2 lg:grid-cols-[minmax(0,4fr)_repeat(4,minmax(0,2fr))] lg:gap-10">
       <div class="max-w-sm">
         <Logo />
         <p class="mt-5 text-[1.35rem] font-[600] leading-[1.15] tracking-[-0.03em] text-text">{site.tagline}</p>
         <p class="mt-4 text-[0.9rem] leading-relaxed text-text-2">
-          Free and open source. No account, no subscription. AI providers may charge separately for their models, and <a href={cloud.href} class="text-text underline underline-offset-3 decoration-border-strong hover:decoration-accent">{cloud.name}</a> is optional.
+          Vekrun Personal is planned to be free. <a href={teams.href} class="text-text underline underline-offset-3 decoration-border-strong hover:decoration-accent">{teams.name}</a> is self-hosted on your infrastructure. Your model providers bill you directly.
         </p>
         <p class="mt-5 inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-[0.8125rem] text-text-2">
-          <span class="h-1.5 w-1.5 rounded-full bg-warn" aria-hidden="true"></span>{site.status.label} · no public release yet
+          <span class="h-1.5 w-1.5 rounded-full bg-warn" aria-hidden="true"></span>{site.status.short}
         </p>
       </div>
       {footerColumns.map((col) => (
@@ -29,12 +29,8 @@ const year = new Date().getFullYear();
       ))}
     </div>
     <div class="mt-14 flex flex-col gap-3 border-t border-border pt-6 text-[0.8125rem] text-text-3 sm:flex-row sm:items-center sm:justify-between">
-      <p>© {year} Vekrun contributors. Source code will be published under the {site.license.name} ({site.license.status}).</p>
-      <p>
-        {site.repo.public
-          ? <a href={site.repo.url} class="hover:text-text" target="_blank" rel="noopener noreferrer">Source on GitHub</a>
-          : <span>Source repository: not yet public. <a href="/roadmap/" class="underline underline-offset-2 hover:text-text">See the roadmap</a>.</span>}
-      </p>
+      <p>© {year} Vekrun. Proprietary software. All rights reserved.</p>
+      <p><a href="/license/" class="underline underline-offset-2 hover:text-text">Licence</a></p>
     </div>
   </div>
 </footer>

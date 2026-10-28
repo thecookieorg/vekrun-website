@@ -1,0 +1,114 @@
+---
+/**
+ * The Board's signature flow: three monitoring alerts become one shared Work Item,
+ * a mapped ticket, an authorized Factory job and a verified pull request that waits
+ * for a person. The card travels across the columns; the detail panel fills in the
+ * linked chain. Markup carries the final state. Demonstration data.
+ */
+import Window from '@/components/mock/Window.astro';
+import DemoControls from '@/components/mock/DemoControls.astro';
+const cols = [
+  { id: 'intake', n: 'Intake', cards: [{ t: 'Slow /search on acme-api', m: 'Datadog · p95 1.8 s' }] },
+  { id: 'ready', n: 'Ready', cards: [{ t: 'ENG-418 Add CSV export', m: 'Linear · acme-api' }] },
+  { id: 'factory', n: 'In Factory', cards: [{ t: 'PAY-77 Payments SDK upgrade', m: 'billing · Implementing' }] },
+  { id: 'review', n: 'In review', cards: [] },
+  { id: 'done', n: 'Done', cards: [{ t: 'ENG-402 Rate limit headers', m: 'merged · observed 24 h' }] },
+];
+const chain = [
+  { k: 'incident', t: 'Honeybadger · TypeError in CheckoutTotal', d: '3 alerts merged into one Work Item' },
+  { k: 'ticket', t: 'Jira PAY-81 created and linked', d: 'status mapped: In progress ↔ In Factory' },
+  { k: 'job', t: 'Factory job authorized by Sam', d: 'env 17 · Claude Code · plan approved' },
+  { k: 'pr', t: 'PR #482 opened with its Proof Pack', d: '148 tests pass · browser check · verifier pass' },
+  { k: 'review', t: 'Review requested from Priya', d: 'merge waits for a person; then Vekrun watches the error rate' },
+];
+---
+<figure class="bf" data-demo-root="board-flow" data-board-flow>
+  <Window title="Board" crumbs={['All projects']} class="bf-win">
+    <span slot="status" class="pill is-warn" data-bf-state>Waiting for review</span>
+    <div class="bf-grid">
+      <div class="bf-cols" role="list" aria-label="Board columns">
+        {cols.map((c) => (
+          <div class="bf-col" role="listitem" data-col={c.id}>
+            <p class="bf-col-n">{c.n}</p>
+            <ul class="bf-cards" data-cards={c.id}>
+              {c.id === 'review' && (
+                <li class="bf-card is-hero" data-hero-card>
+                  <span class="bf-card-t">Checkout total wrong with discount</span>
+                  <span class="bf-card-m" data-hero-meta>PR #482 · Proof Pack verified</span>
+                  <span class="bf-card-tags"><span class="pill is-danger">incident</span><span class="pill is-muted">acme-web</span></span>
+                </li>
+              )}
+              {c.cards.map((k) => <li class="bf-card"><span class="bf-card-t">{k.t}</span><span class="bf-card-m">{k.m}</span></li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <aside class="bf-detail" aria-label="Work Item">
+        <p class="bf-detail-k">Work Item · linked chain</p>
+        <ol class="bf-chain">
+          {chain.map((c, i) => <li data-chain={i}><span class="bf-dot" aria-hidden="true"></span><span><b>{c.t}</b><small>{c.d}</small></span></li>)}
+        </ol>
+      </aside>
+    </div>
+  </Window>
+  <DemoControls notice="Illustrative product concept with demonstration data. Tracker and monitoring adapters are tested against recorded responses; one shared Work Item per incident is planned. A merge always follows your review rules." />
+</figure>
+
+<style>
+  .bf { margin: 0; }
+  .bf-win { box-shadow: var(--shadow-window), var(--glow); }
+  .bf-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 64rem) { .bf-grid { grid-template-columns: minmax(0, 1fr) 19rem; } }
+  .bf-cols { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(11rem, 1fr); gap: 0.6rem; padding: 1rem; overflow-x: auto; scrollbar-width: thin; }
+  .bf-col { display: grid; align-content: start; gap: 0.5rem; padding: 0.6rem; border-radius: 10px; background: color-mix(in srgb, var(--bg-elevated) 70%, var(--surface)); min-height: 15rem; }
+  .bf-col-n { margin: 0; font-size: 0.72rem; font-weight: 560; color: var(--text-2); }
+  .bf-cards { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.45rem; }
+  .bf-card { display: grid; gap: 0.25rem; padding: 0.6rem 0.65rem; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+  .bf-card-t { font-size: 0.78rem; font-weight: 540; color: var(--text); line-height: 1.3; }
+  .bf-card-m { font-size: 0.66rem; color: var(--text-3); }
+  .bf-card-tags { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.15rem; }
+  .bf-card.is-hero { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent); }
+  .bf-card.is-moved { animation: rise-sm 320ms var(--ease-out) both; }
+  .bf-detail { padding: 1rem 1.1rem 1.2rem; border-top: 1px solid var(--border); background: color-mix(in srgb, var(--bg-elevated) 50%, var(--surface)); }
+  @media (min-width: 64rem) { .bf-detail { border-top: 0; border-left: 1px solid var(--border); } }
+  .bf-detail-k { margin: 0 0 0.8rem; font-size: 0.72rem; font-weight: 560; color: var(--text-2); }
+  .bf-chain { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.75rem; position: relative; }
+  .bf-chain::before { content: ''; position: absolute; left: 0.3rem; top: 0.4rem; bottom: 0.4rem; width: 1px; background: linear-gradient(var(--danger), var(--accent), var(--cloud)); opacity: 0.5; }
+  .bf-chain li { position: relative; display: flex; gap: 0.7rem; font-size: 0.8rem; color: var(--text); }
+  .bf-chain li.is-pending { opacity: 0.35; }
+  .bf-chain li.is-in { animation: rise-sm 300ms var(--ease-out) both; }
+  .bf-dot { flex-shrink: 0; width: 0.62rem; height: 0.62rem; margin-top: 0.25rem; border-radius: 50%; border: 2px solid var(--accent); background: var(--bg); }
+  .bf-chain li:first-child .bf-dot { border-color: var(--danger); }
+  .bf-chain li:last-child .bf-dot { border-color: var(--warn); }
+  .bf-chain b { font-weight: 560; }
+  .bf-chain small { display: block; color: var(--text-3); font-size: 0.7rem; }
+  @media (prefers-reduced-motion: reduce) { .bf-card.is-moved, .bf-chain li.is-in { animation: none; } }
+</style>
+
+<script>
+  import { createSequence, type Step } from '@/scripts/sequence';
+  const root = document.querySelector<HTMLElement>('[data-board-flow]');
+  if (root) {
+    const card = root.querySelector<HTMLElement>('[data-hero-card]')!;
+    const meta = root.querySelector<HTMLElement>('[data-hero-meta]')!;
+    const state = root.querySelector<HTMLElement>('[data-bf-state]')!;
+    const links = Array.from(root.querySelectorAll<HTMLElement>('[data-chain]'));
+    const move = (col: string, m: string) => { root.querySelector(`[data-cards="${col}"]`)!.prepend(card); card.classList.remove('is-moved'); void card.offsetWidth; card.classList.add('is-moved'); meta.textContent = m; };
+    const link = (i: number) => { const l = links[i]!; l.classList.remove('is-pending'); l.classList.add('is-in'); };
+    const setState = (t: string, tone: string) => { state.textContent = t; state.className = `pill ${tone}`; };
+    const reset = () => {
+      links.forEach((l) => { l.classList.add('is-pending'); l.classList.remove('is-in'); });
+      move('intake', 'Honeybadger · 312 events'); card.classList.remove('is-moved');
+      setState('New incident', 'is-danger');
+    };
+    const steps: Step[] = [
+      { t: 700, run: () => { link(0); meta.textContent = '3 alerts · one Work Item'; } },
+      { t: 2000, run: () => { link(1); move('ready', 'Jira PAY-81 · linked'); setState('Ticket linked', 'is-info'); } },
+      { t: 3500, run: () => { link(2); move('factory', 'env 17 · Investigating'); setState('In Factory', 'is-ok'); } },
+      { t: 4700, run: () => { meta.textContent = 'env 17 · Verifying'; } },
+      { t: 5900, run: () => { link(3); move('review', 'PR #482 · Proof Pack verified'); } },
+      { t: 7000, run: () => { link(4); setState('Waiting for review', 'is-warn'); } },
+    ];
+    createSequence(root, steps, { reset });
+  }
+</script>

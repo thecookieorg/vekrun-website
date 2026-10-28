@@ -7,10 +7,10 @@ import { roadmapStatuses, site, type RoadmapStatus } from '@/data/site';
 const legend: RoadmapStatus[] = ['implemented', 'in-progress', 'planned', 'proposed', 'released'];
 const dot: Record<string, string> = { ok: 'bg-ok', warn: 'bg-warn', muted: 'bg-text-3', info: 'bg-info', faint: 'bg-border-strong' };
 const title = 'Roadmap';
-const description = 'What you can do in Vekrun today, what is being built, and what is planned, grouped by terminal, AI coding, Board, AI Teams, code reviews, Insights, integrations, Vekrun Cloud and release.';
+const description = 'What is verified in the Vekrun development build, what is in development and what is planned: the AI Factory, isolated environments, coding agents, Board, Inbox, verification, Engineering Memory, Host and Mobile, Vekrun Teams and releases.';
 ---
 <Base title={title} description={description}>
-  <PageHero eyebrow="Roadmap" title="What works," accent="what is next." lede={`${site.status.line} This page tracks the capabilities you will use, not the engineering behind them.`} align="left">
+  <PageHero eyebrow="Roadmap" title="What works," accent="what is next." lede={`${site.status.line} Grouped by the experiences you will use. Nothing here is publicly released, and planned work is not promised to a date.`} align="left">
     <Fragment slot="status">
       <ul class="flex flex-wrap gap-x-6 gap-y-2" role="list" aria-label="What the statuses mean">
         {legend.map((s) => (
@@ -28,7 +28,7 @@ const description = 'What you can do in Vekrun today, what is being built, and w
   <section class="container-site pt-10 pb-24">
     <RoadmapBoard />
     <p class="mt-12 text-[0.9375rem] text-text-2">
-      Contributors can follow the engineering milestones in <a href="/docs/advanced/progress/" class="text-accent link-slide">detailed technical progress</a>.
+      The earlier engineering milestones are kept as history in <a href="/docs/advanced/progress/" class="text-accent link-slide">technical progress</a>. They describe the path to the development build, not the current plan.
     </p>
   </section>
 </Base>

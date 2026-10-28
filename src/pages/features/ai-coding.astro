@@ -6,7 +6,7 @@ import Button from '@/components/Button.astro';
 import StatusBadge from '@/components/StatusBadge.astro';
 import CodingStudio from '@/components/features/CodingStudio.astro';
 import Steps from '@/components/features/Steps.astro';
-import WhereThisStands from '@/components/features/WhereThisStands.astro';
+import CapabilityStatus from '@/components/CapabilityStatus.astro';
 
 const modes = [
   { name: 'Ask', body: 'Read-only. Questions about the code, the repository and your terminal output.' },
@@ -22,8 +22,8 @@ const workflow = [
   { title: 'Keep what matters', body: 'Conversations are saved, searchable and forkable. Memory is scoped to you, the project or a task, and you can delete it.' },
 ];
 ---
-<Base title="AI coding" description="Code with Claude, OpenAI, Gemini or a local model inside your terminal. Five modes, every change shown as a diff before it lands, commands only when you allow them, and you see what is sent before it is sent.">
-  <PageHero eyebrow="AI coding" title="Any model." accent="Every change approved." lede="Connect the provider you already pay for, or a model on your machine. Ask, plan, build, debug and review in the project, with every write shown as a diff and every command waiting for your yes." cta={{ label: 'Supported providers', href: '/integrations/?category=ai-models' }} secondary={{ label: 'AI coding docs', href: '/docs/ai-coding/coding-sessions/' }} wide>
+<Base title="Coding sessions" fullTitle="Coding sessions: work directly with a model · Vekrun" description="An advanced tool in Vekrun: work directly with Claude, OpenAI, Gemini or a local model in a project, with every change shown as a diff first, commands only when you allow them, and a preview of what is sent.">
+  <PageHero eyebrow="Advanced tools · Coding sessions" title="Work with a model directly." accent="Every change approved." lede="Most work goes through the Factory. When you want a hands-on session, ask, plan, build, debug and review with a model in the project, with every write shown as a diff and every command waiting for your yes." cta={{ label: 'Supported providers', href: '/integrations/?category=models' }} secondary={{ label: 'AI coding docs', href: '/docs/ai-coding/coding-sessions/' }} wide>
     <CodingStudio />
   </PageHero>
 
@@ -55,9 +55,9 @@ const workflow = [
     <div class="container-site">
       <SectionHeading id="flow-title" kicker="In order" title="From question to approved change." class="reveal" />
       <Steps steps={workflow} columns={4} class="reveal-group mt-12" />
-      <div class="mt-12 reveal"><Button href="/ai-teams/" variant="secondary">When one agent is not enough: AI Teams</Button></div>
+      <div class="mt-12 reveal"><Button href="/features/factory/" variant="secondary">Hand the whole outcome to the AI Factory</Button></div>
     </div>
   </section>
 
-  <WhereThisStands>Anthropic, OpenAI, Gemini and OpenAI-compatible keys, Ollama and LM Studio, the five modes, diff approvals, allowed commands, the egress preview and scoped memory work in the development build on macOS. Downloading local models from inside Vekrun and coding-agent subscriptions are planned.</WhereThisStands>
+  <CapabilityStatus keys={['routing', 'failover', 'openrouter', 'codeView', 'budgets']} />
 </Base>

@@ -25,4 +25,4 @@ The plan approval, every command and write according to your permissions, the bu
 
 The issue reaches the agents as a redacted data block, shown in the egress preview before it is sent. Agents never receive the provider credential.
 
-The investigation's status moves with the work: investigating, fix in progress, in review, and so on. It never changes the provider's own status. See [reviewing repairs](/docs/insights/reviewing-repairs/) and [Factory](/docs/ai-teams/factory/).
+The investigation's status moves with the work: investigating, fix in progress, in review, and so on. It never changes the provider's own status. See [reviewing repairs](/docs/insights/reviewing-repairs/) and [Factory](/docs/factory/overview/).

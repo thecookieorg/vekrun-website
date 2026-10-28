@@ -8,23 +8,27 @@ const commitments = [
   { title: 'Nothing an agent reads is trusted', body: 'Text in your repository, model replies, tool results and terminal output are treated as untrusted input. Your permissions decide what an agent may do, not the prompt.' },
   { title: 'Keys stay in your keychain', body: 'API keys are stored by your operating system, kept out of logs and the interface by design, and not handed to tools or remote machines unless you say so.' },
   { title: 'Deny by default', body: 'An agent can only do what you have allowed. Every action that touches files, commands, Git or the network is recorded.' },
-  { title: 'Limits are stated', body: 'How well an agent is isolated differs by operating system. Vekrun says what each platform can and cannot enforce instead of glossing over it.' },
+  { title: 'Logins stay on the Host', body: 'Coding CLIs stay signed in on your machine. Vekrun never copies their logins or sessions into a job’s environment, and seeds jobs with code without handing over your Git credentials.' },
+  { title: 'One environment per job', body: 'Each Work Item is planned to run in its own isolated environment. Isolation reduces risk; it does not make a malicious dependency or a bad change harmless, and limits differ by operating system.' },
+  { title: 'People approve consequential actions', body: 'Merges follow your branch protections. Production commands and deploys run only under explicit policy and approval.' },
+  { title: 'Limits are stated', body: 'Vekrun says what each platform can and cannot enforce instead of glossing over it. It claims no certification it does not have.' },
 ];
 const scope = [
   'Any way for an agent, an integration or content in a repository to act outside your permissions.',
   'Any exposure of API keys or credentials.',
   'Any way for an interrupted task to repeat a command that should run once.',
-  'Any way to reach Vekrun from outside your machine without being allowed to.',
+  'Any way to reach a Vekrun Host or Coordinator from outside without being allowed to.',
+  'Any way for a job to escape its environment or reach a login it should not.',
   'Problems in how Vekrun is built, released or updated.',
 ];
 const title = 'Security';
-const description = 'How Vekrun handles untrusted input, your API keys and agent permissions, and how to report a vulnerability.';
+const description = 'How Vekrun handles untrusted input, credentials, isolated environments and approvals, what self-hosting Vekrun Teams does and does not change, and how to report a vulnerability.';
 ---
 <Base title={title} description={description}>
-  <PageHero eyebrow="Security" title="Agents act on your behalf." accent="These are the rules they follow." lede="Vekrun runs commands, edits files and talks to AI providers for you. Four commitments shape how it does that." align="left" />
+  <PageHero eyebrow="Security" title="Agents act on your behalf." accent="These are the rules they follow." lede="Vekrun runs commands, edits files and talks to model providers for you. These commitments shape how it does that." align="left" />
 
   <Section padded="tight">
-    <ul class="ruled-grid sm:grid-cols-2" role="list">
+    <ul class="ruled-grid sm:grid-cols-2 lg:grid-cols-3" role="list">
       {commitments.map((c) => (
         <li class="p-6">
           <h2 class="text-[1rem] font-[560] text-text">{c.title}</h2>
@@ -32,6 +36,15 @@ const description = 'How Vekrun handles untrusted input, your API keys and agent
         </li>
       ))}
     </ul>
+  </Section>
+
+  <Section rule padded="tight" aria-labelledby="shared">
+    <div class="prose-site max-w-3xl">
+      <h2 id="shared" class="!mt-0">Self-hosted Teams: shared responsibility</h2>
+      <p>With Vekrun Teams, your organization runs the Coordinator, its data store and the workers. That gives you control over where code, records and audit history live. It also makes you responsible for those servers: access, patching, backups, network exposure and secrets management.</p>
+      <p>Vekrun remains responsible for the software it ships: secure defaults, timely updates and honest security notices. Self-hosting does not exempt anyone from those duties, and it does not stop model providers from receiving what a job sends them.</p>
+      <p>Vekrun holds no SOC 2 report or other certification, and does not claim end-to-end encryption or zero access. If that changes, this page will say exactly what is covered.</p>
+    </div>
   </Section>
 
   <Section rule padded="tight" class="pb-24">
@@ -42,7 +55,7 @@ const description = 'How Vekrun handles untrusted input, your API keys and agent
         {site.contact.securityEmail ? (
           <p>Email <strong>{site.contact.securityEmail}</strong> with steps to reproduce, your platform and the Vekrun version. You will hear back within seven days.</p>
         ) : (
-          <p>A security address will be published here before the first public release. Once the source repository is public, GitHub's private vulnerability reporting will also work. Include steps to reproduce, your platform and the Vekrun version; reports are acknowledged within seven days.</p>
+          <p>A security address will be published here before the first public release. Include steps to reproduce, your platform and the Vekrun version; reports will be acknowledged within seven days.</p>
         )}
         <p>There are no releases yet. Once there are, the latest release is supported.</p>
       </div>

@@ -1,0 +1,211 @@
+---
+/**
+ * Vekrun Teams: the one self-hosted commercial package. Replaces the old Cloud
+ * page. Every product interface here is an illustrative concept with one sample
+ * organization; prices are planned launch pricing and nothing can be bought.
+ */
+import Base from '@/layouts/Base.astro';
+import Button from '@/components/Button.astro';
+import TeamsHero from '@/components/org/TeamsHero.astro';
+import DesktopSwitcher from '@/components/org/DesktopSwitcher.astro';
+import WorkflowStepper from '@/components/org/WorkflowStepper.astro';
+import TeamDashboard from '@/components/org/TeamDashboard.astro';
+import FactoryOps from '@/components/org/FactoryOps.astro';
+import GovernanceSettings from '@/components/org/GovernanceSettings.astro';
+import RoleSwitcher from '@/components/org/RoleSwitcher.astro';
+import PlanCards from '@/components/teams/PlanCards.astro';
+import TeamsCalculator from '@/components/teams/TeamsCalculator.astro';
+import CapabilityStatus from '@/components/CapabilityStatus.astro';
+import { site, teams, pricing, usd, teamsMonthly } from '@/data/site';
+
+const t = pricing.teams;
+const title = 'Vekrun Teams: the self-hosted AI software engineering Factory for your organization';
+const description = `One self-hosted Coordinator for your engineering organization: shared Board, Factory queues on your own workers, approvals, SSO, audit, Engineering Memory and Insights. Planned launch pricing ${usd(t.base)} a month for up to ${t.includedEngineers} engineers, plus ${usd(t.perAdditionalEngineer)} per additional engineer.`;
+const structuredData = [
+  { '@context': 'https://schema.org', '@type': 'WebPage', name: teams.name, url: `${site.url}${teams.href}`, description, isPartOf: { '@type': 'WebSite', name: site.name, url: site.url } },
+  { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: site.name, item: site.url }, { '@type': 'ListItem', position: 2, name: teams.name, item: `${site.url}${teams.href}` }] },
+];
+const managerDoes = ['Track project progress', 'See blocked work', 'Follow Factory jobs', 'Inspect Proof Packs', 'Review delivery reports', 'Assign work from the browser', 'Request plans', 'Start authorized workflows'];
+const where = [
+  ['Your Coordinator and data store', 'Run on servers you choose. Tickets, plans, approvals, memory, audit and reports live there.'],
+  ['Your workers', 'Factory jobs run on machines your organization owns and approves, each job in its own environment.'],
+  ['Your developers’ desktops', 'The same Vekrun app every engineer already uses, connected to the organization by SSO.'],
+  ['Your model providers', 'Prompts and the code a job needs go to the providers you approve, under your accounts and their terms.'],
+  ['Vekrun', 'Ships the software, licences, updates and support. Vekrun does not operate your Coordinator, workers or code servers.'],
+];
+const faq = [
+  ['Is Vekrun Teams a hosted service?', 'No. You run the Coordinator, the organization data store and the workers on your infrastructure. Vekrun provides the software, the licence, updates and support.'],
+  ['Is there an Enterprise plan, or an extra charge for SSO?', 'No. There is one Teams plan, and SSO, roles, permissions, audit and every other Teams capability are included.'],
+  ['What does it cost?', `Planned launch pricing is ${usd(t.base)} a month for up to ${t.includedEngineers} engineers, plus ${usd(t.perAdditionalEngineer)} a month for each additional engineer. Thirty engineers would be ${usd(teamsMonthly(30))} a month, or ${usd(teamsMonthly(30) * 12)} over twelve monthly payments.`],
+  ['Does Vekrun charge per task, pull request or agent?', 'No. There is no Vekrun usage charge. Model and API usage is billed by your providers, and your servers and workers are your own costs.'],
+  ['Does self-hosting mean no data ever leaves our network?', 'No. Your code and records stay on infrastructure you control, but model providers and connected services receive what a job sends them when you use them. Your approved providers and policies decide what that is.'],
+  ['Do our developers need a different app?', 'No. They connect the Vekrun desktop app they already use to your Coordinator, and keep a personal workspace beside the organization one.'],
+  ['Can we buy it today?', `Not yet. ${pricing.notForSale} There is no checkout, trial or billing, and Vekrun itself has no public release yet.`],
+  ['Will there be a managed option?', 'Perhaps, later, as an optional service. It is not offered, and Vekrun Teams never depends on it.'],
+];
+---
+<Base title={teams.name} fullTitle={title} description={description} image="/og/teams.png" structuredData={structuredData}>
+  <section class="hero ambient" aria-labelledby="teams-title">
+    <div class="grid-field pointer-events-none absolute inset-0" aria-hidden="true"></div>
+    <div class="container-wide relative">
+      <div class="hero-copy">
+        <p class="eyebrow enter" style="--i: 0">Vekrun Teams · self-hosted</p>
+        <h1 id="teams-title" class="display enter mt-5 text-text" style="--i: 1">One Factory for your engineering team.<br class="hidden sm:inline" /> <span class="text-gradient">On your infrastructure.</span></h1>
+        <p class="lede enter mx-auto mt-6 max-w-2xl" style="--i: 2">A shared Coordinator for your organization: one Board for tickets and incidents, Factory queues on your own workers, approvals, SSO, audit, and memory and reporting the whole team can use.</p>
+        <div class="enter mt-8 flex flex-wrap justify-center gap-3" style="--i: 3">
+          <Button href="#pricing" size="lg">See Teams pricing</Button>
+          <Button href="#where" size="lg" variant="secondary">What runs where</Button>
+        </div>
+        <p class="enter mt-6 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[0.9rem] text-text-2" style="--i: 3">
+          <span class="inline-flex items-center gap-2 rounded-full border border-border bg-surface/70 px-3 py-1 text-[0.8125rem] backdrop-blur"><span class="h-1.5 w-1.5 rounded-full bg-warn" aria-hidden="true"></span>Planned · not available to buy yet</span>
+          <span>{usd(t.base)} a month for up to {t.includedEngineers} engineers. SSO included.</span>
+        </p>
+      </div>
+      <div class="relative mt-12 sm:mt-14 lg:mt-16"><TeamsHero /></div>
+    </div>
+  </section>
+
+  <section id="where" class="section-pad rule scroll-mt-16" aria-labelledby="where-title">
+    <div class="container-site">
+      <div class="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+        <div class="reveal">
+          <p class="kicker">Self-hosted by design</p>
+          <h2 id="where-title" class="heading-2 mt-3 text-text">Your Coordinator. Your workers. Your data store.</h2>
+          <p class="lede mt-4">Vekrun Teams is software you run, not a service you send your code to. Self-hosting gives you control; it does not remove every security responsibility, yours or ours.</p>
+          <div class="flow mt-8" aria-label="What runs where">
+            <div class="flow-box is-mint"><b>Developer desktops</b><span>Vekrun app · signed-in coding CLIs · personal projects</span></div>
+            <span class="flow-link"><i>SSO · work items · approvals</i></span>
+            <div class="flow-box is-blue"><b>Your Teams Coordinator</b><span>Board · queues · policies · memory · audit · reports</span></div>
+            <span class="flow-link"><i>authorized jobs</i></span>
+            <div class="flow-box is-mint"><b>Your workers</b><span>one isolated environment per Work Item</span></div>
+          </div>
+        </div>
+        <dl class="reveal-group facts facts-lg">
+          {where.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section id="connected" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="connected-title">
+    <div class="container-site">
+      <div class="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-14 lg:items-start">
+        <div class="reveal min-w-0 lg:sticky lg:top-24">
+          <p class="kicker">One app for every engineer</p>
+          <h2 id="connected-title" class="heading-2 mt-3 text-text">The same Vekrun. Connected to your organization.</h2>
+          <p class="lede mt-4">Engineers keep the desktop app they use for personal work. Signing in with your company SSO adds the organization workspace beside it.</p>
+          <dl class="facts mt-7">
+            <div><dt>Personal projects stay personal</dt><dd>They never join the organization unless you move them.</dd></div>
+            <div><dt>Organization projects are shared by permission</dt><dd>People see what their role allows.</dd></div>
+          </dl>
+        </div>
+        <div class="reveal min-w-0"><DesktopSwitcher /></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="workflow" class="section-pad rule scroll-mt-16" aria-labelledby="flow-title">
+    <div class="container-site">
+      <div class="reveal max-w-3xl">
+        <p class="kicker">Shared Board and workflows</p>
+        <h2 id="flow-title" class="heading-2 mt-3 text-text">From a ticket to a verified pull request, without forwarding anything.</h2>
+        <p class="lede mt-4">Work travels between a manager, an engineer, the Factory and a reviewer. Step through it, or let it play.</p>
+      </div>
+      <div class="reveal mt-10"><WorkflowStepper /></div>
+    </div>
+  </section>
+
+  <section id="dashboard" class="section-pad rule ambient" aria-labelledby="dash-title">
+    <div class="container-wide">
+      <div class="reveal mx-auto max-w-3xl text-center">
+        <p class="kicker">Team dashboard</p>
+        <h2 id="dash-title" class="heading-2 mt-3 text-text">A clear view of engineering progress.</h2>
+        <p class="lede mx-auto mt-4">What engineers and Factory jobs are working on, what is blocked, what awaits review and what shipped, served by your own Coordinator in a browser.</p>
+      </div>
+      <div class="reveal mt-12"><TeamDashboard /></div>
+      <div class="reveal mt-10 grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-12">
+        <p class="text-[0.95rem] leading-relaxed text-text-2">A project manager needs no desktop install. Jira, Linear or Asana stay where your tickets live; the Board connects them to the work.</p>
+        <ul class="chips" aria-label="What a project manager can do">{managerDoes.map((m) => <li>{m}</li>)}</ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="factory" class="section-pad rule bg-bg-elevated" aria-labelledby="factory-title">
+    <div class="container-wide">
+      <div class="reveal max-w-3xl">
+        <p class="kicker">Shared Factory queues</p>
+        <h2 id="factory-title" class="heading-2 mt-3 text-text">Factory jobs for the whole team, on machines you own.</h2>
+        <p class="lede mt-4">Shared queues, customer-owned workers, human approvals, budgets and clear ownership. The same agents that run on one engineer’s machine.</p>
+      </div>
+      <div class="reveal mt-10"><FactoryOps /></div>
+    </div>
+  </section>
+
+  <section id="governance" class="section-pad rule" aria-labelledby="gov-title">
+    <div class="container-site">
+      <div class="reveal max-w-3xl">
+        <p class="kicker">Governance, SSO included</p>
+        <h2 id="gov-title" class="heading-2 mt-3 text-text">Your organization. Your rules.</h2>
+        <p class="lede mt-4">SSO, roles, model policies, budgets, approvals, workers, audit history and data sharing, decided once for the organization. Approvals never bypass your branch protections.</p>
+      </div>
+      <div class="reveal mt-10"><GovernanceSettings /></div>
+    </div>
+  </section>
+
+  <section id="roles" class="section-pad rule bg-bg-elevated" aria-labelledby="roles-title">
+    <div class="container-site">
+      <div class="reveal max-w-3xl">
+        <p class="kicker">Built for every role</p>
+        <h2 id="roles-title" class="heading-2 mt-3 text-text">One organization, four ways in.</h2>
+      </div>
+      <div class="reveal mt-10"><RoleSwitcher /></div>
+    </div>
+  </section>
+
+  <section id="pricing" class="section-pad rule ambient scroll-mt-16" aria-labelledby="pricing-title">
+    <div class="container-site">
+      <div class="reveal mx-auto max-w-3xl text-center">
+        <p class="kicker">Personal and Teams</p>
+        <h2 id="pricing-title" class="heading-2 mt-3 text-text">Free for individuals. One plan for teams.</h2>
+        <p class="lede mx-auto mt-4">No Enterprise tier, no Cloud plan, no extra charge for SSO and no Vekrun usage fees.</p>
+        <p class="price-label mt-6"><span aria-hidden="true"></span>{pricing.notForSale}</p>
+      </div>
+      <div class="reveal-group mt-12"><PlanCards /></div>
+      <div class="reveal mt-10"><TeamsCalculator /></div>
+    </div>
+  </section>
+
+  <section id="faq" class="section-pad rule" aria-labelledby="faq-title">
+    <div class="container-site">
+      <div class="grid gap-8 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-16">
+        <div class="reveal">
+          <p class="kicker">Before you plan for Teams</p>
+          <h2 id="faq-title" class="heading-2 mt-3 text-text">Short answers.</h2>
+        </div>
+        <div class="reveal faq">
+          {faq.map(([q, a]) => <details class="faq-i"><summary>{q}<svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></summary><p>{a}</p></details>)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CapabilityStatus keys={['teamsCoordinator', 'sso', 'orgRoles', 'workers', 'inbox', 'audit', 'insights']} title="Vekrun Teams is planned." />
+</Base>
+
+<style>
+  .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--border); padding-top: 5rem; padding-bottom: 4rem; }
+  @media (min-width: 64rem) { .hero { padding-top: 5.5rem; padding-bottom: 5rem; } }
+  .hero::before { left: 10%; top: -12rem; width: 60rem; height: 34rem; }
+  .hero::after { right: -5%; top: 10rem; }
+  .hero-copy { max-width: 56rem; margin-inline: auto; text-align: center; }
+  .price-label { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.9rem; border: 1px solid var(--border); border-radius: 999px; background: color-mix(in srgb, var(--surface) 70%, transparent); font-size: 0.8125rem; color: var(--text-2); }
+  .price-label span { width: 0.4rem; height: 0.4rem; border-radius: 50%; background: var(--warn); }
+  .flow { display: grid; gap: 0.3rem; }
+  .flow-box { display: grid; gap: 0.15rem; padding: 0.8rem 0.95rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+  .flow-box b { color: var(--text); font-weight: 560; font-size: 0.95rem; }
+  .flow-box span { color: var(--text-3); font-size: 0.8rem; }
+  .flow-box.is-mint { border-left: 3px solid var(--accent); }
+  .flow-box.is-blue { border-left: 3px solid var(--cloud); background: color-mix(in srgb, var(--cloud) 6%, var(--surface)); }
+  .flow-link { display: flex; align-items: center; gap: 0.6rem; padding-left: 1.4rem; color: var(--text-3); font-family: var(--font-mono); font-size: 0.66rem; }
+  .flow-link::before { content: ''; width: 1px; height: 1.4rem; background: linear-gradient(var(--accent), var(--cloud)); }
+</style>

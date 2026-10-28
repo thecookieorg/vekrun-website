@@ -17,10 +17,10 @@ interface Props {
   /**
    * Lock the page to one theme. The page renders in that theme before first paint,
    * the stored preference is neither read nor written, and the toggle is not shown.
-   * Used by /cloud/, which is a dark-by-design experience.
+   * Available for a dark-by-design page; no page uses it today.
    */
   lockTheme?: 'dark';
-  /** A page identity hook (`[data-page='cloud']`) for the few page-specific rules. */
+  /** A page identity hook (`[data-page='…']`) for the few page-specific rules. */
   page?: string;
 }
 const { title, description, image = '/og/default.png', structuredData, noindex = false, fullTitle, lockTheme, page } = Astro.props;

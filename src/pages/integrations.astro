@@ -6,22 +6,24 @@ import IntegrationLogo from '@/components/catalog/IntegrationLogo.astro';
 import StatusBadge from '@/components/StatusBadge.astro';
 import { getCollection } from 'astro:content';
 import { site } from '@/data/site';
+import SectionHeading from '@/components/SectionHeading.astro';
+import CapabilityStatus from '@/components/CapabilityStatus.astro';
 import { ArrowUpRight } from '@lucide/astro';
 
 const title = 'Integrations';
-const description = 'The AI models, coding tools, project trackers, Git hosts and developer services Vekrun connects to, and what each connection lets you do.';
+const description = 'The coding CLIs, models and API gateways, source control, trackers, monitoring, CI and local runtimes Vekrun connects to, each with its real status. Vekrun discovers your coding CLIs and keeps them current where the vendor supports it.';
 const entries = await getCollection('integrations');
 const byId = (id: string) => entries.find((e) => e.id === id)!;
 const featured = [
-  { title: 'AI models', blurb: 'Your own key, billed by the provider. Or a model on your machine.', href: '/integrations/?category=ai-models', ids: ['anthropic', 'openai', 'gemini', 'openrouter'] },
-  { title: 'Git hosting', blurb: 'Branches, pull requests and the link between a ticket and its change.', href: '/integrations/?category=git-hosting', ids: ['github', 'gitlab'] },
-  { title: 'Project management', blurb: 'Where your tickets live. Connect one and they appear on the Board.', href: '/integrations/?category=project-management', ids: ['linear', 'jira', 'asana'] },
-  { title: 'Monitoring', blurb: 'Production errors and slow requests become work you can investigate and fix.', href: '/integrations/?category=monitoring', ids: ['honeybadger', 'sentry', 'datadog', 'appsignal'] },
+  { title: 'Coding CLIs', blurb: 'Signed in on your Host. Discovered, checked and kept current.', href: '/integrations/?category=coding-clis', ids: ['claude-code', 'codex', 'gemini-cli', 'github-cli'] },
+  { title: 'Models and gateways', blurb: 'Your own accounts, billed by the provider. OpenRouter is first-class.', href: '/integrations/?category=models', ids: ['openrouter', 'anthropic', 'openai', 'gemini'] },
+  { title: 'Trackers and source control', blurb: 'Where work is defined and where it is reviewed.', href: '/integrations/?category=project-management', ids: ['jira', 'linear', 'asana', 'github', 'gitlab'] },
+  { title: 'Monitoring', blurb: 'Production problems become shared Work Items you can fix.', href: '/integrations/?category=monitoring', ids: ['sentry', 'honeybadger', 'datadog', 'appsignal'] },
 ].map((g) => ({ ...g, items: g.ids.map(byId).filter(Boolean) }));
 ---
 <Base title={title} description={description}>
-  <PageHero eyebrow="Integrations" title="Connect the tools" accent="you already use." lede="Your AI provider, your ticket tracker, your Git host and the services your work depends on, each connected with your own account." wide>
-    <Fragment slot="status"><span>Hosted providers bill you directly, and a consumer chat subscription is not an API key.</span><a href="/docs/settings/providers/" class="text-accent link-slide">Setup steps in the docs</a></Fragment>
+  <PageHero eyebrow="Integrations and Connections" title="Connect the tools" accent="you already use." lede="Your coding CLIs, model accounts, trackers, repositories and monitoring, each connected with your own account. How each one authenticates depends on the provider; not every one has a one-click sign-in." wide>
+    <Fragment slot="status"><span>Model providers bill you directly. A coding CLI subscription and paid API access are separate things.</span><a href="/docs/settings/providers/" class="text-accent link-slide">Setup steps in the docs</a></Fragment>
     <div class="feat-grid reveal-group" aria-label="Featured connections">
       {featured.map((g) => (
         <section class="feat-card card" aria-labelledby={`feat-${g.title.toLowerCase().replace(/\s+/g, '-')}`}>
@@ -44,12 +46,38 @@ const featured = [
     <p class="mt-6 text-center text-[0.75rem] text-text-3">Logos are trademarks of their owners and indicate compatibility, not endorsement. {site.status.line}</p>
   </PageHero>
 
-  <div class="pb-24">
+  <div class="pb-20">
     <IntegrationCatalog />
     <p class="container-site mt-14 text-[0.9375rem] text-text-2">
-      Connected trackers put your tickets on the <a href="/features/board/" class="text-accent link-slide">Board</a>, one click from a branch, a terminal and an agent.
+      Connected trackers and monitoring put work on the <a href="/features/board/" class="text-accent link-slide">Board</a>, one step from a Factory job.
     </p>
   </div>
+
+  <section id="connections" class="section-pad rule scroll-mt-16" aria-labelledby="connections-title">
+    <div class="container-site">
+      <div class="grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+        <div class="reveal">
+          <p class="kicker">Connections and Setup</p>
+          <h2 id="connections-title" class="heading-2 mt-3 text-text">Your coding CLIs, found and kept healthy.</h2>
+          <p class="lede mt-4">Vekrun looks for Claude Code, Codex, Gemini CLI and GitHub CLI on your Host, shows their versions and whether they are signed in, and offers to install or update them where the vendor supports it.</p>
+        </div>
+        <dl class="facts facts-lg reveal-group">
+          <div><dt>Version and health</dt><dd>See which CLI is installed, which version, and whether its sign-in still works, before a job depends on it.</dd></div>
+          <div><dt>Install and update where supported</dt><dd>Through each vendor’s own installer and update channel. Not every tool offers one on every operating system.</dd></div>
+          <div><dt>Safe restarts and Context Handoff</dt><dd>An update or a usage limit should not lose a job. The job pauses at a safe point, and Context Handoff rebuilds its state for the next worker.</dd></div>
+          <div><dt>Logins stay on the Host</dt><dd>Vekrun never exports a CLI’s login or session to an environment or anywhere else.</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section id="project-setup" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="setup-title">
+    <div class="container-site">
+      <SectionHeading id="setup-title" kicker="Project setup" title="Docker, native and hybrid projects." lede="Environment Discovery works out how a repository runs: Docker Compose services, a native Rails, Node or Python app, or a mix. It starts the project with health checks and seeds and saves a verified Environment Recipe for every job after. Most projects need no setup; some need a hint." class="reveal" />
+    </div>
+  </section>
+
+  <CapabilityStatus keys={['claudeCode', 'codex', 'geminiCli', 'cliSetup', 'cliInstall', 'githubCli', 'openrouter', 'contextHandoff', 'envDiscovery', 'envRecipes']} />
 </Base>
 
 <style>

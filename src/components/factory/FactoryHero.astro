@@ -1,0 +1,209 @@
+---
+/**
+ * The homepage centrepiece: the AI Factory as an illustrative concept. One focal
+ * Coordinator composer, projects on the left, jobs across several projects in the
+ * middle, and the selected job's Proof Pack and Inbox request on the right.
+ * Markup carries the final state (the new job ready for review); the script
+ * types the outcome and walks the job through its stages. Demonstration data.
+ */
+import Window from '@/components/mock/Window.astro';
+import DemoControls from '@/components/mock/DemoControls.astro';
+
+const stages = ['Investigating', 'Implementing', 'Testing', 'Verifying', 'Ready for review'];
+const prompt = 'Fix the checkout error from Honeybadger and open a verified PR';
+const jobs = [
+  { id: 'j1', title: 'Fix checkout total error', from: 'Honeybadger · 312 events', project: 'acme-web', branch: 'fix/checkout-total', env: 'env 17', agent: 'Claude Code', stage: 5, isNew: true },
+  { id: 'j2', title: 'Add CSV export to reports', from: 'Linear · ENG-418', project: 'acme-api', branch: 'feat/report-csv', env: 'env 12', agent: 'Codex', stage: 3 },
+  { id: 'j3', title: 'Upgrade the payments SDK', from: 'Jira · PAY-77', project: 'billing', branch: 'chore/payments-sdk', env: 'env 9', agent: 'Claude Code', stage: 2 },
+];
+const projects = [
+  { name: 'acme-web', jobs: 1, on: true },
+  { name: 'acme-api', jobs: 1 },
+  { name: 'billing', jobs: 1 },
+  { name: 'docs-site', jobs: 0 },
+];
+---
+<figure class="fh" data-demo-root="factory" data-factory>
+  <Window title="Vekrun" crumbs={['AI Factory']} class="fh-win">
+    <span slot="status" class="live"><i></i><span data-f-live>3 jobs running</span></span>
+    <div class="fh-grid">
+      <aside class="fh-nav" aria-label="Projects and places">
+        <p class="fh-k">Places</p>
+        <ul class="fh-places">
+          <li class="is-on">AI Factory</li>
+          <li>Board</li>
+          <li>Inbox <span class="fh-count" data-f-inbox-count>1</span></li>
+          <li>Memory</li>
+        </ul>
+        <p class="fh-k mt-4">Projects</p>
+        <ul class="fh-projects">
+          {projects.map((p) => <li class:list={[p.on && 'is-on']}><span class="fh-dot" aria-hidden="true"></span>{p.name}{p.jobs > 0 && <span class="fh-count">{p.jobs}</span>}</li>)}
+        </ul>
+      </aside>
+
+      <div class="fh-main">
+        <div class="fh-composer">
+          <p class="fh-composer-k">Tell Vekrun what needs to ship</p>
+          <p class="fh-prompt"><span data-f-prompt>{prompt}</span><span class="fh-caret" aria-hidden="true"></span></p>
+          <div class="fh-composer-foot">
+            <span class="fh-chip">Project · acme-web</span>
+            <span class="fh-chip">Worker · chosen automatically</span>
+            <span class="fh-send" aria-hidden="true">Assign</span>
+          </div>
+        </div>
+
+        <ol class="fh-jobs" aria-label="Jobs">
+          {jobs.map((j) => (
+            <li class:list={['fh-job', j.isNew && 'is-selected']} data-job={j.id} data-stage={j.stage}>
+              <div class="fh-job-top">
+                <span class="fh-job-t">{j.title}</span>
+                <span class="fh-job-stage" data-stage-label>{stages[j.stage - 1]}</span>
+              </div>
+              <p class="fh-job-meta"><span>{j.project}</span><span class="hidden sm:inline">{j.branch}</span><span>{j.env}</span><span>{j.agent}</span></p>
+              <ol class="fh-track" aria-label={`Stage ${j.stage} of 5`}>
+                {stages.map((s, i) => <li class:list={[i + 1 < j.stage && 'is-done', i + 1 === j.stage && 'is-now']}><i></i><span>{s}</span></li>)}
+              </ol>
+              <p class="fh-job-from">{j.from}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <aside class="fh-side" aria-label="Selected job">
+        <div class="fh-proof">
+          <p class="fh-side-k"><span>Proof Pack</span><span class="fh-mono">acme-web · a91f3c2</span></p>
+          <ul class="fh-proof-list">
+            <li data-p="1"><span class="pill is-ok">pass</span><span>Tests<small>148 passed · 0 failed · 2 not run</small></span></li>
+            <li data-p="2"><span class="pill is-ok">pass</span><span>Browser check<small>checkout with a discount code</small></span></li>
+            <li data-p="2" class="fh-shot" aria-hidden="true"><i></i><i></i><i></i><b>Total $42.10</b></li>
+            <li data-p="3"><span class="pill is-ok">pass</span><span>Independent verifier<small>matches the goal on this revision</small></span></li>
+            <li data-p="3"><span class="pill is-info">draft</span><span>Pull request #482<small>evidence linked</small></span></li>
+          </ul>
+        </div>
+        <div class="fh-inbox" data-f-inbox>
+          <p class="fh-side-k"><span>Inbox · needs you</span></p>
+          <p class="fh-inbox-t">Review PR #482 before it can merge</p>
+          <p class="fh-inbox-why">Branch protection on main requires a person.</p>
+          <p class="fh-inbox-acts" aria-hidden="true"><span>Open review</span><span>Ask a question</span></p>
+        </div>
+      </aside>
+    </div>
+  </Window>
+  <DemoControls notice="Illustrative product concept with demonstration data. The AI Factory is in development; this shows the intended experience, not a recording of the application." />
+</figure>
+
+<style>
+  .fh { margin: 0; }
+  .fh-win { box-shadow: var(--shadow-window), var(--glow); }
+  .fh-grid { display: grid; grid-template-columns: minmax(0, 1fr); min-height: 0; }
+  @media (min-width: 48rem) { .fh-grid { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); } }
+  @media (min-width: 72rem) { .fh-grid { grid-template-columns: 11.5rem minmax(0, 1.6fr) minmax(0, 1fr); } }
+  .fh-nav { display: none; padding: 1rem 0.8rem; border-right: 1px solid var(--border); background: color-mix(in srgb, var(--bg-elevated) 60%, var(--surface)); }
+  @media (min-width: 72rem) { .fh-nav { display: block; } }
+  .fh-k { margin: 0 0 0.4rem; padding: 0 0.5rem; font-size: 0.68rem; color: var(--text-3); }
+  .fh-places, .fh-projects { margin: 0; padding: 0; list-style: none; display: grid; gap: 1px; font-size: 0.8rem; }
+  .fh-places li, .fh-projects li { display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.5rem; border-radius: 6px; color: var(--text-2); }
+  .fh-places li.is-on { background: var(--surface-2); color: var(--text); box-shadow: inset 2px 0 0 var(--accent); }
+  .fh-projects li.is-on { color: var(--text); }
+  .fh-dot { width: 0.45rem; height: 0.45rem; border-radius: 2px; background: var(--border-strong); }
+  .fh-projects li.is-on .fh-dot { background: var(--accent); }
+  .fh-count { margin-left: auto; min-width: 1.1rem; padding: 0 0.3rem; border-radius: 999px; background: var(--surface-3); color: var(--text-2); font-size: 0.66rem; text-align: center; font-variant-numeric: tabular-nums; }
+
+  .fh-main { padding: 1rem; display: grid; gap: 0.9rem; align-content: start; min-width: 0; }
+  @media (min-width: 48rem) { .fh-main { padding: 1.2rem; } }
+  .fh-composer { padding: 0.9rem 1rem 0.8rem; border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border)); border-radius: 12px; background: color-mix(in srgb, var(--accent) 5%, var(--surface)); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 8%, transparent); }
+  .fh-composer-k { margin: 0; font-size: 0.7rem; color: var(--text-3); }
+  .fh-prompt { margin: 0.35rem 0 0; min-height: 2.6em; font-size: clamp(0.95rem, 0.85rem + 0.4vw, 1.12rem); line-height: 1.35; font-weight: 520; color: var(--text); letter-spacing: -0.01em; }
+  .fh-caret { display: inline-block; width: 2px; height: 1.05em; margin-left: 2px; vertical-align: text-bottom; background: var(--accent); opacity: 0; }
+  :global([data-demo='playing']) .fh-caret { opacity: 1; animation: blink 1s steps(2) infinite; }
+  .fh-composer-foot { margin-top: 0.7rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; }
+  .fh-chip { padding: 0.2rem 0.55rem; border: 1px solid var(--border); border-radius: 999px; font-size: 0.7rem; color: var(--text-2); background: var(--surface); }
+  .fh-send { margin-left: auto; padding: 0.3rem 0.8rem; border-radius: 7px; background: var(--accent); color: var(--accent-ink); font-size: 0.75rem; font-weight: 600; }
+
+  .fh-jobs { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.55rem; }
+  .fh-job { padding: 0.75rem 0.85rem; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); transition: border-color var(--dur), box-shadow var(--dur), opacity var(--dur); }
+  .fh-job.is-selected { border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent); }
+  .fh-job[hidden] { display: none; }
+  .fh-job.is-in { animation: rise-sm 360ms var(--ease-out) both; }
+  .fh-job-top { display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem; }
+  .fh-job-t { font-size: 0.875rem; font-weight: 560; color: var(--text); min-width: 0; }
+  .fh-job-stage { flex-shrink: 0; font-size: 0.7rem; color: var(--accent); font-weight: 540; }
+  .fh-job[data-stage='5'] .fh-job-stage { color: var(--info); }
+  .fh-job-meta { margin: 0.25rem 0 0; display: flex; flex-wrap: wrap; gap: 0.2rem 0.75rem; font-family: var(--font-mono); font-size: 0.64rem; color: var(--text-3); }
+  .fh-job-from { margin: 0.45rem 0 0; font-size: 0.68rem; color: var(--text-3); }
+  .fh-track { margin: 0.6rem 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.25rem; }
+  .fh-track li { display: grid; gap: 0.3rem; }
+  .fh-track i { display: block; height: 4px; border-radius: 999px; background: var(--surface-3); transition: background-color var(--dur); }
+  .fh-track li.is-done i { background: color-mix(in srgb, var(--accent) 70%, var(--surface-3)); }
+  .fh-track li.is-now i { background: var(--accent); box-shadow: 0 0 10px -1px color-mix(in srgb, var(--accent) 70%, transparent); }
+  .fh-track span { font-size: 0.58rem; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fh-track li.is-now span { color: var(--text-2); }
+  @media (max-width: 40rem) { .fh-track span { display: none; } }
+
+  .fh-side { display: grid; gap: 0.8rem; align-content: start; padding: 0 1rem 1rem; min-width: 0; }
+  @media (min-width: 48rem) { .fh-side { padding: 1.2rem 1.2rem 1.2rem 0; } }
+  .fh-side-k { margin: 0 0 0.55rem; display: flex; justify-content: space-between; gap: 0.5rem; font-size: 0.72rem; color: var(--text-2); font-weight: 560; }
+  .fh-mono { font-family: var(--font-mono); font-weight: 400; color: var(--text-3); font-size: 0.64rem; }
+  .fh-proof, .fh-inbox { padding: 0.85rem; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+  .fh-proof-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.5rem; }
+  .fh-proof-list li { display: flex; align-items: flex-start; gap: 0.55rem; font-size: 0.78rem; color: var(--text); }
+  .fh-proof-list li[hidden] { display: none; }
+  .fh-proof-list li.is-in { animation: rise-sm 320ms var(--ease-out) both; }
+  .fh-proof-list small { display: block; color: var(--text-3); font-size: 0.68rem; }
+  .fh-shot { display: grid !important; grid-template-columns: 1fr; gap: 0.25rem; padding: 0.55rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-elevated); }
+  .fh-shot i { display: block; height: 0.35rem; border-radius: 3px; background: var(--surface-3); }
+  .fh-shot i:nth-child(2) { width: 70%; } .fh-shot i:nth-child(3) { width: 45%; }
+  .fh-shot b { justify-self: end; font-size: 0.68rem; font-weight: 600; color: var(--ok); }
+  .fh-inbox { border-color: color-mix(in srgb, var(--warn) 40%, var(--border)); background: color-mix(in srgb, var(--warn) 5%, var(--surface)); }
+  .fh-inbox[hidden] { display: none; }
+  .fh-inbox.is-in { animation: rise-sm 360ms var(--ease-out) both; }
+  .fh-inbox-t { margin: 0; font-size: 0.85rem; font-weight: 560; color: var(--text); }
+  .fh-inbox-why { margin: 0.25rem 0 0; font-size: 0.72rem; color: var(--text-3); }
+  .fh-inbox-acts { margin: 0.6rem 0 0; display: flex; gap: 0.4rem; }
+  .fh-inbox-acts span { padding: 0.25rem 0.6rem; border: 1px solid var(--border-strong); border-radius: 6px; font-size: 0.7rem; color: var(--text-2); }
+  .fh-inbox-acts span:first-child { border-color: transparent; background: var(--surface-3); color: var(--text); }
+  @media (prefers-reduced-motion: reduce) { .fh-job.is-in, .fh-proof-list li.is-in, .fh-inbox.is-in { animation: none; } }
+</style>
+
+<script>
+  import { createSequence, typeSteps, type Step } from '@/scripts/sequence';
+  const root = document.querySelector<HTMLElement>('[data-factory]');
+  if (root) {
+    const stages = ['Investigating', 'Implementing', 'Testing', 'Verifying', 'Ready for review'];
+    const prompt = root.querySelector<HTMLElement>('[data-f-prompt]')!;
+    const text = prompt.textContent ?? '';
+    const job = (id: string) => root.querySelector<HTMLElement>(`[data-job="${id}"]`)!;
+    const proofs = Array.from(root.querySelectorAll<HTMLElement>('[data-p]'));
+    const inbox = root.querySelector<HTMLElement>('[data-f-inbox]')!;
+    const inboxCount = root.querySelector<HTMLElement>('[data-f-inbox-count]')!;
+    const live = root.querySelector<HTMLElement>('[data-f-live]')!;
+    const setStage = (id: string, n: number) => {
+      const j = job(id);
+      j.dataset.stage = String(n);
+      j.querySelector<HTMLElement>('[data-stage-label]')!.textContent = stages[n - 1]!;
+      j.querySelectorAll('.fh-track li').forEach((li, i) => { li.classList.toggle('is-done', i + 1 < n); li.classList.toggle('is-now', i + 1 === n); });
+      j.querySelector('.fh-track')!.setAttribute('aria-label', `Stage ${n} of 5`);
+    };
+    const showProof = (n: number) => proofs.filter((p) => p.dataset.p === String(n)).forEach((p) => { p.hidden = false; p.classList.add('is-in'); });
+    const reset = () => {
+      prompt.textContent = '';
+      const j1 = job('j1'); j1.hidden = true; j1.classList.remove('is-in', 'is-selected');
+      setStage('j1', 1); setStage('j2', 2); setStage('j3', 1);
+      proofs.forEach((p) => { p.hidden = true; p.classList.remove('is-in'); });
+      inbox.hidden = true; inbox.classList.remove('is-in'); inboxCount.textContent = '0';
+      live.textContent = '2 jobs running';
+    };
+    const typed = typeSteps(() => prompt, text, 500, 30);
+    const steps: Step[] = [
+      ...typed.steps,
+      { t: typed.end + 500, run: () => { const j1 = job('j1'); j1.hidden = false; j1.classList.add('is-in', 'is-selected'); live.textContent = '3 jobs running'; } },
+      { t: typed.end + 1900, run: () => { setStage('j1', 2); setStage('j3', 2); } },
+      { t: typed.end + 3300, run: () => { setStage('j1', 3); setStage('j2', 3); } },
+      { t: typed.end + 4500, run: () => { showProof(1); setStage('j1', 4); } },
+      { t: typed.end + 5600, run: () => showProof(2) },
+      { t: typed.end + 6700, run: () => { showProof(3); setStage('j1', 5); } },
+      { t: typed.end + 7500, run: () => { inbox.hidden = false; inbox.classList.add('is-in'); inboxCount.textContent = '1'; } },
+    ];
+    createSequence(root, steps, { reset });
+  }
+</script>

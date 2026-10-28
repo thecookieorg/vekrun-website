@@ -20,7 +20,7 @@ Reading, writing and deleting files; running commands; Git operations; network a
 
 ## Where authority comes from
 
-The session mode is the permission profile: Ask reads, Build proposes, Debug may run approved commands, Review reports. In AI Teams, a delegated task can never hold more permission or budget than the task that created it.
+The session mode is the permission profile: Ask reads, Build proposes, Debug may run approved commands, Review reports. In the AI Factory, a delegated task can never hold more permission or budget than the task that created it.
 
 ## What cannot change the rules
 

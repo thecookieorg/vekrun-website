@@ -1,0 +1,37 @@
+---
+/**
+ * Several projects at once: one lane per job, each with its own repository,
+ * branch, environment and queue position. Demonstration data.
+ */
+import ConceptNotice from '@/components/ConceptNotice.astro';
+const lanes = [
+  { p: 'acme-web', b: 'fix/checkout-total', e: 'env 17 · Docker + Rails', q: 'urgent', s: 'Verifying', w: 80, tone: 'ok' },
+  { p: 'acme-api', b: 'feat/report-csv', e: 'env 12 · native Node', q: 'normal', s: 'Testing', w: 60, tone: 'ok' },
+  { p: 'billing', b: 'chore/payments-sdk', e: 'env 9 · Docker + Python', q: 'normal', s: 'Implementing', w: 38, tone: 'ok' },
+  { p: 'docs-site', b: 'docs/rate-limits', e: 'waiting for capacity', q: 'low', s: 'Queued', w: 0, tone: 'muted' },
+];
+---
+<div class="pl">
+  <ul class="pl-lanes" aria-label="Jobs running in parallel">
+    {lanes.map((l) => (
+      <li class:list={['pl-lane', l.w === 0 && 'is-queued']}>
+        <div class="pl-head"><b>{l.p}</b><span class:list={['pill', l.q === 'urgent' ? 'is-warn' : 'is-muted']}>{l.q}</span></div>
+        <p class="pl-meta"><span>{l.b}</span><span>{l.e}</span></p>
+        <div class="pl-progress"><span class:list={['bar', l.w === 0 && 'is-empty']} style={`--w: ${l.w}%`}><i></i></span><span class="pl-s">{l.s}</span></div>
+      </li>
+    ))}
+  </ul>
+  <ConceptNotice class="mt-4" text="Illustrative product concept with demonstration data. Concurrent jobs and a queue exist in the development build; one isolated environment per Work Item and capacity-aware scheduling are in development and planned." />
+</div>
+
+<style>
+  .pl-lanes { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.6rem; }
+  @media (min-width: 48rem) { .pl-lanes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .pl-lane { padding: 0.9rem 1rem; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+  .pl-lane.is-queued { border-style: dashed; background: transparent; }
+  .pl-head { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
+  .pl-head b { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 560; color: var(--text); }
+  .pl-meta { margin: 0.35rem 0 0; display: flex; flex-wrap: wrap; gap: 0.2rem 0.9rem; font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-3); }
+  .pl-progress { margin-top: 0.75rem; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0.75rem; }
+  .pl-s { font-size: 0.75rem; color: var(--text-2); }
+</style>

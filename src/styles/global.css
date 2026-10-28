@@ -6,7 +6,7 @@
    Vekrun design tokens.
    Dark is the identity: a deep blue-black ground, charcoal-navy surfaces, mint
    for the developer's own machine and Vekrun itself, electric blue for the
-   organization and Vekrun Cloud. Light is a full peer with the same meaning.
+   organization and Vekrun Teams. Light is a full peer with the same meaning.
    Bare :root carries dark. Light applies under [data-theme="light"].
    =========================================================================== */
 :root {
@@ -331,7 +331,7 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Product frames: the desktop window and the Cloud browser
+   Product frames: the desktop window and the Teams browser
    --------------------------------------------------------------------------- */
 .window {
   position: relative;

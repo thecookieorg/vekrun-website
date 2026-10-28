@@ -1,0 +1,45 @@
+---
+/**
+ * "Where this stands": the honest status of the capabilities a page describes,
+ * read from data/capabilities.ts so every route agrees.
+ */
+import StatusBadge from '@/components/StatusBadge.astro';
+import Button from '@/components/Button.astro';
+import { capabilities, type CapabilityKey } from '@/data/capabilities';
+import { site } from '@/data/site';
+interface Props { keys: CapabilityKey[]; title?: string; class?: string }
+const { keys, title = 'Where this stands', class: className = '' } = Astro.props;
+---
+<section class:list={['cs section-pad rule bg-bg-elevated', className]} aria-labelledby="cs-title">
+  <div class="container-site">
+    <div class="cs-grid">
+      <div>
+        <p class="kicker">Honest status</p>
+        <h2 id="cs-title" class="heading-2 mt-3 text-text">{title}</h2>
+        <p class="lede mt-4">{site.status.line} Statuses come from the development build as of {new Date(site.status.asOf + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}.</p>
+        <Button href="/roadmap/" variant="secondary" class="mt-6">See the roadmap</Button>
+      </div>
+      <ul class="cs-list">
+        {keys.map((k) => {
+          const c = capabilities[k];
+          return (
+            <li>
+              <span class="cs-l">{c.label}{'note' in c && c.note && <small>{c.note}</small>}</span>
+              <StatusBadge status={c.status} compact />
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cs-grid { display: grid; gap: 2.5rem; }
+  @media (min-width: 64rem) { .cs-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 4rem; } }
+  .cs-list { margin: 0; padding: 0; list-style: none; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); overflow: hidden; }
+  .cs-list li { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding: 0.85rem 1.1rem; }
+  .cs-list li + li { border-top: 1px solid var(--border); }
+  .cs-l { color: var(--text); font-size: 0.95rem; font-weight: 520; min-width: 0; }
+  .cs-l small { display: block; margin-top: 0.2rem; font-weight: 400; font-size: 0.8125rem; line-height: 1.45; color: var(--text-3); }
+</style>

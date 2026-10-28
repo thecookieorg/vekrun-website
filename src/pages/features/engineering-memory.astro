@@ -1,0 +1,49 @@
+---
+import Base from '@/layouts/Base.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import MemoryInsights from '@/components/factory/MemoryInsights.astro';
+import CapabilityStatus from '@/components/CapabilityStatus.astro';
+
+const memory = [
+  ['A journal of every job', 'Timestamped and authoritative: what was decided, run, changed and approved, by whom.'],
+  ['Decisions you can trace', 'Plans, Council debates and approvals, linked to the tickets, commits, pull requests and Proof Packs they produced.'],
+  ['Ask it questions', 'Why was this built this way? What did we try last time this broke? Answers cite their sources.'],
+  ['Project knowledge', 'How each project starts, what must keep working, and what the team learned, reused by every future job.'],
+];
+const metrics = [
+  ['Pull requests merged', 'Counted from your Git host, linked to the jobs that produced them.'],
+  ['Bugs fixed and verified', 'Only when the fix has passing evidence and, for incidents, the error stopped.'],
+  ['Features delivered', 'Work Items closed with a merged, verified change.'],
+  ['Delivery time', 'From the goal or incident to review and to merge.'],
+  ['Verification and rework', 'How often work needed another pass, and why.'],
+  ['Agent usage and spend', 'Per worker and model, where the provider reports cost.'],
+];
+---
+<Base title="Engineering Memory and Insights" fullTitle="Engineering Memory and Insights: every decision on the record · Vekrun" description="Vekrun's Engineering Memory is a native, searchable record of decisions, changes, evidence and project knowledge. Engineering Insights reports verifiable delivery: pull requests merged, bugs fixed, features delivered, delivery time, rework and spend, from 24 hours to all time.">
+  <PageHero eyebrow="Engineering Memory and Insights" title="Every decision on the record." accent="Every result measurable." lede="Vekrun keeps a native, searchable record of what was decided, changed and proven, and reports on what actually shipped. Locally for Personal; on your own servers for Teams." cta={{ label: 'See Insights', href: '#insights' }} secondary={{ label: 'Self-hosted Teams', href: '/teams/' }} wide>
+    <MemoryInsights />
+  </PageHero>
+
+  <section class="section-pad rule" aria-labelledby="memory-title">
+    <div class="container-site">
+      <div class="grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+        <div class="reveal">
+          <p class="kicker">Engineering Memory</p>
+          <h2 id="memory-title" class="heading-2 mt-3 text-text">Built into Vekrun, not exported to a notes app.</h2>
+          <p class="lede mt-4">Memory lives in Vekrun’s own store: on your machine for Personal, on your Coordinator for Teams, with its own access, retention and privacy rules. Secrets are kept out of logs.</p>
+        </div>
+        <dl class="facts facts-lg reveal-group">{memory.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+      </div>
+    </div>
+  </section>
+
+  <section id="insights" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="insights-title">
+    <div class="container-site">
+      <SectionHeading id="insights-title" kicker="Engineering Insights" title="Report what shipped, not how busy everyone looked." lede="Every metric links back to the work behind it, over 24 hours, 7, 14 or 30 days, or all time, per repository and per team. Lines of code appear as activity, never as a measure of productivity." class="reveal" />
+      <dl class="facts facts-grid facts-lg reveal-group mt-10">{metrics.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+    </div>
+  </section>
+
+  <CapabilityStatus keys={['memory', 'audit', 'insights', 'budgets']} />
+</Base>

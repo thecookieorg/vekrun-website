@@ -11,7 +11,7 @@ Start a session in Review mode and point it at a branch or a diff. The agent rea
 
 ## A second opinion
 
-For a change that matters, convene a [Council](/docs/ai-teams/council/): several models review independently, challenge each other's findings, and a report records where they disagree. You decide what to act on.
+For a change that matters, convene a [Council](/docs/factory/council/): several models review independently, challenge each other's findings, and a report records where they disagree. You decide what to act on.
 
 ## Your approval
 

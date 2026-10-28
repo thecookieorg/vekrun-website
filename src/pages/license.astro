@@ -1,0 +1,28 @@
+---
+/**
+ * Licence. Vekrun is proprietary, all rights reserved. This page states that
+ * plainly and describes the two planned packages; it is not a contract.
+ */
+import Base from '@/layouts/Base.astro';
+import Section from '@/components/Section.astro';
+import PageHero from '@/components/PageHero.astro';
+import { site, personal, teams, pricing, usd } from '@/data/site';
+const t = pricing.teams;
+---
+<Base title="Licence" fullTitle="Licence: Vekrun is proprietary software · Vekrun" description="Vekrun is proprietary software, all rights reserved. Vekrun Personal is planned to be free to use; Vekrun Teams is a paid self-hosted licence.">
+  <PageHero eyebrow="Licence" title="Vekrun is proprietary software." lede={site.licence.summary} align="left" />
+  <Section padded="tight" class="pb-24">
+    <div class="prose-site max-w-3xl text-[1.0625rem] leading-relaxed">
+      <p>Vekrun and its source code are owned by Vekrun. All rights reserved. The source code is not public.</p>
+
+      <h2>The two packages</h2>
+      <ul>
+        <li><strong>{personal.name}</strong> is a downloadable desktop product, free to use. It is not a trial with hidden limits.</li>
+        <li><strong>{teams.name}</strong> is one paid, self-hosted licence for organizations: {usd(t.base)} a month for up to {t.includedEngineers} engineers and {usd(t.perAdditionalEngineer)} a month for each additional engineer, as planned launch pricing. It cannot be bought yet.</li>
+      </ul>
+
+      <h2>Third-party software and services</h2>
+      <p>Vekrun works with tools and services you bring, such as coding CLIs, model providers, Git hosts and trackers. Their own licences and terms apply to your use of them.</p>
+    </div>
+  </Section>
+</Base>

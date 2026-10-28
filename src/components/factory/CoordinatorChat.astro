@@ -1,0 +1,43 @@
+---
+/**
+ * Goal-first: a short exchange with the Coordinator. It asks only what it needs,
+ * proposes a plan, and starts once the person approves. Static concept.
+ */
+import Window from '@/components/mock/Window.astro';
+import ConceptNotice from '@/components/ConceptNotice.astro';
+---
+<figure class="cc">
+  <Window title="Coordinator" crumbs={['acme-api']}>
+    <div class="cc-body">
+      <p class="cc-msg is-you"><b>You</b>Add CSV export to the monthly report, with the same filters as the table.</p>
+      <p class="cc-msg"><b>Coordinator</b>The report table filters by team, date range and status. Should the export include archived rows when “All” is selected? The table hides them.</p>
+      <p class="cc-msg is-you"><b>You</b>No, match the table exactly.</p>
+      <div class="cc-msg cc-plan">
+        <b>Coordinator · plan, 3 steps</b>
+        <ol>
+          <li>Add an export endpoint that reuses the report query and its filters</li>
+          <li>Add the Export button and a download test in the browser</li>
+          <li>Verify against the Feature Map for reports; open a pull request</li>
+        </ol>
+        <p class="cc-plan-meta"><span>Worker: Codex, chosen for this repository</span><span>Environment: native Node, recipe verified</span></p>
+        <p class="cc-acts" aria-hidden="true"><span>Approve and start</span><span>Edit plan</span></p>
+      </div>
+    </div>
+  </Window>
+  <ConceptNotice class="mt-4" text="Illustrative product concept. A Coordinator panel and editable plans exist in the development build; the outcome-first Factory home is in development." />
+</figure>
+
+<style>
+  .cc { margin: 0; }
+  .cc-body { display: grid; gap: 0.7rem; padding: 1.1rem 1.2rem 1.2rem; }
+  .cc-msg { margin: 0; max-width: 34rem; padding: 0.7rem 0.85rem; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); font-size: 0.86rem; line-height: 1.5; color: var(--text-2); }
+  .cc-msg b { display: block; margin-bottom: 0.15rem; font-size: 0.7rem; font-weight: 600; color: var(--accent); }
+  .cc-msg.is-you { justify-self: end; background: var(--surface-2); color: var(--text); }
+  .cc-msg.is-you b { color: var(--text-3); }
+  .cc-plan { max-width: none; border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
+  .cc-plan ol { margin: 0.4rem 0 0; padding-left: 1.1rem; display: grid; gap: 0.3rem; color: var(--text); }
+  .cc-plan-meta { margin: 0.7rem 0 0; display: flex; flex-wrap: wrap; gap: 0.2rem 1rem; font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-3); }
+  .cc-acts { margin: 0.75rem 0 0; display: flex; gap: 0.4rem; }
+  .cc-acts span { padding: 0.3rem 0.7rem; border: 1px solid var(--border-strong); border-radius: 7px; font-size: 0.74rem; color: var(--text-2); }
+  .cc-acts span:first-child { border-color: transparent; background: var(--accent); color: var(--accent-ink); font-weight: 600; }
+</style>

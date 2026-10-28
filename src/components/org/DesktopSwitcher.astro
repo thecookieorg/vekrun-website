@@ -1,0 +1,173 @@
+---
+/**
+ * "The Vekrun you already know. Now connected." One desktop window whose
+ * workspace switcher is a real radiogroup: Personal · Acme Engineering · Open
+ * Source Team. Switching swaps the context bar, the Board and the Factory queue.
+ * The script switches Personal → Acme once; after that the reader drives.
+ * Final state in markup: Acme Engineering. Conceptual, demonstration data.
+ */
+import Window from '@/components/mock/Window.astro';
+import DemoControls from '@/components/mock/DemoControls.astro';
+import Avatar from './Avatar.astro';
+
+type Card = { id: string; t: string; m?: string; tone?: 'ok' | 'warn' | 'info' | 'cloud' | 'muted'; tag?: string };
+type Space = { id: string; name: string; sub: string; ctx: string; cols: { name: string; cards: Card[] }[]; queue: { t: string; m: string; tone: string }[]; queueHead: string };
+const spaces: Space[] = [
+  { id: 'personal', name: 'Personal', sub: 'this machine · no account', ctx: 'Personal projects stay on this machine. No account, no organization.',
+    cols: [
+      { name: 'To do', cards: [{ id: 'side-project', t: 'Add dark mode to settings' }, { id: 'notes', t: 'Weekly review template' }] },
+      { name: 'In progress', cards: [{ id: 'dotfiles', t: 'Migrate zsh config', tag: 'you', tone: 'muted' }] },
+      { name: 'Review', cards: [] },
+    ],
+    queueHead: 'Local Factory', queue: [{ t: 'Generate changelog', m: 'your machine · running', tone: 'info' }] },
+  { id: 'acme', name: 'Acme Engineering', sub: 'organization · 5 members', ctx: 'Shared by permission: tickets, plans, reviews and the Factory queue of the Platform team.',
+    cols: [
+      { name: 'To do', cards: [{ id: 'VEK-152', t: 'Audit log pagination', tag: 'from Dana', tone: 'cloud' }, { id: 'VEK-139', t: 'Checkout redesign', tag: 'Priya', tone: 'muted' }] },
+      { name: 'In progress', cards: [{ id: 'VEK-140', t: 'Retry failed exports', tag: 'Factory · build-2', tone: 'info' }, { id: 'VEK-131', t: 'Rate-limit the webhook endpoint', tag: 'you', tone: 'muted' }] },
+      { name: 'Review', cards: [{ id: '#216', t: 'Retry failed exports', tag: 'Priya reviewing', tone: 'ok' }] },
+    ],
+    queueHead: 'Shared Factory queue · $184 of $600 this week', queue: [{ t: 'VEK-140 Retry failed exports', m: 'build-2 · verifying', tone: 'info' }, { t: 'VEK-145 Payment webhooks', m: 'waiting for Sam’s approval', tone: 'warn' }, { t: 'VEK-151 Audit log pagination', m: 'queued', tone: 'muted' }] },
+  { id: 'oss', name: 'Northwind Labs', sub: 'client organization · 12 members', ctx: 'A second organization, with its own projects, members and policies.',
+    cols: [
+      { name: 'To do', cards: [{ id: '#482', t: 'Flaky CI on Windows', tag: 'good first issue', tone: 'muted' }] },
+      { name: 'In progress', cards: [{ id: '#470', t: 'Docs for the plugin API', tag: 'you', tone: 'muted' }] },
+      { name: 'Review', cards: [{ id: '#479', t: 'Fix path escaping', tag: 'maintainer review', tone: 'ok' }] },
+    ],
+    queueHead: 'Shared Factory queue · Northwind workers', queue: [{ t: '#481 Update translations', m: 'ci-worker · tests', tone: 'info' }, { t: '#476 Release notes draft', m: 'queued', tone: 'muted' }] },
+];
+---
+<figure class="ds" data-demo-root="desktop-switcher" data-switcher>
+  <Window title="Vekrun" class="ds-win">
+    <span slot="status" class="hidden sm:inline" data-ds-status>Organization workspace · Acme Engineering</span>
+    <div class="ds-app">
+      <aside class="ds-side">
+        <div class="ds-switch">
+          <button type="button" class="ds-switch-btn" aria-expanded="false" aria-controls="ds-menu" data-switch-btn>
+            <span class="ds-dot" aria-hidden="true"></span>
+            <span class="ds-switch-name" data-switch-name>Acme Engineering</span>
+            <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+          </button>
+          <div id="ds-menu" class="ds-menu" role="radiogroup" aria-label="Workspace" data-switch-menu hidden>
+            {spaces.map((s) => (
+              <label class="ds-opt" data-opt={s.id}><input type="radio" name="ds-space" value={s.id} class="sr-only" checked={s.id === 'acme'} data-space-radio /><span class="ds-opt-name">{s.name}</span><span class="ds-opt-sub">{s.sub}</span></label>
+            ))}
+            <p class="ds-menu-note">Joining an organization never moves your personal projects.</p>
+          </div>
+        </div>
+        <ul class="ds-nav" aria-hidden="true"><li>Projects</li><li class="is-on">Board</li><li>Factory</li><li>Reviews</li><li>Insights</li></ul>
+      </aside>
+      <div class="ds-main">
+        {spaces.map((s) => (
+          <div class="ds-panel" data-space-panel={s.id} hidden={s.id !== 'acme'}>
+            <div class="ds-ctx">
+              {s.id === 'acme' ? <span class="avatars" aria-hidden="true"><Avatar who="dana" size="sm" /><Avatar who="sam" size="sm" /><Avatar who="alex" size="sm" /><Avatar who="priya" size="sm" /></span> : s.id === 'oss' ? <span class="avatars" aria-hidden="true"><Avatar label="MK" size="sm" /><Avatar label="JL" size="sm" /><Avatar label="RS" size="sm" /></span> : <span class="ds-ctx-ico" aria-hidden="true"></span>}
+              <span>{s.ctx}</span>
+            </div>
+            <div class="ds-board">
+              {s.cols.map((c) => (
+                <div class="ds-col"><span class="ds-col-h">{c.name} <b>{c.cards.length}</b></span>
+                  {c.cards.length === 0 && <span class="ds-empty">Nothing here</span>}
+                  {c.cards.map((k) => <div class="ds-card"><span class="ds-id">{k.id}</span><span class="ds-card-t">{k.t}</span>{k.tag && <span class:list={['pill', `is-${k.tone ?? 'muted'}`]}>{k.tag}</span>}</div>)}
+                </div>
+              ))}
+            </div>
+            <div class="ds-queue">
+              <span class="ds-queue-h">{s.queueHead}</span>
+              <ul>{s.queue.map((q) => <li><span class="ds-card-t">{q.t}</span><span class:list={['pill', `is-${q.tone}`]}>{q.m}</span></li>)}</ul>
+            </div>
+          </div>
+        ))}
+        <div class="ds-toast" data-toast hidden><span><strong>Acme Engineering</strong> connected · 5 shared tasks and the Factory queue arrived</span></div>
+      </div>
+    </div>
+  </Window>
+  <DemoControls notice="Illustrative product concept. Organization workspaces on a self-hosted Teams Coordinator are planned; today the desktop app has a personal workspace only. Switch workspaces yourself with the menu above." />
+</figure>
+
+<style>
+  .ds { margin: 0; }
+  .ds-win { font-size: 0.76rem; }
+  .ds-app { display: grid; grid-template-columns: 12rem minmax(0, 1fr); min-height: 19rem; }
+  @media (max-width: 40rem) { .ds-app { grid-template-columns: 1fr; } }
+  .ds-side { border-right: 1px solid var(--border); background: var(--bg-elevated); padding: 0.6rem; display: flex; flex-direction: column; gap: 0.7rem; min-width: 0; }
+  @media (max-width: 40rem) { .ds-side { border-right: 0; border-bottom: 1px solid var(--border); } .ds-nav { display: none !important; } }
+  .ds-switch { position: relative; }
+  .ds-switch-btn { width: 100%; display: flex; align-items: center; gap: 0.45rem; padding: 0.45rem 0.6rem; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); font-size: 0.8rem; cursor: pointer; text-align: left; transition: border-color var(--dur-fast), box-shadow var(--dur-fast); }
+  .ds-switch-btn:hover { border-color: var(--border-strong); }
+  .ds-switch-btn[aria-expanded='true'] { border-color: var(--cloud); box-shadow: 0 0 0 3px var(--cloud-soft); }
+  .ds-switch-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 540; }
+  .ds-dot { width: 0.55rem; height: 0.55rem; border-radius: 3px; background: var(--accent-gradient); flex: 0 0 auto; }
+  .ds-menu { position: absolute; left: 0; right: 0; top: calc(100% + 0.35rem); z-index: 3; padding: 0.35rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elevated); box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.8); animation: rise-sm 180ms var(--ease-out) both; min-width: 13rem; }
+  .ds-menu[hidden] { display: none; }
+  .ds-opt { display: flex; flex-direction: column; gap: 0.05rem; padding: 0.45rem 0.6rem; border-radius: 6px; cursor: pointer; }
+  .ds-opt:hover { background: var(--surface-2); }
+  .ds-opt:has(:checked) { background: var(--cloud-soft); }
+  .ds-opt:has(:focus-visible) { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .ds-opt-name { color: var(--text); font-weight: 540; }
+  .ds-opt-sub { color: var(--text-3); font-size: 0.66rem; }
+  .ds-menu-note { margin: 0.3rem 0 0; padding: 0.4rem 0.6rem 0.2rem; border-top: 1px solid var(--border); color: var(--text-3); font-size: 0.66rem; line-height: 1.35; }
+  .ds-nav { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.1rem; }
+  .ds-nav li { padding: 0.3rem 0.6rem; border-radius: 6px; color: var(--text-3); font-size: 0.78rem; }
+  .ds-nav li.is-on { background: var(--surface-2); color: var(--text); }
+  .ds-main { position: relative; min-width: 0; }
+  .ds-panel { display: grid; gap: 0.7rem; padding: 0.75rem; animation: fade 260ms var(--ease-out) both; }
+  .ds-panel[hidden] { display: none; }
+  .ds-ctx { display: flex; align-items: center; gap: 0.6rem; color: var(--text-2); font-size: 0.74rem; }
+  .ds-ctx-ico { width: 1.2rem; height: 1.2rem; border-radius: 50%; border: 1px dashed var(--border-strong); flex: 0 0 auto; }
+  .ds-board { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+  @media (max-width: 30rem) { .ds-board { grid-template-columns: 1fr; } }
+  .ds-col { background: var(--surface); padding: 0.5rem; display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; min-height: 7.5rem; }
+  .ds-col-h { display: flex; justify-content: space-between; font-size: 0.64rem; color: var(--text-3); }
+  .ds-col-h b { font-weight: 400; font-family: var(--font-mono); }
+  .ds-empty { font-size: 0.66rem; color: var(--text-3); border: 1px dashed var(--border); border-radius: var(--radius-sm); padding: 0.5rem; text-align: center; }
+  .ds-card { display: flex; flex-direction: column; gap: 0.2rem; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.4rem 0.5rem; }
+  .ds-card .pill { align-self: flex-start; }
+  .ds-id { font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-3); }
+  .ds-card-t { color: var(--text); font-size: 0.72rem; line-height: 1.3; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .ds-queue { border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); padding: 0.5rem 0.6rem; }
+  .ds-queue-h { display: block; font-size: 0.64rem; color: var(--text-3); margin-bottom: 0.35rem; }
+  .ds-queue ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.3rem; }
+  .ds-queue li { display: flex; justify-content: space-between; align-items: center; gap: 0.6rem; }
+  .ds-toast { position: absolute; right: 0.75rem; bottom: 0.75rem; left: 0.75rem; display: flex; align-items: center; gap: 0.6rem; padding: 0.55rem 0.7rem; border: 1px solid color-mix(in srgb, var(--cloud) 50%, var(--border)); border-radius: var(--radius-sm); background: var(--bg-elevated); color: var(--text-2); font-size: 0.72rem; box-shadow: 0 16px 40px -20px rgba(0, 0, 0, 0.8); animation: rise-sm 300ms var(--ease-out) both; }
+  .ds-toast[hidden] { display: none; }
+  .ds-toast strong { color: var(--text); font-weight: 560; }
+  @media (prefers-reduced-motion: reduce) { .ds-panel, .ds-menu, .ds-toast { animation: none; } }
+</style>
+
+<script>
+  import { createSequence, type Step } from '@/scripts/sequence';
+
+  const root = document.querySelector<HTMLElement>('[data-switcher]');
+  if (root) {
+    const btn = root.querySelector<HTMLButtonElement>('[data-switch-btn]')!;
+    const menu = root.querySelector<HTMLElement>('[data-switch-menu]')!;
+    const name = root.querySelector<HTMLElement>('[data-switch-name]')!;
+    const radios = Array.from(root.querySelectorAll<HTMLInputElement>('[data-space-radio]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-space-panel]'));
+    const toast = root.querySelector<HTMLElement>('[data-toast]')!;
+    const status = root.querySelector<HTMLElement>('[data-ds-status]')!;
+    const labels: Record<string, string> = { personal: 'Personal', acme: 'Acme Engineering', oss: 'Northwind Labs' };
+
+    const openMenu = (open: boolean) => { menu.hidden = !open; btn.setAttribute('aria-expanded', String(open)); };
+    const choose = (id: string) => {
+      radios.forEach((r) => { r.checked = r.value === id; });
+      panels.forEach((p) => { p.hidden = p.dataset.spacePanel !== id; });
+      name.textContent = labels[id] ?? id;
+      status.textContent = id === 'personal' ? 'Personal workspace · no account' : `Organization workspace · ${labels[id]}`;
+    };
+    btn.addEventListener('click', () => openMenu(menu.hidden));
+    radios.forEach((r) => r.addEventListener('change', () => { seq.pause(); toast.hidden = true; choose(r.value); setTimeout(() => openMenu(false), 220); }));
+    document.addEventListener('click', (e) => { if (!root.contains(e.target as Node)) openMenu(false); });
+    root.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { openMenu(false); btn.focus(); } });
+
+    const reset = () => { toast.hidden = true; openMenu(false); choose('personal'); };
+    const steps: Step[] = [
+      { t: 1100, run: () => openMenu(true) },
+      { t: 2000, run: () => choose('acme') },
+      { t: 2700, run: () => openMenu(false) },
+      { t: 3200, run: () => { toast.hidden = false; } },
+      { t: 6200, run: () => { toast.hidden = true; } },
+    ];
+    const seq = createSequence(root, steps, { reset });
+  }
+</script>
