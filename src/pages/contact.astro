@@ -1,31 +1,17 @@
 ---
+/** Contact: only channels that exist. Addresses render once set in site.ts. */
 import Base from '@/layouts/Base.astro';
-import Section from '@/components/Section.astro';
 import PageHero from '@/components/PageHero.astro';
 import { site } from '@/data/site';
-const title = 'Contact';
-const description = 'How to reach Vekrun, including about Vekrun Teams and security.';
 ---
-<Base title={title} description={description}>
-  <PageHero eyebrow="Contact" title="Get in touch." lede="Vekrun has no public release yet, so there are few channels so far. This page lists only what exists today." align="left" />
-  <Section padded="tight" class="pb-24">
-    <ul class="ruled-grid max-w-3xl" role="list">
-      <li class="p-6">
-        <h2 class="text-[1rem] font-[560] text-text">Vekrun Teams</h2>
-        <p class="mt-2 text-[0.9rem] leading-relaxed text-text-2">Teams is planned and cannot be bought yet. When it can, this page will say how to reach us. Until then, the <a href="/teams/" class="text-accent underline underline-offset-2">Teams page</a> has the plan and planned pricing.</p>
-      </li>
-      <li class="p-6">
-        <h2 class="text-[1rem] font-[560] text-text">Everything else</h2>
-        {site.contact.generalEmail ? (
-          <p class="mt-2 text-[0.9rem] leading-relaxed text-text-2">Email <strong class="text-text">{site.contact.generalEmail}</strong>.</p>
-        ) : (
-          <p class="mt-2 text-[0.9rem] leading-relaxed text-text-2">A public address will be published before the first release.</p>
-        )}
-      </li>
-      <li class="p-6">
-        <h2 class="text-[1rem] font-[560] text-text">Security</h2>
-        <p class="mt-2 text-[0.9rem] leading-relaxed text-text-2">Never in a public issue. See the <a href="/security/" class="text-accent underline underline-offset-2">security page</a>.</p>
-      </li>
-    </ul>
-  </Section>
+<Base title="Contact" fullTitle="Contact · Vekrun" description="How to reach Vekrun.">
+  <PageHero eyebrow="Contact" title="Get in touch." lede={site.contact.generalEmail ? `Email ${site.contact.generalEmail}.` : 'A public address will be published here before the first release.'} />
+  <section class="rule pb-24 pt-14">
+    <div class="container-site">
+      <dl class="facts facts-grid facts-lg max-w-3xl">
+        <div><dt>Vekrun Teams</dt><dd>Plans and pricing are on the <a href="/teams/" class="text-accent link-slide">Teams page</a>.</dd></div>
+        <div><dt>Security reports</dt><dd>Never in a public issue. See the <a href="/security/" class="text-accent link-slide">security page</a>.</dd></div>
+      </dl>
+    </div>
+  </section>
 </Base>

@@ -1,0 +1,62 @@
+---
+/**
+ * The Council as an illustrative concept: one engineering question, three
+ * models taking positions and challenging each other, and the decision with
+ * its reasoning and the dissent kept on record. Static markup, demonstration data.
+ */
+import Window from '@/components/mock/Window.astro';
+import ConceptNotice from '@/components/ConceptNotice.astro';
+interface Props { compact?: boolean; class?: string }
+const { compact = false, class: className = '' } = Astro.props;
+
+const seats = [
+  { who: 'Claude', h: 28, stance: 'Queue the webhooks and retry with backoff.', note: 'Survives the provider’s outages without losing an order.', verdict: 'for' },
+  { who: 'Gemini', h: 210, stance: 'Poll the provider every minute instead.', note: 'Simpler, but a minute of lag on every payment.', verdict: 'against' },
+  { who: 'Local model', h: 150, stance: 'Queue them, but make the handler idempotent first.', note: 'Retries will deliver duplicates. Guard against them.', verdict: 'amend' },
+];
+const label = { for: 'Supports', against: 'Objects', amend: 'Amends' } as const;
+---
+<figure class:list={['council', compact && 'is-compact', className]}>
+  <Window title="Vekrun" crumbs={['Council']}>
+    <span slot="status" class="pill">3 models</span>
+    <div class="cn-body">
+      <p class="cn-q"><span class="cn-k">Question</span>How should checkout handle payment webhooks that arrive late or twice?</p>
+      <ul class="cn-seats">
+        {seats.map((s) => (
+          <li class:list={['cn-seat', `is-${s.verdict}`]}>
+            <p class="cn-who"><span class="avatar is-sm" style={`--h:${s.h}`}>{s.who.slice(0, 1)}</span>{s.who}<span class="cn-verdict">{label[s.verdict as keyof typeof label]}</span></p>
+            <p class="cn-stance">{s.stance}</p>
+            {!compact && <p class="cn-note">{s.note}</p>}
+          </li>
+        ))}
+      </ul>
+      <div class="cn-decision">
+        <p class="cn-k">Decision</p>
+        <p class="cn-d">Queue with retries, behind an idempotent handler.</p>
+        {!compact && <p class="cn-why">Two of three agree on the queue; the duplicate risk changes the plan. The objection about polling is kept with the decision.</p>}
+      </div>
+    </div>
+  </Window>
+  <ConceptNotice class="mt-4" text="Illustrative product concept with demonstration data." />
+</figure>
+
+<style>
+  .council { margin: 0; }
+  .cn-body { padding: 1.1rem; display: grid; gap: 0.9rem; }
+  @media (min-width: 40rem) { .cn-body { padding: 1.4rem; } }
+  .cn-k { display: block; margin: 0 0 0.3rem; font-size: 0.72rem; color: var(--text-3); }
+  .cn-q { margin: 0; font-size: 1rem; line-height: 1.45; font-weight: 560; color: var(--text); }
+  .cn-seats { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.6rem; }
+  @media (min-width: 48rem) { .council:not(.is-compact) .cn-seats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .cn-seat { padding: 0.8rem 0.9rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-2); }
+  .cn-who { margin: 0; display: flex; align-items: center; gap: 0.45rem; font-size: 0.82rem; font-weight: 560; color: var(--text); }
+  .cn-verdict { margin-left: auto; font-size: 0.7rem; font-weight: 500; padding: 0.1rem 0.45rem; border-radius: 999px; border: 1px solid var(--border-strong); color: var(--text-2); }
+  .is-for .cn-verdict { color: var(--accent); border-color: var(--accent-line); background: var(--accent-soft); }
+  .is-amend .cn-verdict { color: var(--mint); border-color: color-mix(in srgb, var(--mint) 40%, transparent); }
+  .cn-stance { margin: 0.5rem 0 0; font-size: 0.88rem; line-height: 1.45; color: var(--text); }
+  .cn-note { margin: 0.35rem 0 0; font-size: 0.8rem; line-height: 1.45; color: var(--text-2); }
+  .cn-decision { padding: 0.9rem 1rem; border-radius: var(--radius); border: 1px solid var(--accent-line); background: var(--accent-soft); }
+  .cn-decision .cn-k { color: var(--accent); }
+  .cn-d { margin: 0; font-size: 0.98rem; font-weight: 580; color: var(--text); }
+  .cn-why { margin: 0.35rem 0 0; font-size: 0.82rem; line-height: 1.5; color: var(--text-2); }
+</style>

@@ -1,55 +1,49 @@
 ---
 /**
- * The top of every marketing page: eyebrow, display headline with one gradient
- * line, a lede, calls to action, an optional status line, and the product stage
- * as the artwork. Ambient light sits behind the copy; the stage enters once.
+ * The top of every page: a short headline, one supporting sentence, up to two
+ * actions and an optional visual. Left-aligned by default, like an editorial
+ * page; the visual enters once.
  */
 import Button from '@/components/Button.astro';
 interface Props {
   eyebrow?: string;
   title: string;
-  accent?: string;
   lede: string;
   cta?: { label: string; href: string };
   secondary?: { label: string; href: string };
   align?: 'left' | 'center';
-  /** Use the wide container for the stage. */
   wide?: boolean;
   id?: string;
   class?: string;
 }
-const { eyebrow, title, accent, lede, cta, secondary, align = 'center', wide = false, id = 'page-title', class: className = '' } = Astro.props;
+const { eyebrow, title, lede, cta, secondary, align = 'left', wide = false, id = 'page-title', class: className = '' } = Astro.props;
 const hasStage = Astro.slots.has('default');
-const hasStatus = Astro.slots.has('status');
 ---
-<section class:list={['page-hero ambient', hasStage ? 'has-stage' : 'no-stage', className]} aria-labelledby={id}>
-  <div class="grid-field pointer-events-none absolute inset-0" aria-hidden="true"></div>
-  <div class:list={[wide ? 'container-wide' : 'container-site', 'relative']}>
+<section class:list={['page-hero', hasStage ? 'has-stage' : 'no-stage', className]} aria-labelledby={id}>
+  <div class="container-site relative">
     <div class:list={['page-hero-copy', align === 'center' ? 'is-center' : 'is-left']}>
       {eyebrow && <p class="eyebrow enter" style="--i: 0">{eyebrow}</p>}
-      <h1 id={id} class="display enter mt-5 text-text" style="--i: 1">{title}{accent && <> <span class="text-gradient">{accent}</span></>}</h1>
+      <h1 id={id} class:list={['display enter text-text', eyebrow && 'mt-4']} style="--i: 1">{title}</h1>
       <p class="lede enter mt-6 max-w-2xl" style="--i: 2">{lede}</p>
       {(cta || secondary) && (
-        <div class="enter mt-8 flex flex-wrap gap-3" style="--i: 3">
+        <div class="page-hero-actions enter mt-8 flex flex-wrap gap-3" style="--i: 3">
           {cta && <Button href={cta.href} size="lg">{cta.label}</Button>}
           {secondary && <Button href={secondary.href} size="lg" variant="secondary">{secondary.label}</Button>}
         </div>
       )}
-      {hasStatus && <div class="enter mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.9rem] text-text-2" style="--i: 3"><slot name="status" /></div>}
+      <slot name="after" />
     </div>
-    {hasStage && <div class="page-hero-stage enter-stage relative" style="--i: 4"><slot /></div>}
   </div>
+  {hasStage && <div class:list={[wide ? 'container-wide' : 'container-site', 'page-hero-stage enter-stage relative']} style="--i: 4"><slot /></div>}
 </section>
 
 <style>
-  .page-hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--border); padding-top: 4.5rem; padding-bottom: 4rem; }
-  @media (min-width: 64rem) { .page-hero { padding-top: 5.5rem; padding-bottom: 5rem; } .page-hero.no-stage { padding-bottom: 5.5rem; } }
-  .page-hero::before { left: 10%; top: -12rem; width: 60rem; height: 34rem; }
-  .page-hero::after { right: -5%; top: 10rem; }
+  .page-hero { position: relative; overflow: clip; padding-top: 4.5rem; padding-bottom: 4.5rem; }
+  .page-hero::before { content: ''; position: absolute; inset: -20rem -10rem auto; height: 40rem; pointer-events: none; background: radial-gradient(ellipse 45% 50% at 30% 50%, var(--ambient-a), transparent 70%); }
+  @media (min-width: 64rem) { .page-hero { padding-top: 6.5rem; padding-bottom: 6rem; } }
   .page-hero-copy.is-center { max-width: 56rem; margin-inline: auto; text-align: center; }
-  .page-hero-copy.is-center .lede, .page-hero-copy.is-center .flex { margin-inline: auto; justify-content: center; }
-  .page-hero-copy.is-left { max-width: 48rem; }
-  .page-hero-stage { margin-top: 3rem; }
-  @media (min-width: 40rem) { .page-hero-stage { margin-top: 3.5rem; } }
-  @media (min-width: 64rem) { .page-hero-stage { margin-top: 4rem; } }
+  .page-hero-copy.is-center .lede, .page-hero-copy.is-center .page-hero-actions { margin-inline: auto; justify-content: center; }
+  .page-hero-copy.is-left { max-width: 52rem; }
+  .page-hero-stage { margin-top: 3.5rem; }
+  @media (min-width: 64rem) { .page-hero-stage { margin-top: 4.5rem; } }
 </style>

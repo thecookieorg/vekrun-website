@@ -1,41 +1,30 @@
 /**
- * Single source of truth for positioning, packages, pricing, navigation and status
- * vocabulary. Components never hardcode a product status string or a price; they
- * import from here so every route states the same facts.
+ * Single source of truth for positioning, navigation, packages and pricing.
+ * Components import from here so every page states the same facts.
  */
 
 export const site = {
   name: 'Vekrun',
   domain: 'vekrunapp.com',
   url: 'https://vekrunapp.com',
-  /** Category line, used in titles and the footer. */
+  /** Category line, used in titles, the footer and structured data. */
   tagline: 'The AI software engineering Factory.',
-  eyebrow: 'AI software engineering Factory',
-  /** Homepage headline and subheading. */
-  headline: 'Tell Vekrun what needs to ship.',
-  subheading:
-    'Your coding agents can write code. Vekrun coordinates everything around it: plan, implement, test, independently verify, review and deliver, across the projects you already own.',
+  headline: 'From prompt to verified outcome.',
+  subheading: 'Describe what you want built. Vekrun plans the work, puts your coding agents on it and checks the result before it reaches you.',
   description:
-    'Vekrun is an AI software engineering Factory. Give it an outcome, a feature, a ticket or a production incident, and it coordinates your coding agents to plan, build, test, verify and deliver the change in your real repositories while you stay in control. In development.',
-  shortDescription: 'Give Vekrun the outcome. It coordinates your coding agents to plan, build, test, verify and deliver.',
-  /** Licensing. Vekrun is proprietary; nothing has been publicly licensed or distributed. */
+    'Vekrun is a local-first AI software engineering Factory. Describe the outcome; it plans the work, coordinates your coding agents, builds and tests in isolated environments, verifies the result and hands you reviewable work with evidence.',
   licence: {
     model: 'Proprietary',
     summary: 'Vekrun is proprietary software. Vekrun Personal is free to use; Vekrun Teams is a paid, self-hosted licence.',
   },
-  /** Public, verifiable project state. Update this when the status changes. */
-  status: {
-    label: 'In development',
-    /** Last date the roadmap and availability data were reconciled with the desktop project. */
-    asOf: '2026-10-28',
-    /** One sentence, used once per page at most. */
-    line: 'Vekrun is in development. There is no public download yet.',
-    short: 'In development · No public release yet',
-    /** What the "verified in development" status means. Used in legends only. */
-    meaning: 'Verified in development means the capability works in the current development build, with automated tests, on macOS. It is not in any public release. Windows and Linux are not yet verified by hand.',
+  /**
+   * Release facts. These must stay true: flip `downloadAvailable` only when a
+   * signed installer is actually published.
+   */
+  release: {
+    downloadAvailable: false,
+    line: 'Vekrun isn’t available to download yet.',
   },
-  /** The desktop application repository is private and stays private. */
-  repo: { public: false },
   contact: {
     securityEmail: null as string | null,
     generalEmail: null as string | null,
@@ -43,15 +32,15 @@ export const site = {
 } as const;
 
 /**
- * The two packages. There is no Cloud plan and no Enterprise plan.
- * Prices are planned launch pricing: there is no checkout, trial or billing.
+ * Two packages. No Cloud plan, no Enterprise plan, no per-task fees.
+ * Prices are planned launch pricing: there is no checkout, trial or billing yet.
  */
 export const pricing = {
   currency: 'USD',
   label: 'Planned launch pricing',
   /** True only once a real checkout exists. Purchase controls render only then. */
   purchasable: false,
-  notForSale: 'Planned launch pricing. Vekrun Teams is not available to buy yet.',
+  notForSale: 'Planned launch pricing. Vekrun Teams isn’t on sale yet.',
   teams: { base: 199, includedEngineers: 10, perAdditionalEngineer: 10, calculatorMax: 500 },
 } as const;
 
@@ -66,104 +55,53 @@ export const usd = (n: number) => `$${n.toLocaleString('en-US')}`;
 export const personal = {
   name: 'Vekrun Personal',
   price: 'Free',
-  priceNote: 'Free to use when released',
-  summary: 'The native desktop Factory for individual engineers, on your own machine.',
+  summary: 'The whole Factory on your own machine, for individual engineers.',
   includes: [
-    'AI Factory with multiple projects and jobs',
-    'Board for your repositories, trackers and monitoring',
-    'Inbox for the decisions that need you',
-    'Isolated environments',
-    'Verification and Proof Packs',
-    'Personal Engineering Memory and Insights',
-    'Connections to your coding CLIs, models and tools',
-    'Mobile pairing with your own Host',
+    'AI Factory across all your projects',
+    'Council, Board and Inbox',
+    'Isolated environments and Proof Packs',
+    'Interactive Browser',
+    'Engineering Memory and Insights',
+    'Vekrun Mobile with your own Host',
   ],
-  bring: 'You bring your coding CLI logins, model or API accounts, local models, Git access and compute. Vekrun does not bundle paid inference.',
+  bring: 'Bring your own coding agents, model accounts, local models and compute.',
 } as const;
 
 export const teams = {
   name: 'Vekrun Teams',
   href: '/teams/',
-  summary: 'One self-hosted Coordinator for your organization: shared Board, Factory queues, approvals, memory and reporting, running on your infrastructure.',
+  summary: 'One self-hosted Factory for your engineering organization.',
   includes: [
-    'Self-hosted shared Coordinator and organization data store',
-    'SSO, organization roles and permissions',
-    'Shared Board, incident intake and workflow orchestration',
-    'Shared Factory queues on customer-owned workers',
-    'Team-wide Engineering Memory and Insights',
+    'Everything in Personal, for every engineer',
+    'Shared Coordinator on your servers',
+    'Shared Board, Inbox and Factory queues',
+    'SSO, roles and permissions',
     'Approvals, policies and audit',
-    'Secure integrations and secure mobile access',
-    'Updates, licence and support from Vekrun',
+    'Team-wide Memory and Insights',
   ],
-  notIncluded: [
-    'Model and API usage, billed by your providers',
-    'Your servers, workers and other infrastructure',
-  ],
+  notIncluded: ['Model and API usage, billed by your providers', 'Your servers and workers'],
 } as const;
 
-export type NavItem = { label: string; href: string; description?: string };
+export type NavItem = { label: string; href: string };
 
-/** The Product menu. Order is the order these appear everywhere. */
-export const productPages: (NavItem & { key: string })[] = [
-  { key: 'factory', label: 'AI Factory', href: '/features/factory/', description: 'Assign an outcome. Watch it planned, built, tested and verified.' },
-  { key: 'board', label: 'Board', href: '/features/board/', description: 'Tickets, pull requests and production incidents as one stream of work.' },
-  { key: 'inbox', label: 'Inbox', href: '/features/inbox/', description: 'Only the decisions that need a person: approvals, questions, reviews.' },
-  { key: 'verification', label: 'Verification', href: '/features/verification/', description: 'Isolated environments, executable checks and inspectable Proof Packs.' },
-  { key: 'memory', label: 'Engineering Memory', href: '/features/engineering-memory/', description: 'A searchable record of every decision, change and result.' },
-  { key: 'insights', label: 'Insights', href: '/features/engineering-memory/#insights', description: 'Delivery reporting from verifiable work, not lines of code.' },
-  { key: 'connections', label: 'Connections', href: '/integrations/#connections', description: 'Coding CLIs, models, trackers and monitoring, set up and kept current.' },
-  { key: 'mobile', label: 'Mobile and Host', href: '/features/mobile/', description: 'Your Factory from your phone, with a Host that stays reachable.' },
-];
-
-/** Secondary tools for troubleshooting and takeover. Never the headline. */
-export const advancedPages: NavItem[] = [
-  { label: 'Terminal and SSH', href: '/features/terminal/', description: 'Take over a job by hand, on your machine or a remote one.' },
-  { label: 'Coding sessions', href: '/features/ai-coding/', description: 'Work directly with a model, change by change.' },
-  { label: 'Code review', href: '/features/code-review/', description: 'Pull requests, findings and your feedback.' },
-];
-
+/** The five primary destinations. Confirmed; keep the order. */
 export const primaryNav: NavItem[] = [
-  { label: 'Product', href: '/features/' },
-  { label: 'How it works', href: '/how-it-works/' },
-  { label: 'Teams & Pricing', href: '/teams/' },
+  { label: 'Product', href: '/product/' },
+  { label: 'Benefits', href: '/benefits/' },
+  { label: 'Before & After', href: '/before-and-after/' },
   { label: 'Integrations', href: '/integrations/' },
-  { label: 'Docs', href: '/docs/' },
-  { label: 'Roadmap', href: '/roadmap/' },
+  { label: 'Teams & Pricing', href: '/teams/' },
 ];
 
-export const primaryCta = {
-  label: 'Explore AI Factory',
-  href: '/features/factory/',
-  releasedLabel: 'Download Vekrun, free',
-  releasedHref: '/download/',
-};
+/** The header call to action points at the download page, which states availability plainly. */
+export const primaryCta: NavItem = { label: 'Get Vekrun', href: '/download/' };
 
 export const footerColumns: { title: string; items: NavItem[] }[] = [
+  { title: 'Vekrun', items: primaryNav },
   {
-    title: 'Product',
+    title: 'More',
     items: [
-      ...productPages.filter((p) => !p.href.includes('#')).map(({ label, href }) => ({ label, href })),
-      { label: 'All capabilities', href: '/features/' },
-    ],
-  },
-  {
-    title: 'Vekrun',
-    items: [
-      { label: 'How it works', href: '/how-it-works/' },
-      { label: 'Teams & Pricing', href: '/teams/' },
-      { label: 'Integrations', href: '/integrations/' },
       { label: 'Download', href: '/download/' },
-      { label: 'Roadmap', href: '/roadmap/' },
-      { label: 'Documentation', href: '/docs/' },
-    ],
-  },
-  {
-    title: 'Advanced',
-    items: advancedPages.map(({ label, href }) => ({ label, href })),
-  },
-  {
-    title: 'Trust',
-    items: [
       { label: 'Security', href: '/security/' },
       { label: 'Privacy', href: '/privacy/' },
       { label: 'Licence', href: '/license/' },
@@ -172,88 +110,15 @@ export const footerColumns: { title: string; items: NavItem[] }[] = [
   },
 ];
 
-/**
- * One status vocabulary for the site and the docs: product vision, in development,
- * verified development build, publicly available. Keep the strings here.
- */
-export const availability = {
-  available: {
-    label: 'Verified in development',
-    description: 'Works in the development build with automated tests on macOS. Not in a public release.',
-    tone: 'ok',
-  },
-  'in-development': {
-    label: 'In development',
-    description: 'Implementation exists or is under way, but the full workflow or its verification is outstanding.',
-    tone: 'warn',
-  },
-  planned: {
-    label: 'Planned',
-    description: 'Approved product direction with no complete implementation yet.',
-    tone: 'muted',
-  },
-  proposed: {
-    label: 'Exploring',
-    description: 'Under consideration. Not approved or scheduled.',
-    tone: 'faint',
-  },
-} as const;
-
-export type Availability = keyof typeof availability;
-
-/** Roadmap uses the same statuses plus "released" for public builds. */
-export const roadmapStatuses = {
-  implemented: availability.available,
-  'in-progress': availability['in-development'],
-  planned: availability.planned,
-  proposed: availability.proposed,
-  released: { label: 'Available', description: 'Available in a signed public Vekrun release.', tone: 'info' },
-} as const;
-
-export type RoadmapStatus = keyof typeof roadmapStatuses;
-
-/** Roadmap areas, in display order, by user experience. */
-export const roadmapAreas = {
-  factory: 'AI Factory',
-  environments: 'Projects and isolated environments',
-  agents: 'Coding agents and models',
-  board: 'Board, trackers and incidents',
-  inbox: 'Inbox and approvals',
-  verification: 'Verification and Proof Packs',
-  memory: 'Engineering Memory and Insights',
-  'host-mobile': 'Host and Mobile',
-  teams: 'Vekrun Teams',
-  delivery: 'CI, delivery and security',
-  advanced: 'Advanced workspace',
-  releases: 'Releases',
-} as const;
-
-export type RoadmapArea = keyof typeof roadmapAreas;
-
-/** Integration categories. */
-export const integrationCategories = {
-  'coding-clis': { label: 'Coding CLIs and Git tools', description: 'The coding agents and command-line tools you already use, discovered, installed where supported, and kept current on your Host.' },
-  models: { label: 'Models and API gateways', description: 'Hosted model APIs and gateways you connect with your own account, billed by the provider.' },
-  'source-control': { label: 'Source control', description: 'Repositories, branches, pull requests and reviews.' },
-  'project-management': { label: 'Project management', description: 'Where your tickets live. Connect one and its work appears on the Board.' },
-  monitoring: { label: 'Monitoring', description: 'Error tracking and observability. Production problems become shared Work Items you can investigate and fix.' },
-  'ci-delivery': { label: 'CI and delivery', description: 'Pipelines, test runs, deployments, scanners and feature flags: what happened after a change, linked to the work.' },
-  'local-runtimes': { label: 'Local runtimes', description: 'Models that run on your own hardware.' },
-  services: { label: 'Workers and other services', description: 'Machines, MCP servers and services an agent can use with your permission.' },
-} as const;
-
-export type IntegrationCategory = keyof typeof integrationCategories;
-
-export const connectionMethods = {
-  'api-key': 'Your API key',
-  oauth: 'Sign in with the service',
-  'local-runtime': 'Runs on your machine',
-  'cli-account': 'Your signed-in CLI on the Host',
-  mcp: 'MCP server',
-  git: 'Your installed git',
-  ssh: 'SSH',
-  'openai-compatible': 'OpenAI-compatible endpoint',
-  'built-in': 'Built in',
-} as const;
-
-export type ConnectionMethod = keyof typeof connectionMethods;
+/** Sections of the Product page, used for its in-page index and for redirects. */
+export const productSections: { id: string; label: string }[] = [
+  { id: 'how', label: 'How it works' },
+  { id: 'factory', label: 'AI Factory' },
+  { id: 'council', label: 'Council' },
+  { id: 'board', label: 'Board' },
+  { id: 'inbox', label: 'Inbox' },
+  { id: 'verification', label: 'Verification' },
+  { id: 'memory', label: 'Memory' },
+  { id: 'mobile', label: 'Mobile' },
+  { id: 'tools', label: 'Your tools' },
+];

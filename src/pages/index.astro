@@ -1,222 +1,173 @@
 ---
 /**
- * The homepage. Vekrun is an AI software engineering Factory: the hero is the
- * Factory itself (a Coordinator composer and jobs across projects), and every
- * section after it answers one question a new visitor has, in order.
+ * The homepage tells one story, one idea per section: the promise, the problem,
+ * the Factory, the Council, verification, what you gain, before and after, your
+ * tools, and the two packages.
  */
 import Base from '@/layouts/Base.astro';
-import Button from '@/components/Button.astro';
+import PageHero from '@/components/PageHero.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import FactoryHero from '@/components/factory/FactoryHero.astro';
-import JobFlow from '@/components/factory/JobFlow.astro';
-import ParallelLanes from '@/components/factory/ParallelLanes.astro';
-import AgentBridge from '@/components/factory/AgentBridge.astro';
-import ProofPack from '@/components/factory/ProofPack.astro';
-import MemoryInsights from '@/components/factory/MemoryInsights.astro';
-import MobileHost from '@/components/factory/MobileHost.astro';
+import Council from '@/components/visuals/Council.astro';
+import Screenshot from '@/components/visuals/Screenshot.astro';
 import PlanCards from '@/components/teams/PlanCards.astro';
-import { site, primaryCta } from '@/data/site';
-import { hasRelease } from '@/data/releases';
-import { Check, MessageSquareText, SquareKanban, Siren, ArrowUpRight } from '@lucide/astro';
+import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
+import { site } from '@/data/site';
+import { toolById } from '@/data/integrations';
+import { ArrowRight, RotateCw } from '@lucide/astro';
+
+const chores = ['Write the prompt', 'Watch it work', 'Fix what it missed', 'Test it yourself', 'Explain it again'];
+const factory = [
+  { t: 'Outcome', d: 'You say what should be true.' },
+  { t: 'Council', d: 'The approach gets challenged.' },
+  { t: 'Build', d: 'Your agents do the work.' },
+  { t: 'Verify', d: 'The result gets proven.' },
+  { t: 'Deliver', d: 'You review a finished PR.' },
+];
+const gains = [
+  { t: 'Stop babysitting agents.', d: 'Hand over the outcome, not a stream of prompts.' },
+  { t: 'More work moving at once.', d: 'Several projects progress while you focus on one.' },
+  { t: 'Know what happened and why.', d: 'Decisions and evidence stay with the code.' },
+];
+const pairs = [
+  { b: 'The agent says it’s done. Now you test everything.', a: 'Tests run, evidence is collected, you review the result.' },
+  { b: 'One AI makes a plan. You hope it’s right.', a: 'A Council challenges the plan before anyone builds.' },
+];
+const tools = ['claude-code', 'codex', 'gemini-cli', 'openrouter', 'github', 'gitlab', 'jira', 'linear', 'sentry'].map((id) => toolById(id)!);
 
 const structuredData = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: site.name,
-    applicationCategory: 'DeveloperApplication',
-    description: site.description,
-    url: site.url,
-    softwareHelp: `${site.url}/docs/`,
-  },
+  { '@context': 'https://schema.org', '@type': 'Organization', name: site.name, url: site.url, logo: `${site.url}/brand/vekrun-mark-dark-512.png` },
   { '@context': 'https://schema.org', '@type': 'WebSite', name: site.name, url: site.url },
-];
-const cta = hasRelease ? { label: primaryCta.releasedLabel, href: primaryCta.releasedHref } : { label: primaryCta.label, href: primaryCta.href };
-const contrast = [
-  ['Writes and edits code in a session', 'Owns the outcome from the goal to a reviewed pull request'],
-  ['Works in the directory you give it', 'Gives each Work Item its own isolated environment'],
-  ['Forgets when the session ends', 'Keeps durable Work Items, a journal and Engineering Memory'],
-  ['Reports that it is done', 'Runs the checks, then has an independent verifier inspect the result'],
-  ['Stops when it hits a limit', 'Routes to another capable worker and hands over the context'],
-  ['One engineer, one terminal', 'Shared Board, Inbox and queues for a whole team'],
-];
-const starts = [
-  { i: MessageSquareText, k: 'Describe the outcome', t: 'Build a feature in an existing repository.', d: 'Say what should be true when the work is done. New projects work the same way.', ex: 'Add CSV export to the monthly report, with the same filters as the table', href: '/features/factory/' },
-  { i: SquareKanban, k: 'Start from your Board', t: 'Pick up tickets, issues and reviews.', d: 'Jira, Linear, Asana, GitHub and GitLab work arrives on one Board, ready to become a Factory job.', ex: 'ENG-418 · Add CSV export to reports · assigned to you', href: '/features/board/' },
-  { i: Siren, k: 'Investigate production', t: 'Turn an incident into a verified fix.', d: 'Sentry, Honeybadger, AppSignal or Datadog → deduplicate → reproduce → fix → verified PR → review → observe.', ex: 'Honeybadger · TypeError in CheckoutTotal · 312 events', href: '/features/board/#incidents' },
+  { '@context': 'https://schema.org', '@type': 'SoftwareApplication', name: site.name, applicationCategory: 'DeveloperApplication', description: site.description, url: site.url },
 ];
 ---
-<Base title={`${site.name}: ${site.tagline}`} fullTitle={`${site.name}: the AI software engineering Factory`} description={site.description} structuredData={structuredData}>
-  <!-- A. Hero -->
-  <section class="hero ambient" aria-labelledby="hero-title">
-    <div class="grid-field pointer-events-none absolute inset-0" aria-hidden="true"></div>
-    <div class="container-wide relative">
-      <div class="hero-copy">
-        <p class="eyebrow enter" style="--i: 0">{site.eyebrow}</p>
-        <h1 id="hero-title" class="display enter mt-5 text-text" style="--i: 1">{site.headline}</h1>
-        <p class="lede enter mt-6 max-w-2xl" style="--i: 2">{site.subheading}</p>
-        <div class="enter mt-8 flex flex-wrap items-center gap-3" style="--i: 3">
-          <Button href={cta.href} size="lg">{cta.label}</Button>
-          <Button href="/teams/" size="lg" variant="secondary">Self-hosted Teams</Button>
-        </div>
-        <div class="hero-meta enter" style="--i: 4">
-          <p class="hero-trust">Your repositories <span aria-hidden="true">·</span> Your models <span aria-hidden="true">·</span> Your infrastructure</p>
-          <p class="hero-status"><span aria-hidden="true"></span>{site.status.line}</p>
-        </div>
-      </div>
-      <div class="hero-stage enter-stage relative" style="--i: 5"><FactoryHero /></div>
+<Base title={site.name} fullTitle={`${site.name} · From prompt to verified outcome`} description={site.description} structuredData={structuredData} page="home">
+  <PageHero eyebrow="The AI software engineering Factory" title={site.headline} lede={site.subheading} cta={{ label: 'See how it works', href: '/product/' }} secondary={{ label: 'Before & After', href: '/before-and-after/' }} wide>
+    <FactoryHero />
+  </PageHero>
+
+  <section class="section-pad rule" aria-labelledby="problem-title">
+    <div class="container-site problem">
+      <SectionHeading id="problem-title" title="Your agents write the code. You’re still running the project." lede="Prompting, checking, correcting, re-explaining. That part of the job never got automated." class="reveal" />
+      <ol class="loop reveal-group" aria-label="The loop you run today">
+        {chores.map((c) => <li>{c}</li>)}
+        <li class="loop-back"><RotateCw class="h-4 w-4" aria-hidden="true" />Repeat</li>
+      </ol>
     </div>
   </section>
 
-  <!-- C. Category contrast -->
-  <section class="section-pad" aria-labelledby="contrast-title">
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="factory-title">
     <div class="container-site">
-      <div class="grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
-        <div class="reveal">
-          <p class="kicker">Why Vekrun</p>
-          <h2 id="contrast-title" class="heading-2 mt-3 text-text">Your coding agent is the worker. <span class="text-gradient">Vekrun is the Factory.</span></h2>
-          <p class="lede mt-4">Keep Claude Code, Codex or Gemini CLI. Vekrun does not replace them, or your editor. It coordinates the work around them: context, isolated execution, verification, delivery and memory, across every project you own.</p>
-        </div>
-        <div class="reveal contrast" role="table" aria-label="A coding agent compared with Vekrun">
-          <div class="contrast-row contrast-head" role="row"><span role="columnheader">A coding agent on its own</span><span role="columnheader">With Vekrun</span></div>
-          {contrast.map(([a, b]) => <div class="contrast-row" role="row"><span role="cell">{a}</span><span role="cell"><Check class="h-4 w-4 shrink-0 text-accent" aria-hidden="true" />{b}</span></div>)}
-        </div>
-      </div>
+      <SectionHeading id="factory-title" title="Vekrun runs the engineering around them." lede="You set the outcome. The Factory takes it from there and comes back with proof." class="reveal" />
+      <ol class="flow reveal-group" aria-label="How the Factory works">
+        {factory.map((s) => <li><b>{s.t}</b><span>{s.d}</span></li>)}
+      </ol>
+      <p class="mt-10 reveal"><a href="/product/#how" class="link-more group">See every step<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
     </div>
   </section>
 
-  <!-- D. Three starting points -->
-  <section class="section-pad rule bg-bg-elevated" aria-labelledby="starts-title">
+  <section class="section-pad rule" aria-labelledby="council-title">
+    <div class="container-site split">
+      <div class="reveal">
+        <h2 id="council-title" class="heading-2 text-text">Argue about the plan before anyone writes code.</h2>
+        <p class="lede mt-4">When a decision matters, several models challenge it. You see the reasoning and the objections, not just the winner.</p>
+      </div>
+      <div class="reveal min-w-0"><Council compact /></div>
+    </div>
+  </section>
+
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="verify-title">
     <div class="container-site">
-      <SectionHeading id="starts-title" kicker="Three ways to start" title="Work starts where it already lives." class="reveal" />
-      <ul class="starts reveal-group">
-        {starts.map((s) => (
-          <li class="start card">
-            <s.i class="h-5 w-5 text-accent" aria-hidden="true" />
-            <p class="start-k">{s.k}</p>
-            <h3 class="start-t">{s.t}</h3>
-            <p class="start-d">{s.d}</p>
-            <p class="start-ex" aria-label="Example">{s.ex}</p>
-            <a href={s.href} class="start-a group link-slide">Learn more<ArrowUpRight class="icon-nudge h-3.5 w-3.5" aria-hidden="true" /></a>
-          </li>
+      <SectionHeading id="verify-title" title="Done means proven, not claimed." lede="Tests, a real browser and an independent verifier check the work. The evidence arrives with it." class="reveal" />
+      <div class="reveal mt-12"><Screenshot name="browser-verified" alt="The Vekrun desktop app comparing a page before and after a fix, with each review comment verified and an independent test run passed." /></div>
+    </div>
+  </section>
+
+  <section class="section-pad rule" aria-labelledby="gains-title">
+    <div class="container-site">
+      <SectionHeading id="gains-title" title="Less coordinating. More shipping." class="reveal" />
+      <ul class="gains reveal-group">
+        {gains.map((g) => <li><h3>{g.t}</h3><p>{g.d}</p></li>)}
+      </ul>
+      <p class="mt-10 reveal"><a href="/benefits/" class="link-more group">Everything you gain<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
+    </div>
+  </section>
+
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="ba-title">
+    <div class="container-site">
+      <SectionHeading id="ba-title" title="Before Vekrun, you were the glue." class="reveal" />
+      <div class="ba reveal-group">
+        {pairs.map((p) => (
+          <div class="ba-pair">
+            <p class="ba-b"><span>Before</span>{p.b}</p>
+            <p class="ba-a"><span>After</span>{p.a}</p>
+          </div>
         ))}
+      </div>
+      <p class="mt-10 reveal"><a href="/before-and-after/" class="link-more group">See the whole day, before and after<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
+    </div>
+  </section>
+
+  <section class="section-pad rule" aria-labelledby="tools-title">
+    <div class="container-site split">
+      <div class="reveal">
+        <h2 id="tools-title" class="heading-2 text-text">Keep the tools you like.</h2>
+        <p class="lede mt-4">Vekrun works through your agents, repositories and trackers. It doesn’t replace them.</p>
+        <p class="mt-8"><a href="/integrations/" class="link-more group">All integrations<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
+      </div>
+      <ul class="logos reveal-group" aria-label="Some of the tools Vekrun works with">
+        {tools.map((t) => <li><IntegrationLogo id={t.id} name={t.name} monogram={t.mono} /><span>{t.name}</span></li>)}
       </ul>
     </div>
   </section>
 
-  <!-- E. How a job works -->
-  <section id="how" class="section-pad rule scroll-mt-16" aria-labelledby="how-title">
-    <div class="container-wide">
-      <SectionHeading id="how-title" kicker="How an engineering job works" title="From a goal to a reviewed pull request." lede="Orchestration and your policies govern every change. Where you require approval, the job waits for a person." class="reveal" />
-      <div class="mt-12"><JobFlow /></div>
-    </div>
-  </section>
-
-  <!-- F. Parallel projects -->
-  <section class="section-pad rule bg-bg-elevated" aria-labelledby="parallel-title">
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="plans-title">
     <div class="container-site">
-      <div class="grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16 lg:items-center">
-        <div class="reveal">
-          <p class="kicker">Parallel work</p>
-          <h2 id="parallel-title" class="heading-2 mt-3 text-text">One Factory. Many projects. No shared working-directory collisions.</h2>
-          <p class="lede mt-4">Each job has its own repository copy, branch, services, test database and preview, and waits its turn when the machine is busy. Two changes to the same code can still conflict when they merge; Vekrun shows you, it does not pretend otherwise.</p>
-        </div>
-        <div class="reveal"><ParallelLanes /></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- G. Bring your own AI -->
-  <section class="section-pad rule" aria-labelledby="ai-title">
-    <div class="container-site">
-      <SectionHeading id="ai-title" kicker="Bring your existing AI" title="Your signed-in agents. Routed with care." lede="Vekrun finds the coding CLIs on your machine, checks their versions and sign-in, and picks a capable worker for each task. When one reaches its limit, work can move to another with its context. Coding CLI accounts and paid API access are separate things, billed by their providers." class="reveal" />
-      <div class="reveal mt-12"><AgentBridge /></div>
-      <p class="reveal mt-6 text-[0.875rem] text-text-3">Vekrun respects each provider’s terms; using a personal subscription for unattended automation may not be allowed. <a href="/integrations/" class="text-accent link-slide">All connections and their status</a></p>
-    </div>
-  </section>
-
-  <!-- H. Verification -->
-  <section class="section-pad rule ambient" aria-labelledby="proof-title">
-    <div class="container-wide">
-      <div class="grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-14 lg:items-start">
-        <div class="reveal lg:sticky lg:top-24">
-          <p class="kicker">Verification you can inspect</p>
-          <h2 id="proof-title" class="heading-2 mt-3 text-text">Trust the evidence, not the agent’s confidence.</h2>
-          <p class="lede mt-4">Every job ends with a Proof Pack: what was run, what passed, what failed and was fixed, what was not run and why, on the exact revision. An independent verifier checks the result against the goal. Your branch protections still decide what merges.</p>
-          <Button href="/features/verification/" variant="secondary" class="mt-7">How verification works</Button>
-        </div>
-        <div class="reveal min-w-0"><ProofPack /></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- I. Memory and Insights -->
-  <section class="section-pad rule bg-bg-elevated" aria-labelledby="memory-title">
-    <div class="container-wide">
-      <SectionHeading id="memory-title" kicker="Engineering Memory and Insights" title="Every decision on the record. Every result measurable." lede="Ask why something was built the way it was and get the decision, the ticket, the change and the evidence. Report on what actually shipped: pull requests merged, bugs fixed and verified, features delivered, time to review, rework and spend." class="reveal" />
-      <div class="reveal mt-12"><MemoryInsights /></div>
-    </div>
-  </section>
-
-  <!-- J. Personal and Teams -->
-  <section class="section-pad rule" aria-labelledby="plans-title">
-    <div class="container-site">
-      <SectionHeading id="plans-title" kicker="Built for engineers, coordinated for teams" title="Free on your machine. Self-hosted for your team." lede="Vekrun Personal runs on your own computer. Vekrun Teams adds a shared Coordinator on your infrastructure, with organization policies, SSO, shared incidents and reporting. Model providers you choose still receive the prompts and code a job sends them." class="reveal" />
-      <div class="reveal-group mt-12"><PlanCards compact /></div>
-    </div>
-  </section>
-
-  <!-- K. Mobile and Host -->
-  <section class="section-pad rule bg-bg-elevated" aria-labelledby="mobile-title">
-    <div class="container-site">
-      <SectionHeading id="mobile-title" kicker="Mobile and an always-on Host" title="Your Factory stays within reach." class="reveal" />
-      <div class="reveal mt-12"><MobileHost /></div>
-    </div>
-  </section>
-
-  <!-- L. Final call to action -->
-  <section class="rule ambient ambient-low" aria-labelledby="cta-title">
-    <div class="container-site relative py-20 text-center sm:py-24">
-      <h2 id="cta-title" class="heading-1 text-text">Your next engineering task starts with an outcome.</h2>
-      <p class="lede mx-auto mt-5 max-w-2xl">See how the AI Factory plans, builds, verifies and delivers, and where each part stands today.</p>
-      <div class="mt-8 flex flex-wrap justify-center gap-3">
-        <Button href={cta.href} size="lg">{cta.label}</Button>
-        <Button href="/roadmap/" size="lg" variant="secondary">See the roadmap</Button>
-      </div>
-      <p class="mt-6 text-[0.875rem] text-text-3">{site.status.line}</p>
+      <SectionHeading id="plans-title" title="Free for you. Simple for your team." lede="Personal costs nothing. Teams is one self-hosted plan with one price." class="reveal" />
+      <div class="reveal mt-12"><PlanCards compact /></div>
     </div>
   </section>
 </Base>
 
 <style>
-  .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--border); padding-top: 4.5rem; padding-bottom: 3.5rem; }
-  @media (min-width: 64rem) { .hero { padding-top: 5.5rem; padding-bottom: 4.5rem; } }
-  .hero::before { left: -6%; top: -10rem; width: 60rem; height: 34rem; }
-  .hero::after { right: 2%; top: 18rem; }
-  .hero-copy { max-width: 50rem; }
-  .hero-meta { margin-top: 1.75rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1.5rem; font-size: 0.875rem; }
-  .hero-trust { margin: 0; color: var(--text-2); }
-  .hero-trust span { margin-inline: 0.35rem; color: var(--text-3); }
-  .hero-status { margin: 0; display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-3); }
-  .hero-status span { width: 0.4rem; height: 0.4rem; border-radius: 50%; background: var(--warn); }
-  .hero-stage { margin-top: 3rem; }
-  @media (min-width: 64rem) { .hero-stage { margin-top: 3.75rem; } }
+  .split { display: grid; gap: 2.5rem; }
+  @media (min-width: 64rem) { .split { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 4rem; align-items: center; } }
 
-  .contrast { border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--surface); }
-  .contrast-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); }
-  .contrast-row + .contrast-row { border-top: 1px solid var(--border); }
-  .contrast-row > span { padding: 0.8rem 1rem; font-size: 0.9rem; line-height: 1.45; }
-  .contrast-row > span:first-child { color: var(--text-3); }
-  .contrast-row > span:last-child { display: flex; gap: 0.55rem; align-items: flex-start; color: var(--text); border-left: 1px solid var(--border); background: color-mix(in srgb, var(--accent) 4%, transparent); }
-  .contrast-row > span:last-child :global(svg) { margin-top: 0.15rem; }
-  .contrast-head > span { font-size: 0.75rem !important; font-weight: 560; color: var(--text-2) !important; background: var(--surface-2) !important; }
+  .problem { display: grid; gap: 2.5rem; }
+  @media (min-width: 64rem) { .problem { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 4rem; align-items: center; } }
+  .loop { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.5rem; }
+  .loop li { display: flex; align-items: center; gap: 0.75rem; padding: 0.8rem 1rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); font-size: 1rem; color: var(--text-2); }
+  .loop li::before { content: ''; width: 0.5rem; height: 0.5rem; border-radius: 50%; border: 1.5px solid var(--text-3); flex: 0 0 auto; }
+  .loop .loop-back { justify-content: center; border-style: dashed; color: var(--warn); }
+  .loop .loop-back::before { display: none; }
 
-  .starts { margin: 3rem 0 0; padding: 0; list-style: none; display: grid; gap: 1.25rem; }
-  @media (min-width: 64rem) { .starts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-  .start { display: flex; flex-direction: column; padding: 1.5rem; }
-  .start-k { margin: 1rem 0 0; font-size: 0.8125rem; color: var(--accent); font-weight: 560; }
-  .start-t { margin: 0.35rem 0 0; font-size: 1.15rem; font-weight: 600; letter-spacing: -0.015em; color: var(--text); }
-  .start-d { margin: 0.5rem 0 0; font-size: 0.9rem; line-height: 1.55; color: var(--text-2); }
-  .start-ex { margin: 1.1rem 0 0; padding: 0.6rem 0.75rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-elevated); font-family: var(--font-mono); font-size: 0.72rem; line-height: 1.5; color: var(--text-2); }
-  .start-a { margin-top: auto; padding-top: 1.1rem; display: inline-flex; align-items: center; gap: 0.3rem; align-self: flex-start; font-size: 0.9rem; font-weight: 540; color: var(--accent); }
+  .flow { margin: 3rem 0 0; padding: 0; list-style: none; display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; counter-reset: s; }
+  @media (min-width: 48rem) { .flow { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+  .flow li { counter-increment: s; display: grid; gap: 0.35rem; padding: 1.4rem 1.25rem 1.5rem; background: var(--surface); }
+  .flow li::before { content: counter(s); font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-3); }
+  .flow b { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.02em; color: var(--text); }
+  .flow span { font-size: 0.92rem; line-height: 1.45; color: var(--text-2); }
+  .flow li:last-child { background: var(--accent-soft); }
+  .flow li:last-child b { color: var(--accent); }
+
+  .gains { margin: 3rem 0 0; padding: 0; list-style: none; display: grid; gap: 2rem; }
+  @media (min-width: 48rem) { .gains { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3rem; } }
+  .gains h3 { margin: 0; font-size: 1.35rem; font-weight: 620; letter-spacing: -0.025em; color: var(--text); }
+  .gains p { margin: 0.5rem 0 0; font-size: 1rem; line-height: 1.5; color: var(--text-2); }
+
+  .ba { margin-top: 3rem; display: grid; gap: 1.25rem; }
+  @media (min-width: 64rem) { .ba { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .ba-pair { display: grid; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  .ba-pair p { margin: 0; padding: 1.4rem 1.5rem; font-size: 1.15rem; line-height: 1.4; letter-spacing: -0.015em; }
+  .ba-pair span { display: block; margin-bottom: 0.4rem; font-size: 0.8125rem; letter-spacing: 0; }
+  .ba-b { background: var(--surface); color: var(--text-2); }
+  .ba-b span { color: var(--text-3); }
+  .ba-a { background: var(--accent-soft); color: var(--text); border-top: 1px solid var(--accent-line); }
+  .ba-a span { color: var(--accent); }
+
+  .logos { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
+  @media (min-width: 40rem) { .logos { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .logos li { display: flex; align-items: center; gap: 0.7rem; padding: 0.6rem 0.7rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); font-size: 0.92rem; font-weight: 520; color: var(--text); min-width: 0; }
+  .logos li span:last-child { min-width: 0; line-height: 1.25; }
+
 </style>

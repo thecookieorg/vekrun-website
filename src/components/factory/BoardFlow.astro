@@ -26,7 +26,7 @@ const chain = [
   <Window title="Board" crumbs={['All projects']} class="bf-win">
     <span slot="status" class="pill is-warn" data-bf-state>Waiting for review</span>
     <div class="bf-grid">
-      <div class="bf-cols" role="list" aria-label="Board columns">
+      <div class="bf-cols" role="list" aria-label="Board columns" tabindex="0">
         {cols.map((c) => (
           <div class="bf-col" role="listitem" data-col={c.id}>
             <p class="bf-col-n">{c.n}</p>

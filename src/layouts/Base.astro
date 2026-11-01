@@ -42,7 +42,7 @@ const ld = structuredData
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <meta name="theme-color" content="#080b12" data-theme-color />
+    <meta name="theme-color" content="#0d1014" data-theme-color />
     {noindex && <meta name="robots" content="noindex" />}
 
     <meta property="og:type" content="website" />
@@ -62,22 +62,17 @@ const ld = structuredData
 
     <script is:inline>
       // Resolve the theme before first paint. Dark is the default; an explicit choice
-      // ('dark' or 'light') wins, and 'auto' (an empty stored value, as the docs write it)
-      // follows the system. Shares the storage key with the docs (Starlight).
+      // ('dark' or 'light') wins. The old key from the retired docs is still honoured.
       (function () {
         var html = document.documentElement;
         html.classList.remove('no-js');
         if (html.hasAttribute('data-theme-locked')) return;
         var stored = null;
-        try { stored = localStorage.getItem('starlight-theme'); } catch (e) {}
-        var theme = stored === 'dark' || stored === 'light'
-          ? stored
-          : stored === '' || stored === 'auto'
-            ? (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
-            : 'dark';
+        try { stored = localStorage.getItem('vekrun-theme') || localStorage.getItem('starlight-theme'); } catch (e) {}
+        var theme = stored === 'light' ? 'light' : 'dark';
         html.dataset.theme = theme;
         var meta = document.querySelector('meta[data-theme-color]');
-        if (meta) meta.setAttribute('content', theme === 'light' ? '#f5f7fb' : '#080b12');
+        if (meta) meta.setAttribute('content', theme === 'light' ? '#f6f7f4' : '#0d1014');
       })();
     </script>
     <slot name="head" />

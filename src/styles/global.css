@@ -1,105 +1,119 @@
 @import 'tailwindcss';
-@import '@fontsource-variable/geist';
+@import '@fontsource-variable/inter';
 @import '@fontsource-variable/geist-mono';
 
 /* ===========================================================================
-   Vekrun design tokens.
-   Dark is the identity: a deep blue-black ground, charcoal-navy surfaces, mint
-   for the developer's own machine and Vekrun itself, electric blue for the
-   organization and Vekrun Teams. Light is a full peer with the same meaning.
-   Bare :root carries dark. Light applies under [data-theme="light"].
+   Vekrun design tokens, taken from the desktop application
+   (apps/desktop/src/index.css): a near-black charcoal ground in quiet layers,
+   hairline borders, a desaturated lime for primary actions and states, and a
+   muted mint as the one secondary accent. Inter for text, Geist Mono for code.
+   Dark is the default; light applies under [data-theme="light"].
    =========================================================================== */
 :root {
   color-scheme: dark;
 
-  --bg: #080b12;
-  --bg-elevated: #0d131d;
-  --surface: #111927;
-  --surface-2: #172131;
-  --surface-3: #1f2b3d;
-  --border: #233146;
-  --border-strong: #32455f;
-  --text: #f4f7fb;
-  --text-2: #9aa9bc;
-  --text-3: #6f7e94;
+  --bg: #0d1014;
+  --bg-elevated: #0f1317;
+  --surface: #151b20;
+  --surface-2: #1a2127;
+  --surface-3: #20282d;
+  --surface-sunk: #12171c;
+  --border: #252d32;
+  --border-strong: #353f45;
+  --text: #e9eee9;
+  --text-2: #8b989d;
+  /* The desktop's faint grey (#657279) is too dim for small text on this ground; this keeps its hue at 4.6:1. */
+  --text-3: #808e94;
 
-  --accent: #8ce6c4;
-  --accent-strong: #a8f0d6;
-  --accent-ink: #062018;
-  --accent-soft: rgba(140, 230, 196, 0.12);
-  --accent-ring: rgba(140, 230, 196, 0.45);
-  --accent-2: #618bff;
-  --cloud: #618bff;
-  --cloud-strong: #86a6ff;
-  --cloud-soft: rgba(97, 139, 255, 0.14);
-  --accent-gradient: linear-gradient(120deg, var(--accent) 0%, var(--accent-2) 100%);
+  --accent: #c0f48a;
+  --accent-strong: #d0f8a6;
+  --accent-ink: #152217;
+  --accent-soft: #202a21;
+  --accent-line: #33422e;
+  --accent-ring: rgba(192, 244, 138, 0.45);
+  --mint: #9ad7ba;
+  --mint-soft: rgba(154, 215, 186, 0.1);
+  /* Legacy names kept for the product concepts: the secondary accent is mint, never blue. */
+  --accent-2: var(--mint);
+  --cloud: var(--mint);
+  --cloud-strong: var(--mint);
+  --cloud-soft: var(--mint-soft);
+  --accent-gradient: linear-gradient(120deg, var(--accent), var(--mint));
 
-  --ok: #8ce6c4;
-  --warn: #f0c060;
-  --info: #7da3ff;
-  --muted: #7f8ea4;
-  --danger: #ff8a8a;
+  --ok: #b4e8a0;
+  --warn: #e5bd80;
+  --info: #a3c7ea;
+  --muted: #808e94;
+  --danger: #e69a8f;
 
-  --term-bg: #060910;
-  --term-fg: #d7dee7;
-  --term-dim: #5c6b7d;
-  --term-green: #8ce6c4;
-  --term-yellow: #f0c060;
-  --term-blue: #86a6ff;
-  --term-red: #ff8a8a;
-  --term-magenta: #c89bf2;
+  --term-bg: #0c1115;
+  --term-fg: #d7e0d8;
+  --term-dim: #657279;
+  --term-green: #b4e8a0;
+  --term-yellow: #e5bd80;
+  --term-blue: #a3c7ea;
+  --term-red: #e69a8f;
+  --term-magenta: #c9b9ed;
 
-  --ambient-a: rgba(140, 230, 196, 0.14);
-  --ambient-b: rgba(97, 139, 255, 0.2);
-  --glow: 0 0 0 1px color-mix(in srgb, var(--accent) 16%, var(--border)), 0 30px 90px -30px rgba(97, 139, 255, 0.4);
-  --shadow-window: 0 40px 100px -30px rgba(0, 0, 0, 0.8), 0 0 0 1px var(--border);
+  --ambient-a: rgba(192, 244, 138, 0.07);
+  --ambient-b: rgba(154, 215, 186, 0.06);
+  --glow: 0 0 0 1px var(--border), 0 30px 80px rgba(0, 0, 0, 0.55);
+  --shadow-window: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--border);
   --shadow-lift: 0 18px 50px -24px rgba(0, 0, 0, 0.7);
 
-  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'Geist Mono Variable', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
   --radius-sm: 6px;
-  --radius: 10px;
+  --radius: 9px;
   --radius-lg: 14px;
 
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
   --ease-spring: cubic-bezier(0.34, 1.3, 0.64, 1);
-  --dur-fast: 140ms;
-  --dur: 240ms;
-  --dur-slow: 480ms;
+  --dur-fast: 120ms;
+  --dur: 220ms;
+  --dur-slow: 460ms;
 }
 
 :root[data-theme='light'] {
   color-scheme: light;
-  --bg: #f5f7fb;
-  --bg-elevated: #ffffff;
+  --bg: #f6f7f4;
+  --bg-elevated: #fbfcfa;
   --surface: #ffffff;
-  --surface-2: #eef2f7;
-  --surface-3: #e2e8f1;
-  --border: #d7dee9;
-  --border-strong: #bcc7d6;
-  --text: #0e1522;
-  --text-2: #4a5a6f;
-  --text-3: #74849a;
-  --accent: #0f8f71;
-  --accent-strong: #0b7a60;
+  --surface-2: #eff2ec;
+  --surface-3: #e7ebe3;
+  --surface-sunk: #f0f3ed;
+  --border: #e0e5dc;
+  --border-strong: #c4ccbf;
+  --text: #111511;
+  --text-2: #4f5a51;
+  --text-3: #5a645e;
+  --accent: #3d670a;
+  --accent-strong: #335608;
   --accent-ink: #ffffff;
-  --accent-soft: rgba(15, 143, 113, 0.1);
-  --accent-ring: rgba(15, 143, 113, 0.4);
-  --accent-2: #3b63e0;
-  --cloud: #3b63e0;
-  --cloud-strong: #2f52c4;
-  --cloud-soft: rgba(59, 99, 224, 0.1);
-  --ok: #0f8f71;
-  --warn: #a2690a;
-  --info: #2f52c4;
-  --muted: #6b7a8f;
-  --danger: #c43f3f;
-  --ambient-a: rgba(15, 143, 113, 0.12);
-  --ambient-b: rgba(59, 99, 224, 0.12);
-  --glow: 0 0 0 1px color-mix(in srgb, var(--accent) 18%, var(--border)), 0 30px 80px -30px rgba(59, 99, 224, 0.22);
-  --shadow-window: 0 30px 80px -30px rgba(14, 21, 34, 0.3), 0 0 0 1px var(--border);
-  --shadow-lift: 0 18px 50px -24px rgba(14, 21, 34, 0.25);
+  --accent-soft: rgba(61, 103, 10, 0.1);
+  --accent-line: rgba(61, 103, 10, 0.35);
+  --accent-ring: rgba(61, 103, 10, 0.4);
+  --mint: #1f7a5a;
+  --mint-soft: rgba(31, 122, 90, 0.1);
+  --ok: #3f7a12;
+  --warn: #9a6200;
+  --info: #2f5fd6;
+  --muted: #5a645e;
+  --danger: #c3311f;
+  --term-bg: #fbfcfa;
+  --term-fg: #1f2420;
+  --term-dim: #7f8a81;
+  --term-green: #3f7a12;
+  --term-yellow: #9a6200;
+  --term-blue: #0969da;
+  --term-red: #cf222e;
+  --term-magenta: #8250df;
+  --ambient-a: rgba(61, 103, 10, 0.06);
+  --ambient-b: rgba(31, 122, 90, 0.05);
+  --glow: 0 0 0 1px var(--border), 0 24px 60px -30px rgba(17, 21, 17, 0.28);
+  --shadow-window: 0 18px 50px -28px rgba(17, 21, 17, 0.3), 0 0 0 1px var(--border);
+  --shadow-lift: 0 18px 50px -28px rgba(17, 21, 17, 0.3);
 }
 
 /* Expose tokens to Tailwind utilities (bg-surface, text-text-2, border-border …). */
@@ -119,6 +133,9 @@
   --color-accent-ink: var(--accent-ink);
   --color-accent-soft: var(--accent-soft);
   --color-accent-2: var(--accent-2);
+  --color-mint: var(--mint);
+  --color-accent-line: var(--accent-line);
+  --color-surface-sunk: var(--surface-sunk);
   --color-cloud: var(--cloud);
   --color-cloud-strong: var(--cloud-strong);
   --color-ok: var(--ok);
@@ -153,7 +170,8 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    font-feature-settings: 'ss01', 'cv11';
+    font-feature-settings: 'cv11', 'ss01';
+    letter-spacing: -0.011em;
     scroll-behavior: smooth;
   }
   @media (prefers-reduced-motion: reduce) {
@@ -166,8 +184,8 @@
     color: var(--text);
   }
   ::selection {
-    background: var(--accent);
-    color: var(--accent-ink);
+    background: var(--accent-line);
+    color: var(--text);
   }
   :focus-visible {
     outline: 2px solid var(--accent);
@@ -176,7 +194,7 @@
   }
   a { color: inherit; text-decoration: none; }
   code, kbd, pre, samp { font-family: var(--font-mono); font-feature-settings: normal; }
-  h1, h2, h3, h4 { letter-spacing: -0.02em; text-wrap: balance; font-weight: 560; line-height: 1.1; }
+  h1, h2, h3, h4 { letter-spacing: -0.022em; text-wrap: balance; font-weight: 600; line-height: 1.1; }
   p { text-wrap: pretty; }
   img, svg { display: block; max-width: 100%; }
   button { font: inherit; color: inherit; }
@@ -219,40 +237,38 @@
    Typography
    --------------------------------------------------------------------------- */
 @utility eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  font-size: 0.9375rem;
+  font-weight: 540;
+  letter-spacing: -0.005em;
   color: var(--accent);
 }
 
 @utility kicker {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-3);
+  font-size: 0.875rem;
+  font-weight: 540;
+  letter-spacing: -0.005em;
+  color: var(--mint);
 }
 
 @utility display {
-  font-size: clamp(2.5rem, 1.3rem + 4.6vw, 4.9rem);
+  font-size: clamp(2.6rem, 1.2rem + 5vw, 5.4rem);
   line-height: 0.98;
-  letter-spacing: -0.04em;
-  font-weight: 600;
+  letter-spacing: -0.045em;
+  font-weight: 640;
 }
 
 @utility heading-1 {
   font-size: clamp(2.25rem, 1.3rem + 3.2vw, 4rem);
   line-height: 1.02;
-  letter-spacing: -0.035em;
-  font-weight: 600;
+  letter-spacing: -0.04em;
+  font-weight: 630;
 }
 
 @utility heading-2 {
   font-size: clamp(1.85rem, 1.25rem + 2.4vw, 3rem);
   line-height: 1.06;
-  letter-spacing: -0.032em;
-  font-weight: 600;
+  letter-spacing: -0.037em;
+  font-weight: 630;
 }
 
 @utility heading-3 {
@@ -268,12 +284,9 @@
   color: var(--text-2);
 }
 
-/* Gradient text for the one accented line per page. */
+/* The one emphasised phrase: plain lime, no gradient. */
 @utility text-gradient {
-  background: var(--accent-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--accent);
 }
 
 /* The ruled grid replaces cards: cells share hairlines, no shadows. */
@@ -339,12 +352,12 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--glow), 0 40px 100px -40px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--glow);
   overflow: hidden;
 }
 .window::before {
   content: ''; position: absolute; left: 0; right: 0; top: 0; height: 1px; z-index: 2;
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 70%, transparent) 30%, color-mix(in srgb, var(--accent-2) 70%, transparent) 70%, transparent);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 45%, transparent) 50%, transparent);
 }
 .window-bar {
   display: flex; min-width: 0; align-items: center; gap: 0.75rem; padding: 0.55rem 0.85rem;
@@ -359,8 +372,8 @@
 .window-mono { font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.55; }
 .window-pane-head { display: flex; justify-content: space-between; gap: 1rem; padding: 0.45rem 0.85rem; border-bottom: 1px solid var(--border); color: var(--text-2); font-size: 0.7rem; font-family: var(--font-mono); }
 
-.browser { position: relative; min-width: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--glow), 0 50px 120px -40px rgba(0, 0, 0, 0.75); overflow: hidden; }
-.browser::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 1px; z-index: 2; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 70%, transparent) 25%, color-mix(in srgb, var(--cloud) 80%, transparent) 75%, transparent); }
+.browser { position: relative; min-width: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--glow); overflow: hidden; }
+.browser::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 1px; z-index: 2; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 45%, transparent) 50%, transparent); }
 .browser-bar { display: flex; min-width: 0; align-items: center; gap: 0.6rem; padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); background: var(--bg-elevated); font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-3); min-height: 2.4rem; }
 .browser-tab { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.6rem; border-radius: 6px 6px 0 0; background: var(--surface); color: var(--text-2); box-shadow: inset 0 0 0 1px var(--border); white-space: nowrap; max-width: 14rem; overflow: hidden; text-overflow: ellipsis; }
 .browser-tab svg { color: var(--cloud); flex: 0 0 auto; }
@@ -416,7 +429,7 @@
 [data-demo='playing'] .live-dot { animation: pulse-dot 1.6s ease-out infinite; }
 
 .bar { display: block; height: 5px; border-radius: 999px; background: var(--surface-3); overflow: hidden; }
-.bar i { display: block; height: 100%; width: var(--w, 0%); border-radius: inherit; background: var(--accent-gradient); transition: width 600ms var(--ease-out); }
+.bar i { display: block; height: 100%; width: var(--w, 0%); border-radius: inherit; background: var(--accent); transition: width 600ms var(--ease-out); }
 .bar.is-warn i { background: var(--warn); }
 .bar.is-cloud i { background: var(--cloud); }
 
@@ -463,11 +476,12 @@
 }
 .card::after {
   content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 10%, transparent), transparent 40%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 5%, transparent), transparent 40%);
   opacity: 0; transition: opacity var(--dur) var(--ease-out);
 }
-.card-hover:hover, .card-hover:focus-within { transform: translateY(-2px); border-color: var(--border-strong); box-shadow: var(--shadow-lift), 0 0 0 1px color-mix(in srgb, var(--accent) 20%, transparent); }
+.card-hover:hover, .card-hover:focus-within { border-color: var(--border-strong); }
 .card-hover:hover::after, .card-hover:focus-within::after { opacity: 1; }
+.card-hover:hover { background: var(--surface-2); }
 
 /* A segmented control: a tablist that reads as one object. */
 .seg { display: inline-flex; gap: 0.2rem; padding: 0.2rem; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
@@ -476,6 +490,10 @@
 .seg-btn:hover { color: var(--text); }
 .seg-btn[aria-selected='true'], .seg-btn[aria-checked='true'] { background: var(--surface-3); color: var(--text); box-shadow: inset 0 0 0 1px var(--border-strong); }
 .seg-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+/* A short text link with an arrow, used at the end of a section. */
+.link-more { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 1rem; font-weight: 540; color: var(--accent); }
+.link-more:hover { color: var(--accent-strong); }
 
 /* Links with a sliding underline. */
 .link-slide { position: relative; }

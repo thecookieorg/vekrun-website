@@ -1,0 +1,133 @@
+---
+/**
+ * The Product page: what Vekrun does, in the order a job experiences it.
+ * One heading, one sentence and one visual per capability. The section ids are
+ * stable: old feature, docs and How it works URLs redirect to them.
+ */
+import Base from '@/layouts/Base.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import Button from '@/components/Button.astro';
+import Screenshot from '@/components/visuals/Screenshot.astro';
+import Council from '@/components/visuals/Council.astro';
+import JobFlow from '@/components/factory/JobFlow.astro';
+import ParallelLanes from '@/components/factory/ParallelLanes.astro';
+import BoardFlow from '@/components/factory/BoardFlow.astro';
+import ApprovalsDemo from '@/components/org/ApprovalsDemo.astro';
+import ProofPack from '@/components/factory/ProofPack.astro';
+import MemoryInsights from '@/components/factory/MemoryInsights.astro';
+import MobileHost from '@/components/factory/MobileHost.astro';
+import { productSections } from '@/data/site';
+import { SquareTerminal, FileDiff, GitBranch, MessagesSquare } from '@lucide/astro';
+
+const tools = [
+  { i: SquareTerminal, t: 'Terminal and SSH', d: 'Open a shell in any job, here or on a remote machine.' },
+  { i: FileDiff, t: 'Code and diffs', d: 'Read exactly what changed before it goes anywhere.' },
+  { i: GitBranch, t: 'Git and worktrees', d: 'Branches per job, so work never collides.' },
+  { i: MessagesSquare, t: 'Coding sessions', d: 'Pair with a model directly when you’d rather drive.' },
+];
+---
+<Base title="Product" fullTitle="Product: the AI software engineering Factory · Vekrun" description="How Vekrun works: describe an outcome and the AI Factory plans it, has a Council challenge it, builds it with your coding agents, tests and verifies it, and delivers a reviewable pull request with its evidence.">
+  <PageHero eyebrow="Product" title="Tell Vekrun what to build. It handles the engineering." lede="The AI Factory turns an outcome into verified, reviewable work, across every project you own." cta={{ label: 'See pricing', href: '/teams/#pricing' }} secondary={{ label: 'What you gain', href: '/benefits/' }} wide>
+    <Screenshot name="browser-annotate" eager alt="The Vekrun desktop app's Interactive Browser: a checkout page with two numbered comments, each queued as work for a coding agent." caption="The Interactive Browser in the Vekrun desktop app. Point at what’s wrong; each comment becomes verified work." />
+  </PageHero>
+
+  <nav class="pnav" aria-label="On this page">
+    <div class="container-site"><ul>{productSections.map((s) => <li><a href={`#${s.id}`}>{s.label}</a></li>)}</ul></div>
+  </nav>
+
+  <section id="how" class="section-pad anchor" aria-labelledby="how-title">
+    <div class="container-site">
+      <SectionHeading id="how-title" title="From request to pull request." lede="Seven steps you no longer run by hand." class="reveal" />
+      <div class="mt-12"><JobFlow /></div>
+    </div>
+  </section>
+
+  <section id="factory" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="factory-title">
+    <div class="container-site split">
+      <div class="reveal">
+        <h2 id="factory-title" class="heading-2 text-text">One Factory. Many projects.</h2>
+        <p class="lede mt-4">A fix in one repository, a feature across a mobile app and its API, an upgrade in a third. All moving, none colliding.</p>
+      </div>
+      <div class="reveal min-w-0"><ParallelLanes /></div>
+    </div>
+  </section>
+
+  <section id="council" class="section-pad rule anchor" aria-labelledby="council-title">
+    <div class="container-site">
+      <SectionHeading id="council-title" title="Decisions get argued before they get built." lede="Several models investigate, disagree and settle on an approach. The reasoning stays on record." class="reveal" />
+      <div class="reveal mt-12"><Council /></div>
+    </div>
+  </section>
+
+  <section id="board" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="board-title">
+    <div class="container-site">
+      <SectionHeading id="board-title" title="All your engineering work on one Board." lede="Tickets, pull requests and production errors, each one a job away from a fix." class="reveal" />
+      <div class="reveal mt-12"><BoardFlow /></div>
+    </div>
+  </section>
+
+  <section id="inbox" class="section-pad rule anchor" aria-labelledby="inbox-title">
+    <div class="container-site">
+      <SectionHeading id="inbox-title" title="Only the decisions that need you." lede="Approvals, questions and reviews wait in one Inbox. Everything else keeps moving." class="reveal" />
+      <div class="reveal mt-12"><ApprovalsDemo /></div>
+    </div>
+  </section>
+
+  <section id="verification" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="verify-title">
+    <div class="container-site">
+      <SectionHeading id="verify-title" title="Every result arrives with its proof." lede="Tests, browser checks and an independent verifier, packed into a Proof Pack on the pull request." class="reveal" />
+      <div class="reveal mt-12"><ProofPack full /></div>
+    </div>
+  </section>
+
+  <section id="memory" class="section-pad rule anchor" aria-labelledby="memory-title">
+    <div class="container-site">
+      <SectionHeading id="memory-title" title="It remembers why." lede="Every decision, change and result becomes searchable memory. Insights show what actually shipped." class="reveal" />
+      <div class="reveal mt-12"><MemoryInsights /></div>
+    </div>
+  </section>
+
+  <section id="mobile" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="mobile-title">
+    <div class="container-site">
+      <SectionHeading id="mobile-title" title="Your Factory, in your pocket." lede="Assign work and approve it from your phone, while your own machine does the building." class="reveal" />
+      <div class="reveal mt-12"><MobileHost /></div>
+    </div>
+  </section>
+
+  <section id="tools" class="section-pad rule anchor" aria-labelledby="tools-title">
+    <div class="container-site">
+      <SectionHeading id="tools-title" title="Step in whenever you want." lede="Every job comes with the tools to take over by hand. Your editor stays your editor." class="reveal" />
+      <ul class="tools reveal-group">
+        {tools.map((t) => <li><t.i class="h-5 w-5 text-mint" aria-hidden="true" /><h3>{t.t}</h3><p>{t.d}</p></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="next-title">
+    <div class="container-site text-center reveal">
+      <h2 id="next-title" class="heading-2 text-text">See what changes in your day.</h2>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <Button href="/before-and-after/" size="lg">Before & After</Button>
+        <Button href="/integrations/" size="lg" variant="secondary">Works with your tools</Button>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .anchor { scroll-margin-top: 7rem; }
+  .pnav { position: sticky; top: 4rem; z-index: 20; border-block: 1px solid var(--border); background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+  .pnav ul { margin: 0; padding: 0.5rem 0; list-style: none; display: flex; gap: 0.25rem; overflow-x: auto; scrollbar-width: none; }
+  .pnav ul::-webkit-scrollbar { display: none; }
+  .pnav a { display: inline-flex; align-items: center; height: 2rem; padding: 0 0.75rem; border-radius: 999px; font-size: 0.875rem; color: var(--text-2); white-space: nowrap; }
+  .pnav a:hover { color: var(--text); background: var(--surface); }
+  .split { display: grid; gap: 2.5rem; }
+  @media (min-width: 64rem) { .split { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 4rem; align-items: center; } }
+  .tools { margin: 3rem 0 0; padding: 0; list-style: none; display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  @media (min-width: 40rem) { .tools { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 64rem) { .tools { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .tools li { display: grid; gap: 0.5rem; align-content: start; padding: 1.5rem; background: var(--surface); }
+  .tools h3 { margin: 0.25rem 0 0; font-size: 1.05rem; font-weight: 600; color: var(--text); }
+  .tools p { margin: 0; font-size: 0.92rem; line-height: 1.5; color: var(--text-2); }
+</style>

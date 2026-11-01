@@ -12,13 +12,13 @@ const monthly = teamsMonthly(start);
 ---
 <div class="pc" data-teams-calc data-base={base} data-included={includedEngineers} data-extra={perAdditionalEngineer}>
   <div class="pc-in">
-    <p class="pc-k">Estimate Vekrun Teams for your organization</p>
+    <p class="pc-k">What would it cost your team?</p>
     <label class="pc-label" for="pc-engineers">Engineers</label>
     <div class="pc-controls">
       <input id="pc-engineers" class="pc-range" type="range" min="1" max={calculatorMax} step="1" value={start} data-pc-range aria-describedby="pc-note" />
       <input class="pc-num" type="number" min="1" max={calculatorMax} step="1" value={start} data-pc-num aria-label="Engineers, typed" />
     </div>
-    <p id="pc-note" class="pc-note">{usd(base)} a month covers up to {includedEngineers} engineers. Each additional engineer is {usd(perAdditionalEngineer)} a month. SSO and every Teams capability are included.</p>
+    <p id="pc-note" class="pc-note">{usd(base)} covers up to {includedEngineers} engineers. Each one after that is {usd(perAdditionalEngineer)} a month.</p>
   </div>
   <dl class="pc-out" aria-live="polite">
     <div><dt>Engineers</dt><dd data-pc-engineers>{start}</dd></div>
@@ -27,7 +27,7 @@ const monthly = teamsMonthly(start);
     <div class="pc-total"><dt>Per month</dt><dd data-pc-monthly>{usd(monthly)}</dd></div>
     <div><dt>Twelve monthly payments</dt><dd data-pc-annual>{usd(monthly * 12)} <small>no annual discount</small></dd></div>
   </dl>
-  <p class="pc-fine">{pricing.label} in US dollars. An illustration, not a quote: there is no checkout, trial or billing yet. Model and API usage and your own servers and workers are paid to their providers, not to Vekrun. Vekrun does not charge per pull request, bug, task or agent.</p>
+  <p class="pc-fine">{pricing.label}, in US dollars. Not on sale yet, so this is an estimate, not a quote.</p>
 </div>
 
 <style>

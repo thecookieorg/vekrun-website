@@ -1,5 +1,5 @@
 ---
-/** A section introduction: kicker, heading, one lede. Left by default, centred on request. */
+/** A section introduction: an optional short label, one heading, one sentence. */
 interface Props {
   id?: string;
   title: string;
@@ -7,16 +7,12 @@ interface Props {
   lede?: string;
   class?: string;
   align?: 'left' | 'center';
-  level?: 'h1' | 'h2';
-  /** Wrap the last `accentWords` words of the title in the brand gradient. */
-  accent?: string;
 }
-const { id, title, kicker, lede, accent, class: className = '', align = 'left', level = 'h2' } = Astro.props;
-const Tag = level;
+const { id, title, kicker, lede, class: className = '', align = 'left' } = Astro.props;
 ---
 <div class:list={['max-w-3xl', align === 'center' && 'mx-auto text-center', className]}>
   {kicker && <p class="kicker">{kicker}</p>}
-  <Tag id={id} class:list={[level === 'h1' ? 'heading-1' : 'heading-2', kicker && 'mt-3', 'text-text']}>{title}{accent && <> <span class="text-gradient">{accent}</span></>}</Tag>
-  {lede && <p class:list={['lede mt-4', align === 'center' && 'mx-auto']}>{lede}</p>}
+  <h2 id={id} class:list={['heading-2 text-text', kicker && 'mt-3']}>{title}</h2>
+  {lede && <p class:list={['lede mt-4 max-w-2xl', align === 'center' && 'mx-auto']}>{lede}</p>}
   <slot />
 </div>

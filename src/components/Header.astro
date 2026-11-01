@@ -1,28 +1,18 @@
 ---
 /**
- * The one global header. Sticky, translucent, with a gradient hairline once the
- * page scrolls. Active pages carry an underline; the Product menu opens on hover
- * or click and is fully keyboard-operable; the phone menu animates its rows in.
+ * The global header: the mark, five destinations, the theme switch and one call
+ * to action. Below the large breakpoint the links fold into a simple menu.
  */
-import { Menu, X, ChevronDown } from '@lucide/astro';
+import { Menu, X } from '@lucide/astro';
 import Logo from './Logo.astro';
 import ThemeToggle from './ThemeToggle.astro';
 import Button from './Button.astro';
-import { primaryNav, primaryCta, productPages, advancedPages } from '@/data/site';
-import { hasRelease } from '@/data/releases';
+import { primaryNav, primaryCta } from '@/data/site';
 
 interface Props { themeToggle?: boolean }
 const { themeToggle = true } = Astro.props;
-
-const cta = hasRelease
-  ? { label: primaryCta.releasedLabel, href: primaryCta.releasedHref }
-  : { label: primaryCta.label, href: primaryCta.href };
 const path = Astro.url.pathname;
-const isActive = (href: string) => href !== '/' && !href.startsWith('/#') && path.startsWith(href);
-const productActive = path.startsWith('/features/');
-const nav = primaryNav;
-const pageHref = (href: string) => href.split('#')[0]!;
-const isCurrent = (href: string) => !href.includes('#') && path === pageHref(href);
+const isActive = (href: string) => path.startsWith(href);
 ---
 <header class="site-header sticky top-0 z-40" data-header>
   <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-md focus:bg-accent focus:px-3 focus:py-2 focus:text-accent-ink">Skip to content</a>
@@ -30,41 +20,16 @@ const isCurrent = (href: string) => !href.includes('#') && path === pageHref(hre
     <a href="/" class="rounded-md" aria-label="Vekrun home"><Logo /></a>
 
     <nav aria-label="Primary" class="hidden lg:block">
-      <ul class="flex items-center gap-0.5">
-        {nav.map((item) => item.label === 'Product' ? (
-          <li class="relative" data-menu>
-            <button type="button" class:list={['nav-link', productActive && 'is-active']} aria-expanded="false" aria-haspopup="true" aria-controls="product-menu" data-menu-button>
-              Product <ChevronDown class="h-3.5 w-3.5 transition-transform duration-200 [[aria-expanded=true]_&]:rotate-180" aria-hidden="true" />
-            </button>
-            <div id="product-menu" class="nav-menu" hidden data-menu-panel>
-              <ul class="nav-menu-grid">
-                {productPages.map((f) => (
-                  <li>
-                    <a href={f.href} class="nav-menu-item" aria-current={isCurrent(f.href) ? 'page' : undefined}>
-                      <span class="nav-menu-title">{f.label}</span>
-                      <span class="nav-menu-desc">{f.description}</span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-              <div class="nav-menu-foot">
-                <span class="nav-menu-k">Advanced tools</span>
-                {advancedPages.map((a) => <a href={a.href} class="nav-menu-adv" aria-current={isCurrent(a.href) ? 'page' : undefined}>{a.label}</a>)}
-                <a href="/features/" class="nav-menu-all">All capabilities</a>
-              </div>
-            </div>
-          </li>
-        ) : (
-          <li>
-            <a href={item.href} class:list={['nav-link', isActive(item.href) && 'is-active']} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>
-          </li>
+      <ul class="flex items-center gap-1">
+        {primaryNav.map((item) => (
+          <li><a href={item.href} class="nav-link" aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a></li>
         ))}
       </ul>
     </nav>
 
     <div class="flex items-center gap-2">
       {themeToggle && <ThemeToggle />}
-      <span class="hidden sm:inline-flex"><Button href={cta.href}>{cta.label}</Button></span>
+      <span class="hidden sm:inline-flex"><Button href={primaryCta.href}>{primaryCta.label}</Button></span>
       <button type="button" class="menu-toggle lg:hidden" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav" data-menu-toggle>
         <Menu class="h-4 w-4" data-icon="open" aria-hidden="true" />
         <X class="hidden h-4 w-4" data-icon="close" aria-hidden="true" />
@@ -75,84 +40,39 @@ const isCurrent = (href: string) => !href.includes('#') && path === pageHref(hre
   <div id="mobile-nav" class="mobile-nav lg:hidden" hidden data-mobile-nav>
     <nav aria-label="Primary, mobile" class="container-site py-3">
       <ul class="flex flex-col">
-        {nav.map((item, i) => (
+        {primaryNav.map((item, i) => (
           <li class="mobile-row" style={`--i: ${i}`}>
             <a href={item.href} class="mobile-link" aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>
-            {item.label === 'Product' && (
-              <ul class="mb-1 ml-3 grid grid-cols-2 pl-3">
-                {productPages.map((f) => <li><a href={f.href} class="mobile-sublink" aria-current={isCurrent(f.href) ? 'page' : undefined}>{f.label}</a></li>)}
-              </ul>
-            )}
           </li>
         ))}
       </ul>
-      <div class="mobile-row mt-2 border-t border-border pt-3 sm:hidden" style="--i: 7"><Button href={cta.href} class="w-full">{cta.label}</Button></div>
+      <div class="mobile-row mt-2 border-t border-border pt-3 sm:hidden" style="--i: 5"><Button href={primaryCta.href} class="w-full">{primaryCta.label}</Button></div>
     </nav>
   </div>
 </header>
 
 <style>
-  .site-header { position: sticky; background: color-mix(in srgb, var(--bg) 72%, transparent); backdrop-filter: blur(18px) saturate(1.3); -webkit-backdrop-filter: blur(18px) saturate(1.3); border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent); transition: box-shadow var(--dur) var(--ease-out), background-color var(--dur) var(--ease-out), border-color var(--dur) var(--ease-out); }
-  .site-header::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 55%, transparent) 35%, color-mix(in srgb, var(--accent-2) 55%, transparent) 65%, transparent); opacity: 0; transition: opacity var(--dur-slow) var(--ease-out); pointer-events: none; }
-  .site-header.is-scrolled { box-shadow: 0 10px 30px -20px rgba(0, 0, 0, 0.7); background: color-mix(in srgb, var(--bg) 84%, transparent); }
-  .site-header.is-scrolled::after { opacity: 1; }
-  .nav-link { position: relative; display: inline-flex; align-items: center; gap: 0.35rem; height: 2.25rem; padding: 0 0.8rem; border-radius: 8px; font-size: 0.9375rem; color: var(--text-2); transition: color var(--dur-fast), background-color var(--dur-fast); background: transparent; border: 0; cursor: pointer; }
-  .nav-link:hover, .nav-link[aria-expanded='true'] { color: var(--text); background: color-mix(in srgb, var(--surface-2) 80%, transparent); }
-  .nav-link.is-active { color: var(--text); }
-  .nav-link.is-active::after { content: ''; position: absolute; left: 0.8rem; right: 0.8rem; bottom: -0.1rem; height: 2px; border-radius: 2px; background: var(--accent-gradient); }
-  .nav-menu { position: absolute; left: 0; top: calc(100% + 0.6rem); width: min(40rem, calc(100vw - 2rem)); padding: 0.5rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: color-mix(in srgb, var(--bg-elevated) 92%, transparent); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.7), 0 0 0 1px color-mix(in srgb, var(--accent) 10%, transparent); animation: rise-sm 200ms var(--ease-out) both; }
-  .nav-menu::before { content: ''; position: absolute; left: 1.25rem; right: 1.25rem; top: 0; height: 1px; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 60%, transparent), transparent); }
-  .nav-menu-item { display: block; padding: 0.55rem 0.7rem; border-radius: 8px; transition: background-color var(--dur-fast); }
-  .nav-menu-item:hover, .nav-menu-item:focus-visible { background: var(--surface-2); }
-  .nav-menu-item[aria-current='page'] .nav-menu-title { color: var(--accent); }
-  .nav-menu-title { display: block; font-size: 0.9375rem; font-weight: 540; color: var(--text); }
-  .nav-menu-desc { display: block; font-size: 0.8125rem; line-height: 1.35; color: var(--text-3); }
-  .nav-menu-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.15rem; }
-  .nav-menu-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.9rem; margin-top: 0.4rem; padding: 0.7rem 0.7rem 0.3rem; border-top: 1px solid var(--border); font-size: 0.8125rem; }
-  .nav-menu-k { color: var(--text-3); }
-  .nav-menu-adv { color: var(--text-2); }
-  .nav-menu-adv:hover, .nav-menu-adv[aria-current='page'] { color: var(--text); }
-  .nav-menu-all { margin-left: auto; color: var(--accent); }
+  .site-header { background: color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter: blur(16px) saturate(1.2); -webkit-backdrop-filter: blur(16px) saturate(1.2); border-bottom: 1px solid transparent; transition: border-color var(--dur) var(--ease-out), background-color var(--dur) var(--ease-out); }
+  .site-header.is-scrolled { border-bottom-color: var(--border); background: color-mix(in srgb, var(--bg) 90%, transparent); }
+  .nav-link { position: relative; display: inline-flex; align-items: center; height: 2.25rem; padding: 0 0.85rem; border-radius: 8px; font-size: 0.9375rem; color: var(--text-2); transition: color var(--dur-fast), background-color var(--dur-fast); }
+  .nav-link:hover { color: var(--text); background: var(--surface); }
+  .nav-link[aria-current='page'] { color: var(--text); background: var(--surface); }
   .menu-toggle { display: inline-flex; height: 2.25rem; width: 2.25rem; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid var(--border); color: var(--text-2); background: transparent; }
   .menu-toggle:hover { color: var(--text); border-color: var(--border-strong); }
   @media (min-width: 64rem) { .menu-toggle { display: none; } }
   .mobile-nav { border-top: 1px solid var(--border); background: var(--bg); }
-  .mobile-row { animation: rise-sm 260ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 40ms); }
-  .mobile-link { display: flex; align-items: center; height: 2.75rem; padding: 0 0.5rem; border-radius: 8px; font-size: 1.0625rem; color: var(--text-2); }
+  .mobile-row { animation: rise-sm 240ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 35ms); }
+  .mobile-link { display: flex; align-items: center; height: 3rem; padding: 0 0.6rem; border-radius: 8px; font-size: 1.0625rem; color: var(--text-2); }
   .mobile-link:hover, .mobile-link[aria-current='page'] { color: var(--text); }
   .mobile-link[aria-current='page'] { background: var(--surface); }
-  .mobile-sublink { display: flex; align-items: center; height: 2.25rem; padding: 0 0.5rem; font-size: 0.9375rem; color: var(--text-3); }
-  .mobile-sublink:hover, .mobile-sublink[aria-current='page'] { color: var(--text); }
-  @media (prefers-reduced-motion: reduce) { .nav-menu, .mobile-row { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .mobile-row { animation: none; } }
 </style>
 
 <script>
-  // Shadow and hairline once scrolled.
   const header = document.querySelector<HTMLElement>('[data-header]');
   const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 8);
   onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
 
-  // Features dropdown: click or hover to open, Escape or outside click to close, arrow keys move.
-  document.querySelectorAll<HTMLElement>('[data-menu]').forEach((menu) => {
-    const button = menu.querySelector<HTMLButtonElement>('[data-menu-button]')!;
-    const panel = menu.querySelector<HTMLElement>('[data-menu-panel]')!;
-    let closeTimer: number | null = null;
-    const set = (open: boolean) => { panel.hidden = !open; button.setAttribute('aria-expanded', String(open)); };
-    button.addEventListener('click', () => set(panel.hidden));
-    menu.addEventListener('mouseenter', () => { if (closeTimer) clearTimeout(closeTimer); set(true); });
-    menu.addEventListener('mouseleave', () => { closeTimer = window.setTimeout(() => set(false), 120); });
-    menu.addEventListener('keydown', (e) => {
-      const items = Array.from(panel.querySelectorAll<HTMLAnchorElement>('a'));
-      const i = items.indexOf(document.activeElement as HTMLAnchorElement);
-      if (e.key === 'Escape') { set(false); button.focus(); }
-      if (e.key === 'ArrowDown') { e.preventDefault(); set(true); (items[i + 1] ?? items[0])?.focus(); }
-      if (e.key === 'ArrowUp') { e.preventDefault(); (items[i - 1] ?? items[items.length - 1])?.focus(); }
-    });
-    document.addEventListener('click', (e) => { if (!menu.contains(e.target as Node)) set(false); });
-    menu.addEventListener('focusout', (e) => { if (!menu.contains(e.relatedTarget as Node)) set(false); });
-  });
-
-  // Phone menu.
   const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
   const panel = document.querySelector<HTMLElement>('[data-mobile-nav]');
   if (toggle && panel) {
