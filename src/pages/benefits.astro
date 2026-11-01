@@ -5,8 +5,8 @@
  * two audiences in short lists. Visuals use demonstration content.
  */
 import Base from '@/layouts/Base.astro';
+import ClosingCta from '@/components/ClosingCta.astro';
 import PageHero from '@/components/PageHero.astro';
-import Button from '@/components/Button.astro';
 import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
 import ConceptNotice from '@/components/ConceptNotice.astro';
 import { toolById } from '@/data/integrations';
@@ -94,15 +94,7 @@ const leads = ['Engineering work that runs in step', 'Progress you can see witho
     </div>
   </section>
 
-  <section class="section-pad rule" aria-labelledby="next-title">
-    <div class="container-site text-center reveal">
-      <h2 id="next-title" class="heading-2 text-text">See it in an ordinary day.</h2>
-      <div class="mt-8 flex flex-wrap justify-center gap-3">
-        <Button href="/before-and-after/" size="lg">Before & After</Button>
-        <Button href="/teams/" size="lg" variant="secondary">Teams & Pricing</Button>
-      </div>
-    </div>
-  </section>
+  <ClosingCta title="Get your day back." />
 </Base>
 
 <style>

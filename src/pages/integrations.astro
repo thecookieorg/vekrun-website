@@ -6,9 +6,9 @@
  * never endorsement.
  */
 import Base from '@/layouts/Base.astro';
+import ClosingCta from '@/components/ClosingCta.astro';
 import PageHero from '@/components/PageHero.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
-import Button from '@/components/Button.astro';
 import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
 import { toolGroups, platforms } from '@/data/integrations';
 
@@ -64,9 +64,10 @@ const facts = [
       </dl>
       <p class="mt-10 text-[0.95rem] text-text-2 reveal">Each provider connects its own way: a signed-in CLI, a sign-in with the service, or an API key. How data is handled is on the <a href="/security/" class="text-accent link-slide">security page</a>.</p>
       <p class="mt-6 text-[0.8125rem] text-text-3">Logos are trademarks of their owners and show compatibility, not endorsement.</p>
-      <div class="mt-10 reveal"><Button href="/teams/" variant="secondary">Teams & Pricing</Button></div>
     </div>
   </section>
+
+  <ClosingCta title="Bring your tools. Vekrun does the coordinating." />
 </Base>
 
 <style>

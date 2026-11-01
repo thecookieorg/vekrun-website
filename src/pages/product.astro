@@ -5,9 +5,9 @@
  * stable: old feature, docs and How it works URLs redirect to them.
  */
 import Base from '@/layouts/Base.astro';
+import ClosingCta from '@/components/ClosingCta.astro';
 import PageHero from '@/components/PageHero.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
-import Button from '@/components/Button.astro';
 import Screenshot from '@/components/visuals/Screenshot.astro';
 import Council from '@/components/visuals/Council.astro';
 import JobFlow from '@/components/factory/JobFlow.astro';
@@ -18,7 +18,7 @@ import ProofPack from '@/components/factory/ProofPack.astro';
 import MemoryInsights from '@/components/factory/MemoryInsights.astro';
 import MobileHost from '@/components/factory/MobileHost.astro';
 import { productSections } from '@/data/site';
-import { SquareTerminal, FileDiff, GitBranch, MessagesSquare } from '@lucide/astro';
+import { SquareTerminal, FileDiff, GitBranch, MessagesSquare, ArrowRight } from '@lucide/astro';
 
 const tools = [
   { i: SquareTerminal, t: 'Terminal and SSH', d: 'Open a shell in any job, here or on a remote machine.' },
@@ -92,6 +92,7 @@ const tools = [
     <div class="container-site">
       <SectionHeading id="mobile-title" title="Your Factory, in your pocket." lede="Assign work and approve it from your phone, while your own machine does the building." class="reveal" />
       <div class="reveal mt-12"><MobileHost /></div>
+      <p class="mt-10 reveal"><a href="/teams/#remote" class="link-more group">Running it for a team? Teams keeps the Factory on your servers<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
     </div>
   </section>
 
@@ -104,15 +105,7 @@ const tools = [
     </div>
   </section>
 
-  <section class="section-pad rule bg-bg-elevated" aria-labelledby="next-title">
-    <div class="container-site text-center reveal">
-      <h2 id="next-title" class="heading-2 text-text">See what changes in your day.</h2>
-      <div class="mt-8 flex flex-wrap justify-center gap-3">
-        <Button href="/before-and-after/" size="lg">Before & After</Button>
-        <Button href="/integrations/" size="lg" variant="secondary">Works with your tools</Button>
-      </div>
-    </div>
-  </section>
+  <ClosingCta title="Hand Vekrun the next outcome." class="bg-bg-elevated" />
 </Base>
 
 <style>
