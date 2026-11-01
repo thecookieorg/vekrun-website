@@ -1,40 +1,37 @@
 ---
 /**
- * Teams & Pricing: free Personal, one self-hosted Teams plan, one price.
- * Pricing comes from site.ts: $199 a month for up to 10 engineers, then $10 a
- * month per additional engineer. There is no checkout: prices are planned
- * launch pricing and nothing on this page sells anything.
+ * Teams & Pricing. The case for Teams is Remote Factory: one shared Factory on
+ * infrastructure the organization owns, used by the whole team from wherever
+ * they work. Pricing comes from site.ts: $199 a month for up to 10 engineers,
+ * then $10 a month per additional engineer. Planned launch pricing; there is
+ * no checkout and nothing on this page sells anything.
  */
 import Base from '@/layouts/Base.astro';
 import PageHero from '@/components/PageHero.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
+import RemoteFactory from '@/components/visuals/RemoteFactory.astro';
 import TeamsHero from '@/components/org/TeamsHero.astro';
 import PlanCards from '@/components/teams/PlanCards.astro';
 import TeamsCalculator from '@/components/teams/TeamsCalculator.astro';
 import { site, teams, pricing, teamsMonthly, usd } from '@/data/site';
-import { Server, SquareKanban, KeyRound, ShieldCheck, Eye, Library } from '@lucide/astro';
+import { Server, Smartphone, Layers, ShieldCheck, BookOpen, Lock } from '@lucide/astro';
 
 const t = pricing.teams;
-const description = `Vekrun Teams is one self-hosted AI software engineering Factory for your organization: a shared Coordinator, Board and Inbox, SSO, roles and audit, on your infrastructure. ${usd(t.base)} a month for up to ${t.includedEngineers} engineers, plus ${usd(t.perAdditionalEngineer)} per additional engineer.`;
-const gets = [
-  { i: Server, t: 'A shared Coordinator', d: 'One Factory for the whole team, running on your servers.' },
-  { i: SquareKanban, t: 'Shared Board and Inbox', d: 'Everyone sees the same work and the same decisions.' },
-  { i: KeyRound, t: 'SSO, roles and permissions', d: 'Included. No separate tier, no extra charge.' },
-  { i: ShieldCheck, t: 'Approvals and policies', d: 'Decide what needs a person before it runs or merges.' },
-  { i: Eye, t: 'Visibility and review', d: 'Progress, evidence and audit history, without status meetings.' },
-  { i: Library, t: 'Team-wide memory', d: 'What one engineer learns, the whole team keeps.' },
-];
-const yours = [
-  ['You run it', 'The Coordinator, data and workers live on infrastructure you choose.'],
-  ['Vekrun supports it', 'You get the software, licence, updates and support from Vekrun.'],
-  ['Providers bill you', 'Model and API usage goes to your providers, never through Vekrun.'],
+const description = `Vekrun Teams runs one shared AI software engineering Factory on infrastructure you control. Your team hands off, approves and reviews work from anywhere. ${usd(t.base)} a month for up to ${t.includedEngineers} engineers, plus ${usd(t.perAdditionalEngineer)} per additional engineer.`;
+const why = [
+  { i: Server, t: 'Work doesn’t depend on one laptop', d: 'Jobs run on the build machines you designate. A closed lid or a day off doesn’t stop the queue.' },
+  { i: Smartphone, t: 'Hand off from anywhere', d: 'Start an outcome, approve a plan or review a result from a laptop, a browser or Vekrun Mobile.' },
+  { i: Layers, t: 'Every project, one queue', d: 'Concurrent work across repositories, coordinated in one place and visible to the whole team.' },
+  { i: ShieldCheck, t: 'People still decide', d: 'Approvals, branch protection and policies apply to every job, whoever started it and wherever.' },
+  { i: BookOpen, t: 'The record belongs to the team', d: 'Proof Packs, decisions and Engineering Memory stay available to every authorized engineer.' },
+  { i: Lock, t: 'Nothing leaves your control', d: 'Code, credentials, execution policies and audit history stay on infrastructure you run.' },
 ];
 const faq: [string, string][] = [
   ['What does it cost?', `${usd(t.base)} a month for up to ${t.includedEngineers} engineers, then ${usd(t.perAdditionalEngineer)} a month for each additional engineer. Twenty engineers is ${usd(teamsMonthly(20))} a month; thirty is ${usd(teamsMonthly(30))}.`],
-  ['Is there an Enterprise plan?', 'No. One Teams plan includes everything, SSO included.'],
-  ['Do you charge per task or per agent?', 'No. There are no usage fees from Vekrun. Model, API and infrastructure costs are separate.'],
-  ['Is it a hosted service?', 'No. Vekrun Teams runs on your infrastructure. There is no required cloud subscription.'],
+  ['What happens to running work when an engineer goes offline?', 'It keeps running. Jobs run on your Factory’s execution machines, not on the laptop or phone that started them.'],
+  ['Is it a hosted service?', 'No. Vekrun Teams runs on your infrastructure. There is no required Vekrun-hosted service.'],
   ['Does any data leave our network?', 'Your code and records stay on your infrastructure. Model providers you connect receive what a job sends them, under your accounts.'],
+  ['Is there an Enterprise plan? Per-task fees?', 'No. One Teams plan includes everything, SSO included, and Vekrun charges no usage fees. Model, API and infrastructure costs are paid to their providers.'],
   ['Can we buy it today?', `Not yet. ${pricing.notForSale}`],
 ];
 const structuredData = [
@@ -42,34 +39,32 @@ const structuredData = [
   { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: site.name, item: site.url }, { '@type': 'ListItem', position: 2, name: 'Teams & Pricing', item: `${site.url}${teams.href}` }] },
 ];
 ---
-<Base title="Teams & Pricing" fullTitle="Teams & Pricing: Vekrun Personal and self-hosted Vekrun Teams · Vekrun" description={description} image="/og/teams.png" structuredData={structuredData}>
-  <PageHero eyebrow="Teams & Pricing" title="One Factory for your whole engineering team." lede="Personal is free. Teams is self-hosted, with one plan and one price." cta={{ label: 'See pricing', href: '#pricing' }} wide>
-    <TeamsHero />
+<Base title="Teams & Pricing" fullTitle="Vekrun Teams: a shared AI Factory on your own infrastructure · Pricing · Vekrun" description={description} image="/og/teams.png" structuredData={structuredData}>
+  <PageHero eyebrow="Vekrun Teams" title="Your engineering Factory shouldn’t stop when you leave your desk." lede="Teams runs one shared Factory on infrastructure you control. Your engineers hand it work, approve it and check the results from wherever they are." cta={{ label: 'See pricing', href: '#pricing' }} secondary={{ label: 'Why it matters', href: '#remote' }} wide>
+    <RemoteFactory />
   </PageHero>
 
-  <section class="section-pad rule bg-bg-elevated" aria-labelledby="gets-title">
+  <section id="remote" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="remote-title">
     <div class="container-site">
-      <SectionHeading id="gets-title" title="What your team gets." class="reveal" />
-      <ul class="gets reveal-group">
-        {gets.map((g) => <li><g.i class="h-5 w-5 text-mint" aria-hidden="true" /><h3>{g.t}</h3><p>{g.d}</p></li>)}
+      <SectionHeading id="remote-title" title="A Factory your organization owns." lede="It isn’t a seat on someone else’s service, and it isn’t tied to one developer’s laptop. It’s your hardware and your rules, and the whole team uses it." class="reveal" />
+      <ul class="why reveal-group">
+        {why.map((g) => <li><g.i class="h-5 w-5 text-mint" aria-hidden="true" /><h3>{g.t}</h3><p>{g.d}</p></li>)}
       </ul>
     </div>
   </section>
 
-  <section id="pricing" class="section-pad rule scroll-mt-16" aria-labelledby="pricing-title">
+  <section class="section-pad rule" aria-labelledby="shared-title">
     <div class="container-site">
-      <SectionHeading id="pricing-title" title="Simple pricing." lede={`Free for individuals. ${usd(t.base)} a month for a team of up to ${t.includedEngineers}.`} class="reveal" />
-      <div class="reveal mt-12"><PlanCards /></div>
-      <div class="reveal mt-6"><TeamsCalculator /></div>
+      <SectionHeading id="shared-title" title="Everyone sees the same Factory." lede="Who asked for what, what’s running, what’s waiting on a person and what shipped, without a status meeting." class="reveal" />
     </div>
+    <div class="container-wide reveal mt-12"><TeamsHero /></div>
   </section>
 
-  <section class="section-pad rule bg-bg-elevated" aria-labelledby="yours-title">
+  <section id="pricing" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="pricing-title">
     <div class="container-site">
-      <SectionHeading id="yours-title" title="Your infrastructure. Your rules." class="reveal" />
-      <dl class="facts facts-grid facts-lg reveal-group mt-10">
-        {yours.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
-      </dl>
+      <SectionHeading id="pricing-title" title="One plan. One price." lede={`Personal is free. Teams is ${usd(t.base)} a month for up to ${t.includedEngineers} engineers, then ${usd(t.perAdditionalEngineer)} for each additional engineer.`} class="reveal" />
+      <div class="reveal mt-12"><PlanCards /></div>
+      <div class="reveal mt-6"><TeamsCalculator /></div>
     </div>
   </section>
 
@@ -84,12 +79,12 @@ const structuredData = [
 </Base>
 
 <style>
-  .gets { margin: 3rem 0 0; padding: 0; list-style: none; display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-  @media (min-width: 40rem) { .gets { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (min-width: 64rem) { .gets { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-  .gets li { display: grid; gap: 0.5rem; align-content: start; padding: 1.6rem; background: var(--surface); }
-  .gets h3 { margin: 0.3rem 0 0; font-size: 1.1rem; font-weight: 600; color: var(--text); }
-  .gets p { margin: 0; font-size: 0.95rem; line-height: 1.5; color: var(--text-2); }
+  .why { margin: 3rem 0 0; padding: 0; list-style: none; display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  @media (min-width: 40rem) { .why { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 64rem) { .why { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .why li { display: grid; gap: 0.5rem; align-content: start; padding: 1.6rem; background: var(--surface); }
+  .why h3 { margin: 0.3rem 0 0; font-size: 1.1rem; font-weight: 600; color: var(--text); }
+  .why p { margin: 0; font-size: 0.95rem; line-height: 1.5; color: var(--text-2); }
   .faq-wrap { display: grid; gap: 2rem; }
   @media (min-width: 64rem) { .faq-wrap { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 4rem; } }
 </style>

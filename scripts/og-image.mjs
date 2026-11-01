@@ -9,7 +9,7 @@ const mark = readFileSync('public/brand/vekrun-mark.svg', 'utf8');
 
 const images = [
   { file: 'default', kicker: 'The AI software engineering Factory', title: 'From prompt to verified outcome.' },
-  { file: 'teams', kicker: 'Vekrun Teams', title: 'One self-hosted Factory for your engineering team.', foot: '$199 a month for up to 10 engineers · planned launch pricing' },
+  { file: 'teams', kicker: 'Vekrun Teams', title: 'Your engineering Factory shouldn’t stop when you leave your desk.', foot: 'A shared AI Factory on your own infrastructure · $199 a month for up to 10 engineers' },
   { file: 'benefits', kicker: 'Benefits', title: 'Get your day back from your AI agents.' },
   { file: 'before-and-after', kicker: 'Before & After', title: 'Stop managing agents. Start directing outcomes.' },
 ];

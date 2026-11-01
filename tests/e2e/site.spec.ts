@@ -30,9 +30,10 @@ test.describe('every page', () => {
 });
 
 test.describe('accessibility', () => {
-  for (const path of pages) {
-    test(`${path} has no WCAG A or AA violations`, async ({ page }) => {
+  for (const path of pages) for (const theme of ['dark', 'light'] as const) {
+    test(`${path} has no WCAG A or AA violations in the ${theme} theme`, async ({ page }) => {
       await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.addInitScript((t) => localStorage.setItem('vekrun-theme', t), theme);
       await page.goto(path);
       await page.evaluate(() => document.querySelectorAll('.reveal,.reveal-group').forEach((e) => e.classList.add('is-visible')));
       const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
@@ -73,6 +74,50 @@ test.describe('homepage', () => {
     await expect(f).toHaveAttribute('data-demo', 'paused');
     await f.locator('[data-demo-play]').click();
     await expect(f).toHaveAttribute('data-demo', 'playing');
+  });
+});
+
+test.describe('conversion paths', () => {
+  for (const path of ['/product/', '/benefits/', '/before-and-after/', '/integrations/']) {
+    test(`${path} ends with the Personal and Teams paths`, async ({ page }) => {
+      await page.goto(path);
+      const next = page.locator('section[aria-labelledby="next-title"]');
+      await expect(next.getByRole('link', { name: 'Get Vekrun Personal' })).toHaveAttribute('href', '/download/');
+      await expect(next.getByRole('link', { name: 'Explore Vekrun Teams' })).toHaveAttribute('href', '/teams/');
+      await expect(next).toContainText('isn’t on sale yet');
+    });
+  }
+
+  test('the homepage plans lead to Personal and Teams, and every CTA destination resolves', async ({ page }) => {
+    await page.goto('/');
+    const plans = page.locator('section[aria-labelledby="plans-title"]');
+    await expect(plans.getByRole('link', { name: 'Get Vekrun Personal' })).toHaveAttribute('href', '/download/');
+    await expect(plans.getByRole('link', { name: 'Explore Vekrun Teams' })).toHaveAttribute('href', '/teams/');
+    for (const href of await page.locator('main a.btn').evaluateAll((els) => els.map((e) => e.getAttribute('href')!))) {
+      if (href.startsWith('#')) continue;
+      expect((await page.request.get(href.replace(/#.*/, ''))).status(), href).toBe(200);
+    }
+  });
+});
+
+test.describe('remote factory', () => {
+  test('the homepage introduces Teams Remote Factory and links to the explanation', async ({ page }) => {
+    await page.goto('/');
+    const sec = page.locator('#teams');
+    await expect(sec.getByRole('heading', { level: 2 })).toHaveText('One Factory for the whole team, wherever they work.');
+    await expect(sec.getByRole('group', { name: 'Infrastructure your organization controls' })).toBeVisible();
+    await expect(sec.getByText('Illustrative product concept with demonstration data.')).toBeVisible();
+    await expect(sec.getByRole('link', { name: /Why teams run their own Factory/ })).toHaveAttribute('href', '/teams/#remote');
+  });
+
+  test('the Teams page leads with Remote Factory and keeps pricing honest', async ({ page }) => {
+    await page.goto('/teams/');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Your engineering Factory shouldn’t stop when you leave your desk.');
+    await expect(page.locator('#remote')).toContainText('Nothing leaves your control');
+    await expect(page.getByText('Code, credentials and execution policies stay here.')).toBeVisible();
+    await expect(page.locator('#pricing')).toContainText('Runs on your servers. Your team works with it from anywhere.');
+    await expect(page.getByText(/enterprise/i).first()).toBeAttached();
+    await expect(page.locator('main')).not.toContainText(/\$19\b/);
   });
 });
 

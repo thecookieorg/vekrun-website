@@ -2,11 +2,12 @@
 /**
  * The two packages, side by side. Personal is free; Teams is one self-hosted
  * plan with planned launch pricing. No Enterprise card and no Cloud card exist.
- * `compact` drops the lists for the homepage.
+ * Each card says where it runs, the difference that matters most. `compact`
+ * shortens the Teams list for the homepage and adds a link to the Teams page.
  */
-import { Check, Minus } from '@lucide/astro';
+import { Check, Minus, Laptop, Server } from '@lucide/astro';
 import Button from '@/components/Button.astro';
-import { personal, teams, pricing, usd } from '@/data/site';
+import { personal, teams, pricing, usd, personalCta, teamsCta } from '@/data/site';
 interface Props { compact?: boolean; class?: string }
 const { compact = false, class: className = '' } = Astro.props;
 const t = pricing.teams;
@@ -17,8 +18,10 @@ const t = pricing.teams;
     <h3 id="plan-personal" class="plan-n">{personal.name}</h3>
     <p class="plan-price"><b>{personal.price}</b><span>for individual use</span></p>
     <p class="plan-p">{personal.summary}</p>
+    <p class="plan-runs"><Laptop class="h-4 w-4" aria-hidden="true" />{personal.runsOn}</p>
     <ul class="plan-list">{personal.includes.map((i) => <li><Check class="h-4 w-4" aria-hidden="true" />{i}</li>)}</ul>
     <p class="plan-note">{personal.bring}</p>
+    <Button href={personalCta.href} variant={compact ? 'primary' : 'secondary'} class="mt-5 self-start">{personalCta.label}</Button>
   </article>
   <article class="plan is-teams" aria-labelledby="plan-teams">
     <p class="plan-k">Self-hosted, for engineering teams</p>
@@ -26,10 +29,11 @@ const t = pricing.teams;
     <p class="plan-price"><b>{usd(t.base)}</b><span>a month, up to {t.includedEngineers} engineers</span></p>
     <p class="plan-sub">+{usd(t.perAdditionalEngineer)} a month for each additional engineer. SSO included.</p>
     <p class="plan-p">{teams.summary}</p>
-    <ul class="plan-list">{(compact ? teams.includes.slice(0, 4) : teams.includes).map((i) => <li><Check class="h-4 w-4" aria-hidden="true" />{i}</li>)}</ul>
+    <p class="plan-runs"><Server class="h-4 w-4" aria-hidden="true" />{teams.runsOn}</p>
+    <ul class="plan-list">{(compact ? teams.includes.slice(0, 5) : teams.includes).map((i) => <li><Check class="h-4 w-4" aria-hidden="true" />{i}</li>)}</ul>
     {!compact && <ul class="plan-list is-out" aria-label="Paid to others">{teams.notIncluded.map((i) => <li><Minus class="h-4 w-4" aria-hidden="true" />{i}</li>)}</ul>}
     <p class="plan-flag"><span aria-hidden="true"></span>{pricing.notForSale}</p>
-    {compact && <Button href="/teams/#pricing" variant="secondary" class="mt-5 self-start">See Teams pricing</Button>}
+    {compact && <Button href={teamsCta.href} variant="secondary" class="mt-5 self-start">{teamsCta.label}</Button>}
   </article>
 </div>
 
@@ -45,6 +49,9 @@ const t = pricing.teams;
   .plan-price span { font-size: 0.9rem; color: var(--text-2); }
   .plan-sub { margin: 0.5rem 0 0; font-size: 0.875rem; color: var(--text-2); }
   .plan-p { margin: 1rem 0 0; font-size: 0.95rem; line-height: 1.55; color: var(--text-2); }
+  .plan-runs { margin: 0.9rem 0 0; display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; font-weight: 560; color: var(--text); }
+  .plan-runs :global(svg) { flex-shrink: 0; color: var(--accent); }
+  .plan.is-teams .plan-runs :global(svg) { color: var(--mint); }
   .plan-list { margin: 1.1rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.45rem; font-size: 0.9rem; color: var(--text); }
   .plan-list li { display: flex; gap: 0.55rem; align-items: flex-start; }
   .plan-list :global(svg) { margin-top: 0.15rem; flex-shrink: 0; color: var(--accent); }

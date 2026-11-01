@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { existsSync } from 'node:fs';
-import { footerColumns, primaryNav, primaryCta, productSections, site, pricing, teams, personal, teamsMonthly } from '@/data/site';
+import { footerColumns, primaryNav, primaryCta, personalCta, teamsCta, productSections, site, pricing, teams, personal, teamsMonthly } from '@/data/site';
 import { toolGroups, platforms, allTools } from '@/data/integrations';
 import { redirects } from '../../astro.config.mjs';
 
@@ -35,6 +35,9 @@ describe('packages and pricing', () => {
   it('has exactly two packages: free Personal and self-hosted Teams with SSO included', () => {
     expect(personal.price).toBe('Free');
     expect(teams.includes.join(' ')).toMatch(/SSO/);
+    expect(teams.includes.join(' ')).toMatch(/Remote Factory/);
+    expect(personal.runsOn).toMatch(/your own computer/);
+    expect(teams.runsOn).toMatch(/your servers/);
     expect(JSON.stringify({ personal, teams })).not.toMatch(/enterprise|cloud plan|annual discount|free trial|checkout/i);
   });
 });
@@ -62,6 +65,12 @@ describe('navigation', () => {
       expect(n.href, n.label).toMatch(/^\/(.*\/)?$/);
       expect(pageExists(n.href), n.href).toBe(true);
     }
+  });
+  it('has one Personal and one Teams path, both to live pages, and no signup until a destination exists', () => {
+    expect(personalCta).toEqual({ label: 'Get Vekrun Personal', href: '/download/' });
+    expect(teamsCta).toEqual({ label: 'Explore Vekrun Teams', href: '/teams/' });
+    for (const c of [personalCta, teamsCta]) expect(pageExists(c.href), c.href).toBe(true);
+    expect(JSON.stringify({ personalCta, teamsCta, primaryCta })).not.toMatch(/waitlist|sign ?up|early access|demo/i);
   });
   it('puts Download, Security, Privacy, Licence and Contact in the footer', () => {
     expect(footerColumns.flatMap((c) => c.items).map((n) => n.label)).toEqual(expect.arrayContaining(['Download', 'Security', 'Privacy', 'Licence', 'Contact']));

@@ -1,8 +1,8 @@
 ---
 /**
  * The homepage tells one story, one idea per section: the promise, the problem,
- * the Factory, the Council, verification, what you gain, before and after, your
- * tools, and the two packages.
+ * how it works, the Council, verification, before and after, your tools, Teams
+ * Remote Factory, and the two packages.
  */
 import Base from '@/layouts/Base.astro';
 import PageHero from '@/components/PageHero.astro';
@@ -10,6 +10,7 @@ import SectionHeading from '@/components/SectionHeading.astro';
 import FactoryHero from '@/components/factory/FactoryHero.astro';
 import Council from '@/components/visuals/Council.astro';
 import Screenshot from '@/components/visuals/Screenshot.astro';
+import RemoteFactory from '@/components/visuals/RemoteFactory.astro';
 import PlanCards from '@/components/teams/PlanCards.astro';
 import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
 import { site } from '@/data/site';
@@ -24,14 +25,9 @@ const factory = [
   { t: 'Verify', d: 'The result gets proven.' },
   { t: 'Deliver', d: 'You review a finished PR.' },
 ];
-const gains = [
-  { t: 'Stop babysitting agents.', d: 'Hand over the outcome, not a stream of prompts.' },
-  { t: 'More work moving at once.', d: 'Several projects progress while you focus on one.' },
-  { t: 'Know what happened and why.', d: 'Decisions and evidence stay with the code.' },
-];
 const pairs = [
-  { b: 'The agent says it’s done. Now you test everything.', a: 'Tests run, evidence is collected, you review the result.' },
-  { b: 'One AI makes a plan. You hope it’s right.', a: 'A Council challenges the plan before anyone builds.' },
+  { b: 'Four projects, four terminals, and you switching between them.', a: 'One Factory moves work in every project at once.' },
+  { b: 'Six weeks on, nobody remembers why the code changed.', a: 'Engineering Memory keeps each decision with its evidence.' },
 ];
 const tools = ['claude-code', 'codex', 'gemini-cli', 'openrouter', 'github', 'gitlab', 'jira', 'linear', 'sentry'].map((id) => toolById(id)!);
 
@@ -82,18 +78,7 @@ const structuredData = [
       <div class="reveal mt-12"><Screenshot name="browser-verified" alt="The Vekrun desktop app comparing a page before and after a fix, with each review comment verified and an independent test run passed." /></div>
     </div>
   </section>
-
-  <section class="section-pad rule" aria-labelledby="gains-title">
-    <div class="container-site">
-      <SectionHeading id="gains-title" title="Less coordinating. More shipping." class="reveal" />
-      <ul class="gains reveal-group">
-        {gains.map((g) => <li><h3>{g.t}</h3><p>{g.d}</p></li>)}
-      </ul>
-      <p class="mt-10 reveal"><a href="/benefits/" class="link-more group">Everything you gain<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
-    </div>
-  </section>
-
-  <section class="section-pad rule bg-bg-elevated" aria-labelledby="ba-title">
+  <section class="section-pad rule" aria-labelledby="ba-title">
     <div class="container-site">
       <SectionHeading id="ba-title" title="Before Vekrun, you were the glue." class="reveal" />
       <div class="ba reveal-group">
@@ -107,8 +92,7 @@ const structuredData = [
       <p class="mt-10 reveal"><a href="/before-and-after/" class="link-more group">See the whole day, before and after<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
     </div>
   </section>
-
-  <section class="section-pad rule" aria-labelledby="tools-title">
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="tools-title">
     <div class="container-site split">
       <div class="reveal">
         <h2 id="tools-title" class="heading-2 text-text">Keep the tools you like.</h2>
@@ -120,13 +104,24 @@ const structuredData = [
       </ul>
     </div>
   </section>
-
+  <section id="teams" class="section-pad rule scroll-mt-16" aria-labelledby="remote-title">
+    <div class="container-site remote">
+      <div class="reveal">
+        <p class="kicker">Vekrun Teams</p>
+        <h2 id="remote-title" class="heading-2 mt-3 text-text">One Factory for the whole team, wherever they work.</h2>
+        <p class="lede mt-4">Vekrun Teams runs a shared Factory on your own servers. Work keeps moving when people step away, anyone authorized can drive it from anywhere, and code and credentials stay with you.</p>
+        <p class="mt-8"><a href="/teams/#remote" class="link-more group">Why teams run their own Factory<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
+      </div>
+      <div class="reveal min-w-0"><RemoteFactory compact /></div>
+    </div>
+  </section>
   <section class="section-pad rule bg-bg-elevated" aria-labelledby="plans-title">
     <div class="container-site">
-      <SectionHeading id="plans-title" title="Free for you. Simple for your team." lede="Personal costs nothing. Teams is one self-hosted plan with one price." class="reveal" />
+      <SectionHeading id="plans-title" title="Start on your machine. Bring your team when you’re ready." lede="Personal is free and runs locally. Teams is one plan, one price, on your own servers." class="reveal" />
       <div class="reveal mt-12"><PlanCards compact /></div>
     </div>
   </section>
+
 </Base>
 
 <style>
@@ -150,10 +145,8 @@ const structuredData = [
   .flow li:last-child { background: var(--accent-soft); }
   .flow li:last-child b { color: var(--accent); }
 
-  .gains { margin: 3rem 0 0; padding: 0; list-style: none; display: grid; gap: 2rem; }
-  @media (min-width: 48rem) { .gains { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3rem; } }
-  .gains h3 { margin: 0; font-size: 1.35rem; font-weight: 620; letter-spacing: -0.025em; color: var(--text); }
-  .gains p { margin: 0.5rem 0 0; font-size: 1rem; line-height: 1.5; color: var(--text-2); }
+  .remote { display: grid; gap: 2.5rem; }
+  @media (min-width: 64rem) { .remote { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 4rem; align-items: center; } }
 
   .ba { margin-top: 3rem; display: grid; gap: 1.25rem; }
   @media (min-width: 64rem) { .ba { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

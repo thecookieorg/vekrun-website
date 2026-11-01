@@ -6,8 +6,8 @@
  * way), and paired illustrations. Illustrative comparisons, not customer quotes.
  */
 import Base from '@/layouts/Base.astro';
+import ClosingCta from '@/components/ClosingCta.astro';
 import PageHero from '@/components/PageHero.astro';
-import Button from '@/components/Button.astro';
 import { Check, X, RotateCw, Copy, ArrowRight } from '@lucide/astro';
 ---
 <Base title="Before & After" fullTitle="Before & After: engineering with and without Vekrun · Vekrun" description="What an engineering day looks like before and after Vekrun: from managing agents to directing outcomes, from hoping a plan is right to having it challenged, from 'it says it's done' to proof." image="/og/before-and-after.png">
@@ -163,15 +163,7 @@ import { Check, X, RotateCw, Copy, ArrowRight } from '@lucide/astro';
     </div>
   </section>
 
-  <section class="section-pad rule" aria-labelledby="next-title">
-    <div class="container-site text-center reveal">
-      <h2 id="next-title" class="display-sm text-text">Spend your day on the after.</h2>
-      <div class="mt-8 flex flex-wrap justify-center gap-3">
-        <Button href="/product/" size="lg">See how it works</Button>
-        <Button href="/benefits/" size="lg" variant="secondary">What you gain</Button>
-      </div>
-    </div>
-  </section>
+  <ClosingCta title="Spend your day on the after." />
 </Base>
 
 <style>

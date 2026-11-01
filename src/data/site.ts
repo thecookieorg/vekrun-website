@@ -56,6 +56,7 @@ export const personal = {
   name: 'Vekrun Personal',
   price: 'Free',
   summary: 'The whole Factory on your own machine, for individual engineers.',
+  runsOn: 'Runs on your own computer.',
   includes: [
     'AI Factory across all your projects',
     'Council, Board and Inbox',
@@ -70,9 +71,11 @@ export const personal = {
 export const teams = {
   name: 'Vekrun Teams',
   href: '/teams/',
-  summary: 'One self-hosted Factory for your engineering organization.',
+  summary: 'One shared Factory for your engineering organization, on infrastructure you control.',
+  runsOn: 'Runs on your servers. Your team works with it from anywhere.',
   includes: [
     'Everything in Personal, for every engineer',
+    'Remote Factory: hand off and approve work from anywhere',
     'Shared Coordinator on your servers',
     'Shared Board, Inbox and Factory queues',
     'SSO, roles and permissions',
@@ -95,6 +98,14 @@ export const primaryNav: NavItem[] = [
 
 /** The header call to action points at the download page, which states availability plainly. */
 export const primaryCta: NavItem = { label: 'Get Vekrun', href: '/download/' };
+
+/**
+ * The two conversion paths, used wherever a page ends. There is no signup or
+ * waitlist yet (no destination exists), so both lead to pages that state
+ * availability honestly. Swap the hrefs here when a real signup exists.
+ */
+export const personalCta: NavItem = { label: 'Get Vekrun Personal', href: '/download/' };
+export const teamsCta: NavItem = { label: 'Explore Vekrun Teams', href: '/teams/' };
 
 export const footerColumns: { title: string; items: NavItem[] }[] = [
   { title: 'Vekrun', items: primaryNav },
