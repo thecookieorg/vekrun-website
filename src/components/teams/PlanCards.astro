@@ -15,13 +15,13 @@ const t = pricing.teams;
   <article class="plan" aria-labelledby="plan-personal">
     <p class="plan-k">For individual engineers</p>
     <h3 id="plan-personal" class="plan-n">{personal.name}</h3>
-    <p class="plan-price"><b>{personal.price}</b><span>{personal.priceNote}</span></p>
+    <p class="plan-price"><b>{personal.price}</b><span>for individual use</span></p>
     <p class="plan-p">{personal.summary}</p>
-    <ul class="plan-list">{(compact ? personal.includes.slice(0, 4) : personal.includes).map((i) => <li><Check class="h-4 w-4" aria-hidden="true" />{i}</li>)}</ul>
+    <ul class="plan-list">{personal.includes.map((i) => <li><Check class="h-4 w-4" aria-hidden="true" />{i}</li>)}</ul>
     <p class="plan-note">{personal.bring}</p>
   </article>
   <article class="plan is-teams" aria-labelledby="plan-teams">
-    <p class="plan-k">For engineering organizations · self-hosted</p>
+    <p class="plan-k">Self-hosted, for engineering teams</p>
     <h3 id="plan-teams" class="plan-n">{teams.name}</h3>
     <p class="plan-price"><b>{usd(t.base)}</b><span>a month, up to {t.includedEngineers} engineers</span></p>
     <p class="plan-sub">+{usd(t.perAdditionalEngineer)} a month for each additional engineer. SSO included.</p>

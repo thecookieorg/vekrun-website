@@ -1,43 +1,31 @@
 ---
-/** The global footer: the brand line, the product map, and the honest status row. */
+/** The global footer: the mark and one line, two short link columns, the legal line. */
 import Logo from './Logo.astro';
-import { footerColumns, site, teams } from '@/data/site';
+import { footerColumns, site } from '@/data/site';
 const year = new Date().getFullYear();
 ---
 <footer class="site-footer">
-  <div class="container-site py-16">
-    <div class="grid gap-12 sm:grid-cols-2 lg:grid-cols-[minmax(0,4fr)_repeat(4,minmax(0,2fr))] lg:gap-10">
-      <div class="max-w-sm">
+  <div class="container-site py-14">
+    <div class="grid gap-10 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:gap-16">
+      <div class="max-w-xs">
         <Logo />
-        <p class="mt-5 text-[1.35rem] font-[600] leading-[1.15] tracking-[-0.03em] text-text">{site.tagline}</p>
-        <p class="mt-4 text-[0.9rem] leading-relaxed text-text-2">
-          Vekrun Personal is free. <a href={teams.href} class="text-text underline underline-offset-3 decoration-border-strong hover:decoration-accent">{teams.name}</a> is self-hosted on your infrastructure. Your model providers bill you directly.
-        </p>
-        <p class="mt-5 inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-[0.8125rem] text-text-2">
-          <span class="h-1.5 w-1.5 rounded-full bg-warn" aria-hidden="true"></span>{site.status.short}
-        </p>
+        <p class="mt-4 text-[0.95rem] leading-relaxed text-text-2">{site.headline}</p>
       </div>
       {footerColumns.map((col) => (
         <nav aria-label={col.title}>
-          <h2 class="kicker">{col.title}</h2>
-          <ul class="mt-4 space-y-2.5">
-            {col.items.map((item) => (
-              <li><a href={item.href} class="footer-link">{item.label}</a></li>
-            ))}
+          <h2 class="text-[0.8125rem] font-[540] text-text-3">{col.title}</h2>
+          <ul class="mt-3 space-y-2">
+            {col.items.map((item) => <li><a href={item.href} class="footer-link">{item.label}</a></li>)}
           </ul>
         </nav>
       ))}
     </div>
-    <div class="mt-14 flex flex-col gap-3 border-t border-border pt-6 text-[0.8125rem] text-text-3 sm:flex-row sm:items-center sm:justify-between">
-      <p>© {year} Vekrun. Proprietary software. All rights reserved.</p>
-      <p><a href="/license/" class="underline underline-offset-2 hover:text-text">Licence</a></p>
-    </div>
+    <p class="mt-12 border-t border-border pt-6 text-[0.8125rem] text-text-3">© {year} Vekrun. Proprietary software. All rights reserved.</p>
   </div>
 </footer>
 
 <style>
-  .site-footer { position: relative; border-top: 1px solid var(--border); background: var(--bg-elevated); }
-  .site-footer::before { content: ''; position: absolute; left: 0; right: 0; top: -1px; height: 1px; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 50%, transparent) 30%, color-mix(in srgb, var(--accent-2) 50%, transparent) 70%, transparent); }
-  .footer-link { font-size: 0.9rem; color: var(--text-2); transition: color var(--dur-fast); }
+  .site-footer { border-top: 1px solid var(--border); background: var(--bg-elevated); }
+  .footer-link { font-size: 0.9375rem; color: var(--text-2); transition: color var(--dur-fast); }
   .footer-link:hover { color: var(--text); }
 </style>

@@ -1,22 +1,19 @@
 # Vekrun website
 
-The official website for [Vekrun](https://vekrunapp.com): a static Astro site
-with Starlight documentation, deployed to GitHub Pages.
+The marketing site for [Vekrun](https://vekrunapp.com): a static Astro site
+deployed to GitHub Pages.
 
-**Tell Vekrun what needs to ship.** Vekrun is an AI software engineering Factory.
+**From prompt to verified outcome.** Vekrun is a local-first AI software
+engineering Factory.
 
 ## Stack
 
 - [Astro](https://astro.build) 7 with strict TypeScript, static output only
 - [Tailwind CSS](https://tailwindcss.com) 4 through `@tailwindcss/vite`
-- [Astro Starlight](https://starlight.astro.build) for `/docs/`
-- Lucide icons, self-hosted Geist and Geist Mono
-- Vitest for data invariants, Playwright for end-to-end tests
-- GitHub Actions building to GitHub Pages
-
-No framework runtime ships to the browser. Interactive pieces (theme toggle,
-menus, the scripted product demonstrations, catalog and roadmap filters) are
-small plain scripts and every page works without JavaScript.
+- Inter Variable and Geist Mono, self-hosted through Fontsource
+- No client framework. The few interactive pieces (phone menu, theme toggle,
+  the scripted product demonstrations, the Teams calculator) are small inline
+  scripts.
 
 ## Develop
 
@@ -31,55 +28,41 @@ pnpm preview      # serve dist/
 
 ## Verify
 
-Run each separately and read the output.
-
 ```bash
 pnpm check        # astro check: TypeScript and template errors
-pnpm test         # vitest: content data invariants
+pnpm test         # vitest: pricing, navigation, redirects, integrations
 pnpm build        # must succeed with zero errors
 pnpm test:links   # every internal link and anchor in dist/ resolves
-pnpm test:e2e     # playwright: navigation, theme, demo, docs, 404 (desktop + phone)
+pnpm test:e2e     # playwright + axe: pages, nav, pricing, demos, a11y, SEO (desktop + phone)
 ```
 
 `pnpm verify` runs the first four in order. The first Playwright run needs
 `pnpm exec playwright install chromium`.
 
-Visual QA: `node scripts/screenshot.mjs http://localhost:4321 out/ / /factory/`
-screenshots pages at desktop and phone widths in both themes.
-
 ## Where things live
 
 | Path | What |
 |---|---|
-| `src/data/site.ts` | Product metadata, navigation, footer, availability vocabulary. The single place product status strings live. |
-| `src/content/data/*.json` | Integrations, roadmap entries, milestones, releases. Validated by `src/content.config.ts`. |
-| `src/content/docs/docs/` | Documentation pages (Starlight). The extra `docs/` level mounts them at `/docs/`. |
-| `src/pages/` | Marketing pages |
-| `src/components/` | Shared components; `mock/` is the product-window system, `home/`, `features/`, `catalog/`, `docs/` are page-specific |
-| `src/scripts/sequence.ts` | Runtime for scripted product demonstrations (play, pause, replay, reduced motion) |
-| `src/styles/global.css` | Design tokens (dark and light), base styles, utilities |
-| `public/` | Static assets, `CNAME`, `robots.txt`, Open Graph image |
-| `scripts/` | Link checker, screenshot helper, Open Graph image generator |
-| `docs/` | Deployment, DNS and content-editing guides for this repository |
+| `src/data/site.ts` | Positioning, navigation, packages, pricing and release facts. One source of truth. |
+| `src/data/integrations.ts` | Integration groups and the platforms strip. |
+| `src/pages/` | One file per page. Retired routes are redirects in `astro.config.mjs`. |
+| `src/components/` | `factory/` and `org/` are product concepts, `visuals/` holds Council and screenshots, `teams/` the plan cards and calculator, `mock/` the window chrome. |
+| `src/styles/global.css` | Design tokens (taken from the desktop app) and shared primitives. |
+| `public/shots/` | Real screenshots of the Vekrun desktop app. |
+| `scripts/brand-mark.mjs`, `scripts/og-image.mjs` | Regenerate the logo assets and Open Graph images. |
+| `docs/` | Deployment, DNS and content-editing guides for this repository. |
 
-## Honesty rules for content
+## Rules
 
-- Three statuses everywhere: **In development build** (works in the current
-  source on macOS, not in any public release), **In progress**, **Planned**.
-- Never mark an integration available without a verified implementation.
-- Mockups are product previews and say so until real recordings exist.
-- Marketing pages speak in user benefits; implementation detail belongs under
-  `/docs/advanced/`. The unit tests reject engineering jargon in catalog and
-  roadmap data.
-- The download page shows releases only from `releases.json`; keep it empty
-  until signed artifacts exist.
-- Reconcile `site.status.asOf` and the roadmap data whenever status changes.
+- Pricing comes only from `site.ts`: $199 a month for up to 10 engineers, then
+  $10 a month per additional engineer. Planned launch pricing; no checkout.
+- No status labels, no "coming soon", no fabricated testimonials, screenshots,
+  downloads or certifications. Download availability lives in `site.release`.
+- Concept visuals carry an "Illustrative product concept" notice.
+- No left-border accent stripes. Use full outlines or a tint.
 
-See [docs/CONTENT.md](docs/CONTENT.md) for how to update each kind of content,
-and [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for hosting, DNS and rollback.
+The public documentation and roadmap were retired on 2026-11-01; their sources
+are kept under the git tag `archive/docs-and-roadmap-2026-11-01`.
 
-## License
-
-The source of this website is licensed under the Apache License 2.0; see [LICENSE](LICENSE).
-That licence covers the website only. The Vekrun product is proprietary software and is not
-open source; see https://vekrunapp.com/license/.
+See [docs/CONTENT.md](docs/CONTENT.md) for editing content and
+[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for hosting, DNS and rollback.

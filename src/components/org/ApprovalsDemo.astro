@@ -40,8 +40,8 @@ const reqs: Req[] = [
             <div><dt>Requested operation</dt><dd>{r.op}</dd></div>
             <div><dt>Affected repository</dt><dd class="ap-mono">{r.repo}</dd></div>
             <div><dt>Context</dt><dd>{r.ctx}</dd></div>
-            <div class="ap-dl-row"><div><dt>Expected cost</dt><dd>{r.cost}</dd></div><div><dt>Risk level</dt><dd><span class:list={['pill', `is-${r.riskTone}`]}>{r.risk}</span></dd></div><div><dt>Decides</dt><dd class="ap-who"><Avatar who={r.who} size="sm" />{r.who === 'sam' ? 'Sam, lead' : r.who === 'alex' ? 'Alex, developer' : 'Dana, manager'}</dd></div></div>
           </dl>
+          <dl class="ap-dl-row"><div><dt>Expected cost</dt><dd>{r.cost}</dd></div><div><dt>Risk level</dt><dd><span class:list={['pill', `is-${r.riskTone}`]}>{r.risk}</span></dd></div><div><dt>Decides</dt><dd class="ap-who"><Avatar who={r.who} size="sm" />{r.who === 'sam' ? 'Sam, lead' : r.who === 'alex' ? 'Alex, developer' : 'Dana, manager'}</dd></div></dl>
           {r.report ? (
             <p class="ap-done"><span class="pill is-ok">Verified</span>Kept for the record. Reports do not need a decision.</p>
           ) : (
@@ -80,10 +80,10 @@ const reqs: Req[] = [
   .ap-head h4 { margin: 0; font-size: 1.05rem; font-weight: 580; color: var(--text); letter-spacing: -0.015em; }
   .ap-head p { margin: 0; color: var(--text-3); }
   .ap-dl { margin: 0; display: grid; gap: 0.6rem; }
-  .ap-dl dt { color: var(--text-3); font-size: 0.64rem; margin-bottom: 0.1rem; }
-  .ap-dl dd { margin: 0; color: var(--text-2); line-height: 1.45; }
+  .ap-dl dt, .ap-dl-row dt { color: var(--text-3); font-size: 0.64rem; margin-bottom: 0.1rem; }
+  .ap-dl dd, .ap-dl-row dd { margin: 0; color: var(--text-2); line-height: 1.45; }
   .ap-mono { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text); word-break: break-word; }
-  .ap-dl-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; padding-top: 0.5rem; border-top: 1px solid var(--border); }
+  .ap-dl-row { margin: 0.6rem 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; padding-top: 0.5rem; border-top: 1px solid var(--border); }
   @media (max-width: 30rem) { .ap-dl-row { grid-template-columns: 1fr 1fr; } }
   .ap-who { display: inline-flex; align-items: center; gap: 0.35rem; }
   .ap-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; padding-top: 0.3rem; }

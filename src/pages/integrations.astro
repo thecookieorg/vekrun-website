@@ -1,94 +1,84 @@
 ---
+/**
+ * Integrations: the customer's own tools, grouped by what they do for them.
+ * OpenRouter is featured as a first-class model connection. Platforms show the
+ * kinds of products Vekrun is built to coordinate. Logos mean compatibility,
+ * never endorsement.
+ */
 import Base from '@/layouts/Base.astro';
 import PageHero from '@/components/PageHero.astro';
-import IntegrationCatalog from '@/components/catalog/IntegrationCatalog.astro';
-import IntegrationLogo from '@/components/catalog/IntegrationLogo.astro';
-import { getCollection } from 'astro:content';
-import { site } from '@/data/site';
 import SectionHeading from '@/components/SectionHeading.astro';
-import { ArrowUpRight } from '@lucide/astro';
+import Button from '@/components/Button.astro';
+import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
+import { toolGroups, platforms } from '@/data/integrations';
 
-const title = 'Integrations';
-const description = 'The coding CLIs, models and API gateways, source control, trackers, monitoring, CI and local runtimes Vekrun connects to, each with its real status. Vekrun discovers your coding CLIs and keeps them current where the vendor supports it.';
-const entries = await getCollection('integrations');
-const byId = (id: string) => entries.find((e) => e.id === id)!;
-const featured = [
-  { title: 'Coding CLIs', blurb: 'Signed in on your Host. Discovered, checked and kept current.', href: '/integrations/?category=coding-clis', ids: ['claude-code', 'codex', 'gemini-cli', 'github-cli'] },
-  { title: 'Models and gateways', blurb: 'Your own accounts, billed by the provider. OpenRouter is first-class.', href: '/integrations/?category=models', ids: ['openrouter', 'anthropic', 'openai', 'gemini'] },
-  { title: 'Trackers and source control', blurb: 'Where work is defined and where it is reviewed.', href: '/integrations/?category=project-management', ids: ['jira', 'linear', 'asana', 'github', 'gitlab'] },
-  { title: 'Monitoring', blurb: 'Production problems become shared Work Items you can fix.', href: '/integrations/?category=monitoring', ids: ['sentry', 'honeybadger', 'datadog', 'appsignal'] },
-].map((g) => ({ ...g, items: g.ids.map(byId).filter(Boolean) }));
+const facts = [
+  ['Your accounts, your bills', 'Model providers bill you directly. Vekrun never resells inference or adds a markup.'],
+  ['Logins stay on your machine', 'Signed-in coding agents run on your own computer. Their credentials are never copied anywhere.'],
+  ['You choose what agents can touch', 'Every connection asks before it reads or changes something new.'],
+];
 ---
-<Base title={title} description={description}>
-  <PageHero eyebrow="Integrations and Connections" title="Connect the tools" accent="you already use." lede="Your coding CLIs, model accounts, trackers, repositories and monitoring, each connected with your own account. How each one authenticates depends on the provider; not every one has a one-click sign-in." wide>
-    <Fragment slot="status"><span>Model providers bill you directly. A coding CLI subscription and paid API access are separate things.</span><a href="/docs/settings/providers/" class="text-accent link-slide">Setup steps in the docs</a></Fragment>
-    <div class="feat-grid reveal-group" aria-label="Featured connections">
-      {featured.map((g) => (
-        <section class="feat-card card" aria-labelledby={`feat-${g.title.toLowerCase().replace(/\s+/g, '-')}`}>
-          <div class="feat-head">
-            <div><h2 id={`feat-${g.title.toLowerCase().replace(/\s+/g, '-')}`} class="feat-title">{g.title}</h2><p class="feat-blurb">{g.blurb}</p></div>
-            <a href={g.href} class="group feat-all link-slide">All<ArrowUpRight class="icon-nudge h-3.5 w-3.5" aria-hidden="true" /></a>
-          </div>
-          <ul class="feat-items" role="list">
-            {g.items.map((e) => (
-              <li class="feat-item">
-                <IntegrationLogo id={e.id} name={e.data.name} monogram={e.data.monogram} />
-                <span class="feat-name">{e.data.name}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))}
-    </div>
-    <p class="mt-6 text-center text-[0.75rem] text-text-3">Logos are trademarks of their owners and indicate compatibility, not endorsement.</p>
-  </PageHero>
+<Base title="Integrations" fullTitle="Integrations: keep the tools you love · Vekrun" description="Vekrun works with Claude Code, Codex, Gemini CLI, OpenRouter, GitHub, GitLab, Jira, Linear, Sentry, Ollama and more. Keep your tools; Vekrun coordinates the engineering around them.">
+  <PageHero eyebrow="Integrations" title="Keep the tools you love. Let Vekrun coordinate them." lede="Bring your coding agents, models, repositories and trackers. Vekrun connects the work between them." />
 
-  <div class="pb-20">
-    <IntegrationCatalog />
-    <p class="container-site mt-14 text-[0.9375rem] text-text-2">
-      Connected trackers and monitoring put work on the <a href="/features/board/" class="text-accent link-slide">Board</a>, one step from a Factory job.
-    </p>
-  </div>
-
-  <section id="connections" class="section-pad rule scroll-mt-16" aria-labelledby="connections-title">
-    <div class="container-site">
-      <div class="grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
-        <div class="reveal">
-          <p class="kicker">Connections and Setup</p>
-          <h2 id="connections-title" class="heading-2 mt-3 text-text">Your coding CLIs, found and kept healthy.</h2>
-          <p class="lede mt-4">Vekrun looks for Claude Code, Codex, Gemini CLI and GitHub CLI on your Host, shows their versions and whether they are signed in, and offers to install or update them where the vendor supports it.</p>
+  <section class="rule" aria-labelledby="openrouter-title">
+    <div class="container-site py-14">
+      <div class="feature reveal">
+        <IntegrationLogo id="openrouter" name="OpenRouter" monogram="Or" size="lg" />
+        <div>
+          <h2 id="openrouter-title" class="text-[1.35rem] font-[620] tracking-[-0.02em] text-text">Every model through one connection.</h2>
+          <p class="mt-2 max-w-2xl text-[1.0625rem] text-text-2">Connect OpenRouter once and give the Council or any job the model that fits. Billed by OpenRouter, separately from Vekrun.</p>
         </div>
-        <dl class="facts facts-lg reveal-group">
-          <div><dt>Version and health</dt><dd>See which CLI is installed, which version, and whether its sign-in still works, before a job depends on it.</dd></div>
-          <div><dt>Install and update where supported</dt><dd>Through each vendor’s own installer and update channel. Not every tool offers one on every operating system.</dd></div>
-          <div><dt>Safe restarts and Context Handoff</dt><dd>An update or a usage limit should not lose a job. The job pauses at a safe point, and Context Handoff rebuilds its state for the next worker.</dd></div>
-          <div><dt>Logins stay on the Host</dt><dd>Vekrun never exports a CLI’s login or session to an environment or anywhere else.</dd></div>
-        </dl>
       </div>
     </div>
   </section>
 
-  <section id="project-setup" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="setup-title">
+  {toolGroups.map((g, i) => (
+    <section class:list={['group-sec rule', i % 2 === 0 && 'bg-bg-elevated']} aria-labelledby={`g-${g.key}`}>
+      <div class="container-site group-in">
+        <div class="reveal">
+          <h2 id={`g-${g.key}`} class="heading-3 text-text">{g.title}</h2>
+          <p class="mt-2 max-w-sm text-[0.98rem] text-text-2">{g.line}</p>
+        </div>
+        <ul class="tiles reveal-group">
+          {g.tools.map((t) => <li><IntegrationLogo id={t.id} name={t.name} monogram={t.mono} /><span>{t.name}</span></li>)}
+        </ul>
+      </div>
+    </section>
+  ))}
+
+  <section class="section-pad rule" aria-labelledby="platforms-title">
     <div class="container-site">
-      <SectionHeading id="setup-title" kicker="Project setup" title="Docker, native and hybrid projects." lede="Environment Discovery works out how a repository runs: Docker Compose services, a native Rails, Node or Python app, or a mix. It starts the project with health checks and seeds and saves a verified Environment Recipe for every job after. Most projects need no setup; some need a hint." class="reveal" />
+      <SectionHeading id="platforms-title" title="Built for whole products, not single repos." lede="An Expo app and its Rails API, a Shopify storefront, a Tauri desktop client. Vekrun is built to coordinate them together." class="reveal" />
+      <ul class="plat reveal-group" aria-label="Platforms">
+        {platforms.map((t) => <li><IntegrationLogo id={t.id} name={t.name} monogram={t.mono} size="sm" />{t.name}</li>)}
+      </ul>
     </div>
   </section>
 
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="connect-title">
+    <div class="container-site">
+      <SectionHeading id="connect-title" title="Connecting is simple. Staying in control is the point." class="reveal" />
+      <dl class="facts facts-grid facts-lg reveal-group mt-10">
+        {facts.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+      </dl>
+      <p class="mt-10 text-[0.95rem] text-text-2 reveal">Each provider connects its own way: a signed-in CLI, a sign-in with the service, or an API key. How data is handled is on the <a href="/security/" class="text-accent link-slide">security page</a>.</p>
+      <p class="mt-6 text-[0.8125rem] text-text-3">Logos are trademarks of their owners and show compatibility, not endorsement.</p>
+      <div class="mt-10 reveal"><Button href="/teams/" variant="secondary">Teams & Pricing</Button></div>
+    </div>
+  </section>
 </Base>
 
 <style>
-  .feat-grid { display: grid; gap: 1rem; }
-  @media (min-width: 40rem) { .feat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (min-width: 80rem) { .feat-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-  .feat-card { display: flex; flex-direction: column; gap: 1rem; padding: 1.25rem; text-align: left; }
-  .feat-head { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start; }
-  .feat-title { margin: 0; font-size: 1.05rem; font-weight: 600; letter-spacing: -0.015em; color: var(--text); }
-  .feat-blurb { margin: 0.25rem 0 0; font-size: 0.85rem; line-height: 1.45; color: var(--text-3); }
-  .feat-all { display: inline-flex; align-items: center; gap: 0.2rem; flex: 0 0 auto; font-size: 0.8125rem; font-weight: 540; color: var(--accent); }
-  .feat-items { list-style: none; padding: 0; display: grid; gap: 0.5rem; }
-  .feat-item { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: 'logo name'; column-gap: 0.75rem; align-items: center; padding: 0.6rem 0.7rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-2); min-width: 0; transition: border-color var(--dur-fast), transform var(--dur) var(--ease-out); }
-  .feat-item > :first-child { grid-area: logo; }
-  .feat-item:hover { border-color: var(--border-strong); transform: translateY(-2px); }
-  .feat-name { grid-area: name; font-size: 0.875rem; font-weight: 560; color: var(--text); line-height: 1.2; }
-  @media (prefers-reduced-motion: reduce) { .feat-item { transition: none; } .feat-item:hover { transform: none; } }
+  .feature { display: flex; flex-wrap: wrap; align-items: center; gap: 1.25rem; }
+  .group-sec { padding-block: 3.5rem; }
+  @media (min-width: 64rem) { .group-sec { padding-block: 4.5rem; } }
+  .group-in { display: grid; gap: 1.75rem; }
+  @media (min-width: 64rem) { .group-in { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 4rem; align-items: start; } }
+  .tiles { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
+  @media (min-width: 40rem) { .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .tiles li { display: flex; align-items: center; gap: 0.75rem; min-width: 0; padding: 0.7rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); font-size: 0.95rem; font-weight: 520; color: var(--text); }
+  .tiles li span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .plat { margin: 2.5rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .plat li { display: inline-flex; align-items: center; gap: 0.55rem; padding: 0.4rem 0.85rem 0.4rem 0.45rem; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); font-size: 0.95rem; color: var(--text); }
 </style>

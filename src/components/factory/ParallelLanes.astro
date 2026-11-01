@@ -1,21 +1,21 @@
 ---
 /**
- * Several projects at once: one lane per job, each with its own repository,
- * branch, environment and queue position. Demonstration data.
+ * Several projects at once, including linked ones: a mobile app and its API
+ * built together against one shared contract. Demonstration data.
  */
 import ConceptNotice from '@/components/ConceptNotice.astro';
 const lanes = [
-  { p: 'acme-web', b: 'fix/checkout-total', e: 'env 17 · Docker + Rails', q: 'urgent', s: 'Verifying', w: 80, tone: 'ok' },
-  { p: 'acme-api', b: 'feat/report-csv', e: 'env 12 · native Node', q: 'normal', s: 'Testing', w: 60, tone: 'ok' },
-  { p: 'billing', b: 'chore/payments-sdk', e: 'env 9 · Docker + Python', q: 'normal', s: 'Implementing', w: 38, tone: 'ok' },
-  { p: 'docs-site', b: 'docs/rate-limits', e: 'waiting for capacity', q: 'low', s: 'Queued', w: 0, tone: 'muted' },
-];
+  { p: 'shop-mobile', b: 'feat/saved-carts', e: 'Expo · iOS and Android', q: 'linked', s: 'Testing', w: 64 },
+  { p: 'shop-api', b: 'feat/saved-carts', e: 'Rails · shares the carts contract', q: 'linked', s: 'Verifying', w: 82 },
+  { p: 'storefront', b: 'fix/checkout-total', e: 'Shopify theme', q: 'urgent', s: 'Building', w: 40 },
+  { p: 'admin', b: 'docs/rate-limits', e: 'Next.js · waiting for a slot', q: 'low', s: 'Queued', w: 0 },
+]
 ---
 <div class="pl">
   <ul class="pl-lanes" aria-label="Jobs running in parallel">
     {lanes.map((l) => (
       <li class:list={['pl-lane', l.w === 0 && 'is-queued']}>
-        <div class="pl-head"><b>{l.p}</b><span class:list={['pill', l.q === 'urgent' ? 'is-warn' : 'is-muted']}>{l.q}</span></div>
+        <div class="pl-head"><b>{l.p}</b><span class:list={['pill', l.q === 'urgent' ? 'is-warn' : l.q === 'linked' ? 'is-ok' : 'is-muted']}>{l.q}</span></div>
         <p class="pl-meta"><span>{l.b}</span><span>{l.e}</span></p>
         <div class="pl-progress"><span class:list={['bar', l.w === 0 && 'is-empty']} style={`--w: ${l.w}%`}><i></i></span><span class="pl-s">{l.s}</span></div>
       </li>
