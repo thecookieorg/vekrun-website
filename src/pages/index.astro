@@ -1,8 +1,8 @@
 ---
 /**
  * The homepage tells one story, one idea per section: the promise, the problem,
- * how it works, the Council, verification, before and after, your tools, Teams
- * Remote Factory, and the two packages.
+ * how it works, the Council, verification, Live Share, before and after, your
+ * tools, Teams Remote Factory, and the two packages.
  */
 import Base from '@/layouts/Base.astro';
 import PageHero from '@/components/PageHero.astro';
@@ -13,7 +13,7 @@ import Screenshot from '@/components/visuals/Screenshot.astro';
 import RemoteFactory from '@/components/visuals/RemoteFactory.astro';
 import PlanCards from '@/components/teams/PlanCards.astro';
 import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
-import { site } from '@/data/site';
+import { site, personalCta, teams } from '@/data/site';
 import { toolById } from '@/data/integrations';
 import { ArrowRight, RotateCw } from '@lucide/astro';
 
@@ -26,10 +26,10 @@ const factory = [
   { t: 'Deliver', d: 'You review a finished PR.' },
 ];
 const pairs = [
-  { b: 'Four projects, four terminals, and you switching between them.', a: 'One Factory moves work in every project at once.' },
+  { b: 'Every new agent session starts out knowing nothing about your codebase.', a: 'Vekrun reads the repository, its conventions and your team’s notes first.' },
   { b: 'Six weeks on, nobody remembers why the code changed.', a: 'Engineering Memory keeps each decision with its evidence.' },
 ];
-const tools = ['claude-code', 'codex', 'gemini-cli', 'openrouter', 'github', 'gitlab', 'jira', 'linear', 'sentry'].map((id) => toolById(id)!);
+const tools = ['claude-code', 'codex', 'antigravity', 'openrouter', 'github', 'gitlab', 'jira', 'linear', 'sentry'].map((id) => toolById(id)!);
 
 const structuredData = [
   { '@context': 'https://schema.org', '@type': 'Organization', name: site.name, url: site.url, logo: `${site.url}/brand/vekrun-mark-dark-512.png` },
@@ -38,7 +38,7 @@ const structuredData = [
 ];
 ---
 <Base title={site.name} fullTitle={`${site.name} · From prompt to verified outcome`} description={site.description} structuredData={structuredData} page="home">
-  <PageHero eyebrow="The AI software engineering Factory" title={site.headline} lede={site.subheading} cta={{ label: 'See how it works', href: '/product/' }} secondary={{ label: 'Before & After', href: '/before-and-after/' }} wide>
+  <PageHero eyebrow="The AI software engineering Factory" title={site.headline} lede={site.subheading} cta={personalCta} secondary={{ label: 'See how it works', href: '/product/' }} wide>
     <FactoryHero />
   </PageHero>
 
@@ -78,7 +78,14 @@ const structuredData = [
       <div class="reveal mt-12"><Screenshot name="browser-verified" alt="The Vekrun desktop app comparing a page before and after a fix, with each review comment verified and an independent test run passed." /></div>
     </div>
   </section>
-  <section class="section-pad rule" aria-labelledby="ba-title">
+  <section class="section-pad rule" aria-labelledby="share-title">
+    <div class="container-site">
+      <SectionHeading id="share-title" title="Show it running. Fix what reviewers point at." lede="Live Share puts the app you’re building on a permanent HTTPS link. Clients and teammates select what’s wrong, right on the page. Approve their feedback and the Factory fixes it and verifies the fix." class="reveal" />
+      <div class="reveal mt-12"><Screenshot name="liveshare-review" alt="The Live Share Review Inbox in the Vekrun desktop app: a reviewer’s comment about a cramped checkout heading, with the region they selected highlighted on the page." caption="Live Share’s Review Inbox in the Vekrun desktop app." /></div>
+      <p class="mt-10 reveal"><a href="/product/#live-share" class="link-more group">How Live Share works<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
+    </div>
+  </section>
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="ba-title">
     <div class="container-site">
       <SectionHeading id="ba-title" title="Before Vekrun, you were the glue." class="reveal" />
       <div class="ba reveal-group">
@@ -92,7 +99,7 @@ const structuredData = [
       <p class="mt-10 reveal"><a href="/before-and-after/" class="link-more group">See the whole day, before and after<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
     </div>
   </section>
-  <section class="section-pad rule bg-bg-elevated" aria-labelledby="tools-title">
+  <section class="section-pad rule" aria-labelledby="tools-title">
     <div class="container-site split">
       <div class="reveal">
         <h2 id="tools-title" class="heading-2 text-text">Keep the tools you like.</h2>
@@ -104,20 +111,21 @@ const structuredData = [
       </ul>
     </div>
   </section>
-  <section id="teams" class="section-pad rule scroll-mt-16" aria-labelledby="remote-title">
+  <section id="teams" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="remote-title">
     <div class="container-site remote">
       <div class="reveal">
         <p class="kicker">Vekrun Teams</p>
         <h2 id="remote-title" class="heading-2 mt-3 text-text">One Factory for the whole team, wherever they work.</h2>
-        <p class="lede mt-4">Vekrun Teams runs a shared Factory on your own servers. Work keeps moving when people step away, anyone authorized can drive it from anywhere, and code and credentials stay with you.</p>
+        <p class="lede mt-4">Vekrun Teams will run a shared Factory on your own servers. Work keeps moving when people step away, anyone authorized can drive it from anywhere, and code and credentials stay with you.</p>
+        <p class="mt-4 text-[0.95rem] text-text-2">{teams.availability}</p>
         <p class="mt-8"><a href="/teams/#remote" class="link-more group">Why teams run their own Factory<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
       </div>
       <div class="reveal min-w-0"><RemoteFactory compact /></div>
     </div>
   </section>
-  <section class="section-pad rule bg-bg-elevated" aria-labelledby="plans-title">
+  <section class="section-pad rule" aria-labelledby="plans-title">
     <div class="container-site">
-      <SectionHeading id="plans-title" title="Start on your machine. Bring your team when you’re ready." lede="Personal is free and runs locally. Teams is one plan, one price, on your own servers." class="reveal" />
+      <SectionHeading id="plans-title" title="Start on your machine. Bring your team when you’re ready." lede="Personal is free and runs locally. Teams follows, with one plan and one price, on your own servers." class="reveal" />
       <div class="reveal mt-12"><PlanCards compact /></div>
     </div>
   </section>

@@ -12,12 +12,13 @@ const rules = [
   ['Nothing an agent reads is trusted', 'Repository text, model replies and tool output are untrusted input. Your permissions decide what an agent may do, not the prompt.'],
   ['Deny by default', 'Agents can only do what you’ve allowed. Every action on files, commands, Git or the network is recorded.'],
   ['Keys stay in your keychain', 'Your operating system stores API keys. They stay out of logs and out of the interface.'],
-  ['Logins stay on your machine', 'Coding agents stay signed in on your computer. Their logins are never copied into a job’s environment.'],
-  ['One environment per job', 'Each piece of work runs isolated. Isolation reduces risk; it doesn’t make a malicious dependency harmless.'],
+  ['Logins stay with the agent', 'Coding agents sign in through their own official flow. Vekrun never reads or stores those credentials.'],
+  ['One VM per task', 'Each Factory task runs in its own isolated VM. Isolation reduces risk; it doesn’t make a malicious dependency harmless.'],
+  ['MCP tools ask first', 'Every tool call an agent makes to an MCP server needs your approval. Remote servers stay off until you enable them.'],
   ['People approve what matters', 'Merges follow your branch protections. Production commands run only under explicit policy and approval.'],
 ];
 ---
-<Base title="Security" fullTitle="Security · Vekrun" description="How Vekrun handles untrusted input, credentials, isolated environments and approvals, what self-hosting Vekrun Teams changes, and how to report a vulnerability.">
+<Base title="Security" fullTitle="Security · Vekrun" description="How Vekrun handles untrusted input, credentials, isolated environments, MCP tools and approvals, what Live Share sends through our gateway, what self-hosting Vekrun Teams changes, and how to report a vulnerability.">
   <PageHero eyebrow="Security" title="Agents act for you. These are their rules." lede="Vekrun runs commands, edits code and talks to model providers on your behalf. Here’s how it keeps that safe." />
 
   <section class="rule py-14" aria-label="Security rules">
@@ -26,16 +27,24 @@ const rules = [
     </div>
   </section>
 
-  <section class="rule bg-bg-elevated py-14" aria-labelledby="shared">
+  <section class="rule bg-bg-elevated py-14" aria-labelledby="live-share">
+    <div class="container-site prose-site max-w-3xl">
+      <h2 id="live-share" class="!mt-0">Live Share goes through our gateway</h2>
+      <p>Live Share is the one feature that uses a server Vekrun operates. When you turn it on, your machine keeps an outgoing connection to a public gateway. The gateway serves your permanent HTTPS link, checks the password if you set one (keeping only its hash), and relays visitors to the single app you chose to share.</p>
+      <p>Anyone with a public link can open it. Feedback from reviewers waits in your Review Inbox and starts no work until you approve it. What the gateway relays and keeps is listed on the <a href="/privacy/#live-share">privacy page</a>.</p>
+    </div>
+  </section>
+
+  <section class="rule py-14" aria-labelledby="shared">
     <div class="container-site prose-site max-w-3xl">
       <h2 id="shared" class="!mt-0">Self-hosting is shared responsibility</h2>
-      <p>With Vekrun Teams you run the Coordinator, its data and the workers. You control where code and records live, and you own access, patching, backups and network exposure for those servers. Vekrun stays responsible for the software: secure defaults, timely updates and honest security notices.</p>
+      <p>With Vekrun Teams you will run the Coordinator, its data and the workers. You control where code and records live, and you own access, patching, backups and network exposure for those servers. Vekrun stays responsible for the software: secure defaults, timely updates and honest security notices.</p>
       <p>Model providers you connect receive what a job sends them, under your accounts and their terms. Local models keep that on your hardware.</p>
       <p>Vekrun holds no SOC 2 report or other certification, and doesn’t claim end-to-end encryption or zero access.</p>
     </div>
   </section>
 
-  <section class="rule pb-24 pt-14" aria-labelledby="report">
+  <section class="rule bg-bg-elevated pb-24 pt-14" aria-labelledby="report">
     <div class="container-site prose-site max-w-3xl">
       <h2 id="report" class="!mt-0">Reporting a vulnerability</h2>
       {site.contact.securityEmail ? (

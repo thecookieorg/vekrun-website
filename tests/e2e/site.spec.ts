@@ -82,7 +82,7 @@ test.describe('conversion paths', () => {
     test(`${path} ends with the Personal and Teams paths`, async ({ page }) => {
       await page.goto(path);
       const next = page.locator('section[aria-labelledby="next-title"]');
-      await expect(next.getByRole('link', { name: 'Get Vekrun Personal' })).toHaveAttribute('href', '/download/');
+      await expect(next.getByRole('link', { name: 'Request early access' })).toHaveAttribute('href', '/download/#early-access');
       await expect(next.getByRole('link', { name: 'Explore Vekrun Teams' })).toHaveAttribute('href', '/teams/');
       await expect(next).toContainText('isn’t on sale yet');
     });
@@ -91,12 +91,39 @@ test.describe('conversion paths', () => {
   test('the homepage plans lead to Personal and Teams, and every CTA destination resolves', async ({ page }) => {
     await page.goto('/');
     const plans = page.locator('section[aria-labelledby="plans-title"]');
-    await expect(plans.getByRole('link', { name: 'Get Vekrun Personal' })).toHaveAttribute('href', '/download/');
+    await expect(plans.getByRole('link', { name: 'Request early access' })).toHaveAttribute('href', '/download/#early-access');
     await expect(plans.getByRole('link', { name: 'Explore Vekrun Teams' })).toHaveAttribute('href', '/teams/');
     for (const href of await page.locator('main a.btn').evaluateAll((els) => els.map((e) => e.getAttribute('href')!))) {
       if (href.startsWith('#')) continue;
-      expect((await page.request.get(href.replace(/#.*/, ''))).status(), href).toBe(200);
+      expect((await page.request.get(href.replace(/[?#].*/, ''))).status(), href).toBe(200);
     }
+  });
+});
+
+test.describe('live share and privacy', () => {
+  test('the homepage shows Live Share with a real screenshot', async ({ page }) => {
+    await page.goto('/');
+    const sec = page.locator('section[aria-labelledby="share-title"]');
+    await expect(sec.locator('img[src="/shots/liveshare-review-1440.webp"]')).toBeAttached();
+    await expect(sec.getByRole('link', { name: 'How Live Share works' })).toHaveAttribute('href', '/product/#live-share');
+  });
+
+  test('privacy says what Live Share relays through the gateway and no longer claims no Vekrun server', async ({ page }) => {
+    await page.goto('/privacy/');
+    await expect(page.locator('main')).not.toContainText('passes through no Vekrun server');
+    const ls = page.locator('#live-share');
+    await expect(ls).toHaveText('Live Share');
+    for (const t of ['What stays local.', 'What the gateway relays.', 'What the gateway keeps.']) await expect(page.locator('main')).toContainText(t);
+    await page.goto('/security/');
+    await expect(page.locator('#live-share')).toHaveText('Live Share goes through our gateway');
+  });
+
+  test('integrations separate agents, native services and MCP, and list nothing unfinished as shipped', async ({ page }) => {
+    await page.goto('/integrations/');
+    await expect(page.locator('main')).toContainText('Antigravity CLI');
+    await expect(page.locator('main')).not.toContainText(/Gemini CLI|Kamal|Vercel|PagerDuty/);
+    await expect(page.getByRole('heading', { name: 'Native integrations.' })).toBeVisible();
+    await expect(page.locator('#mcp')).toContainText('Planned: Asana tools for agents');
   });
 });
 
@@ -115,7 +142,9 @@ test.describe('remote factory', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Your engineering Factory shouldn’t stop when you leave your desk.');
     await expect(page.locator('#remote')).toContainText('Nothing leaves your control');
     await expect(page.getByText('Code, credentials and execution policies stay here.')).toBeVisible();
-    await expect(page.locator('#pricing')).toContainText('Runs on your servers. Your team works with it from anywhere.');
+    await expect(page.locator('#pricing')).toContainText('Will run on your servers. Your team works with it from anywhere.');
+    await expect(page.locator('main')).toContainText('Vekrun Teams comes after Personal.');
+    await expect(page.getByRole('link', { name: 'Request Teams early access' }).first()).toHaveAttribute('href', '/download/?edition=teams#early-access');
     await expect(page.getByText(/enterprise/i).first()).toBeAttached();
     await expect(page.locator('main')).not.toContainText(/\$19\b/);
   });
@@ -136,7 +165,20 @@ test.describe('product', () => {
 
   test('has every section the old URLs point at', async ({ page }) => {
     await page.goto('/product/');
-    for (const id of ['how', 'factory', 'council', 'board', 'inbox', 'verification', 'memory', 'mobile', 'tools']) await expect(page.locator(`#${id}`), id).toHaveCount(1);
+    for (const id of ['how', 'factory', 'git', 'live-share', 'council', 'board', 'inbox', 'verification', 'memory', 'mobile', 'tools']) await expect(page.locator(`#${id}`), id).toHaveCount(1);
+  });
+
+  test('Live Share, delivery and memory use real screenshots that load', async ({ page }) => {
+    await page.goto('/product/');
+    for (const [id, shot] of [['live-share', 'liveshare-review'], ['factory', 'project-delivery'], ['memory', 'memory-understand']] as const) {
+      const img = page.locator(`#${id} img[src="/shots/${shot}-1440.webp"]`);
+      await img.scrollIntoViewIfNeeded();
+      await expect(img, shot).toHaveJSProperty('complete', true);
+      expect(await img.evaluate((i: HTMLImageElement) => i.naturalWidth), shot).toBeGreaterThan(0);
+      await expect(page.locator(`#${id} figcaption`)).toContainText('Vekrun desktop app');
+    }
+    await expect(page.locator('#live-share a[href="/privacy/#live-share"]')).toBeVisible();
+    await expect(page.locator('#memory')).toContainText('Obsidian vault');
   });
 
   test('the Board flow ends with a pull request waiting for a person', async ({ page }) => {
@@ -155,20 +197,6 @@ test.describe('product', () => {
     await ap.getByRole('tab', { name: /Rotate the webhook signing secret/ }).click();
     await ap.getByRole('button', { name: 'Reject' }).filter({ visible: true }).click();
     await expect(ap.getByText(/Rejected by/).filter({ visible: true }).first()).toBeVisible();
-  });
-
-  test('the Insights period control is a keyboard-operable radiogroup with illustrative data', async ({ page }) => {
-    await page.goto('/product/');
-    const ins = page.locator('[data-insights]').first();
-    const group = ins.getByRole('radiogroup', { name: 'Reporting period' });
-    await group.scrollIntoViewIfNeeded();
-    await expect(ins.getByText('Illustrative data')).toBeVisible();
-    const first = await ins.locator('[data-metric="0"]').textContent();
-    await group.getByRole('radio', { name: '30d' }).click();
-    await expect(group.getByRole('radio', { name: '30d' })).toHaveAttribute('aria-checked', 'true');
-    await expect(ins.locator('[data-metric="0"]')).not.toHaveText(first ?? '');
-    await page.keyboard.press('ArrowRight');
-    await expect(group.getByRole('radio', { name: 'All time' })).toHaveAttribute('aria-checked', 'true');
   });
 });
 
@@ -256,7 +284,7 @@ test.describe('navigation and theme', () => {
   test('the footer has the utility links and no Docs or Roadmap', async ({ page }) => {
     await page.goto('/');
     const footer = page.locator('footer');
-    for (const label of ['Download', 'Security', 'Privacy', 'Licence', 'Contact']) await expect(footer.getByRole('link', { name: label })).toBeVisible();
+    for (const label of ['Get Vekrun', 'Security', 'Privacy', 'Licence', 'Contact']) await expect(footer.getByRole('link', { name: label })).toBeVisible();
     await expect(footer).not.toContainText(/Docs|Documentation|Roadmap|How it works/);
   });
 
@@ -289,10 +317,25 @@ test.describe('navigation and theme', () => {
   });
 });
 
-test.describe('download', () => {
+test.describe('get vekrun', () => {
+  test('early access composes a real email, and Teams can be preselected', async ({ page }) => {
+    await page.goto('/download/?edition=teams');
+    const form = page.locator('form[data-ea]');
+    await expect(form).toHaveAttribute('action', 'mailto:manoylo@hey.com');
+    await expect(form.getByRole('radio', { name: /Teams/ })).toBeChecked();
+    await form.getByLabel('Your name').fill('Ada');
+    await form.getByLabel(/Engineers on the team/).fill('12');
+    await form.getByRole('button', { name: 'Write the email' }).click();
+    await expect(form).toHaveAttribute('data-mailto', /^mailto:/);
+    const href = (await form.getAttribute('data-mailto'))!;
+    expect(href).toContain('mailto:manoylo@hey.com?subject=Vekrun%20Teams%20early%20access');
+    expect(decodeURIComponent(href)).toContain('Engineers: 12');
+  });
+
   test('states plainly that there is no download yet and offers no installer', async ({ page }) => {
     await page.goto('/download/');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Vekrun isn’t ready to download yet.');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Request early access.');
+    await expect(page.getByRole('list', { name: 'Availability by platform' }).getByRole('listitem')).toHaveCount(3);
     await expect(page.locator('a[href$=".dmg"], a[href$=".exe"], a[href$=".msi"], a[href$=".AppImage"], a[href$=".deb"]')).toHaveCount(0);
     await expect(page.getByRole('link', { name: /build from source/i })).toHaveCount(0);
   });

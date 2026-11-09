@@ -1,8 +1,9 @@
 ---
 /**
- * Integrations: the customer's own tools, grouped by what they do for them.
- * OpenRouter is featured as a first-class model connection. Platforms show the
- * kinds of products Vekrun is built to coordinate. Logos mean compatibility,
+ * Integrations, split the way the product splits them: the coding agents and
+ * models that do the work, the services Vekrun connects to natively, and
+ * anything else through MCP servers the customer adds. Only what ships is
+ * listed as a tool; anything planned says so. Logos mean compatibility,
  * never endorsement.
  */
 import Base from '@/layouts/Base.astro';
@@ -10,30 +11,25 @@ import ClosingCta from '@/components/ClosingCta.astro';
 import PageHero from '@/components/PageHero.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
-import { toolGroups, platforms } from '@/data/integrations';
+import { toolGroups, platforms, plannedConnections } from '@/data/integrations';
 
+const agentGroups = toolGroups.filter((g) => g.kind === 'agents');
+const nativeGroups = toolGroups.filter((g) => g.kind === 'native');
+const mcp = [
+  ['Local or remote', 'Add any MCP server. A local one starts enabled; a remote one stays off until you turn it on.'],
+  ['Approval per call', 'Every tool call an agent makes asks for your approval first.'],
+  ['Untrusted by default', 'What a server returns is treated as data, never as instructions.'],
+];
 const facts = [
-  ['Your accounts, your bills', 'Model providers bill you directly. Vekrun never resells inference or adds a markup.'],
-  ['Logins stay on your machine', 'Signed-in coding agents run on your own computer. Their credentials are never copied anywhere.'],
-  ['You choose what agents can touch', 'Every connection asks before it reads or changes something new.'],
+  ['Your accounts, your bills', 'Coding agents use your own subscriptions. Model providers bill you directly. Vekrun adds no markup.'],
+  ['Logins stay yours', 'Coding agents sign in through their own official flow. Vekrun never reads or stores their credentials.'],
+  ['You choose what agents can touch', 'Each connection says what it can do, and you decide what agents may use.'],
 ];
 ---
-<Base title="Integrations" fullTitle="Integrations: keep the tools you love · Vekrun" description="Vekrun works with Claude Code, Codex, Gemini CLI, OpenRouter, GitHub, GitLab, Jira, Linear, Sentry, Ollama and more. Keep your tools; Vekrun coordinates the engineering around them.">
-  <PageHero eyebrow="Integrations" title="Keep the tools you love. Let Vekrun coordinate them." lede="Bring your coding agents, models, repositories and trackers. Vekrun connects the work between them." />
+<Base title="Integrations" fullTitle="Integrations: keep the tools you love · Vekrun" description="Vekrun works with Claude Code, Codex, Antigravity CLI, OpenRouter, Ollama, GitHub, GitLab, Jira, Linear, Sentry, Notion, Figma, Slack and Obsidian, plus any MCP server you add.">
+  <PageHero eyebrow="Integrations" title="Keep the tools you love. Let Vekrun coordinate them." lede="Your coding agents and models do the work. Vekrun connects them to your trackers, Git hosts, monitoring and docs, and to any MCP server you add." />
 
-  <section class="rule" aria-labelledby="openrouter-title">
-    <div class="container-site py-14">
-      <div class="feature reveal">
-        <IntegrationLogo id="openrouter" name="OpenRouter" monogram="Or" size="lg" />
-        <div>
-          <h2 id="openrouter-title" class="text-[1.35rem] font-[620] tracking-[-0.02em] text-text">Every model through one connection.</h2>
-          <p class="mt-2 max-w-2xl text-[1.0625rem] text-text-2">Connect OpenRouter once and give the Council or any job the model that fits. Billed by OpenRouter, separately from Vekrun.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  {toolGroups.map((g, i) => (
+  {agentGroups.map((g, i) => (
     <section class:list={['group-sec rule', i % 2 === 0 && 'bg-bg-elevated']} aria-labelledby={`g-${g.key}`}>
       <div class="container-site group-in">
         <div class="reveal">
@@ -47,9 +43,41 @@ const facts = [
     </section>
   ))}
 
+  <section class="section-pad rule pb-0" aria-labelledby="native-title">
+    <div class="container-site">
+      <SectionHeading id="native-title" title="Native integrations." lede="Vekrun connects to these directly. Work comes in as issues and incidents; results go back as pull requests, comments and updates." class="reveal" />
+    </div>
+  </section>
+  {nativeGroups.map((g) => (
+    <section class="group-sec" aria-labelledby={`g-${g.key}`}>
+      <div class="container-site group-in">
+        <div class="reveal">
+          <h3 id={`g-${g.key}`} class="heading-3 text-text">{g.title}</h3>
+          <p class="mt-2 max-w-sm text-[0.98rem] text-text-2">{g.line}</p>
+        </div>
+        <ul class="tiles reveal-group">
+          {g.tools.map((t) => <li><IntegrationLogo id={t.id} name={t.name} monogram={t.mono} /><span>{t.name}</span></li>)}
+        </ul>
+      </div>
+    </section>
+  ))}
+
+  <section id="mcp" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="mcp-title">
+    <div class="container-site">
+      <div class="mcp-head reveal">
+        <IntegrationLogo id="mcp" name="Model Context Protocol" monogram="Mc" size="lg" />
+        <SectionHeading id="mcp-title" title="Everything else, through MCP." lede="Databases, cloud consoles, payment dashboards: if a service has an MCP server, your agents can use it, on your terms. A catalog of vendor-published servers is built in." />
+      </div>
+      <dl class="facts facts-grid facts-lg reveal-group mt-10">
+        {mcp.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+      </dl>
+      <p class="mt-10 text-[0.95rem] text-text-2 reveal">Planned: {plannedConnections.join('; ')}.</p>
+    </div>
+  </section>
+
   <section class="section-pad rule" aria-labelledby="platforms-title">
     <div class="container-site">
-      <SectionHeading id="platforms-title" title="Built for whole products, not single repos." lede="An Expo app and its Rails API, a Shopify storefront, a Tauri desktop client. Vekrun is built to coordinate them together." class="reveal" />
+      <SectionHeading id="platforms-title" title="Built for whole products, not single repos." lede="An Expo app and its Rails API, a Shopify storefront, a Tauri desktop client. Vekrun coordinates them together." class="reveal" />
       <ul class="plat reveal-group" aria-label="Platforms">
         {platforms.map((t) => <li><IntegrationLogo id={t.id} name={t.name} monogram={t.mono} size="sm" />{t.name}</li>)}
       </ul>
@@ -62,7 +90,7 @@ const facts = [
       <dl class="facts facts-grid facts-lg reveal-group mt-10">
         {facts.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
       </dl>
-      <p class="mt-10 text-[0.95rem] text-text-2 reveal">Each provider connects its own way: a signed-in CLI, a sign-in with the service, or an API key. How data is handled is on the <a href="/security/" class="text-accent link-slide">security page</a>.</p>
+      <p class="mt-10 text-[0.95rem] text-text-2 reveal">Each service connects its own way: a signed-in CLI, a sign-in with the service, or an API key kept in your system keychain. How data is handled is on the <a href="/security/" class="text-accent link-slide">security page</a>.</p>
       <p class="mt-6 text-[0.8125rem] text-text-3">Logos are trademarks of their owners and show compatibility, not endorsement.</p>
     </div>
   </section>
@@ -71,7 +99,8 @@ const facts = [
 </Base>
 
 <style>
-  .feature { display: flex; flex-wrap: wrap; align-items: center; gap: 1.25rem; }
+  .mcp-head { display: grid; gap: 1.5rem; align-items: start; }
+  @media (min-width: 48rem) { .mcp-head { grid-template-columns: auto minmax(0, 1fr); gap: 2rem; } }
   .group-sec { padding-block: 3.5rem; }
   @media (min-width: 64rem) { .group-sec { padding-block: 4.5rem; } }
   .group-in { display: grid; gap: 1.75rem; }

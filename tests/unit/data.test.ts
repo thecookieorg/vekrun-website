@@ -38,6 +38,7 @@ describe('packages and pricing', () => {
     expect(teams.includes.join(' ')).toMatch(/Remote Factory/);
     expect(personal.runsOn).toMatch(/your own computer/);
     expect(teams.runsOn).toMatch(/your servers/);
+    expect(teams.availability).toMatch(/after Personal/);
     expect(JSON.stringify({ personal, teams })).not.toMatch(/enterprise|cloud plan|annual discount|free trial|checkout/i);
   });
 });
@@ -66,14 +67,16 @@ describe('navigation', () => {
       expect(pageExists(n.href), n.href).toBe(true);
     }
   });
-  it('has one Personal and one Teams path, both to live pages, and no signup until a destination exists', () => {
-    expect(personalCta).toEqual({ label: 'Get Vekrun Personal', href: '/download/' });
+  it('has one Personal and one Teams path, both to live pages, and early access goes to a real inbox', () => {
+    expect(personalCta).toEqual({ label: 'Request early access', href: '/download/#early-access' });
     expect(teamsCta).toEqual({ label: 'Explore Vekrun Teams', href: '/teams/' });
-    for (const c of [personalCta, teamsCta]) expect(pageExists(c.href), c.href).toBe(true);
-    expect(JSON.stringify({ personalCta, teamsCta, primaryCta })).not.toMatch(/waitlist|sign ?up|early access|demo/i);
+    for (const c of [personalCta, teamsCta, primaryCta]) expect(pageExists(c.href.replace(/[?#].*$/, '')), c.href).toBe(true);
+    expect(site.earlyAccess.email).toMatch(/^[^@\s]+@[^@\s]+\.[a-z]+$/);
+    expect(site.release.downloadAvailable).toBe(false);
+    expect(JSON.stringify({ personalCta, teamsCta, primaryCta })).not.toMatch(/waitlist|sign ?up|trial|demo|download now/i);
   });
-  it('puts Download, Security, Privacy, Licence and Contact in the footer', () => {
-    expect(footerColumns.flatMap((c) => c.items).map((n) => n.label)).toEqual(expect.arrayContaining(['Download', 'Security', 'Privacy', 'Licence', 'Contact']));
+  it('puts Get Vekrun, Security, Privacy, Licence and Contact in the footer', () => {
+    expect(footerColumns.flatMap((c) => c.items).map((n) => n.label)).toEqual(expect.arrayContaining(['Get Vekrun', 'Security', 'Privacy', 'Licence', 'Contact']));
   });
 });
 
@@ -100,10 +103,16 @@ describe('integrations', () => {
   it('has unique ids and the agreed groups', () => {
     const ids = allTools.map((t) => t.id);
     expect(new Set(ids).size).toBe(ids.length);
-    expect(toolGroups.map((g) => g.key)).toEqual(['agents', 'git', 'pm', 'monitoring', 'services', 'local']);
+    expect(toolGroups.map((g) => g.key)).toEqual(['agents', 'models', 'pm', 'git', 'monitoring', 'context']);
   });
-  it('treats OpenRouter as first-class and introduces Shopify, Supabase and Firebase', () => {
-    expect(toolGroups[0]!.tools.map((t) => t.id)).toContain('openrouter');
+  it('lists the shipped coding CLIs and models, and nothing that only connects through MCP', () => {
+    expect(toolGroups[0]!.tools.map((t) => t.id)).toEqual(['claude-code', 'codex', 'antigravity']);
+    expect(toolGroups[1]!.tools.map((t) => t.id)).toEqual(['openrouter', 'ollama', 'lm-studio']);
+    const ids = allTools.map((t) => t.id);
+    for (const gone of ['gemini-cli', 'kamal', 'docker', 'vercel', 'cloudflare', 'supabase', 'stripe', 'postgres', 'pagerduty', 'llama-cpp']) expect(ids, gone).not.toContain(gone);
+    expect(ids).toContain('obsidian');
+  });
+  it('keeps Shopify, Supabase and Firebase among the platforms', () => {
     expect(platforms.map((p) => p.id)).toEqual(expect.arrayContaining(['shopify', 'supabase', 'firebase']));
   });
 });

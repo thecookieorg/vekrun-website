@@ -4,7 +4,8 @@
  * infrastructure the organization owns, used by the whole team from wherever
  * they work. Pricing comes from site.ts: $199 a month for up to 10 engineers,
  * then $10 a month per additional engineer. Planned launch pricing; there is
- * no checkout and nothing on this page sells anything.
+ * no checkout and nothing on this page sells anything. Teams ships after
+ * Personal, so the page describes it in the future tense.
  */
 import Base from '@/layouts/Base.astro';
 import PageHero from '@/components/PageHero.astro';
@@ -17,20 +18,21 @@ import { site, teams, pricing, teamsMonthly, usd } from '@/data/site';
 import { Server, Smartphone, Layers, ShieldCheck, BookOpen, Lock } from '@lucide/astro';
 
 const t = pricing.teams;
-const description = `Vekrun Teams runs one shared AI software engineering Factory on infrastructure you control. Your team hands off, approves and reviews work from anywhere. ${usd(t.base)} a month for up to ${t.includedEngineers} engineers, plus ${usd(t.perAdditionalEngineer)} per additional engineer.`;
+const description = `Vekrun Teams will run one shared AI software engineering Factory on infrastructure you control. Your team will hand off, approve and review work from anywhere. ${usd(t.base)} a month for up to ${t.includedEngineers} engineers, plus ${usd(t.perAdditionalEngineer)} per additional engineer.`;
 const why = [
-  { i: Server, t: 'Work doesn’t depend on one laptop', d: 'Jobs run on the build machines you designate. A closed lid or a day off doesn’t stop the queue.' },
+  { i: Server, t: 'Work won’t depend on one laptop', d: 'Jobs will run on the build machines you designate. A closed lid or a day off won’t stop the queue.' },
   { i: Smartphone, t: 'Hand off from anywhere', d: 'Start an outcome, approve a plan or review a result from a laptop, a browser or Vekrun Mobile.' },
   { i: Layers, t: 'Every project, one queue', d: 'Concurrent work across repositories, coordinated in one place and visible to the whole team.' },
-  { i: ShieldCheck, t: 'People still decide', d: 'Approvals, branch protection and policies apply to every job, whoever started it and wherever.' },
-  { i: BookOpen, t: 'The record belongs to the team', d: 'Proof Packs, decisions and Engineering Memory stay available to every authorized engineer.' },
-  { i: Lock, t: 'Nothing leaves your control', d: 'Code, credentials, execution policies and audit history stay on infrastructure you run.' },
+  { i: ShieldCheck, t: 'People still decide', d: 'Approvals, branch protection and policies will apply to every job, whoever started it and wherever.' },
+  { i: BookOpen, t: 'The record belongs to the team', d: 'Proof Packs, decisions and Engineering Memory, available to every authorized engineer.' },
+  { i: Lock, t: 'Nothing leaves your control', d: 'Code, credentials, execution policies and audit history will stay on infrastructure you run.' },
 ];
 const faq: [string, string][] = [
   ['What does it cost?', `${usd(t.base)} a month for up to ${t.includedEngineers} engineers, then ${usd(t.perAdditionalEngineer)} a month for each additional engineer. Twenty engineers is ${usd(teamsMonthly(20))} a month; thirty is ${usd(teamsMonthly(30))}.`],
-  ['What happens to running work when an engineer goes offline?', 'It keeps running. Jobs run on your Factory’s execution machines, not on the laptop or phone that started them.'],
-  ['Is it a hosted service?', 'No. Vekrun Teams runs on your infrastructure. There is no required Vekrun-hosted service.'],
-  ['Does any data leave our network?', 'Your code and records stay on your infrastructure. Model providers you connect receive what a job sends them, under your accounts.'],
+  ['When is Teams available?', `${teams.availability} Personal comes first; we’ll publish Teams availability here and won’t give a date before we can keep it. You can request Teams early access today.`],
+  ['What happens to running work when an engineer goes offline?', 'It keeps running. Jobs will run on your Factory’s execution machines, not on the laptop or phone that started them.'],
+  ['Is it a hosted service?', 'No. Vekrun Teams will run on your infrastructure. There is no required Vekrun-hosted service.'],
+  ['Does any data leave our network?', 'Your code and records stay on your infrastructure. Model providers you connect receive what a job sends them, under your accounts. If you turn on Live Share, it relays the app you share through Vekrun’s gateway.'],
   ['Is there an Enterprise plan? Per-task fees?', 'No. One Teams plan includes everything, SSO included, and Vekrun charges no usage fees. Model, API and infrastructure costs are paid to their providers.'],
   ['Can we buy it today?', `Not yet. ${pricing.notForSale}`],
 ];
@@ -40,7 +42,7 @@ const structuredData = [
 ];
 ---
 <Base title="Teams & Pricing" fullTitle="Vekrun Teams: a shared AI Factory on your own infrastructure · Pricing · Vekrun" description={description} image="/og/teams.png" structuredData={structuredData}>
-  <PageHero eyebrow="Vekrun Teams" title="Your engineering Factory shouldn’t stop when you leave your desk." lede="Teams runs one shared Factory on infrastructure you control. Your engineers hand it work, approve it and check the results from wherever they are." cta={{ label: 'See pricing', href: '#pricing' }} secondary={{ label: 'Why it matters', href: '#remote' }} wide>
+  <PageHero eyebrow="Vekrun Teams" title="Your engineering Factory shouldn’t stop when you leave your desk." lede={`Teams will run one shared Factory on infrastructure you control. Your engineers hand it work, approve it and check the results from wherever they are. ${teams.availability}`} cta={{ label: 'Request Teams early access', href: teams.earlyAccessHref }} secondary={{ label: 'See pricing', href: '#pricing' }} wide>
     <RemoteFactory />
   </PageHero>
 
@@ -55,7 +57,7 @@ const structuredData = [
 
   <section class="section-pad rule" aria-labelledby="shared-title">
     <div class="container-site">
-      <SectionHeading id="shared-title" title="Everyone sees the same Factory." lede="Who asked for what, what’s running, what’s waiting on a person and what shipped, without a status meeting." class="reveal" />
+      <SectionHeading id="shared-title" title="Everyone sees the same Factory." lede="Who asked for what, what’s running, what’s waiting on a person and what shipped, without a status meeting. Today’s Personal Board and Inbox, shared." class="reveal" />
     </div>
     <div class="container-wide reveal mt-12"><TeamsHero /></div>
   </section>

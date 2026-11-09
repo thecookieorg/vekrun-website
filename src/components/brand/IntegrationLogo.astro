@@ -8,7 +8,7 @@ import {
   siClaude, siGooglegemini, siOllama, siLmstudio, siOpenrouter, siLinear, siJira, siAsana, siGithub, siGitlab,
   siConfluence, siNotion, siSentry, siDatadog, siFigma, siPostgresql, siCloudflare, siSupabase, siStripe, siGit,
   siHoneybadger, siAppsignal, siPagerduty, siGithubactions, siDocker, siVercel, siShopify, siFirebase, siFlutter,
-  siTauri, siExpo, siRubyonrails, siNextdotjs, siSwift, siKotlin, siAnthropic } from 'simple-icons';
+  siTauri, siExpo, siRubyonrails, siNextdotjs, siSwift, siKotlin, siAnthropic, siObsidian, siModelcontextprotocol } from 'simple-icons';
 
 interface Props { id: string; name: string; monogram: string; size?: 'sm' | 'md' | 'lg'; class?: string }
 const { id, name, monogram, size = 'md', class: className = '' } = Astro.props;
@@ -22,7 +22,7 @@ const map: Record<string, Icon> = {
   sentry: siSentry, datadog: siDatadog, honeybadger: siHoneybadger, appsignal: siAppsignal, figma: siFigma, postgres: siPostgresql, cloudflare: siCloudflare,
   supabase: siSupabase, stripe: siStripe, git: siGit, pagerduty: siPagerduty, 'github-actions': siGithubactions,
   'gitlab-ci': siGitlab, docker: siDocker, vercel: siVercel, shopify: siShopify, firebase: siFirebase, flutter: siFlutter,
-  tauri: siTauri, expo: siExpo, rails: siRubyonrails, nextjs: siNextdotjs, swift: siSwift, kotlin: siKotlin,
+  tauri: siTauri, obsidian: siObsidian, mcp: siModelcontextprotocol, expo: siExpo, rails: siRubyonrails, nextjs: siNextdotjs, swift: siSwift, kotlin: siKotlin,
 };
 const icon = map[id];
 const luminance = (hex: string) => {

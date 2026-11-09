@@ -3,12 +3,12 @@
  * A real screenshot of the Vekrun desktop app, framed and captioned as such.
  * Images live in /public/shots as 960 and 1440 pixel WebP files.
  */
-interface Props { name: string; alt: string; caption?: string; class?: string; eager?: boolean }
-const { name, alt, caption = 'Screenshot of the Vekrun desktop app.', class: className = '', eager = false } = Astro.props;
+interface Props { name: string; alt: string; caption?: string; class?: string; eager?: boolean; width?: number; height?: number }
+const { name, alt, caption = 'Screenshot of the Vekrun desktop app.', class: className = '', eager = false, width = 1440, height = 900 } = Astro.props;
 ---
 <figure class:list={['shot', className]}>
   <div class="shot-frame">
-    <img src={`/shots/${name}-1440.webp`} srcset={`/shots/${name}-960.webp 960w, /shots/${name}-1440.webp 1440w`} sizes="(min-width: 80rem) 72rem, 100vw" width="1440" height="900" alt={alt} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+    <img src={`/shots/${name}-1440.webp`} srcset={`/shots/${name}-960.webp 960w, /shots/${name}-1440.webp 1440w`} sizes="(min-width: 80rem) 72rem, 100vw" width={width} height={height} alt={alt} loading={eager ? 'eager' : 'lazy'} decoding="async" />
   </div>
   <figcaption>{caption}</figcaption>
 </figure>
