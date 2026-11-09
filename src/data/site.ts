@@ -29,6 +29,13 @@ export const site = {
     securityEmail: null as string | null,
     generalEmail: null as string | null,
   },
+  /**
+   * Early access goes to a real inbox by email. There is no form backend: the
+   * page composes a message the visitor sends from their own email app.
+   */
+  earlyAccess: {
+    email: 'manoylo@hey.com',
+  },
 } as const;
 
 /**
@@ -61,8 +68,9 @@ export const personal = {
     'AI Factory across all your projects',
     'Council, Board and Inbox',
     'Isolated environments and Proof Packs',
-    'Interactive Browser',
-    'Engineering Memory and Insights',
+    'Interactive Browser and Live Share',
+    'Engineering Memory, including Obsidian vaults',
+    'Insights',
     'Vekrun Mobile with your own Host',
   ],
   bring: 'Bring your own coding agents, model accounts, local models and compute.',
@@ -72,7 +80,10 @@ export const teams = {
   name: 'Vekrun Teams',
   href: '/teams/',
   summary: 'One shared Factory for your engineering organization, on infrastructure you control.',
-  runsOn: 'Runs on your servers. Your team works with it from anywhere.',
+  runsOn: 'Will run on your servers. Your team works with it from anywhere.',
+  /** Teams ships after Personal. Pages describe it in the future tense and say so. */
+  availability: 'Vekrun Teams comes after Personal.',
+  earlyAccessHref: '/download/?edition=teams#early-access',
   includes: [
     'Everything in Personal, for every engineer',
     'Remote Factory: hand off and approve work from anywhere',
@@ -96,15 +107,14 @@ export const primaryNav: NavItem[] = [
   { label: 'Teams & Pricing', href: '/teams/' },
 ];
 
-/** The header call to action points at the download page, which states availability plainly. */
-export const primaryCta: NavItem = { label: 'Get Vekrun', href: '/download/' };
+/** The header call to action: the Get Vekrun page, with early access first. */
+export const primaryCta: NavItem = { label: 'Get early access', href: '/download/' };
 
 /**
- * The two conversion paths, used wherever a page ends. There is no signup or
- * waitlist yet (no destination exists), so both lead to pages that state
- * availability honestly. Swap the hrefs here when a real signup exists.
+ * The two conversion paths, used wherever a page ends. Early access is a real
+ * email to the team (see `site.earlyAccess`); there is no public download yet.
  */
-export const personalCta: NavItem = { label: 'Get Vekrun Personal', href: '/download/' };
+export const personalCta: NavItem = { label: 'Request early access', href: '/download/#early-access' };
 export const teamsCta: NavItem = { label: 'Explore Vekrun Teams', href: '/teams/' };
 
 export const footerColumns: { title: string; items: NavItem[] }[] = [
@@ -112,7 +122,7 @@ export const footerColumns: { title: string; items: NavItem[] }[] = [
   {
     title: 'More',
     items: [
-      { label: 'Download', href: '/download/' },
+      { label: 'Get Vekrun', href: '/download/' },
       { label: 'Security', href: '/security/' },
       { label: 'Privacy', href: '/privacy/' },
       { label: 'Licence', href: '/license/' },
@@ -124,7 +134,9 @@ export const footerColumns: { title: string; items: NavItem[] }[] = [
 /** Sections of the Product page, used for its in-page index and for redirects. */
 export const productSections: { id: string; label: string }[] = [
   { id: 'how', label: 'How it works' },
-  { id: 'factory', label: 'AI Factory' },
+  { id: 'factory', label: 'Delivery' },
+  { id: 'git', label: 'Git workflow' },
+  { id: 'live-share', label: 'Live Share' },
   { id: 'council', label: 'Council' },
   { id: 'board', label: 'Board' },
   { id: 'inbox', label: 'Inbox' },

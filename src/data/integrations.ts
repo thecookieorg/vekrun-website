@@ -4,87 +4,88 @@
  * `id` keys the logo in IntegrationLogo; `mono` is the fallback monogram.
  */
 export type Tool = { id: string; name: string; mono: string };
-export type ToolGroup = { key: string; title: string; line: string; tools: Tool[] };
+/**
+ * `agents`: the coding CLIs and model connections that do the work.
+ * `native`: services Vekrun connects to directly. Anything else connects as an
+ * MCP server the customer adds (see the Integrations page), never as a claim here.
+ */
+export type ToolGroup = { key: string; kind: 'agents' | 'native'; title: string; line: string; tools: Tool[] };
 
 export const toolGroups: ToolGroup[] = [
   {
     key: 'agents',
-    title: 'Coding agents and models',
-    line: 'Use the agents you already pay for. Add any model through OpenRouter.',
+    kind: 'agents',
+    title: 'Coding agents',
+    line: 'The official CLIs, signed in with your own accounts. Each Factory task runs in its own isolated VM.',
     tools: [
       { id: 'claude-code', name: 'Claude Code', mono: 'Cc' },
       { id: 'codex', name: 'Codex', mono: 'Cx' },
-      { id: 'gemini-cli', name: 'Gemini CLI', mono: 'Gc' },
+      { id: 'antigravity', name: 'Antigravity CLI', mono: 'Ag' },
+    ],
+  },
+  {
+    key: 'models',
+    kind: 'agents',
+    title: 'Models',
+    line: 'Hosted models through one OpenRouter key, or open-weight models that never leave your machine.',
+    tools: [
       { id: 'openrouter', name: 'OpenRouter', mono: 'Or' },
-      { id: 'anthropic', name: 'Anthropic API', mono: 'An' },
-      { id: 'openai', name: 'OpenAI API', mono: 'Oa' },
-      { id: 'gemini', name: 'Google Gemini API', mono: 'Gm' },
+      { id: 'ollama', name: 'Ollama', mono: 'Ol' },
+      { id: 'lm-studio', name: 'LM Studio', mono: 'Lm' },
+    ],
+  },
+  {
+    key: 'pm',
+    kind: 'native',
+    title: 'Work tracking',
+    line: 'Issues on the Board, and new ones created from incidents and reviews.',
+    tools: [
+      { id: 'jira', name: 'Jira', mono: 'Ji' },
+      { id: 'linear', name: 'Linear', mono: 'Li' },
+      { id: 'asana', name: 'Asana', mono: 'As' },
     ],
   },
   {
     key: 'git',
-    title: 'Git and source control',
-    line: 'Branches, pull requests and CI, on the hosts you use now.',
+    kind: 'native',
+    title: 'Code hosting and CI',
+    line: 'Pull and merge requests, checks, pipelines and code scanning. GitLab.com or self-managed.',
     tools: [
       { id: 'github', name: 'GitHub', mono: 'Gh' },
       { id: 'gitlab', name: 'GitLab', mono: 'Gl' },
       { id: 'github-actions', name: 'GitHub Actions', mono: 'Ga' },
       { id: 'gitlab-ci', name: 'GitLab CI', mono: 'Gc' },
-      { id: 'git', name: 'Any Git remote', mono: 'Gt' },
-    ],
-  },
-  {
-    key: 'pm',
-    title: 'Project management',
-    line: 'Tickets become work. Progress goes back where your team looks for it.',
-    tools: [
-      { id: 'jira', name: 'Jira', mono: 'Ji' },
-      { id: 'linear', name: 'Linear', mono: 'Li' },
-      { id: 'asana', name: 'Asana', mono: 'As' },
-      { id: 'github-issues', name: 'GitHub Issues', mono: 'Gi' },
-      { id: 'gitlab-issues', name: 'GitLab Issues', mono: 'Gi' },
-      { id: 'confluence', name: 'Confluence', mono: 'Co' },
-      { id: 'notion', name: 'Notion', mono: 'No' },
     ],
   },
   {
     key: 'monitoring',
-    title: 'Monitoring',
-    line: 'A production error turns into a fix with evidence, not a forgotten alert.',
+    kind: 'native',
+    title: 'Production monitoring',
+    line: 'Errors and incidents land in Insights, and the Factory investigates them.',
     tools: [
       { id: 'sentry', name: 'Sentry', mono: 'Se' },
       { id: 'honeybadger', name: 'Honeybadger', mono: 'Hb' },
-      { id: 'datadog', name: 'Datadog', mono: 'Dd' },
       { id: 'appsignal', name: 'AppSignal', mono: 'Ap' },
-      { id: 'pagerduty', name: 'PagerDuty', mono: 'Pd' },
+      { id: 'datadog', name: 'Datadog', mono: 'Dd' },
     ],
   },
   {
-    key: 'services',
-    title: 'Cloud and development services',
-    line: 'The services your app runs on, available to agents with your permission.',
+    key: 'context',
+    kind: 'native',
+    title: 'Docs, designs and notes',
+    line: 'Specs, designs, conversations and your team’s notes, as context for the Council and agents.',
     tools: [
-      { id: 'docker', name: 'Docker', mono: 'Dk' },
-      { id: 'cloudflare', name: 'Cloudflare', mono: 'Cf' },
-      { id: 'vercel', name: 'Vercel', mono: 'Vc' },
-      { id: 'supabase', name: 'Supabase', mono: 'Su' },
-      { id: 'postgres', name: 'PostgreSQL', mono: 'Pg' },
-      { id: 'stripe', name: 'Stripe', mono: 'St' },
+      { id: 'notion', name: 'Notion', mono: 'No' },
+      { id: 'confluence', name: 'Confluence', mono: 'Co' },
       { id: 'figma', name: 'Figma', mono: 'Fi' },
       { id: 'slack', name: 'Slack', mono: 'Sl' },
-    ],
-  },
-  {
-    key: 'local',
-    title: 'Local AI',
-    line: 'Run models on your own hardware when the code shouldn’t leave it.',
-    tools: [
-      { id: 'ollama', name: 'Ollama', mono: 'Ol' },
-      { id: 'lm-studio', name: 'LM Studio', mono: 'Lm' },
-      { id: 'llama-cpp', name: 'llama.cpp', mono: 'Ll' },
+      { id: 'obsidian', name: 'Obsidian vaults', mono: 'Ob' },
     ],
   },
 ];
+
+/** Connections that exist in the product's design but haven't shipped. Shown only as planned. */
+export const plannedConnections: string[] = ['Asana tools for agents, alongside the Asana Board integration'];
 
 /** Platforms and ecosystems Vekrun is built to coordinate whole products across. */
 export const platforms: Tool[] = [
@@ -101,6 +102,6 @@ export const platforms: Tool[] = [
 ];
 
 /** The coding agents shown wherever the site says "your agents". */
-export const agentIds = ['claude-code', 'codex', 'gemini-cli', 'openrouter'] as const;
+export const agentIds = ['claude-code', 'codex', 'antigravity', 'openrouter'] as const;
 export const allTools = toolGroups.flatMap((g) => g.tools);
 export const toolById = (id: string) => [...allTools, ...platforms].find((t) => t.id === id);

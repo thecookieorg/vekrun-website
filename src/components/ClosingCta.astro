@@ -1,13 +1,13 @@
 ---
 /**
  * The end of every content page: one line, then the two ways in. Personal
- * leads to the download page, Teams to the Teams page; both state
- * availability honestly. Labels and destinations come from site.ts.
+ * leads to early access, Teams to the Teams page; both state availability
+ * honestly. Labels and destinations come from site.ts.
  */
 import Button from '@/components/Button.astro';
 import { personalCta, teamsCta, pricing } from '@/data/site';
 interface Props { title: string; line?: string; class?: string }
-const { title, line = 'Vekrun Personal is free. Vekrun Teams runs one shared Factory on your own infrastructure.', class: className = '' } = Astro.props;
+const { title, line = 'Vekrun Personal is free. Vekrun Teams will run one shared Factory on your own infrastructure.', class: className = '' } = Astro.props;
 ---
 <section class:list={['section-pad rule', className]} aria-labelledby="next-title">
   <div class="container-site text-center reveal">
@@ -17,6 +17,6 @@ const { title, line = 'Vekrun Personal is free. Vekrun Teams runs one shared Fac
       <Button href={personalCta.href} size="lg">{personalCta.label}</Button>
       <Button href={teamsCta.href} size="lg" variant="secondary">{teamsCta.label}</Button>
     </div>
-    <p class="mt-5 text-[0.8125rem] text-text-3">Not available to download yet. {pricing.notForSale}</p>
+    <p class="mt-5 text-[0.8125rem] text-text-3">No public download yet; early access is by email. {pricing.notForSale}</p>
   </div>
 </section>

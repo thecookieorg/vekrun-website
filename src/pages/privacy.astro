@@ -1,10 +1,13 @@
 ---
-/** Privacy: this website, Vekrun Personal, Vekrun Teams and model providers. */
+/**
+ * Privacy: this website, Vekrun Personal, Live Share (the one feature that
+ * goes through a Vekrun-operated gateway), Vekrun Teams and model providers.
+ */
 import Base from '@/layouts/Base.astro';
 import PageHero from '@/components/PageHero.astro';
 ---
-<Base title="Privacy" fullTitle="Privacy · Vekrun" description="This website uses no cookies, analytics or trackers. In Vekrun, your work stays on machines you control and you decide what reaches a model provider.">
-  <PageHero eyebrow="Privacy" title="Your work stays on your machines." lede="No cookies or trackers on this site. In the product, you decide what reaches a model provider." />
+<Base title="Privacy" fullTitle="Privacy · Vekrun" description="This website uses no cookies, analytics or trackers. In Vekrun, your work stays on machines you control. You decide what reaches a model provider, and what Live Share relays when you turn it on.">
+  <PageHero eyebrow="Privacy" title="Your work stays on your machines." lede="No cookies or trackers on this site. In the product, your work stays local unless you send it somewhere: to a model provider you choose, or through Live Share when you turn it on." />
   <section class="rule pb-24 pt-14">
     <div class="container-site prose-site max-w-3xl text-[1.0625rem] leading-relaxed">
       <h2 class="!mt-0">This website</h2>
@@ -16,15 +19,24 @@ import PageHero from '@/components/PageHero.astro';
 
       <h2>Vekrun Personal</h2>
       <ul>
-        <li>No Vekrun account, and your work passes through no Vekrun server.</li>
-        <li>Projects, jobs, memory, logs and audit history stay on your machine. You can delete them at any time.</li>
+        <li>No Vekrun account. Your code, projects and work don’t go through a Vekrun server unless you turn on Live Share.</li>
+        <li>Projects, Work Items, Engineering Memory, logs and audit history stay on your machine. You can delete them at any time.</li>
+        <li>Imported notes, such as an Obsidian vault, are read on your machine and never changed. Notes marked private are skipped.</li>
         <li>Usage reporting is off unless you turn it on.</li>
       </ul>
 
+      <h2 id="live-share">Live Share</h2>
+      <p>Live Share is optional and off until you turn it on. It gives the app you’re building a permanent HTTPS link, and that link goes through a public gateway Vekrun operates.</p>
+      <ul>
+        <li><strong>What stays local.</strong> Your repository, files, Engineering Memory, agents and their logins. The link shows only the app you choose to share, and only while it runs.</li>
+        <li><strong>What the gateway relays.</strong> Visitors’ requests to your link and the shared app’s responses. With Review Mode on, it also relays reviewer feedback to your Review Inbox: the comment, the page and the part of it they pointed at.</li>
+        <li><strong>What the gateway keeps.</strong> Your link’s address and who may open it. If you set a password, the gateway checks it and keeps only its hash.</li>
+        <li><strong>Your controls.</strong> Make the link public or password-protected, sign everyone out, stop sharing an app or turn Live Share off at any time. A public link is exactly that, so treat its address as public.</li>
+      </ul>
       <h2>Vekrun Teams</h2>
       <ul>
-        <li>The Coordinator, data, workers and audit history run on infrastructure your organization controls.</li>
-        <li>Vekrun ships software, licences, updates and support. It doesn’t operate your servers or receive your code through them.</li>
+        <li>The Coordinator, data, workers and audit history will run on infrastructure your organization controls.</li>
+        <li>Vekrun ships the software, licences, updates and support. It doesn’t operate your servers or receive your code through them. Live Share works the same way as in Personal: optional, and relayed through the gateway only when it’s on.</li>
       </ul>
 
       <h2>Model providers and connected services</h2>

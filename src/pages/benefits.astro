@@ -12,7 +12,7 @@ import ConceptNotice from '@/components/ConceptNotice.astro';
 import { toolById } from '@/data/integrations';
 import { Check } from '@lucide/astro';
 
-const logos = ['claude-code', 'codex', 'gemini-cli', 'openrouter', 'github', 'jira', 'linear', 'sentry'].map((id) => toolById(id)!);
+const logos = ['claude-code', 'codex', 'antigravity', 'openrouter', 'github', 'jira', 'linear', 'sentry'].map((id) => toolById(id)!);
 const devs = ['Less time supervising agents', 'Less context to juggle', 'More finished work each week', 'Proof instead of guesswork', 'Control over complex changes'];
 const leads = ['Engineering work that runs in step', 'Progress you can see without asking', 'The same quality bar on every change', 'Fewer handoffs between people and tools', 'A record of who decided what, and why'];
 ---
@@ -59,7 +59,7 @@ const leads = ['Engineering work that runs in step', 'Progress you can see witho
       </article>
 
       <article class="bn reveal">
-        <div class="bn-copy"><h2>Keep the tools you already like.</h2><p>Claude Code, Codex, Gemini, GitHub, Jira. Vekrun works through them, not around them.</p></div>
+        <div class="bn-copy"><h2>Keep the tools you already like.</h2><p>Claude Code, Codex, Antigravity, GitHub, Jira. Vekrun works through them, not around them.</p></div>
         <div class="bn-vis vis-logos" aria-hidden="true">
           {logos.map((t) => <IntegrationLogo id={t.id} name={t.name} monogram={t.mono} size="lg" />)}
         </div>

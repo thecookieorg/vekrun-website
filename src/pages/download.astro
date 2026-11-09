@@ -1,28 +1,59 @@
 ---
 /**
- * Download. Availability must stay accurate: there is no installer until
- * `site.release.downloadAvailable` is true and a signed build is published.
+ * Get Vekrun. Early access comes first and is real (an email to the team, see
+ * EarlyAccess). Availability must stay accurate per platform: there is no
+ * installer until `site.release.downloadAvailable` is true and a signed build
+ * is published.
  */
 import Base from '@/layouts/Base.astro';
 import PageHero from '@/components/PageHero.astro';
-import { site, personal } from '@/data/site';
-
+import EarlyAccess from '@/components/EarlyAccess.astro';
+import { site, personal, teams } from '@/data/site';
+const platforms = [
+  ['macOS', 'No public installer yet'],
+  ['Windows', 'No public installer yet'],
+  ['Linux', 'No public installer yet'],
+];
 const facts = [
-  ['Platforms', 'macOS, Windows and Linux. Each one gets a download once it has a signed installer.'],
-  ['System requirements', 'Published with each release, per platform.'],
   ['What you need', 'Your own coding agent or model account, and Git access to your projects.'],
+  ['System requirements', 'Published with each release, per platform.'],
   ['Every release', 'A signed installer, a SHA-256 checksum and release notes, listed on this page.'],
 ];
 ---
-<Base title="Download" fullTitle="Download Vekrun" description={`${site.release.line} ${personal.name} will be free. This page lists platforms, requirements and every release once it exists.`}>
-  <PageHero eyebrow="Download" title="Vekrun isn’t ready to download yet." lede={`${personal.name} will be free. When an installer exists, it will be here.`} cta={{ label: 'See how it works', href: '/product/' }} secondary={{ label: 'Teams & Pricing', href: '/teams/' }} />
-  <section class="rule pb-24 pt-14" aria-labelledby="dl-facts">
+<Base title="Get Vekrun" fullTitle="Get Vekrun: request early access" description={`${site.release.line} Request early access to ${personal.name} or ${teams.name}.`}>
+  <PageHero eyebrow="Get Vekrun" title="Request early access." lede={`There’s no public download yet. Tell us what you build and we’ll be in touch when there’s a build for you. ${personal.name} will be free.`} />
+
+  <section id="early-access" class="rule pb-16 pt-14 scroll-mt-16" aria-label="Request early access">
+    <div class="container-site ea-wrap">
+      <div class="ea-copy">
+        <h2 class="heading-3 text-text">Early access is by email.</h2>
+        <p class="mt-3 text-text-2">Pick an edition and fill in what you like. Your email app opens with a message to the team, ready to send.</p>
+        <p class="mt-3 text-text-2">Interested in Teams? It follows Personal; the <a href="/teams/" class="text-accent link-slide">Teams page</a> explains how it will work.</p>
+      </div>
+      <EarlyAccess />
+    </div>
+  </section>
+
+  <section class="rule bg-bg-elevated pb-24 pt-14" aria-labelledby="dl-facts">
     <div class="container-site">
-      <h2 id="dl-facts" class="sr-only">Release facts</h2>
-      <dl class="facts facts-grid facts-lg">
+      <h2 id="dl-facts" class="heading-3 text-text">Releases</h2>
+      <ul class="plats mt-6" aria-label="Availability by platform">
+        {platforms.map(([p, s]) => <li><b>{p}</b><span>{s}</span></li>)}
+      </ul>
+      <dl class="facts facts-grid facts-lg mt-10">
         {facts.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
       </dl>
       <p class="mt-10 text-[0.9rem] text-text-3">Vekrun is proprietary software, so there is no source build. <a href="/license/" class="text-accent link-slide">Licence</a></p>
     </div>
   </section>
 </Base>
+
+<style>
+  .ea-wrap { display: grid; gap: 2rem; }
+  @media (min-width: 64rem) { .ea-wrap { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: 4rem; align-items: start; } }
+  .plats { margin: 0; padding: 0; list-style: none; display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  @media (min-width: 40rem) { .plats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .plats li { display: grid; gap: 0.2rem; padding: 1.1rem 1.25rem; background: var(--surface); }
+  .plats b { font-weight: 600; color: var(--text); }
+  .plats span { font-size: 0.92rem; color: var(--text-2); }
+</style>

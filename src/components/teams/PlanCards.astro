@@ -32,8 +32,10 @@ const t = pricing.teams;
     <p class="plan-runs"><Server class="h-4 w-4" aria-hidden="true" />{teams.runsOn}</p>
     <ul class="plan-list">{(compact ? teams.includes.slice(0, 5) : teams.includes).map((i) => <li><Check class="h-4 w-4" aria-hidden="true" />{i}</li>)}</ul>
     {!compact && <ul class="plan-list is-out" aria-label="Paid to others">{teams.notIncluded.map((i) => <li><Minus class="h-4 w-4" aria-hidden="true" />{i}</li>)}</ul>}
-    <p class="plan-flag"><span aria-hidden="true"></span>{pricing.notForSale}</p>
-    {compact && <Button href={teamsCta.href} variant="secondary" class="mt-5 self-start">{teamsCta.label}</Button>}
+    <p class="plan-flag"><span aria-hidden="true"></span>{teams.availability} {pricing.notForSale}</p>
+    {compact
+      ? <Button href={teamsCta.href} variant="secondary" class="mt-5 self-start">{teamsCta.label}</Button>
+      : <Button href={teams.earlyAccessHref} variant="primary" class="mt-5 self-start">Request Teams early access</Button>}
   </article>
 </div>
 
