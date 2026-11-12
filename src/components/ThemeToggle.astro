@@ -1,41 +1,53 @@
 ---
-import { Sun, Moon } from '@lucide/astro';
+/**
+ * Theme choice: system, light or dark, as three small buttons that read as one
+ * control. The choice persists in localStorage ('vekrun-theme'); 'system'
+ * follows the operating system and updates live. The inline script in
+ * Base.astro applies the theme before first paint.
+ */
+import { Monitor, Sun, Moon } from '@lucide/astro';
 interface Props { class?: string }
 const { class: className = '' } = Astro.props;
+const options = [
+  { value: 'system', label: 'Use system theme', Icon: Monitor },
+  { value: 'light', label: 'Use light theme', Icon: Sun },
+  { value: 'dark', label: 'Use dark theme', Icon: Moon },
+];
 ---
-<button
-  type="button"
-  data-theme-toggle
-  class:list={['theme-toggle', className]}
-  aria-label="Switch to light theme"
-  title="Switch theme"
->
-  <Sun class="theme-icon-sun h-4 w-4" aria-hidden="true" />
-  <Moon class="theme-icon-moon h-4 w-4" aria-hidden="true" />
-</button>
+<div class:list={['theme-toggle', className]} role="group" aria-label="Theme" data-theme-toggle>
+  {options.map(({ value, label, Icon }) => (
+    <button type="button" class="theme-opt" data-value={value} aria-label={label} title={label} aria-pressed="false">
+      <Icon class="h-3.5 w-3.5" aria-hidden="true" />
+    </button>
+  ))}
+</div>
 
 <style>
-  .theme-toggle { display: inline-flex; height: 2.25rem; width: 2.25rem; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid var(--border); color: var(--text-2); background: transparent; transition: color var(--dur-fast), border-color var(--dur-fast), background-color var(--dur-fast); }
-  .theme-toggle:hover { color: var(--text); border-color: var(--border-strong); background: var(--surface); }
-  :global(:root[data-theme='dark']) .theme-icon-moon { display: none; }
-  :global(:root[data-theme='light']) .theme-icon-sun { display: none; }
+  .theme-toggle { display: inline-flex; align-items: center; gap: 2px; padding: 2px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); }
+  .theme-opt { display: inline-flex; height: 1.9rem; width: 1.9rem; align-items: center; justify-content: center; border: 0; border-radius: 7px; background: transparent; color: var(--foreground-muted); cursor: pointer; transition: color var(--dur-fast), background-color var(--dur-fast); }
+  .theme-opt:hover { color: var(--foreground); }
+  .theme-opt[aria-pressed='true'] { color: var(--foreground); background: var(--surface-elevated); }
+  .theme-opt:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 0; }
+  @media (prefers-reduced-motion: reduce) { .theme-opt { transition: none; } }
 </style>
 
 <script>
   const KEY = 'vekrun-theme';
-  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]');
-  const label = () => {
-    const dark = document.documentElement.dataset.theme === 'dark';
-    buttons.forEach((b) => b.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme'));
+  const html = document.documentElement;
+  const groups = document.querySelectorAll<HTMLElement>('[data-theme-toggle]');
+  const sync = () => {
+    const choice = html.dataset.themeChoice ?? 'system';
+    groups.forEach((g) => g.querySelectorAll<HTMLButtonElement>('[data-value]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.value === choice))));
   };
-  buttons.forEach((b) =>
-    b.addEventListener('click', () => {
-      const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-      document.documentElement.dataset.theme = next;
-      document.querySelector('meta[data-theme-color]')?.setAttribute('content', next === 'light' ? '#f5f7fb' : '#080b12');
-      try { localStorage.setItem(KEY, next); } catch {}
-      label();
+  groups.forEach((g) =>
+    g.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-value]');
+      if (!btn) return;
+      const choice = btn.dataset.value!;
+      (window as unknown as { __vekrunTheme?: { apply: (c: string) => void } }).__vekrunTheme?.apply(choice);
+      try { localStorage.setItem(KEY, choice); } catch {}
+      sync();
     }),
   );
-  label();
+  sync();
 </script>

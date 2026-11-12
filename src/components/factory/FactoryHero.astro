@@ -106,36 +106,36 @@ const projects = [
   .fh-places li.is-on { background: var(--surface-2); color: var(--text); }
   .fh-projects li.is-on { color: var(--text); }
   .fh-dot { width: 0.45rem; height: 0.45rem; border-radius: 2px; background: var(--border-strong); }
-  .fh-projects li.is-on .fh-dot { background: var(--accent); }
+  .fh-projects li.is-on .fh-dot { background: var(--accent-text); }
   .fh-count { margin-left: auto; min-width: 1.1rem; padding: 0 0.3rem; border-radius: 999px; background: var(--surface-3); color: var(--text-2); font-size: 0.66rem; text-align: center; font-variant-numeric: tabular-nums; }
 
   .fh-main { padding: 1rem; display: grid; gap: 0.9rem; align-content: start; min-width: 0; }
   @media (min-width: 48rem) { .fh-main { padding: 1.2rem; } }
-  .fh-composer { padding: 0.9rem 1rem 0.8rem; border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border)); border-radius: 12px; background: color-mix(in srgb, var(--accent) 5%, var(--surface)); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 8%, transparent); }
+  .fh-composer { padding: 0.9rem 1rem 0.8rem; border: 1px solid color-mix(in srgb, var(--accent-text) 45%, var(--border)); border-radius: 12px; background: color-mix(in srgb, var(--accent-text) 5%, var(--surface)); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-text) 8%, transparent); }
   .fh-composer-k { margin: 0; font-size: 0.7rem; color: var(--text-3); }
   .fh-prompt { margin: 0.35rem 0 0; min-height: 2.6em; font-size: clamp(0.95rem, 0.85rem + 0.4vw, 1.12rem); line-height: 1.35; font-weight: 520; color: var(--text); letter-spacing: -0.01em; }
-  .fh-caret { display: inline-block; width: 2px; height: 1.05em; margin-left: 2px; vertical-align: text-bottom; background: var(--accent); opacity: 0; }
+  .fh-caret { display: inline-block; width: 2px; height: 1.05em; margin-left: 2px; vertical-align: text-bottom; background: var(--accent-text); opacity: 0; }
   :global([data-demo='playing']) .fh-caret { opacity: 1; animation: blink 1s steps(2) infinite; }
   .fh-composer-foot { margin-top: 0.7rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; }
-  .fh-chip { padding: 0.2rem 0.55rem; border: 1px solid var(--border); border-radius: 999px; font-size: 0.7rem; color: var(--text-2); background: var(--surface); }
-  .fh-send { margin-left: auto; padding: 0.3rem 0.8rem; border-radius: 7px; background: var(--accent); color: var(--accent-ink); font-size: 0.75rem; font-weight: 600; }
+  .fh-chip { padding: 0.2rem 0.55rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.7rem; color: var(--text-2); background: var(--surface); }
+  .fh-send { margin-left: auto; padding: 0.3rem 0.8rem; border-radius: 7px; background: var(--accent); color: var(--accent-foreground); font-size: 0.75rem; font-weight: 600; }
 
   .fh-jobs { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.55rem; }
   .fh-job { padding: 0.75rem 0.85rem; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); transition: border-color var(--dur), box-shadow var(--dur), opacity var(--dur); }
-  .fh-job.is-selected { border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent); }
+  .fh-job.is-selected { border-color: color-mix(in srgb, var(--accent-text) 50%, var(--border)); box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-text) 22%, transparent); }
   .fh-job[hidden] { display: none; }
   .fh-job.is-in { animation: rise-sm 360ms var(--ease-out) both; }
   .fh-job-top { display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem; }
   .fh-job-t { font-size: 0.875rem; font-weight: 560; color: var(--text); min-width: 0; }
-  .fh-job-stage { flex-shrink: 0; font-size: 0.7rem; color: var(--accent); font-weight: 540; }
+  .fh-job-stage { flex-shrink: 0; font-size: 0.7rem; color: var(--accent-text); font-weight: 540; }
   .fh-job[data-stage='5'] .fh-job-stage { color: var(--info); }
   .fh-job-meta { margin: 0.25rem 0 0; display: flex; flex-wrap: wrap; gap: 0.2rem 0.75rem; font-family: var(--font-mono); font-size: 0.64rem; color: var(--text-3); }
   .fh-job-from { margin: 0.45rem 0 0; font-size: 0.68rem; color: var(--text-3); }
   .fh-track { margin: 0.6rem 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.25rem; }
   .fh-track li { display: grid; gap: 0.3rem; }
   .fh-track i { display: block; height: 4px; border-radius: 999px; background: var(--surface-3); transition: background-color var(--dur); }
-  .fh-track li.is-done i { background: color-mix(in srgb, var(--accent) 70%, var(--surface-3)); }
-  .fh-track li.is-now i { background: var(--accent); box-shadow: 0 0 10px -1px color-mix(in srgb, var(--accent) 70%, transparent); }
+  .fh-track li.is-done i { background: color-mix(in srgb, var(--accent-text) 70%, var(--surface-3)); }
+  .fh-track li.is-now i { background: var(--accent-text); box-shadow: 0 0 10px -1px color-mix(in srgb, var(--accent-text) 70%, transparent); }
   .fh-track span { font-size: 0.58rem; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .fh-track li.is-now span { color: var(--text-2); }
   @media (max-width: 40rem) { .fh-track span { display: none; } }

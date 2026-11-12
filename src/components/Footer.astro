@@ -13,7 +13,7 @@ const year = new Date().getFullYear();
       </div>
       {footerColumns.map((col) => (
         <nav aria-label={col.title}>
-          <h2 class="text-[0.8125rem] font-[540] text-text-3">{col.title}</h2>
+          <h2 class="text-[0.75rem] font-[560] uppercase tracking-[0.06em] text-text-3">{col.title}</h2>
           <ul class="mt-3 space-y-2">
             {col.items.map((item) => <li><a href={item.href} class="footer-link">{item.label}</a></li>)}
           </ul>
@@ -25,7 +25,8 @@ const year = new Date().getFullYear();
 </footer>
 
 <style>
-  .site-footer { border-top: 1px solid var(--border); background: var(--bg-elevated); }
-  .footer-link { font-size: 0.9375rem; color: var(--text-2); transition: color var(--dur-fast); }
-  .footer-link:hover { color: var(--text); }
+  .site-footer { border-top: 1px solid var(--border); background: var(--background-secondary); }
+  .footer-link { font-size: 0.9375rem; color: var(--foreground-secondary); transition: color var(--dur-fast); }
+  .footer-link:hover { color: var(--foreground); }
+  .footer-link:focus-visible { color: var(--foreground); }
 </style>

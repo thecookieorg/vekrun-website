@@ -288,25 +288,32 @@ test.describe('navigation and theme', () => {
     await expect(footer).not.toContainText(/Docs|Documentation|Roadmap|How it works/);
   });
 
-  test('theme toggle switches and persists', async ({ page }) => {
+  test('theme choice switches, persists and can follow the system again', async ({ page }) => {
     await page.goto('/');
     const html = page.locator('html');
-    const before = await html.getAttribute('data-theme');
-    await page.getByRole('button', { name: /Switch to (light|dark) theme/ }).first().click();
-    const after = await html.getAttribute('data-theme');
-    expect(after).not.toBe(before);
+    const theme = page.getByRole('group', { name: 'Theme' }).first();
+    await theme.getByRole('button', { name: 'Use light theme' }).click();
+    await expect(html).toHaveAttribute('data-theme', 'light');
+    await expect(theme.getByRole('button', { name: 'Use light theme' })).toHaveAttribute('aria-pressed', 'true');
     await page.reload();
-    await expect(html).toHaveAttribute('data-theme', after!);
+    await expect(html).toHaveAttribute('data-theme', 'light');
     await page.goto('/teams/');
-    await expect(html).toHaveAttribute('data-theme', after!);
+    await expect(html).toHaveAttribute('data-theme', 'light');
+    await page.getByRole('group', { name: 'Theme' }).first().getByRole('button', { name: 'Use dark theme' }).click();
+    await expect(html).toHaveAttribute('data-theme', 'dark');
+    await page.getByRole('group', { name: 'Theme' }).first().getByRole('button', { name: 'Use system theme' }).click();
+    await expect(html).toHaveAttribute('data-theme-choice', 'system');
   });
 
-  test('dark is the default even when the system prefers light', async ({ browser }) => {
-    const ctx = await browser.newContext({ colorScheme: 'light' });
-    const page = await ctx.newPage();
-    await page.goto('/');
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-    await ctx.close();
+  test('without a stored choice the theme follows the system', async ({ browser }) => {
+    for (const scheme of ['light', 'dark'] as const) {
+      const ctx = await browser.newContext({ colorScheme: scheme });
+      const page = await ctx.newPage();
+      await page.goto('/');
+      await expect(page.locator('html')).toHaveAttribute('data-theme', scheme);
+      await expect(page.locator('meta[name="theme-color"]').first()).toHaveAttribute('content', scheme === 'light' ? '#ffffff' : '#1b1c23');
+      await ctx.close();
+    }
   });
 
   test('skip link targets main content', async ({ page }) => {
@@ -340,10 +347,8 @@ test.describe('brand', () => {
       expect((await page.request.get(asset)).status(), asset).toBe(200);
     }
     const fav = await (await page.request.get('/favicon.svg')).text();
-    expect(fav.toLowerCase()).toContain('#c0f48a');
-    expect(fav.toLowerCase()).toContain('#151b20');
-    await page.goto('/');
-    await expect(page.locator('meta[name="theme-color"]').first()).toHaveAttribute('content', '#0d1014');
+    expect(fav.toLowerCase()).toContain('#b9f58b');
+    expect(fav.toLowerCase()).toContain('#272832');
   });
 });
 

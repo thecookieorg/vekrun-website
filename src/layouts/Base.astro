@@ -42,7 +42,7 @@ const ld = structuredData
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <meta name="theme-color" content="#0d1014" data-theme-color />
+    <meta name="theme-color" content="#1b1c23" data-theme-color />
     {noindex && <meta name="robots" content="noindex" />}
 
     <meta property="og:type" content="website" />
@@ -61,18 +61,27 @@ const ld = structuredData
     {ld.map((d) => <script type="application/ld+json" set:html={JSON.stringify(d)} />)}
 
     <script is:inline>
-      // Resolve the theme before first paint. Dark is the default; an explicit choice
-      // ('dark' or 'light') wins. The old key from the retired docs is still honoured.
+      // Resolve the theme before first paint. The stored choice ('light', 'dark' or
+      // 'system') wins; without one, the theme follows the system. The old key from
+      // the retired docs is still honoured. ThemeToggle reuses window.__vekrunTheme.
       (function () {
         var html = document.documentElement;
         html.classList.remove('no-js');
         if (html.hasAttribute('data-theme-locked')) return;
-        var stored = null;
-        try { stored = localStorage.getItem('vekrun-theme') || localStorage.getItem('starlight-theme'); } catch (e) {}
-        var theme = stored === 'light' ? 'light' : 'dark';
-        html.dataset.theme = theme;
-        var meta = document.querySelector('meta[data-theme-color]');
-        if (meta) meta.setAttribute('content', theme === 'light' ? '#f6f7f4' : '#0d1014');
+        var mq = window.matchMedia('(prefers-color-scheme: light)');
+        function read() {
+          try { return localStorage.getItem('vekrun-theme') || localStorage.getItem('starlight-theme') || 'system'; } catch (e) { return 'system'; }
+        }
+        function apply(choice) {
+          var theme = choice === 'light' || choice === 'dark' ? choice : (mq.matches ? 'light' : 'dark');
+          html.dataset.theme = theme;
+          html.dataset.themeChoice = choice === 'light' || choice === 'dark' ? choice : 'system';
+          var meta = document.querySelector('meta[data-theme-color]');
+          if (meta) meta.setAttribute('content', theme === 'light' ? '#ffffff' : '#1b1c23');
+        }
+        apply(read());
+        mq.addEventListener('change', function () { if (html.dataset.themeChoice === 'system') apply('system'); });
+        window.__vekrunTheme = { apply: apply };
       })();
     </script>
     <slot name="head" />

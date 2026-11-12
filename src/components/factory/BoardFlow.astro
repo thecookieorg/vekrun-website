@@ -67,17 +67,17 @@ const chain = [
   .bf-card-t { font-size: 0.78rem; font-weight: 540; color: var(--text); line-height: 1.3; }
   .bf-card-m { font-size: 0.66rem; color: var(--text-3); }
   .bf-card-tags { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.15rem; }
-  .bf-card.is-hero { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent); }
+  .bf-card.is-hero { border-color: color-mix(in srgb, var(--accent-text) 55%, var(--border)); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-text) 12%, transparent); }
   .bf-card.is-moved { animation: rise-sm 320ms var(--ease-out) both; }
   .bf-detail { padding: 1rem 1.1rem 1.2rem; border-top: 1px solid var(--border); background: color-mix(in srgb, var(--bg-elevated) 50%, var(--surface)); }
   @media (min-width: 64rem) { .bf-detail { border-top: 0; border-left: 1px solid var(--border); } }
   .bf-detail-k { margin: 0 0 0.8rem; font-size: 0.72rem; font-weight: 560; color: var(--text-2); }
   .bf-chain { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.75rem; position: relative; }
-  .bf-chain::before { content: ''; position: absolute; left: 0.3rem; top: 0.4rem; bottom: 0.4rem; width: 1px; background: linear-gradient(var(--danger), var(--accent), var(--cloud)); opacity: 0.5; }
+  .bf-chain::before { content: ''; position: absolute; left: 0.3rem; top: 0.4rem; bottom: 0.4rem; width: 1px; background: linear-gradient(var(--danger), var(--accent-text), var(--cloud)); opacity: 0.5; }
   .bf-chain li { position: relative; display: flex; gap: 0.7rem; font-size: 0.8rem; color: var(--text); }
   .bf-chain li.is-pending { opacity: 0.35; }
   .bf-chain li.is-in { animation: rise-sm 300ms var(--ease-out) both; }
-  .bf-dot { flex-shrink: 0; width: 0.62rem; height: 0.62rem; margin-top: 0.25rem; border-radius: 50%; border: 2px solid var(--accent); background: var(--bg); }
+  .bf-dot { flex-shrink: 0; width: 0.62rem; height: 0.62rem; margin-top: 0.25rem; border-radius: 50%; border: 2px solid var(--accent-text); background: var(--bg); }
   .bf-chain li:first-child .bf-dot { border-color: var(--danger); }
   .bf-chain li:last-child .bf-dot { border-color: var(--warn); }
   .bf-chain b { font-weight: 560; }
