@@ -1,14 +1,16 @@
 ---
 /**
- * Get Vekrun. Early access comes first and is real (an email to the team, see
- * EarlyAccess). Availability must stay accurate per platform: there is no
+ * Get Vekrun. Early access comes first and is real: a plain email link to
+ * `site.earlyAccess.email`, with no form. Availability must stay accurate per platform: there is no
  * installer until `site.release.downloadAvailable` is true and a signed build
  * is published.
  */
 import Base from '@/layouts/Base.astro';
 import PageHero from '@/components/PageHero.astro';
-import EarlyAccess from '@/components/EarlyAccess.astro';
+import Button from '@/components/Button.astro';
 import { site, personal, teams } from '@/data/site';
+const email = site.earlyAccess.email;
+const mailto = `mailto:${email}?subject=${encodeURIComponent('Vekrun early access')}`;
 const platforms = [
   ['macOS', 'No public installer yet'],
   ['Windows', 'No public installer yet'],
@@ -27,10 +29,12 @@ const facts = [
     <div class="container-site ea-wrap">
       <div class="ea-copy">
         <h2 class="heading-3 text-text">Early access is by email.</h2>
-        <p class="mt-3 text-text-2">Pick an edition and fill in what you like. Your email app opens with a message to the team, ready to send.</p>
         <p class="mt-3 text-text-2">Interested in Teams? It follows Personal; the <a href="/teams/" class="text-accent link-slide">Teams page</a> explains how it will work.</p>
       </div>
-      <EarlyAccess />
+      <div class="ea">
+        <p class="text-text-2">Write to us and tell us which edition you want, Personal or Teams, what computer you use, and what you’d hand Vekrun first.</p>
+        <Button href={mailto} size="lg" class="mt-6">Email {email}</Button>
+      </div>
     </div>
   </section>
 
@@ -51,6 +55,8 @@ const facts = [
 <style>
   .ea-wrap { display: grid; gap: 2rem; }
   @media (min-width: 64rem) { .ea-wrap { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: 4rem; align-items: start; } }
+  .ea { padding: 1.5rem; border: 1px solid var(--border-strong); border-radius: var(--radius-lg); background: var(--surface); }
+  @media (min-width: 40rem) { .ea { padding: 2rem; } }
   .plats { margin: 0; padding: 0; list-style: none; display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
   @media (min-width: 40rem) { .plats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   .plats li { display: grid; gap: 0.2rem; padding: 1.1rem 1.25rem; background: var(--surface); }

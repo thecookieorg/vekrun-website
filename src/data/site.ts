@@ -30,8 +30,7 @@ export const site = {
     generalEmail: null as string | null,
   },
   /**
-   * Early access goes to a real inbox by email. There is no form backend: the
-   * page composes a message the visitor sends from their own email app.
+   * Early access goes to a real inbox by email: a plain mailto link, no form.
    */
   earlyAccess: {
     email: 'manoylo@hey.com',
@@ -83,7 +82,7 @@ export const teams = {
   runsOn: 'Will run on your servers. Your team works with it from anywhere.',
   /** Teams ships after Personal. Pages describe it in the future tense and say so. */
   availability: 'Vekrun Teams comes after Personal.',
-  earlyAccessHref: '/download/?edition=teams#early-access',
+  earlyAccessHref: '/download/#early-access',
   includes: [
     'Everything in Personal, for every engineer',
     'Remote Factory: hand off and approve work from anywhere',
