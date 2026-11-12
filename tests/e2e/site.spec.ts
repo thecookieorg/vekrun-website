@@ -144,7 +144,7 @@ test.describe('remote factory', () => {
     await expect(page.getByText('Code, credentials and execution policies stay here.')).toBeVisible();
     await expect(page.locator('#pricing')).toContainText('Will run on your servers. Your team works with it from anywhere.');
     await expect(page.locator('main')).toContainText('Vekrun Teams comes after Personal.');
-    await expect(page.getByRole('link', { name: 'Request Teams early access' }).first()).toHaveAttribute('href', '/download/?edition=teams#early-access');
+    await expect(page.getByRole('link', { name: 'Request Teams early access' }).first()).toHaveAttribute('href', '/download/#early-access');
     await expect(page.getByText(/enterprise/i).first()).toBeAttached();
     await expect(page.locator('main')).not.toContainText(/\$19\b/);
   });
@@ -318,18 +318,11 @@ test.describe('navigation and theme', () => {
 });
 
 test.describe('get vekrun', () => {
-  test('early access composes a real email, and Teams can be preselected', async ({ page }) => {
-    await page.goto('/download/?edition=teams');
-    const form = page.locator('form[data-ea]');
-    await expect(form).toHaveAttribute('action', 'mailto:manoylo@hey.com');
-    await expect(form.getByRole('radio', { name: /Teams/ })).toBeChecked();
-    await form.getByLabel('Your name').fill('Ada');
-    await form.getByLabel(/Engineers on the team/).fill('12');
-    await form.getByRole('button', { name: 'Write the email' }).click();
-    await expect(form).toHaveAttribute('data-mailto', /^mailto:/);
-    const href = (await form.getAttribute('data-mailto'))!;
-    expect(href).toContain('mailto:manoylo@hey.com?subject=Vekrun%20Teams%20early%20access');
-    expect(decodeURIComponent(href)).toContain('Engineers: 12');
+  test('early access is a plain email link, with no form', async ({ page }) => {
+    await page.goto('/download/');
+    const section = page.locator('#early-access');
+    await expect(section.getByRole('link', { name: 'Email manoylo@hey.com' })).toHaveAttribute('href', 'mailto:manoylo@hey.com?subject=Vekrun%20early%20access');
+    await expect(page.locator('form')).toHaveCount(0);
   });
 
   test('states plainly that there is no download yet and offers no installer', async ({ page }) => {
