@@ -157,7 +157,7 @@ const tools = [
   .pnav { position: sticky; top: 4rem; z-index: 20; border-block: 1px solid var(--border); background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
   .pnav ul { margin: 0; padding: 0.5rem 0; list-style: none; display: flex; gap: 0.25rem; overflow-x: auto; scrollbar-width: none; }
   .pnav ul::-webkit-scrollbar { display: none; }
-  .pnav a { display: inline-flex; align-items: center; height: 2rem; padding: 0 0.75rem; border-radius: 999px; font-size: 0.875rem; color: var(--text-2); white-space: nowrap; }
+  .pnav a { display: inline-flex; align-items: center; height: 2rem; padding: 0 0.75rem; border-radius: var(--radius-sm); font-size: 0.875rem; color: var(--text-2); white-space: nowrap; }
   .pnav a:hover { color: var(--text); background: var(--surface); }
   .split { display: grid; gap: 2.5rem; }
   @media (min-width: 64rem) { .split { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 4rem; align-items: center; } }

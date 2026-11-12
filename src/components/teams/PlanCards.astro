@@ -43,7 +43,7 @@ const t = pricing.teams;
   .plans { display: grid; gap: 1.25rem; }
   @media (min-width: 52rem) { .plans { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .plan { display: flex; flex-direction: column; padding: 1.6rem 1.6rem 1.5rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
-  .plan.is-teams { border-color: color-mix(in srgb, var(--cloud) 45%, var(--border)); background: linear-gradient(160deg, color-mix(in srgb, var(--cloud) 9%, var(--surface)), var(--surface) 60%); }
+  .plan.is-teams { border-color: var(--border-strong); background: var(--surface); box-shadow: var(--shadow-sm); }
   .plan-k { margin: 0; font-size: 0.8125rem; color: var(--text-3); }
   .plan-n { margin: 0.35rem 0 0; font-size: 1.35rem; font-weight: 600; letter-spacing: -0.02em; color: var(--text); }
   .plan-price { margin: 1rem 0 0; display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.25rem 0.6rem; }
@@ -52,16 +52,14 @@ const t = pricing.teams;
   .plan-sub { margin: 0.5rem 0 0; font-size: 0.875rem; color: var(--text-2); }
   .plan-p { margin: 1rem 0 0; font-size: 0.95rem; line-height: 1.55; color: var(--text-2); }
   .plan-runs { margin: 0.9rem 0 0; display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; font-weight: 560; color: var(--text); }
-  .plan-runs :global(svg) { flex-shrink: 0; color: var(--accent); }
-  .plan.is-teams .plan-runs :global(svg) { color: var(--mint); }
+  .plan-runs :global(svg) { flex-shrink: 0; color: var(--accent-text); }
   .plan-list { margin: 1.1rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.45rem; font-size: 0.9rem; color: var(--text); }
   .plan-list li { display: flex; gap: 0.55rem; align-items: flex-start; }
-  .plan-list :global(svg) { margin-top: 0.15rem; flex-shrink: 0; color: var(--accent); }
-  .plan.is-teams .plan-list :global(svg) { color: var(--cloud-strong); }
+  .plan-list :global(svg) { margin-top: 0.15rem; flex-shrink: 0; color: var(--accent-text); }
   .plan-list.is-out { margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid var(--border); color: var(--text-3); }
   .plan-list.is-out :global(svg) { color: var(--text-3) !important; }
   .plan-note { margin: auto 0 0; padding-top: 1.1rem; font-size: 0.8125rem; line-height: 1.5; color: var(--text-3); }
-  .plan-flag { margin: 1.1rem 0 0; display: inline-flex; align-items: center; gap: 0.5rem; align-self: flex-start; padding: 0.35rem 0.75rem; border: 1px solid color-mix(in srgb, var(--warn) 40%, var(--border)); border-radius: 999px; font-size: 0.8125rem; color: var(--text-2); }
+  .plan-flag { margin: 1.1rem 0 0; display: inline-flex; align-items: center; gap: 0.5rem; align-self: flex-start; padding: 0.35rem 0.75rem; border: 1px solid color-mix(in srgb, var(--warn) 40%, var(--border)); border-radius: var(--radius-sm); font-size: 0.8125rem; color: var(--text-2); }
   .plan-flag span { width: 0.4rem; height: 0.4rem; border-radius: 50%; background: var(--warn); }
   .plans.is-compact .plan-p { font-size: 0.9rem; }
 </style>

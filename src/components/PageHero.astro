@@ -23,7 +23,7 @@ const hasStage = Astro.slots.has('default');
   <div class="container-site relative">
     <div class:list={['page-hero-copy', align === 'center' ? 'is-center' : 'is-left']}>
       {eyebrow && <p class="eyebrow enter" style="--i: 0">{eyebrow}</p>}
-      <h1 id={id} class:list={['display enter text-text', eyebrow && 'mt-4']} style="--i: 1">{title}</h1>
+      <h1 id={id} class:list={['display enter text-text', eyebrow && 'mt-5']} style="--i: 1">{title}</h1>
       <p class="lede enter mt-6 max-w-2xl" style="--i: 2">{lede}</p>
       {(cta || secondary) && (
         <div class="page-hero-actions enter mt-8 flex flex-wrap gap-3" style="--i: 3">
@@ -39,7 +39,9 @@ const hasStage = Astro.slots.has('default');
 
 <style>
   .page-hero { position: relative; overflow: clip; padding-top: 4.5rem; padding-bottom: 4.5rem; }
-  .page-hero::before { content: ''; position: absolute; inset: -20rem -10rem auto; height: 40rem; pointer-events: none; background: radial-gradient(ellipse 45% 50% at 30% 50%, var(--ambient-a), transparent 70%); }
+  /* A faint green light behind the hero in dark; almost nothing on white. */
+  .page-hero::before { content: ''; position: absolute; inset: -18rem -10rem auto; height: 38rem; pointer-events: none; background: radial-gradient(ellipse 42% 48% at 32% 50%, var(--hero-light), transparent 70%); }
+  :global(:root[data-theme='light']) .page-hero::before { display: none; }
   @media (min-width: 64rem) { .page-hero { padding-top: 6.5rem; padding-bottom: 6rem; } }
   .page-hero-copy.is-center { max-width: 56rem; margin-inline: auto; text-align: center; }
   .page-hero-copy.is-center .lede, .page-hero-copy.is-center .page-hero-actions { margin-inline: auto; justify-content: center; }

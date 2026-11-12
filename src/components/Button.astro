@@ -8,7 +8,7 @@ interface Props {
   [key: string]: unknown;
 }
 const { href, variant = 'primary', size = 'md', class: className = '', external = false, ...rest } = Astro.props;
-const base = 'btn inline-flex items-center justify-center gap-2 rounded-md font-[540] tracking-[-0.005em]';
+const base = 'btn inline-flex items-center justify-center gap-2 font-[540] tracking-[-0.005em]';
 const sizes = { md: 'h-10 px-4 text-[0.9375rem]', lg: 'h-12 px-5 text-base' };
 const variants = { primary: 'btn-primary', secondary: 'btn-secondary', ghost: 'btn-ghost' };
 const Tag = href ? 'a' : 'button';
@@ -17,15 +17,17 @@ const extra = external ? { target: '_blank', rel: 'noopener noreferrer' } : {};
 <Tag href={href} class:list={[base, sizes[size], variants[variant], className]} {...extra} {...rest}><slot /></Tag>
 
 <style is:global>
-  .btn { position: relative; overflow: hidden; transition: transform var(--dur-fast) var(--ease-out), background-color var(--dur-fast), border-color var(--dur-fast), color var(--dur-fast), box-shadow var(--dur) var(--ease-out); }
+  /* Three variants, one geometry: primary (lime fill), secondary (bordered surface), ghost (tertiary). */
+  .btn { position: relative; border: 1px solid transparent; border-radius: var(--radius-md); white-space: nowrap; transition: background-color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), box-shadow var(--dur) var(--ease-out); }
   .btn:active { transform: translateY(1px); }
-  .btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: 0 0 0 0 transparent; }
-  .btn-primary::after { content: ''; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%); background-size: 200% 100%; opacity: 0; transition: opacity var(--dur-fast); }
-  .btn-primary:hover { background: var(--accent-strong); box-shadow: 0 10px 30px -12px color-mix(in srgb, var(--accent) 70%, transparent); }
-  .btn-primary:hover::after { opacity: 1; animation: shimmer 900ms var(--ease-out) 1; }
-  .btn-secondary { border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); }
-  .btn-secondary:hover { border-color: var(--text-3); background: var(--surface-2); }
-  .btn-ghost { color: var(--text-2); }
-  .btn-ghost:hover { color: var(--text); background: var(--surface-2); }
-  @media (prefers-reduced-motion: reduce) { .btn, .btn-primary::after { transition: none; animation: none; } .btn-primary:hover::after { animation: none; } }
+  .btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+  .btn[aria-disabled='true'], .btn:disabled { opacity: 0.5; pointer-events: none; }
+  .btn :global(svg) { flex: 0 0 auto; }
+  .btn-primary { background: var(--accent); color: var(--accent-foreground); font-weight: 580; }
+  .btn-primary:hover { background: var(--accent-hover); box-shadow: var(--glow-accent); }
+  .btn-secondary { border-color: var(--border-strong); background: var(--surface); color: var(--foreground); }
+  .btn-secondary:hover { border-color: var(--border-control); background: var(--surface-hover); }
+  .btn-ghost { color: var(--foreground-secondary); }
+  .btn-ghost:hover { color: var(--foreground); background: var(--surface-hover); }
+  @media (prefers-reduced-motion: reduce) { .btn { transition: none; } .btn:active { transform: none; } }
 </style>

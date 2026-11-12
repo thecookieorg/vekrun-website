@@ -50,13 +50,13 @@ const label = { for: 'Supports', against: 'Objects', amend: 'Amends' } as const;
   @media (min-width: 48rem) { .council:not(.is-compact) .cn-seats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   .cn-seat { padding: 0.8rem 0.9rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-2); }
   .cn-who { margin: 0; display: flex; align-items: center; gap: 0.45rem; font-size: 0.82rem; font-weight: 560; color: var(--text); }
-  .cn-verdict { margin-left: auto; font-size: 0.7rem; font-weight: 500; padding: 0.1rem 0.45rem; border-radius: 999px; border: 1px solid var(--border-strong); color: var(--text-2); }
-  .is-for .cn-verdict { color: var(--accent); border-color: var(--accent-line); background: var(--accent-soft); }
+  .cn-verdict { margin-left: auto; font-size: 0.7rem; font-weight: 500; padding: 0.1rem 0.45rem; border-radius: var(--radius-sm); border: 1px solid var(--border-strong); color: var(--text-2); }
+  .is-for .cn-verdict { color: var(--accent-text); border-color: var(--accent-line); background: var(--accent-soft); }
   .is-amend .cn-verdict { color: var(--mint); border-color: color-mix(in srgb, var(--mint) 40%, transparent); }
   .cn-stance { margin: 0.5rem 0 0; font-size: 0.88rem; line-height: 1.45; color: var(--text); }
   .cn-note { margin: 0.35rem 0 0; font-size: 0.8rem; line-height: 1.45; color: var(--text-2); }
   .cn-decision { padding: 0.9rem 1rem; border-radius: var(--radius); border: 1px solid var(--accent-line); background: var(--accent-soft); }
-  .cn-decision .cn-k { color: var(--accent); }
+  .cn-decision .cn-k { color: var(--accent-text); }
   .cn-d { margin: 0; font-size: 0.98rem; font-weight: 580; color: var(--text); }
   .cn-why { margin: 0.35rem 0 0; font-size: 0.82rem; line-height: 1.5; color: var(--text-2); }
 </style>

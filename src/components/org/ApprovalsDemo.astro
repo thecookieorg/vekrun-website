@@ -89,8 +89,8 @@ const reqs: Req[] = [
   .ap-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; padding-top: 0.3rem; }
   .ap-btn { height: 2rem; padding: 0 0.9rem; border-radius: 6px; font-size: 0.8rem; font-weight: 560; cursor: pointer; border: 1px solid var(--border-strong); background: var(--surface-2); color: var(--text); transition: transform var(--dur-fast), background-color var(--dur-fast), border-color var(--dur-fast), box-shadow var(--dur-fast); }
   .ap-btn:active { transform: translateY(1px); }
-  .ap-btn.is-approve { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
-  .ap-btn.is-approve:hover { background: var(--accent-strong); }
+  .ap-btn.is-approve { background: var(--accent); color: var(--accent-foreground); border-color: var(--accent); }
+  .ap-btn.is-approve:hover { background: var(--accent-hover); }
   .ap-btn.is-approve.is-hot { box-shadow: 0 0 0 4px var(--accent-soft); }
   .ap-btn.is-reject:hover { border-color: var(--danger); color: var(--danger); }
   .ap-btn[disabled] { opacity: 0.45; cursor: default; }
