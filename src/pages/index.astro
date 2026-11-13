@@ -22,7 +22,7 @@ import CompareRows from '@/components/compare/CompareRows.astro';
 import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
 import { site, personalCta } from '@/data/site';
 import { toolById } from '@/data/integrations';
-import { projectExamples, highlights } from '@/data/capabilities';
+import { highlights } from '@/data/capabilities';
 import { ArrowRight, Check, Download, Globe, Monitor, Users, MousePointerClick, GitPullRequest, Wrench, Mic, Smartphone } from '@lucide/astro';
 
 const hlIcons = { council: Users, browser: MousePointerClick, delivery: GitPullRequest, environments: Wrench, voice: Mic, apps: Smartphone } as const;
@@ -58,7 +58,7 @@ const structuredData = [
   { '@context': 'https://schema.org', '@type': 'WebSite', name: site.name, url: site.url },
   {
     '@context': 'https://schema.org', '@type': 'SoftwareApplication', name: site.name, applicationCategory: 'DeveloperApplication',
-    operatingSystem: 'macOS, Windows, Linux', description: site.description, url: site.url,
+    operatingSystem: 'macOS', description: site.description, url: site.url,
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', name: 'Vekrun Free' },
   },
 ];
@@ -78,11 +78,6 @@ const structuredData = [
       <SectionHeading id="stack-title" title="Your stack. Your repository. Your workflow." lede="Vekrun isn’t tied to one language or web framework. It works in the repositories you already have, follows their conventions and runs their own tests, across web, mobile, desktop and backend projects." />
     </div>
     <div class="container-wide mt-12"><StackMarquee /></div>
-    <div class="container-site">
-      <ul class="ex" aria-label="Examples of projects Vekrun can help build">
-        {projectExamples.map((e) => <li><span class="ex-logos">{e.logos.map((id) => { const t = logo(id); return <IntegrationLogo id={t.id} name={t.name} monogram={t.mono} size="sm" />; })}</span>{e.title}</li>)}
-      </ul>
-    </div>
   </section>
 
   <section class="section-pad rule bg-bg-elevated" aria-labelledby="how-title">
@@ -95,10 +90,10 @@ const structuredData = [
 
   <section id="models" class="section-pad rule scroll-mt-16" aria-labelledby="models-title">
     <div class="container-site">
-      <SectionHeading id="models-title" title="Your AI. Your hardware. Your choice." lede="Connect OpenRouter, or discover and download compatible local models through Vekrun. Run AI on your own hardware, without needing a paid cloud model subscription. Claude Code, Codex and Antigravity are optional." />
-      <p class="callout mt-8"><Check class="h-4 w-4" aria-hidden="true" />You don’t need a paid AI API, or to install or subscribe to Claude Code, Codex or any other coding-agent CLI, to use Vekrun.</p>
-      <div class="mt-8"><ModelChoice /></div>
-      <p class="mt-8"><a href="/integrations/" class="link-more group">All models and integrations<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
+      <SectionHeading id="models-title" title="Your AI. Your hardware. Your choice." lede="Connect OpenRouter, or discover and download compatible local models through Vekrun. Run AI on your own hardware, with no paid cloud model subscription needed for supported workflows. Claude Code, Codex and Antigravity are optional." />
+      <p class="callout mt-8"><Check class="h-4 w-4" aria-hidden="true" />You don’t need Claude Code, Codex or any other coding-agent subscription to use Vekrun. Local models can stand in for a paid AI API in supported workflows.</p>
+      <div class="mt-8"><ModelChoice compact /></div>
+      <p class="mt-8"><a href="/product/#models" class="link-more group">Everything about models<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
     </div>
   </section>
 
@@ -170,20 +165,15 @@ const structuredData = [
   .show-pts { margin: 1.75rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.55rem; }
   .show-pts li { display: flex; gap: 0.55rem; align-items: flex-start; font-size: 0.98rem; color: var(--foreground); }
   .show-pts :global(svg) { margin-top: 0.25rem; flex-shrink: 0; color: var(--accent-text); }
-  .ex { margin: 2.5rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.5rem; }
-  @media (min-width: 40rem) { .ex { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (min-width: 64rem) { .ex { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-  .ex li { display: flex; align-items: center; gap: 0.65rem; padding: 0.6rem 0.75rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); font-size: 0.9rem; font-weight: 540; color: var(--foreground); }
-  .ex-logos { display: flex; gap: 0.25rem; flex-shrink: 0; }
   .targets { margin: 1.5rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; }
   .targets li { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.65rem 0.25rem 0.3rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); font-size: 0.86rem; font-weight: 540; color: var(--foreground); }
   .targets li > :global(svg) { margin-left: 0.3rem; color: var(--foreground); }
   .next { margin: 1.5rem 0 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem; font-size: 0.92rem; line-height: 1.5; color: var(--foreground-secondary); }
   .next-k { padding: 0.05rem 0.45rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.72rem; font-weight: 560; }
   .hl { margin: 2.5rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.75rem; }
-  @media (min-width: 40rem) { .hl { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 30rem) { .hl { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (min-width: 64rem) { .hl { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-  .hl a { display: grid; gap: 0.45rem; height: 100%; padding: 1.3rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); transition: border-color var(--dur-fast), background-color var(--dur-fast); }
+  .hl a { display: grid; gap: 0.35rem; height: 100%; padding: 1.1rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); transition: border-color var(--dur-fast), background-color var(--dur-fast); }
   .hl a:hover { border-color: var(--border-interactive); background: var(--surface-hover); }
   .hl-ic { display: inline-flex; width: 2rem; height: 2rem; align-items: center; justify-content: center; border-radius: var(--radius-sm); background: var(--accent-subtle); color: var(--accent-text); }
   .hl h3 { margin: 0.3rem 0 0; font-size: 1.05rem; font-weight: 600; color: var(--foreground); }

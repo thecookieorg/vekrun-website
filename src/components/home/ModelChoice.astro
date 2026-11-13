@@ -12,6 +12,8 @@
 import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
 import { toolById, modelIds, agentIds } from '@/data/integrations';
 import { Check, Cpu, Plug, Download, HardDrive, KeyRound, SlidersHorizontal, Search, RefreshCw } from '@lucide/astro';
+interface Props { compact?: boolean }
+const { compact = false } = Astro.props;
 const models = modelIds.map((id) => toolById(id)!);
 const agents = agentIds.map((id) => toolById(id)!);
 const benefits = [
@@ -33,7 +35,7 @@ const library = [
     <p class="mc-k"><Cpu class="h-4 w-4" aria-hidden="true" />Built in</p>
     <h3 id="mc-native">Vekrun’s native agent</h3>
     <p class="mc-big"><Download class="h-5 w-5" aria-hidden="true" />Download local AI models</p>
-    <p class="mc-p">Pick a model that fits your computer and Vekrun downloads it for you. No paid AI API needed, and no Ollama experience either.</p>
+    <p class="mc-p">Pick a model that fits your computer and Vekrun downloads it for you. No Ollama experience needed.</p>
 
     <figure class="lib" data-mdl aria-label="Example: the local model library in Vekrun">
       <div class="lib-head">
@@ -67,9 +69,11 @@ const library = [
       <p class="lib-foot">Downloads through Ollama</p>
     </figure>
 
-    <ul class="mc-ben">
-      {benefits.map((b) => <li><b.i class="h-4 w-4" aria-hidden="true" /><div><h4>{b.t}</h4><p>{b.d}</p></div></li>)}
-    </ul>
+    {!compact && (
+      <ul class="mc-ben">
+        {benefits.map((b) => <li><b.i class="h-4 w-4" aria-hidden="true" /><div><h4>{b.t}</h4><p>{b.d}</p></div></li>)}
+      </ul>
+    )}
     <ul class="mc-logos" aria-label="Model connections">
       {models.map((t) => <li><IntegrationLogo id={t.id} name={t.name} monogram={t.mono} size="sm" />{t.name}</li>)}
     </ul>
@@ -83,7 +87,7 @@ const library = [
     </ul>
   </article>
 </div>
-<p class="mc-note">Hosted model usage is billed by the provider you choose, under your account. Local models run on your own hardware through a supported runtime; Vekrun doesn’t ship its own inference engine and adds no markup. Running a model locally doesn’t make every workflow offline: Git hosts, package registries and integrations still need a connection.</p>
+<p class="mc-note">Hosted model usage is billed by the provider you choose, under your account. Local models run on your own hardware through a supported runtime; Vekrun doesn’t ship its own inference engine and adds no markup. Local models power supported workflows; running the entire autonomous Factory on a local model alone is still being certified. Running a model locally also doesn’t make every workflow offline: Git hosts, package registries and integrations still need a connection.</p>
 
 <style>
   .mc { display: grid; gap: 1.25rem; }

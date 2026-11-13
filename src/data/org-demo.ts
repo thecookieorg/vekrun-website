@@ -7,16 +7,16 @@ export const org = { name: 'Acme Engineering', slug: 'acme', members: 5, teams: 
 export type Person = { id: string; name: string; short: string; ini: string; role: string; hue: number; where: string };
 export const people: Record<'dana' | 'sam' | 'alex' | 'priya', Person> = {
   dana: { id: 'dana', name: 'Dana Whitfield', short: 'Dana', ini: 'DW', role: 'Project manager', hue: 284, where: 'browser' },
-  sam: { id: 'sam', name: 'Sam Okafor', short: 'Sam', ini: 'SO', role: 'Engineering lead', hue: 34, where: 'Vekrun · Linux' },
+  sam: { id: 'sam', name: 'Sam Okafor', short: 'Sam', ini: 'SO', role: 'Engineering lead', hue: 34, where: 'Vekrun · macOS' },
   alex: { id: 'alex', name: 'Alex Moreau', short: 'Alex', ini: 'AM', role: 'Developer', hue: 160, where: 'Vekrun · macOS' },
-  priya: { id: 'priya', name: 'Priya Natarajan', short: 'Priya', ini: 'PN', role: 'Developer', hue: 222, where: 'Vekrun · Windows' },
+  priya: { id: 'priya', name: 'Priya Natarajan', short: 'Priya', ini: 'PN', role: 'Developer', hue: 222, where: 'Vekrun · macOS' },
 };
 
 export const workers = [
   { id: 'build-2', kind: 'shared', where: 'company build machine', state: 'busy' },
   { id: 'build-3', kind: 'shared', where: 'company build machine', state: 'idle' },
   { id: 'Alex’s machine', kind: 'personal', where: 'macOS', state: 'busy' },
-  { id: 'Priya’s machine', kind: 'personal', where: 'Windows', state: 'offline' },
+  { id: 'Priya’s machine', kind: 'personal', where: 'macOS', state: 'offline' },
 ] as const;
 
 export const projects = [

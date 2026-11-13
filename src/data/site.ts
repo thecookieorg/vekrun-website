@@ -69,7 +69,7 @@ export type Plan = {
   name: string;
   price: string;
   priceNote: string;
-  /** A second way to read the price, such as the yearly total. Must be arithmetic on `price`, never a discount nobody agreed. */
+  /** A short qualifier under the price. */
   priceAlt?: string;
   audience: string;
   summary: string;
@@ -87,7 +87,6 @@ export type Plan = {
  * Enterprise differs by deployment, governance and operational control.
  */
 export const cloudPrice = { monthly: 99, currency: 'USD' } as const;
-export const cloudYearly = cloudPrice.monthly * 12;
 const usd = (n: number) => `$${n.toLocaleString('en-US')}`;
 
 export const plans: Plan[] = [
@@ -116,7 +115,7 @@ export const plans: Plan[] = [
     name: 'Cloud',
     price: usd(cloudPrice.monthly),
     priceNote: 'per developer / month',
-    priceAlt: `${usd(cloudYearly)} per developer per year. Proposed price.`,
+    priceAlt: 'USD, billed monthly. Proposed price, subject to change.',
     audience: 'For developers and teams who want Vekrun anywhere',
     summary: 'Hosted workspaces and Factory execution, so work continues when your laptop doesn’t.',
     planned: true,

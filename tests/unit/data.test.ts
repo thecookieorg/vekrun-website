@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { existsSync } from 'node:fs';
-import { footerColumns, primaryNav, primaryCta, personalCta, pricingCta, productSections, productSubAnchors, howSections, site, plans, cloudPrice, cloudYearly, cloudWishlistMailto, earlyAccessMailto, enterpriseMailto } from '@/data/site';
+import { footerColumns, primaryNav, primaryCta, personalCta, pricingCta, productSections, productSubAnchors, howSections, site, plans, cloudPrice, cloudWishlistMailto, earlyAccessMailto, enterpriseMailto } from '@/data/site';
 import { comparisons, projectExamples, highlights } from '@/data/capabilities';
 import { toolGroups, platforms, allTools, stackRows } from '@/data/integrations';
 import { redirects } from '../../astro.config.mjs';
@@ -23,16 +23,16 @@ describe('plans and pricing', () => {
     const [free, cloud, enterprise] = plans;
     expect(free).toMatchObject({ price: '$0', priceNote: 'forever', planned: false });
     expect(cloud).toMatchObject({ price: '$99', priceNote: 'per developer / month', planned: true, status: 'Coming soon' });
-    expect(cloud!.priceAlt).toBe('$1,188 per developer per year. Proposed price.');
+    expect(cloud!.priceAlt).toBe('USD, billed monthly. Proposed price, subject to change.');
     expect(enterprise).toMatchObject({ price: 'Custom', planned: true });
   });
   it('keeps the core engineering workflow in Free', () => {
     const f = plans[0]!.features.join(' ');
     for (const k of ['native agent', 'Council', 'Factory', 'Work Items', 'Git', 'Engineering Memory', 'Proof Packs', 'Live Share']) expect(f).toContain(k);
   });
-  it('derives the yearly Cloud price from the monthly one, with no invented discount', () => {
+  it('prices Cloud monthly only, with no yearly figure', () => {
     expect(cloudPrice.monthly).toBe(99);
-    expect(cloudYearly).toBe(1188);
+    expect(JSON.stringify(plans)).not.toMatch(/1,188|per year|annual|yearly/i);
   });
   it('publishes no old Teams pricing, unlimited usage or purchase paths', () => {
     const all = JSON.stringify(plans);
