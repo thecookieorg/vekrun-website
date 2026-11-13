@@ -49,7 +49,8 @@ test.describe('homepage', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Your AI engineering team. On your machine.');
     await expect(page.getByText('From idea to verified software.')).toBeVisible();
     await expect(page).toHaveTitle('Vekrun · Your AI engineering team. On your machine.');
-    await expect(page.getByRole('list', { name: 'Why Vekrun' }).getByRole('listitem')).toHaveText(['Local-first', 'Model-independent', 'Works with your stack', 'Free for individuals']);
+    await expect(page.getByRole('list', { name: 'Why Vekrun' }).getByRole('listitem')).toHaveText(['Local-first', 'Download local AI models', 'Model-independent', 'Works with your stack', 'Free for individuals']);
+    await expect(page.getByRole('link', { name: 'Download local AI models' })).toHaveAttribute('href', '#models');
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og\/default\.png$/);
     const types = await page.locator('script[type="application/ld+json"]').evaluateAll((els) => els.map((e) => JSON.parse(e.textContent ?? '{}')['@type']));
     expect(types).toEqual(expect.arrayContaining(['Organization', 'WebSite', 'SoftwareApplication']));
@@ -73,13 +74,19 @@ test.describe('homepage', () => {
   test('makes model independence unmistakable, native agent first', async ({ page }) => {
     await page.goto('/');
     const sec = page.locator('#models');
-    await expect(sec).toContainText('You don’t need to install or subscribe to Claude Code, Codex or any other coding-agent CLI to use Vekrun.');
+    await expect(sec).toContainText('You don’t need a paid AI API, or to install or subscribe to Claude Code, Codex or any other coding-agent CLI, to use Vekrun.');
     const cards = sec.locator('article');
     await expect(cards.first()).toContainText('Vekrun’s native agent');
     await expect(cards.first()).toContainText('OpenRouter');
     await expect(cards.nth(1)).toContainText('Optional');
     await expect(cards.nth(1)).toContainText('None of them is required');
     await expect(sec).toContainText('billed by the provider you choose');
+    await expect(cards.first().getByText('Download local AI models')).toBeVisible();
+    for (const t of ['Discover and download models', 'Run locally', 'Connect OpenRouter', 'Choose your models']) await expect(cards.first().getByRole('heading', { name: t })).toBeVisible();
+    await expect(sec.locator('[data-mdl]')).toContainText('Example');
+    await expect(sec).toContainText('doesn’t ship its own inference engine');
+    await expect(sec).toContainText('doesn’t make every workflow offline');
+    await expect(page.locator('main')).not.toContainText('Illustrative product concept');
   });
 
   test('shows the stack in two seamless marquees that stand still under reduced motion', async ({ page }) => {
@@ -92,12 +99,11 @@ test.describe('homepage', () => {
     await noOverflow(page);
   });
 
-  test('the Factory hero reaches its final state, is labelled a concept, and can replay', async ({ page }) => {
+  test('the Factory hero reaches its final state and can replay', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/');
     const f = page.locator('[data-factory]');
     await expect(f).toHaveAttribute('data-demo', 'done');
-    await expect(f.getByText('Illustrative product concept', { exact: false })).toBeVisible();
     await expect(f.locator('[data-job="j1"]')).toHaveAttribute('data-stage', '5');
     await expect(f.locator('[data-f-inbox]')).toBeVisible();
     await f.getByRole('button', { name: 'Replay' }).click();
@@ -266,7 +272,7 @@ test.describe('live share and privacy', () => {
 });
 
 test.describe('product', () => {
-  test('every product demo plays to completion and is labelled a concept', async ({ page }) => {
+  test('every product demo plays to completion', async ({ page }) => {
     test.setTimeout(180_000);
     await page.goto('/product/');
     const roots = page.locator('[data-demo-root]');
@@ -274,7 +280,6 @@ test.describe('product', () => {
     for (let i = 0; i < (await roots.count()); i++) {
       await roots.nth(i).scrollIntoViewIfNeeded();
       await expect(roots.nth(i)).toHaveAttribute('data-demo', 'done', { timeout: 60_000 });
-      await expect(roots.nth(i).getByText(/Illustrative product concept/).first()).toBeVisible();
     }
   });
 

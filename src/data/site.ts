@@ -15,7 +15,7 @@ export const site = {
   description:
     'Vekrun is a local-first AI software engineering platform. Describe an outcome; Vekrun plans the work, coordinates the models you choose, builds and tests in isolated environments and delivers pull requests with the evidence attached. No coding-agent subscription required.',
   /** Short trust signals under the homepage hero. Each one must stay true. */
-  trust: ['Local-first', 'Model-independent', 'Works with your stack', 'Free for individuals'],
+  trust: ['Local-first', 'Download local AI models', 'Model-independent', 'Works with your stack', 'Free for individuals'],
   licence: {
     model: 'Proprietary',
     summary: 'Vekrun is proprietary software. Vekrun Free costs nothing for individual developers. Cloud and Enterprise are planned.',

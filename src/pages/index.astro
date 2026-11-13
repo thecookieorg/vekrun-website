@@ -17,7 +17,7 @@ import MemoryDemo from '@/components/home/MemoryDemo.astro';
 import LiveShareDemo from '@/components/home/LiveShareDemo.astro';
 import PlanCards from '@/components/PlanCards.astro';
 import { site, personalCta } from '@/data/site';
-import { ArrowRight, Check } from '@lucide/astro';
+import { ArrowRight, Check, Download } from '@lucide/astro';
 
 const showcases = [
   {
@@ -53,7 +53,9 @@ const structuredData = [
 <Base title={site.name} fullTitle={`${site.name} · ${site.headline}`} description={site.description} structuredData={structuredData} page="home">
   <PageHero title={site.headline} subtitle={site.subheadline} lede={site.subheading} cta={personalCta} secondary={{ label: 'See how it works', href: '/how-it-works/' }} wide>
     <ul slot="after" class="trust enter" style="--i: 4" aria-label="Why Vekrun">
-      {site.trust.map((t) => <li><Check class="h-4 w-4" aria-hidden="true" />{t}</li>)}
+      {site.trust.map((t) => t === 'Download local AI models'
+        ? <li class="is-lead"><a href="#models"><Download class="h-4 w-4" aria-hidden="true" />{t}</a></li>
+        : <li><Check class="h-4 w-4" aria-hidden="true" />{t}</li>)}
     </ul>
     <FactoryHero />
   </PageHero>
@@ -75,8 +77,8 @@ const structuredData = [
 
   <section id="models" class="section-pad rule scroll-mt-16" aria-labelledby="models-title">
     <div class="container-site">
-      <SectionHeading id="models-title" title="Your models. Your choice." lede="Use Vekrun’s native agent with OpenRouter or compatible local models. Prefer Claude Code, Codex or Antigravity? Bring them too. They’re optional." />
-      <p class="callout mt-8"><Check class="h-4 w-4" aria-hidden="true" />You don’t need to install or subscribe to Claude Code, Codex or any other coding-agent CLI to use Vekrun.</p>
+      <SectionHeading id="models-title" title="Your models. Your choice." lede="Use Vekrun’s native agent with OpenRouter or your own local AI models. Discover and download compatible models right from Vekrun, or connect coding agents you already use. No Claude Code or Codex subscription required." />
+      <p class="callout mt-8"><Check class="h-4 w-4" aria-hidden="true" />You don’t need a paid AI API, or to install or subscribe to Claude Code, Codex or any other coding-agent CLI, to use Vekrun.</p>
       <div class="mt-8"><ModelChoice /></div>
       <p class="mt-8"><a href="/integrations/" class="link-more group">All models and integrations<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
     </div>
@@ -115,6 +117,8 @@ const structuredData = [
   .trust { margin: 1.75rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem 1.4rem; }
   .trust li { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.92rem; font-weight: 520; color: var(--foreground-secondary); }
   .trust :global(svg) { color: var(--accent-text); }
+  .trust .is-lead a { display: inline-flex; align-items: center; gap: 0.45rem; color: var(--foreground); text-decoration: underline; text-decoration-color: var(--border-strong); text-underline-offset: 0.25em; }
+  .trust .is-lead a:hover { text-decoration-color: var(--accent-text); }
   .callout { display: flex; align-items: flex-start; gap: 0.6rem; max-width: 46rem; padding: 0.9rem 1.1rem; border: 1px solid var(--border-interactive); border-radius: var(--radius-md); background: var(--accent-subtle); font-size: 1rem; font-weight: 540; color: var(--foreground); }
   .callout :global(svg) { margin-top: 0.25rem; flex-shrink: 0; color: var(--accent-text); }
   .show { display: grid; gap: 2.5rem; }

@@ -143,7 +143,7 @@ describe('positioning', () => {
   it('leads with the central message', () => {
     expect(site.headline).toBe('Your AI engineering team. On your machine.');
     expect(site.subheadline).toBe('From idea to verified software.');
-    expect(site.trust).toEqual(['Local-first', 'Model-independent', 'Works with your stack', 'Free for individuals']);
+    expect(site.trust).toEqual(['Local-first', 'Download local AI models', 'Model-independent', 'Works with your stack', 'Free for individuals']);
   });
   it('is proprietary, never open source, and never says a coding-agent CLI is required', () => {
     for (const v of [site.tagline, site.headline, site.subheading, site.description, site.licence.summary]) expect(v).not.toMatch(/open[- ]source|apache|10x|revolutioni[sz]e|future of coding/i);

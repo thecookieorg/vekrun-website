@@ -6,7 +6,6 @@
  * the final state; the script types the question and reveals the answer.
  */
 import Window from '@/components/mock/Window.astro';
-import ConceptNotice from '@/components/ConceptNotice.astro';
 const question = 'Why do payment webhooks use an idempotency key?';
 const links = [
   { k: 'Decision', v: 'Council · queue with retries, idempotent handler' },
@@ -27,7 +26,6 @@ const links = [
       </div>
     </div>
   </Window>
-  <ConceptNotice class="mt-3" text="Illustrative product concept with demonstration data." />
 </figure>
 
 <style>

@@ -1,30 +1,50 @@
 ---
 /**
- * Model independence, made unmistakable: Vekrun's native agent comes first,
- * with the model connections it runs on; third-party coding-agent CLIs are a
- * separate, optional group. Billing and local execution are stated plainly.
+ * Model independence, made unmistakable: Vekrun's native agent comes first and
+ * leads with local model downloads (through supported runtimes such as Ollama),
+ * then hosted models through OpenRouter. Third-party coding-agent CLIs are a
+ * separate, optional group. The model card is an example, not a working
+ * download control.
  */
 import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
 import { toolById, modelIds, agentIds } from '@/data/integrations';
-import { Check, Cpu, Plug } from '@lucide/astro';
+import { Check, Cpu, Plug, Download, HardDrive, KeyRound, SlidersHorizontal } from '@lucide/astro';
 const models = modelIds.map((id) => toolById(id)!);
 const agents = agentIds.map((id) => toolById(id)!);
-const native = [
-  'Hosted models through your own OpenRouter key',
-  'Open-weight models on your hardware with Ollama or LM Studio',
-  'You pick the model the work runs on',
-  'Council, Factory, Memory and Proof Packs all work this way',
+const benefits = [
+  { i: Download, t: 'Discover and download models', d: 'Browse models suited to your hardware and download them through supported local runtimes such as Ollama.' },
+  { i: HardDrive, t: 'Run locally', d: 'Inference stays on your own machine, without cloud model charges.' },
+  { i: KeyRound, t: 'Connect OpenRouter', d: 'Prefer hosted models? Use compatible ones with your own API key.' },
+  { i: SlidersHorizontal, t: 'Choose your models', d: 'Decide which models power each supported engineering workflow.' },
 ];
 ---
 <div class="mc">
   <article class="mc-card is-primary" aria-labelledby="mc-native">
     <p class="mc-k"><Cpu class="h-4 w-4" aria-hidden="true" />Built in</p>
     <h3 id="mc-native">Vekrun’s native agent</h3>
-    <p class="mc-p">The full engineering workflow runs on Vekrun’s own agent with the models you connect.</p>
+    <div class="mc-lead">
+      <div>
+        <p class="mc-big"><Download class="h-5 w-5" aria-hidden="true" />Download local AI models</p>
+        <p class="mc-p">Pick a model that fits your computer and Vekrun downloads it for you. No paid AI API needed, and no Ollama experience either.</p>
+      </div>
+      <figure class="mdl" data-mdl aria-label="Example of a local model in Vekrun">
+        <div class="mdl-head"><span class="mdl-name">Qwen2.5 Coder 14B</span><span class="mdl-tag">Example</span></div>
+        <dl class="mdl-meta">
+          <div><dt>Download</dt><dd>9.0 GB</dd></div>
+          <div><dt>Needs</dt><dd>16 GB RAM</dd></div>
+          <div><dt>Runtime</dt><dd>Ollama</dd></div>
+        </dl>
+        <p class="mdl-fit"><Check class="h-3.5 w-3.5" aria-hidden="true" />Fits this machine</p>
+        <div class="mdl-bar" aria-hidden="true"><span></span></div>
+        <p class="mdl-prog"><span>Downloading</span><span>6.1 of 9.0 GB</span></p>
+      </figure>
+    </div>
+    <ul class="mc-ben">
+      {benefits.map((b) => <li><b.i class="h-4 w-4" aria-hidden="true" /><div><h4>{b.t}</h4><p>{b.d}</p></div></li>)}
+    </ul>
     <ul class="mc-logos" aria-label="Model connections">
       {models.map((t) => <li><IntegrationLogo id={t.id} name={t.name} monogram={t.mono} size="sm" />{t.name}</li>)}
     </ul>
-    <ul class="mc-list">{native.map((i) => <li><Check class="h-4 w-4" aria-hidden="true" />{i}</li>)}</ul>
   </article>
   <article class="mc-card" aria-labelledby="mc-optional">
     <p class="mc-k"><Plug class="h-4 w-4" aria-hidden="true" />Optional</p>
@@ -35,7 +55,7 @@ const native = [
     </ul>
   </article>
 </div>
-<p class="mc-note">Hosted model usage is billed by the provider you choose, under your account. Local models run on your own hardware. Vekrun adds no markup.</p>
+<p class="mc-note">Hosted model usage is billed by the provider you choose, under your account. Local models run on your own hardware through a supported runtime; Vekrun doesn’t ship its own inference engine and adds no markup. Running a model locally doesn’t make every workflow offline: Git hosts, package registries and integrations still need a connection.</p>
 
 <style>
   .mc { display: grid; gap: 1.25rem; }
@@ -48,8 +68,37 @@ const native = [
   .mc-p { margin: 0.6rem 0 0; font-size: 0.98rem; line-height: 1.55; color: var(--foreground-secondary); }
   .mc-logos { margin: 1.25rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; }
   .mc-logos li { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.75rem 0.35rem 0.4rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); font-size: 0.9rem; font-weight: 540; color: var(--foreground); }
-  .mc-list { margin: 1.25rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.5rem; font-size: 0.95rem; color: var(--foreground); }
-  .mc-list li { display: flex; gap: 0.55rem; align-items: flex-start; }
-  .mc-list :global(svg) { margin-top: 0.2rem; flex-shrink: 0; color: var(--accent-text); }
+  .mc-lead { margin: 1.1rem 0 0; display: grid; gap: 1.25rem; align-items: start; }
+  @media (min-width: 40rem) { .mc-lead { grid-template-columns: minmax(0, 1fr) minmax(0, 15rem); } }
+  .mc-big { margin: 0; display: flex; align-items: center; gap: 0.55rem; font-size: 1.2rem; font-weight: 620; letter-spacing: -0.015em; color: var(--foreground); }
+  .mc-big :global(svg) { flex-shrink: 0; color: var(--accent-text); }
+  .mc-lead .mc-p { margin-top: 0.45rem; }
+  .mdl { margin: 0; padding: 0.9rem 1rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); font-size: 0.8rem; }
+  .mdl-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+  .mdl-name { font-size: 0.9rem; font-weight: 600; color: var(--foreground); }
+  .mdl-tag { padding: 0.05rem 0.4rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.7rem; color: var(--foreground-secondary); }
+  .mdl-meta { margin: 0.6rem 0 0; display: grid; grid-template-columns: repeat(3, auto); justify-content: space-between; gap: 0.5rem; }
+  .mdl-meta dt { color: var(--foreground-muted); }
+  .mdl-meta dd { margin: 0.1rem 0 0; font-weight: 560; color: var(--foreground); }
+  .mdl-fit { margin: 0.6rem 0 0; display: inline-flex; align-items: center; gap: 0.35rem; color: var(--accent-text); font-weight: 540; }
+  .mdl-bar { margin-top: 0.7rem; height: 6px; border-radius: 999px; background: var(--surface-strong); overflow: hidden; }
+  .mdl-bar span { display: block; height: 100%; width: 68%; border-radius: inherit; background: var(--accent); transform-origin: left; }
+  .mdl.is-run .mdl-bar span { animation: mdl-fill 2.4s var(--ease-out) both; }
+  @keyframes mdl-fill { from { transform: scaleX(0.08); } to { transform: scaleX(1); } }
+  @media (prefers-reduced-motion: reduce) { .mdl.is-run .mdl-bar span { animation: none; } }
+  .mdl-prog { margin: 0.4rem 0 0; display: flex; justify-content: space-between; color: var(--foreground-secondary); }
+  .mc-ben { margin: 1.4rem 0 0; padding: 1.25rem 0 0; border-top: 1px solid var(--border); list-style: none; display: grid; gap: 1rem 1.5rem; }
+  @media (min-width: 40rem) { .mc-ben { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .mc-ben li { display: flex; gap: 0.6rem; align-items: flex-start; }
+  .mc-ben :global(svg) { margin-top: 0.2rem; flex-shrink: 0; color: var(--accent-text); }
+  .mc-ben h4 { margin: 0; font-size: 0.95rem; font-weight: 600; color: var(--foreground); }
+  .mc-ben p { margin: 0.2rem 0 0; font-size: 0.88rem; line-height: 1.5; color: var(--foreground-secondary); }
   .mc-note { margin: 1.25rem 0 0; max-width: 46rem; font-size: 0.92rem; line-height: 1.55; color: var(--foreground-secondary); }
 </style>
+
+<script>
+  for (const el of document.querySelectorAll<HTMLElement>('[data-mdl]')) {
+    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { el.classList.add('is-run'); io.disconnect(); } }, { threshold: 0.5 });
+    io.observe(el);
+  }
+</script>

@@ -6,7 +6,6 @@
  * evidence in check by check. Clearly labelled as demonstration data.
  */
 import Window from '@/components/mock/Window.astro';
-import ConceptNotice from '@/components/ConceptNotice.astro';
 interface Props { class?: string; full?: boolean }
 const { class: className = '', full = false } = Astro.props;
 const checks = [
@@ -59,7 +58,6 @@ const tone: Record<string, string> = { pass: 'is-ok', fail: 'is-danger', skip: '
       </div>
     </div>
   </Window>
-  <ConceptNotice class="mt-4" text="Illustrative product concept with demonstration data." />
 </figure>
 
 <style>
