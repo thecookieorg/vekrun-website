@@ -22,7 +22,7 @@ const extra = external ? { target: '_blank', rel: 'noopener noreferrer' } : {};
   .btn:active { transform: translateY(1px); }
   .btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
   .btn[aria-disabled='true'], .btn:disabled { opacity: 0.5; pointer-events: none; }
-  .btn :global(svg) { flex: 0 0 auto; }
+  .btn svg { flex: 0 0 auto; }
   .btn-primary { background: var(--accent); color: var(--accent-foreground); font-weight: 580; }
   .btn-primary:hover { background: var(--accent-hover); box-shadow: var(--glow-accent); }
   .btn-secondary { border-color: var(--border-strong); background: var(--surface); color: var(--foreground); }

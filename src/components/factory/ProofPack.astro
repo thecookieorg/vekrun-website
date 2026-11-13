@@ -2,7 +2,8 @@
 /**
  * A sample Proof Pack: the evidence a job attaches to its pull request.
  * Honest states: pass, fail (then fixed, on an earlier revision) and not run,
- * each with its reason. Static and clearly labelled as demonstration data.
+ * each with its reason. Markup carries the final state; the script brings the
+ * evidence in check by check. Clearly labelled as demonstration data.
  */
 import Window from '@/components/mock/Window.astro';
 import ConceptNotice from '@/components/ConceptNotice.astro';
@@ -18,18 +19,18 @@ const checks = [
 const label: Record<string, string> = { pass: 'pass', fail: 'fail', skip: 'not run' };
 const tone: Record<string, string> = { pass: 'is-ok', fail: 'is-danger', skip: 'is-muted' };
 ---
-<figure class:list={['pp', className]}>
+<figure class:list={['pp', className]} data-proofpack>
   <Window title="Proof Pack" crumbs={['acme-web', 'Fix checkout total error']}>
     <span slot="status" class="pp-rev">revision a91f3c2</span>
     <div class="pp-grid">
       <div class="pp-main">
         <div class="pp-head">
-          <p class="pp-verdict"><span class="pill is-ok">verified</span> Ready for review</p>
+          <p class="pp-verdict" data-pp-verdict><span class="pill is-ok">verified</span> Ready for review</p>
           <p class="pp-goal">Goal: checkout shows the right total when a discount code is applied. Source: Honeybadger, 312 events since Tuesday.</p>
         </div>
         <ul class="pp-checks" aria-label="Checks">
           {checks.map((c) => (
-            <li class:list={[c.old && 'is-old']}>
+            <li class:list={[c.old && 'is-old']} data-pp-check>
               <span class:list={['pill', tone[c.s]]}>{label[c.s]}</span>
               <span class="pp-check-t">{c.t}<small>{c.d}</small></span>
             </li>
@@ -37,8 +38,8 @@ const tone: Record<string, string> = { pass: 'is-ok', fail: 'is-danger', skip: '
         </ul>
         {full && (
           <div class="pp-notes">
-            <p class="pp-k">Independent verifier</p>
-            <p>The change fixes the rounding in the discount path and adds a test for it. The verifier reran every check on a91f3c2 and confirmed the error no longer reproduces. One gap: no load profile exists for this project.</p>
+            <p class="pp-k">Verifier</p>
+            <p>The change fixes the rounding in the discount path and adds a test for it. The verifier, run separately from the agent that wrote the change, reran every check on a91f3c2 and confirmed the error no longer reproduces. One gap: no load profile exists for this project.</p>
           </div>
         )}
       </div>
@@ -51,7 +52,7 @@ const tone: Record<string, string> = { pass: 'is-ok', fail: 'is-danger', skip: '
         </div>
         <dl class="pp-dl">
           <div><dt>Environment</dt><dd>env 17 · Docker and Rails</dd></div>
-          <div><dt>Worker</dt><dd>Claude Code on the Host</dd></div>
+          <div><dt>Worker</dt><dd>Vekrun agent on the Host</dd></div>
           <div><dt>Pull request</dt><dd>#482 · draft · evidence linked</dd></div>
           <div><dt>Merge</dt><dd>needs a person · branch protection</dd></div>
         </dl>
@@ -92,4 +93,17 @@ const tone: Record<string, string> = { pass: 'is-ok', fail: 'is-danger', skip: '
   .pp-dl div { display: grid; gap: 0.05rem; }
   .pp-dl dt { font-size: 0.68rem; color: var(--text-3); }
   .pp-dl dd { margin: 0; font-size: 0.8rem; color: var(--text); }
+  .pp-checks li.is-off, .pp-verdict.is-off { opacity: 0; }
+  .pp-checks li.is-in, .pp-verdict.is-in { animation: rise-sm 300ms var(--ease-out) both; }
+  @media (prefers-reduced-motion: reduce) { .pp-checks li.is-in, .pp-verdict.is-in { animation: none; } }
 </style>
+
+<script>
+  import { createSequence, type Step } from '@/scripts/sequence';
+  for (const root of document.querySelectorAll<HTMLElement>('[data-proofpack]')) {
+    const parts = [...root.querySelectorAll<HTMLElement>('[data-pp-check]'), root.querySelector<HTMLElement>('[data-pp-verdict]')!];
+    const reset = () => parts.forEach((p) => { p.classList.add('is-off'); p.classList.remove('is-in'); });
+    const steps: Step[] = parts.map((p, i) => ({ t: 300 + i * 650, run: () => { p.classList.remove('is-off'); p.classList.add('is-in'); } }));
+    createSequence(root, steps, { reset });
+  }
+</script>

@@ -1,0 +1,130 @@
+---
+/**
+ * Live Share, as an illustrative concept: a reviewer opens the shared link,
+ * selects a region, leaves feedback; it lands in the Review Inbox, the
+ * developer approves it, and the Factory fixes and verifies it. Markup carries
+ * the final state; the script plays the sequence.
+ */
+import ConceptNotice from '@/components/ConceptNotice.astro';
+import { Lock, MousePointer2 } from '@lucide/astro';
+const comment = 'The heading feels cramped on mobile.';
+const states = [
+  { k: 'new', t: 'Waiting for you' },
+  { k: 'approved', t: 'Approved by you' },
+  { k: 'fixed', t: 'Fixed in WI-12' },
+  { k: 'verified', t: 'Verified on 9c41a7e' },
+];
+---
+<figure class="ls" data-liveshare>
+  <div class="ls-grid">
+    <div class="browser ls-browser">
+      <div class="browser-bar">
+        <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="browser-url"><Lock class="h-3 w-3" aria-hidden="true" />Live Share link<b>&nbsp;· acme-web / checkout</b></span>
+      </div>
+      <div class="ls-page">
+        <div class="ls-target" data-ls-target>
+          <p class="ls-h">Secure checkout</p>
+          <span class="ls-sel" data-ls-sel aria-hidden="true"></span>
+        </div>
+        <div class="ls-rows" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="ls-total" aria-hidden="true"><span>Total</span><b>$42.10</b></div>
+        <span class="ls-btn" aria-hidden="true">Pay now</span>
+        <div class="ls-note" data-ls-note>
+          <p class="ls-note-t"><span data-ls-comment>{comment}</span></p>
+          <p class="ls-note-f"><span>Reviewer · no account needed</span><span class="ls-sent" data-ls-sent>Sent</span></p>
+        </div>
+        <MousePointer2 class="ls-cursor h-5 w-5" data-ls-cursor aria-hidden="true" />
+      </div>
+    </div>
+    <div class="ls-inbox">
+      <p class="ls-inbox-k">Review Inbox</p>
+      <div class="ls-item" data-ls-item>
+        <p class="ls-item-t">“{comment}”</p>
+        <p class="ls-item-m">checkout · heading region · 390 × 844</p>
+        <ol class="ls-states" aria-label="Status">
+          {states.map((s) => <li data-ls-state={s.k}>{s.t}</li>)}
+        </ol>
+      </div>
+      <p class="ls-foot">Nothing starts work until you approve it.</p>
+    </div>
+  </div>
+  <ConceptNotice class="mt-3" text="Illustrative product concept with demonstration data. The link stays the same; the app is served from your machine while Live Share is on." />
+</figure>
+
+<style>
+  .ls { margin: 0; }
+  .ls-grid { display: grid; gap: 1rem; }
+  @media (min-width: 48rem) { .ls-grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: start; } }
+  .ls-page { position: relative; padding: 1.25rem; display: grid; gap: 0.8rem; min-height: 15rem; background: var(--background); }
+  .ls-target { position: relative; justify-self: start; }
+  .ls-h { margin: 0; font-size: 1.3rem; font-weight: 640; letter-spacing: -0.02em; color: var(--foreground); }
+  .ls-sel { position: absolute; inset: -0.35rem -0.5rem; border: 1.5px dashed var(--accent-text); border-radius: 6px; background: color-mix(in srgb, var(--accent) 10%, transparent); }
+  .ls-sel.is-off { opacity: 0; }
+  .ls-sel.is-in { animation: fade 240ms var(--ease-out) both; }
+  .ls-rows { display: grid; gap: 0.45rem; }
+  .ls-rows i { display: block; height: 0.55rem; border-radius: 3px; background: var(--surface-elevated); }
+  .ls-rows i:nth-child(2) { width: 80%; } .ls-rows i:nth-child(3) { width: 60%; }
+  .ls-total { display: flex; justify-content: space-between; padding-top: 0.6rem; border-top: 1px solid var(--border); font-size: 0.85rem; color: var(--foreground-secondary); }
+  .ls-total b { color: var(--foreground); }
+  .ls-btn { justify-self: start; padding: 0.4rem 0.9rem; border-radius: var(--radius-sm); background: var(--surface-strong); font-size: 0.8rem; font-weight: 560; color: var(--foreground); }
+  .ls-note { position: absolute; left: 1.25rem; right: 1.25rem; top: 3.6rem; padding: 0.7rem 0.8rem; border: 1px solid var(--border-strong); border-radius: var(--radius-md); background: var(--surface); box-shadow: var(--shadow-md); }
+  @media (min-width: 30rem) { .ls-note { right: auto; width: 17rem; left: 8rem; } }
+  .ls-note[hidden] { display: none; }
+  .ls-note.is-in { animation: rise-sm 260ms var(--ease-out) both; }
+  .ls-note-t { margin: 0; min-height: 1.4em; font-size: 0.85rem; color: var(--foreground); }
+  .ls-note-f { margin: 0.5rem 0 0; display: flex; justify-content: space-between; gap: 0.5rem; font-size: 0.7rem; color: var(--foreground-muted); }
+  .ls-sent { color: var(--accent-text); font-weight: 560; }
+  .ls-sent.is-off { visibility: hidden; }
+  .ls-cursor { position: absolute; left: 9.5rem; top: 2.1rem; color: var(--foreground); fill: var(--background); transition: transform 700ms var(--ease-out); }
+  .ls-cursor.is-start { transform: translate(6rem, 7rem); }
+  .ls-inbox { padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-md); }
+  .ls-inbox-k { margin: 0 0 0.75rem; font-size: 0.78rem; font-weight: 560; color: var(--foreground-secondary); }
+  .ls-item { padding: 0.8rem; border: 1px solid var(--border-interactive); border-radius: var(--radius-md); background: var(--accent-subtle); }
+  .ls-item.is-off { opacity: 0.35; border-color: var(--border); background: var(--background-secondary); }
+  .ls-item.is-off .ls-item-t, .ls-item.is-off .ls-item-m, .ls-item.is-off .ls-states { visibility: hidden; }
+  .ls-item.is-in { animation: rise-sm 300ms var(--ease-out) both; }
+  .ls-item-t { margin: 0; font-size: 0.88rem; font-weight: 560; color: var(--foreground); }
+  .ls-item-m { margin: 0.3rem 0 0; font-family: var(--font-mono); font-size: 0.68rem; color: var(--foreground-muted); }
+  .ls-states { margin: 0.75rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.3rem; }
+  .ls-states li { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--foreground); }
+  .ls-states li::before { content: ''; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--accent-text); flex: 0 0 auto; }
+  .ls-states li.is-off { color: var(--foreground-muted); }
+  .ls-states li.is-off::before { background: transparent; box-shadow: inset 0 0 0 1.5px var(--border-control); }
+  .ls-states li.is-in { animation: fade 240ms var(--ease-out) both; }
+  .ls-foot { margin: 0.75rem 0 0; font-size: 0.78rem; color: var(--foreground-secondary); }
+  @media (prefers-reduced-motion: reduce) { .ls-cursor { transition: none; } .ls-sel.is-in, .ls-note.is-in, .ls-item.is-in, .ls-states li.is-in { animation: none; } }
+</style>
+
+<script>
+  import { createSequence, typeSteps, type Step } from '@/scripts/sequence';
+  for (const root of document.querySelectorAll<HTMLElement>('[data-liveshare]')) {
+    const $ = (s: string) => root.querySelector<HTMLElement>(s)!;
+    const cursor = $('[data-ls-cursor]'), sel = $('[data-ls-sel]'), note = $('[data-ls-note]'), comment = $('[data-ls-comment]'), sent = $('[data-ls-sent]'), item = $('[data-ls-item]');
+    const text = comment.textContent ?? '';
+    const states = Array.from(root.querySelectorAll<HTMLElement>('[data-ls-state]'));
+    const on = (el: HTMLElement) => { el.classList.remove('is-off'); el.classList.add('is-in'); };
+    const reset = () => {
+      cursor.classList.add('is-start');
+      sel.classList.add('is-off'); sel.classList.remove('is-in');
+      note.hidden = true; note.classList.remove('is-in'); comment.textContent = '';
+      sent.classList.add('is-off');
+      item.classList.add('is-off'); item.classList.remove('is-in');
+      states.forEach((s) => { s.classList.add('is-off'); s.classList.remove('is-in'); });
+    };
+    const typed = typeSteps(() => comment, text, 2400, 30);
+    const e = typed.end;
+    const steps: Step[] = [
+      { t: 400, run: () => cursor.classList.remove('is-start') },
+      { t: 1300, run: () => on(sel) },
+      { t: 1900, run: () => { note.hidden = false; note.classList.add('is-in'); } },
+      ...typed.steps,
+      { t: e + 500, run: () => sent.classList.remove('is-off') },
+      { t: e + 1200, run: () => { on(item); on(states[0]!); } },
+      { t: e + 2500, run: () => on(states[1]!) },
+      { t: e + 3800, run: () => on(states[2]!) },
+      { t: e + 5000, run: () => on(states[3]!) },
+    ];
+    createSequence(root, steps, { reset, loopAfter: 6000 });
+  }
+</script>

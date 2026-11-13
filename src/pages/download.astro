@@ -8,32 +8,31 @@
 import Base from '@/layouts/Base.astro';
 import PageHero from '@/components/PageHero.astro';
 import Button from '@/components/Button.astro';
-import { site, personal, teams } from '@/data/site';
+import { site, earlyAccessMailto } from '@/data/site';
 const email = site.earlyAccess.email;
-const mailto = `mailto:${email}?subject=${encodeURIComponent('Vekrun early access')}`;
 const platforms = [
   ['macOS', 'No public installer yet'],
   ['Windows', 'No public installer yet'],
   ['Linux', 'No public installer yet'],
 ];
 const facts = [
-  ['What you need', 'Your own coding agent or model account, and Git access to your projects.'],
+  ['What you need', 'A model connection (an OpenRouter key or a local model) and Git access to your projects. Coding-agent CLIs are optional.'],
   ['System requirements', 'Published with each release, per platform.'],
   ['Every release', 'A signed installer, a SHA-256 checksum and release notes, listed on this page.'],
 ];
 ---
-<Base title="Get Vekrun" fullTitle="Get Vekrun: request early access" description={`${site.release.line} Request early access to ${personal.name} or ${teams.name}.`}>
-  <PageHero eyebrow="Get Vekrun" title="Request early access." lede={`There’s no public download yet. Tell us what you build and we’ll be in touch when there’s a build for you. ${personal.name} will be free.`} />
+<Base title="Get Vekrun" fullTitle="Get Vekrun: request early access · Vekrun" description={`${site.release.line} Request early access to Vekrun Free, the local-first AI engineering workspace for individual developers.`}>
+  <PageHero eyebrow="Get Vekrun" title="Request early access." lede="There’s no public download yet. Tell us what you build and we’ll be in touch when there’s a build for you. Vekrun Free costs nothing for individual developers." />
 
   <section id="early-access" class="rule pb-16 pt-14 scroll-mt-16" aria-label="Request early access">
     <div class="container-site ea-wrap">
       <div class="ea-copy">
         <h2 class="heading-3 text-text">Early access is by email.</h2>
-        <p class="mt-3 text-text-2">Interested in Teams? It follows Personal; the <a href="/teams/" class="text-accent link-slide">Teams page</a> explains how it will work.</p>
+        <p class="mt-3 text-text-2">Want Vekrun hosted or on your own infrastructure? <a href="/pricing/#cloud-wishlist" class="text-accent link-slide">Join the Cloud wishlist</a> or see <a href="/pricing/" class="text-accent link-slide">Enterprise</a>.</p>
       </div>
       <div class="ea">
-        <p class="text-text-2">Write to us and tell us which edition you want, Personal or Teams, what computer you use, and what you’d hand Vekrun first.</p>
-        <Button href={mailto} size="lg" class="mt-6">Email {email}</Button>
+        <p class="text-text-2">Write to us and tell us what computer you use, which models you’d connect, and what you’d hand Vekrun first.</p>
+        <Button href={earlyAccessMailto} size="lg" class="mt-6">Email {email}</Button>
       </div>
     </div>
   </section>
@@ -53,7 +52,8 @@ const facts = [
 </Base>
 
 <style>
-  .ea-wrap { display: grid; gap: 2rem; }
+  .ea-wrap { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+  .ea :global(.btn) { max-width: 100%; height: auto; min-height: 3rem; padding-block: 0.6rem; white-space: normal; overflow-wrap: anywhere; text-align: center; }
   @media (min-width: 64rem) { .ea-wrap { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: 4rem; align-items: start; } }
   .ea { padding: 1.5rem; border: 1px solid var(--border-strong); border-radius: var(--radius-lg); background: var(--surface); }
   @media (min-width: 40rem) { .ea { padding: 2rem; } }

@@ -12,9 +12,9 @@ import DemoControls from '@/components/mock/DemoControls.astro';
 const stages = ['Investigating', 'Implementing', 'Testing', 'Verifying', 'Ready for review'];
 const prompt = 'Fix the checkout error from Honeybadger and open a verified PR';
 const jobs = [
-  { id: 'j1', title: 'Fix checkout total error', from: 'Honeybadger · 312 events', project: 'acme-web', branch: 'fix/checkout-total', env: 'env 17', agent: 'Claude Code', stage: 5, isNew: true },
-  { id: 'j2', title: 'Add CSV export to reports', from: 'Linear · ENG-418', project: 'acme-api', branch: 'feat/report-csv', env: 'env 12', agent: 'Codex', stage: 3 },
-  { id: 'j3', title: 'Upgrade the payments SDK', from: 'Jira · PAY-77', project: 'billing', branch: 'chore/payments-sdk', env: 'env 9', agent: 'Claude Code', stage: 2 },
+  { id: 'j1', title: 'Fix checkout total error', from: 'Honeybadger · 312 events', project: 'acme-web', branch: 'fix/checkout-total', env: 'env 17', agent: 'Vekrun agent', stage: 5, isNew: true },
+  { id: 'j2', title: 'Add CSV export to reports', from: 'Linear · ENG-418', project: 'acme-api', branch: 'feat/report-csv', env: 'env 12', agent: 'Local model', stage: 3 },
+  { id: 'j3', title: 'Upgrade the payments SDK', from: 'Jira · PAY-77', project: 'billing', branch: 'chore/payments-sdk', env: 'env 9', agent: 'Codex', stage: 2 },
 ];
 const projects = [
   { name: 'acme-web', jobs: 1, on: true },
@@ -76,7 +76,7 @@ const projects = [
             <li data-p="1"><span class="pill is-ok">pass</span><span>Tests<small>148 passed · 0 failed · 2 not run</small></span></li>
             <li data-p="2"><span class="pill is-ok">pass</span><span>Browser check<small>checkout with a discount code</small></span></li>
             <li data-p="2" class="fh-shot" aria-hidden="true"><i></i><i></i><i></i><b>Total $42.10</b></li>
-            <li data-p="3"><span class="pill is-ok">pass</span><span>Independent verifier<small>matches the goal on this revision</small></span></li>
+            <li data-p="3"><span class="pill is-ok">pass</span><span>Verifier<small>matches the goal on this revision</small></span></li>
             <li data-p="3"><span class="pill is-info">draft</span><span>Pull request #482<small>evidence linked</small></span></li>
           </ul>
         </div>

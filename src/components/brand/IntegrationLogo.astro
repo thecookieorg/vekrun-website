@@ -2,13 +2,16 @@
 /**
  * A logo tile for a catalog entry. Uses simple-icons (CC0 SVG paths) where the
  * vendor is available there; otherwise a monogram. Very dark brand colours are
- * rendered in the text colour so they stay visible on dark surfaces.
+ * rendered in the text colour so they stay visible on dark surfaces, and very
+ * light ones are deepened in the light theme so they stay visible on white.
  */
 import {
   siClaude, siGooglegemini, siOllama, siLmstudio, siOpenrouter, siLinear, siJira, siAsana, siGithub, siGitlab,
   siConfluence, siNotion, siSentry, siDatadog, siFigma, siPostgresql, siCloudflare, siSupabase, siStripe, siGit,
   siHoneybadger, siAppsignal, siPagerduty, siGithubactions, siDocker, siVercel, siShopify, siFirebase, siFlutter,
-  siTauri, siExpo, siRubyonrails, siNextdotjs, siSwift, siKotlin, siAnthropic, siObsidian, siModelcontextprotocol } from 'simple-icons';
+  siTauri, siExpo, siRubyonrails, siNextdotjs, siSwift, siKotlin, siAnthropic, siObsidian, siModelcontextprotocol,
+  siLaravel, siDjango, siNodedotjs, siReact, siPython, siTypescript, siRuby, siPhp, siGo, siRust, siVuedotjs, siSvelte,
+  siElectron, siMysql, siRedis } from 'simple-icons';
 
 interface Props { id: string; name: string; monogram: string; size?: 'sm' | 'md' | 'lg'; class?: string }
 const { id, name, monogram, size = 'md', class: className = '' } = Astro.props;
@@ -23,6 +26,9 @@ const map: Record<string, Icon> = {
   supabase: siSupabase, stripe: siStripe, git: siGit, pagerduty: siPagerduty, 'github-actions': siGithubactions,
   'gitlab-ci': siGitlab, docker: siDocker, vercel: siVercel, shopify: siShopify, firebase: siFirebase, flutter: siFlutter,
   tauri: siTauri, obsidian: siObsidian, mcp: siModelcontextprotocol, expo: siExpo, rails: siRubyonrails, nextjs: siNextdotjs, swift: siSwift, kotlin: siKotlin,
+  laravel: siLaravel, django: siDjango, nodejs: siNodedotjs, react: siReact, 'react-native': siReact, python: siPython,
+  typescript: siTypescript, ruby: siRuby, php: siPhp, go: siGo, rust: siRust, vue: siVuedotjs, svelte: siSvelte,
+  electron: siElectron, mysql: siMysql, redis: siRedis,
 };
 const icon = map[id];
 const luminance = (hex: string) => {
@@ -32,14 +38,21 @@ const luminance = (hex: string) => {
 };
 const dark = icon ? luminance(icon.hex) < 0.12 : false;
 const fill = icon ? (dark ? 'var(--text)' : `#${icon.hex}`) : undefined;
+const pale = icon ? luminance(icon.hex) > 0.4 : false;
+const fillLight = icon && pale ? `color-mix(in srgb, #${icon.hex} 62%, #202129)` : fill;
 const tint = icon && !dark ? `color-mix(in srgb, #${icon.hex} 14%, var(--surface-2))` : 'var(--surface-2)';
 const dims = size === 'lg' ? 'h-12 w-12' : size === 'sm' ? 'h-6 w-6' : 'h-10 w-10';
 const glyph = size === 'lg' ? 'h-6 w-6' : size === 'sm' ? 'h-3.5 w-3.5' : 'h-5 w-5';
 ---
 <span class:list={['inline-flex shrink-0 items-center justify-center rounded-lg border border-border', dims, className]} style={`background:${tint}`} aria-hidden="true" title={name}>
   {icon ? (
-    <svg viewBox="0 0 24 24" class={glyph} style={`fill:${fill};opacity:.88`} role="img"><path d={icon.path} /></svg>
+    <svg viewBox="0 0 24 24" class:list={['logo-glyph', glyph]} style={`--fill:${fill};--fill-light:${fillLight}`} role="img"><path d={icon.path} /></svg>
   ) : (
     <span class="font-mono text-[0.8125rem] font-[560] text-text-2">{monogram}</span>
   )}
 </span>
+
+<style>
+  .logo-glyph { fill: var(--fill); opacity: 0.9; }
+  :global(:root[data-theme='light']) .logo-glyph { fill: var(--fill-light); opacity: 1; }
+</style>

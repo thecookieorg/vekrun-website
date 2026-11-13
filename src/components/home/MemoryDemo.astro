@@ -1,0 +1,71 @@
+---
+/**
+ * Engineering Memory, as an illustrative concept: a developer asks why a
+ * decision was made, and Vekrun answers from its record, linked to the Council
+ * decision, the Work Item, the pull request and the evidence. Markup carries
+ * the final state; the script types the question and reveals the answer.
+ */
+import Window from '@/components/mock/Window.astro';
+import ConceptNotice from '@/components/ConceptNotice.astro';
+const question = 'Why do payment webhooks use an idempotency key?';
+const links = [
+  { k: 'Decision', v: 'Council · queue with retries, idempotent handler' },
+  { k: 'Work Item', v: 'WI-3 · Make the webhook handler idempotent' },
+  { k: 'Pull request', v: '#220 · merged by Sam' },
+  { k: 'Proof Pack', v: 'duplicate-delivery test passed on 4be19d0' },
+];
+---
+<figure class="md" data-memory>
+  <Window title="Engineering Memory" crumbs={['acme-api']}>
+    <div class="md-body">
+      <p class="md-q"><span class="md-you">You</span><span data-m-q>{question}</span></p>
+      <div class="md-a" data-m-a>
+        <p class="md-a-t">The provider can deliver the same webhook more than once, and retries make that more likely. The Council chose a queue with retries on the condition that the handler ignores duplicates, so each event carries an idempotency key.</p>
+        <ul class="md-links" aria-label="Sources">
+          {links.map((l, i) => <li data-m-link={i}><b>{l.k}</b><span>{l.v}</span></li>)}
+        </ul>
+      </div>
+    </div>
+  </Window>
+  <ConceptNotice class="mt-3" text="Illustrative product concept with demonstration data." />
+</figure>
+
+<style>
+  .md { margin: 0; }
+  .md-body { display: grid; gap: 1rem; padding: 1.25rem; }
+  .md-q { margin: 0; display: flex; gap: 0.6rem; align-items: baseline; min-height: 1.5em; font-size: 1rem; font-weight: 560; color: var(--foreground); }
+  .md-you { flex: 0 0 auto; padding: 0.1rem 0.45rem; border-radius: 5px; background: var(--surface-elevated); font-size: 0.72rem; font-weight: 560; color: var(--foreground-secondary); }
+  .md-a { padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background-secondary); }
+  .md-a[hidden] { display: none; }
+  .md-a.is-in { animation: rise-sm 320ms var(--ease-out) both; }
+  .md-a-t { margin: 0; font-size: 0.92rem; line-height: 1.55; color: var(--foreground); }
+  .md-links { margin: 0.9rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.4rem; }
+  .md-links li { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: 0.6rem; align-items: baseline; padding: 0.45rem 0.6rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); font-size: 0.8rem; }
+  .md-links li.is-off { opacity: 0; }
+  .md-links li.is-in { animation: rise-sm 280ms var(--ease-out) both; }
+  .md-links b { font-weight: 560; color: var(--accent-text); }
+  .md-links span { color: var(--foreground-secondary); font-family: var(--font-mono); font-size: 0.74rem; min-width: 0; overflow-wrap: anywhere; }
+  @media (prefers-reduced-motion: reduce) { .md-a.is-in, .md-links li.is-in { animation: none; } }
+</style>
+
+<script>
+  import { createSequence, typeSteps, type Step } from '@/scripts/sequence';
+  for (const root of document.querySelectorAll<HTMLElement>('[data-memory]')) {
+    const q = root.querySelector<HTMLElement>('[data-m-q]')!;
+    const text = q.textContent ?? '';
+    const a = root.querySelector<HTMLElement>('[data-m-a]')!;
+    const links = Array.from(root.querySelectorAll<HTMLElement>('[data-m-link]'));
+    const reset = () => {
+      q.textContent = '';
+      a.hidden = true; a.classList.remove('is-in');
+      links.forEach((l) => { l.classList.add('is-off'); l.classList.remove('is-in'); });
+    };
+    const typed = typeSteps(() => q, text, 400, 32);
+    const steps: Step[] = [
+      ...typed.steps,
+      { t: typed.end + 700, run: () => { a.hidden = false; a.classList.add('is-in'); } },
+      ...links.map((l, i) => ({ t: typed.end + 1400 + i * 550, run: () => { l.classList.remove('is-off'); l.classList.add('is-in'); } })),
+    ];
+    createSequence(root, steps, { reset, loopAfter: 6000 });
+  }
+</script>

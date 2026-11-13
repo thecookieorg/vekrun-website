@@ -2,7 +2,8 @@
 /**
  * The Council as an illustrative concept: one engineering question, three
  * models taking positions and challenging each other, and the decision with
- * its reasoning and the dissent kept on record. Static markup, demonstration data.
+ * its reasoning and the dissent kept on record. Markup carries the final state;
+ * the script brings the seats in one by one, then the decision. Demonstration data.
  */
 import Window from '@/components/mock/Window.astro';
 import ConceptNotice from '@/components/ConceptNotice.astro';
@@ -16,21 +17,21 @@ const seats = [
 ];
 const label = { for: 'Supports', against: 'Objects', amend: 'Amends' } as const;
 ---
-<figure class:list={['council', compact && 'is-compact', className]}>
+<figure class:list={['council', compact && 'is-compact', className]} data-council>
   <Window title="Vekrun" crumbs={['Council']}>
     <span slot="status" class="pill">3 models</span>
     <div class="cn-body">
       <p class="cn-q"><span class="cn-k">Question</span>How should checkout handle payment webhooks that arrive late or twice?</p>
       <ul class="cn-seats">
         {seats.map((s) => (
-          <li class:list={['cn-seat', `is-${s.verdict}`]}>
+          <li class:list={['cn-seat', `is-${s.verdict}`]} data-cn-seat>
             <p class="cn-who"><span class="avatar is-sm" style={`--h:${s.h}`}>{s.who.slice(0, 1)}</span>{s.who}<span class="cn-verdict">{label[s.verdict as keyof typeof label]}</span></p>
             <p class="cn-stance">{s.stance}</p>
             {!compact && <p class="cn-note">{s.note}</p>}
           </li>
         ))}
       </ul>
-      <div class="cn-decision">
+      <div class="cn-decision" data-cn-decision>
         <p class="cn-k">Decision</p>
         <p class="cn-d">Queue with retries, behind an idempotent handler.</p>
         {!compact && <p class="cn-why">Two of three agree on the queue; the duplicate risk changes the plan. The objection about polling is kept with the decision.</p>}
@@ -59,4 +60,17 @@ const label = { for: 'Supports', against: 'Objects', amend: 'Amends' } as const;
   .cn-decision .cn-k { color: var(--accent-text); }
   .cn-d { margin: 0; font-size: 0.98rem; font-weight: 580; color: var(--text); }
   .cn-why { margin: 0.35rem 0 0; font-size: 0.82rem; line-height: 1.5; color: var(--text-2); }
+  .cn-seat.is-off, .cn-decision.is-off { opacity: 0; }
+  .cn-seat.is-in, .cn-decision.is-in { animation: rise-sm 320ms var(--ease-out) both; }
+  @media (prefers-reduced-motion: reduce) { .cn-seat.is-in, .cn-decision.is-in { animation: none; } }
 </style>
+
+<script>
+  import { createSequence, type Step } from '@/scripts/sequence';
+  for (const root of document.querySelectorAll<HTMLElement>('[data-council]')) {
+    const parts = [...root.querySelectorAll<HTMLElement>('[data-cn-seat]'), root.querySelector<HTMLElement>('[data-cn-decision]')!];
+    const reset = () => parts.forEach((p) => { p.classList.add('is-off'); p.classList.remove('is-in'); });
+    const steps: Step[] = parts.map((p, i) => ({ t: 400 + i * 900, run: () => { p.classList.remove('is-off'); p.classList.add('is-in'); } }));
+    createSequence(root, steps, { reset });
+  }
+</script>

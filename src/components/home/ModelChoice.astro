@@ -1,0 +1,55 @@
+---
+/**
+ * Model independence, made unmistakable: Vekrun's native agent comes first,
+ * with the model connections it runs on; third-party coding-agent CLIs are a
+ * separate, optional group. Billing and local execution are stated plainly.
+ */
+import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
+import { toolById, modelIds, agentIds } from '@/data/integrations';
+import { Check, Cpu, Plug } from '@lucide/astro';
+const models = modelIds.map((id) => toolById(id)!);
+const agents = agentIds.map((id) => toolById(id)!);
+const native = [
+  'Hosted models through your own OpenRouter key',
+  'Open-weight models on your hardware with Ollama or LM Studio',
+  'You pick the model the work runs on',
+  'Council, Factory, Memory and Proof Packs all work this way',
+];
+---
+<div class="mc">
+  <article class="mc-card is-primary" aria-labelledby="mc-native">
+    <p class="mc-k"><Cpu class="h-4 w-4" aria-hidden="true" />Built in</p>
+    <h3 id="mc-native">Vekrun’s native agent</h3>
+    <p class="mc-p">The full engineering workflow runs on Vekrun’s own agent with the models you connect.</p>
+    <ul class="mc-logos" aria-label="Model connections">
+      {models.map((t) => <li><IntegrationLogo id={t.id} name={t.name} monogram={t.mono} size="sm" />{t.name}</li>)}
+    </ul>
+    <ul class="mc-list">{native.map((i) => <li><Check class="h-4 w-4" aria-hidden="true" />{i}</li>)}</ul>
+  </article>
+  <article class="mc-card" aria-labelledby="mc-optional">
+    <p class="mc-k"><Plug class="h-4 w-4" aria-hidden="true" />Optional</p>
+    <h3 id="mc-optional">Coding agents you already use</h3>
+    <p class="mc-p">Prefer Claude Code, Codex or Antigravity? Connect them with your own accounts and Vekrun can hand them work. None of them is required.</p>
+    <ul class="mc-logos" aria-label="Optional coding agents">
+      {agents.map((t) => <li><IntegrationLogo id={t.id} name={t.name} monogram={t.mono} size="sm" />{t.name}</li>)}
+    </ul>
+  </article>
+</div>
+<p class="mc-note">Hosted model usage is billed by the provider you choose, under your account. Local models run on your own hardware. Vekrun adds no markup.</p>
+
+<style>
+  .mc { display: grid; gap: 1.25rem; }
+  @media (min-width: 56rem) { .mc { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); } }
+  .mc-card { display: flex; flex-direction: column; padding: 1.6rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
+  .mc-card.is-primary { border-color: var(--border-interactive); box-shadow: var(--glow-accent); }
+  .mc-k { margin: 0; display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.8125rem; font-weight: 560; color: var(--foreground-secondary); }
+  .is-primary .mc-k { color: var(--accent-text); }
+  .mc-card h3 { margin: 0.6rem 0 0; font-size: 1.35rem; font-weight: 620; letter-spacing: -0.02em; color: var(--foreground); }
+  .mc-p { margin: 0.6rem 0 0; font-size: 0.98rem; line-height: 1.55; color: var(--foreground-secondary); }
+  .mc-logos { margin: 1.25rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .mc-logos li { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.75rem 0.35rem 0.4rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); font-size: 0.9rem; font-weight: 540; color: var(--foreground); }
+  .mc-list { margin: 1.25rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.5rem; font-size: 0.95rem; color: var(--foreground); }
+  .mc-list li { display: flex; gap: 0.55rem; align-items: flex-start; }
+  .mc-list :global(svg) { margin-top: 0.2rem; flex-shrink: 0; color: var(--accent-text); }
+  .mc-note { margin: 1.25rem 0 0; max-width: 46rem; font-size: 0.92rem; line-height: 1.55; color: var(--foreground-secondary); }
+</style>

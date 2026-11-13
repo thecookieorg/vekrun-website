@@ -1,0 +1,54 @@
+---
+/**
+ * Describe → Plan → Build → Verify → Review, with the part of Vekrun that does
+ * each step. The script walks a highlight through the stages and fills the
+ * rail; the markup's final state shows every stage complete.
+ */
+import { MessageSquareText, Users, Hammer, ShieldCheck, GitPullRequest } from '@lucide/astro';
+const steps = [
+  { i: MessageSquareText, t: 'Describe', d: 'Say what should be true when it’s done.', c: 'Your outcome' },
+  { i: Users, t: 'Plan', d: 'The Council challenges the approach and splits it into Work Items.', c: 'Council · Work Items' },
+  { i: Hammer, t: 'Build', d: 'Agents build each Work Item in an isolated environment, in dependency order.', c: 'Factory · Git branches' },
+  { i: ShieldCheck, t: 'Verify', d: 'Tests and browser checks run on the exact revision, and the evidence is kept.', c: 'Proof Pack' },
+  { i: GitPullRequest, t: 'Review', d: 'You get a pull request with the evidence attached. Your rules decide what merges.', c: 'Pull request · Inbox' },
+];
+---
+<ol class="hf" data-howflow aria-label="How Vekrun works">
+  {steps.map((s, n) => (
+    <li class="hf-step is-done" data-hf={n}>
+      <span class="hf-icon"><s.i class="h-4 w-4" aria-hidden="true" /></span>
+      <h3>{s.t}</h3>
+      <p>{s.d}</p>
+      <span class="hf-chip">{s.c}</span>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .hf { position: relative; margin: 0; padding: 0; list-style: none; display: grid; gap: 0.75rem; }
+  @media (min-width: 56rem) { .hf { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.75rem; } }
+  .hf-step { position: relative; display: grid; align-content: start; gap: 0.45rem; padding: 1.25rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); transition: border-color var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out), opacity var(--dur) var(--ease-out); }
+  .hf-step.is-todo { opacity: 0.55; }
+  .hf-step.is-now { border-color: var(--border-interactive); box-shadow: var(--glow-accent); opacity: 1; }
+  .hf-icon { display: inline-flex; width: 2rem; height: 2rem; align-items: center; justify-content: center; border-radius: var(--radius-sm); background: var(--surface-elevated); color: var(--foreground-secondary); transition: background-color var(--dur), color var(--dur); }
+  .hf-step.is-done .hf-icon, .hf-step.is-now .hf-icon { background: var(--accent-subtle); color: var(--accent-text); }
+  .hf-step h3 { margin: 0.35rem 0 0; font-size: 1.1rem; font-weight: 600; letter-spacing: -0.015em; color: var(--foreground); }
+  .hf-step p { margin: 0; font-size: 0.9rem; line-height: 1.5; color: var(--foreground-secondary); }
+  .hf-chip { justify-self: start; margin-top: 0.35rem; padding: 0.2rem 0.5rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 0.7rem; color: var(--foreground-secondary); }
+  .hf-step.is-now .hf-chip { border-color: var(--border-interactive); color: var(--accent-text); }
+  @media (prefers-reduced-motion: reduce) { .hf-step, .hf-icon { transition: none; } }
+</style>
+
+<script>
+  import { createSequence, type Step } from '@/scripts/sequence';
+  for (const root of document.querySelectorAll<HTMLElement>('[data-howflow]')) {
+    const items = Array.from(root.querySelectorAll<HTMLElement>('[data-hf]'));
+    const show = (n: number) => items.forEach((el, i) => {
+      el.classList.toggle('is-done', i < n || n === items.length);
+      el.classList.toggle('is-now', i === n);
+      el.classList.toggle('is-todo', i > n && n < items.length);
+    });
+    const steps: Step[] = [...items.map((_, n) => ({ t: 300 + n * 1600, run: () => show(n) })), { t: 300 + items.length * 1600, run: () => show(items.length) }];
+    createSequence(root, steps, { reset: () => show(-1), loopAfter: 3000 });
+  }
+</script>
