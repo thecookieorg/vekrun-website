@@ -17,7 +17,7 @@ export const toolGroups: ToolGroup[] = [
     key: 'models',
     kind: 'models',
     title: 'Vekrun’s native agent',
-    line: 'Vekrun’s own agent does the work. Connect hosted models through OpenRouter, or discover and download local models through Ollama or LM Studio and run them on your own hardware.',
+    line: 'Vekrun’s own agent does the work. Connect hosted models through OpenRouter, discover and download compatible models through Vekrun’s Ollama integration, or connect models served by LM Studio. Local models run on your own hardware.',
     tools: [
       { id: 'openrouter', name: 'OpenRouter', mono: 'Or' },
       { id: 'ollama', name: 'Ollama', mono: 'Ol' },

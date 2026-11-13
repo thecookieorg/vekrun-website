@@ -84,10 +84,10 @@ illustration).
 | Claim | Where | Status on site | Needs confirmation |
 |---|---|---|---|
 | Native agent runs the workflow with OpenRouter or local models | Home, Product, Integrations, Pricing | Qualified: local models power supported workflows; a fully local autonomous Factory is still being certified | Yes: drop the qualifier once local-only Factory certification passes |
-| Discover and download local models through Ollama / LM Studio, with hardware fit | Home, Product | Available, with Example model library | Yes: confirm LM Studio downloads, and that hardware-fit guidance is shown |
+| Discover and download compatible models through the Ollama integration; connect models served by LM Studio | Home, Product, Integrations | Available, with Example model library | Confirm hardware-fit guidance is shown |
 | Vekrun ships no inference engine; local models don't make every workflow offline | Home, Product | Qualified | No |
 | Claude Code, Codex, Antigravity optional | Everywhere | Available | No |
-| Council with different models; cross-family review | Product | Qualified: not every task, no guarantee, certification in progress | Yes: update the note when mixed-model certification passes |
+| Council with different models; cross-family review | Product | Available (cross-family certification complete, owner-confirmed); not every task, no guarantee | No |
 | Engineering Memory: structure, decisions, Work Items, evidence, Obsidian, sourced answers | Home, Product | Available | No |
 | Living Architecture Intelligence | Home, Product | Planned, Concept graph | No |
 | Live Share: web apps in the browser | Home, Product | Available | No |
@@ -129,3 +129,9 @@ Follow-up to an external review of the merged site.
 | Operating systems | macOS is the alpha platform (early access). Windows and Linux are marked Planned on Download; structured data lists macOS only; demo data no longer shows Windows or Linux machines. |
 | Homepage length | Project chips and the six model benefits removed from the homepage (both stay on Product). Desktop height 12.1 → 11.6 screens. |
 | Real workflow example | Not added. It needs a real completed project and its evidence (for example the OpenRouter-only two-Work-Item run, or the cross-model certification once it passes). Supply the request, Work Items, test results and Proof Pack and it can be published as a case study. |
+
+## Follow-up (2026-11-12, later)
+
+- LM Studio is described as connecting models it serves; Vekrun downloads only through its Ollama integration.
+- Owner confirmed that cross-family Council certification is complete. The certification note is replaced by "A second opinion that actually challenges the first", with one anonymised real example: a reviewer found that passing tests didn't properly test the ranking they were meant to prove.
+- Download explains what early access means: a macOS alpha on Apple Silicon and Intel Macs, rough edges, Free, and bring your own models. Batching isn't mentioned because invitations aren't batched.

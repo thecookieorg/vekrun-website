@@ -130,7 +130,11 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
       <div>
         <SectionHeading id="council-title" title="Better engineering decisions deserve more than one perspective." lede="Vekrun can bring different AI models together to assess an approach, surface disagreements and identify risks. You see the reasoning, the objections and the decision." />
         <ul class="ticks">{council.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
-        <p class="fine">Not every task convenes a Council, and more models don’t guarantee a correct answer: they make the reasoning visible and harder to get wrong quietly. Mixed-model Councils and cross-family review are still being certified across model combinations.</p>
+        <div class="second">
+          <h3>A second opinion that actually challenges the first.</h3>
+          <p>Vekrun can bring a model from another AI developer into the review process, helping identify weaknesses that the original implementation and its tests may have missed. In one recent review the tests were passing, and the reviewer still found that they didn’t properly test the ranking they were meant to prove.</p>
+        </div>
+        <p class="fine">Not every task convenes a Council, and more models don’t guarantee a correct answer: they make the reasoning visible and harder to get wrong quietly.</p>
       </div>
       <div class="min-w-0"><Council /></div>
     </div>
@@ -305,6 +309,9 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
   .ticks li { display: flex; gap: 0.55rem; align-items: flex-start; font-size: 0.98rem; line-height: 1.5; color: var(--foreground); }
   .ticks :global(svg) { margin-top: 0.25rem; flex-shrink: 0; color: var(--accent-text); }
   @media (min-width: 48rem) { .ticks.cols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem 2rem; max-width: 52rem; } }
+  .second { margin-top: 1.75rem; padding: 1.25rem 1.35rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); }
+  .second h3 { margin: 0; font-size: 1.05rem; font-weight: 600; letter-spacing: -0.01em; color: var(--foreground); }
+  .second p { margin: 0.5rem 0 0; font-size: 0.95rem; line-height: 1.55; color: var(--foreground-secondary); }
   .fine { margin: 1.5rem 0 0; max-width: 46rem; font-size: 0.9rem; line-height: 1.55; color: var(--foreground-secondary); }
   .big-line { margin: 1.75rem 0 0; font-size: clamp(1.4rem, 2.6vw, 2rem); font-weight: 620; letter-spacing: -0.025em; color: var(--accent-text); }
   .h3 { margin: 0; font-size: 1.35rem; font-weight: 620; letter-spacing: -0.02em; color: var(--foreground); }

@@ -341,7 +341,8 @@ test.describe('product', () => {
     await expect(page.locator('#architecture .state')).toHaveText('Planned');
     await expect(page.locator('#architecture')).toContainText('planned and not available yet');
     await expect(page.locator('#council')).toContainText('Not every task convenes a Council');
-    await expect(page.locator('#council')).toContainText('still being certified');
+    await expect(page.locator('#council').getByRole('heading', { name: 'A second opinion that actually challenges the first.' })).toBeVisible();
+    await expect(page.locator('#council')).not.toContainText('still being certified');
     await expect(page.locator('main')).not.toContainText(/every review is independent|fully offline/i);
   });
 
@@ -372,6 +373,8 @@ test.describe('platforms', () => {
     expect(ld).not.toMatch(/Windows|Linux/);
     await page.goto('/download/');
     await expect(page.locator('main')).toContainText('Alpha, by early access');
+    await expect(page.getByRole('list', { name: 'What to expect from early access' })).toContainText('Apple Silicon or Intel');
+    await expect(page.locator('main')).not.toContainText(/batch|waitlist position|within \d+ days/i);
     await expect(page.locator('main')).toContainText('Planned');
   });
 });
