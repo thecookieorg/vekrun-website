@@ -1,30 +1,78 @@
 ---
 /**
- * Model independence, made unmistakable: Vekrun's native agent comes first,
- * with the model connections it runs on; third-party coding-agent CLIs are a
- * separate, optional group. Billing and local execution are stated plainly.
+ * Model independence, made unmistakable: Vekrun's native agent comes first and
+ * leads with discovering and downloading local models (through supported
+ * runtimes such as Ollama and LM Studio), then hosted models through OpenRouter.
+ * Third-party coding-agent CLIs are a separate, optional group.
+ *
+ * The model library is an example with demonstration data, not a working
+ * download control. Its markup carries the final state (downloaded and in
+ * use); the script walks the first model from Download to In use.
  */
 import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
 import { toolById, modelIds, agentIds } from '@/data/integrations';
-import { Check, Cpu, Plug } from '@lucide/astro';
+import { Check, Cpu, Plug, Download, HardDrive, KeyRound, SlidersHorizontal, Search, RefreshCw } from '@lucide/astro';
 const models = modelIds.map((id) => toolById(id)!);
 const agents = agentIds.map((id) => toolById(id)!);
-const native = [
-  'Hosted models through your own OpenRouter key',
-  'Open-weight models on your hardware with Ollama or LM Studio',
-  'You pick the model the work runs on',
-  'Council, Factory, Memory and Proof Packs all work this way',
+const benefits = [
+  { i: Search, t: 'Discover models', d: 'Browse available models and see which ones suit your hardware before you download.' },
+  { i: Download, t: 'Download from Vekrun', d: 'Install supported models through a local runtime such as Ollama, with progress as it goes.' },
+  { i: HardDrive, t: 'Run locally', d: 'Inference stays on your own hardware, without hosted inference charges.' },
+  { i: KeyRound, t: 'Connect cloud models', d: 'Prefer hosted models? Use compatible ones through OpenRouter with your own key.' },
+  { i: SlidersHorizontal, t: 'Choose per workflow', d: 'Decide which models power each supported engineering workflow.' },
+  { i: RefreshCw, t: 'Change your setup', d: 'Switch providers or models whenever you like. You’re never tied to one.' },
+];
+const library = [
+  { name: 'Qwen2.5 Coder 14B', size: '9.0 GB', caps: ['Code', 'Tools'], fit: 'Runs well on this machine', ok: true, demo: true },
+  { name: 'Llama 3.1 8B', size: '4.9 GB', caps: ['Chat', 'Code'], fit: 'Runs well on this machine', ok: true, installed: true },
+  { name: 'Llama 3.3 70B', size: '43 GB', caps: ['Chat', 'Code'], fit: 'Needs 64 GB of memory', ok: false },
 ];
 ---
 <div class="mc">
   <article class="mc-card is-primary" aria-labelledby="mc-native">
     <p class="mc-k"><Cpu class="h-4 w-4" aria-hidden="true" />Built in</p>
     <h3 id="mc-native">Vekrun’s native agent</h3>
-    <p class="mc-p">The full engineering workflow runs on Vekrun’s own agent with the models you connect.</p>
+    <p class="mc-big"><Download class="h-5 w-5" aria-hidden="true" />Download local AI models</p>
+    <p class="mc-p">Pick a model that fits your computer and Vekrun downloads it for you. No paid AI API needed, and no Ollama experience either.</p>
+
+    <figure class="lib" data-mdl aria-label="Example: the local model library in Vekrun">
+      <div class="lib-head">
+        <span class="lib-t">Local models <span class="lib-sub">for this Mac · 32 GB memory</span></span>
+        <span class="lib-tag">Example</span>
+      </div>
+      <ul class="lib-rows">
+        {library.map((m) => (
+          <li class:list={['lib-row', !m.ok && 'is-off']} data-mdl-row={m.demo ? '' : undefined}>
+            <div class="lib-main">
+              <p class="lib-name">{m.name}</p>
+              <p class="lib-meta"><span>{m.size}</span>{m.caps.map((c) => <span class="lib-cap">{c}</span>)}</p>
+              <p class:list={['lib-fit', m.ok ? 'is-ok' : 'is-no']}>{m.ok && <Check class="h-3.5 w-3.5" aria-hidden="true" />}{m.fit}</p>
+            </div>
+            <div class="lib-act">
+              {m.demo ? (
+                <>
+                  <span class="lib-btn" data-state-btn data-s="inuse">In use</span>
+                  <span class="lib-bar" aria-hidden="true"><span data-bar></span></span>
+                  <span class="lib-pct" data-pct>Selected for coding</span>
+                </>
+              ) : m.installed ? (
+                <span class="lib-btn is-quiet">Installed</span>
+              ) : (
+                <span class="lib-btn is-quiet">Too large</span>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+      <p class="lib-foot">Downloads through Ollama</p>
+    </figure>
+
+    <ul class="mc-ben">
+      {benefits.map((b) => <li><b.i class="h-4 w-4" aria-hidden="true" /><div><h4>{b.t}</h4><p>{b.d}</p></div></li>)}
+    </ul>
     <ul class="mc-logos" aria-label="Model connections">
       {models.map((t) => <li><IntegrationLogo id={t.id} name={t.name} monogram={t.mono} size="sm" />{t.name}</li>)}
     </ul>
-    <ul class="mc-list">{native.map((i) => <li><Check class="h-4 w-4" aria-hidden="true" />{i}</li>)}</ul>
   </article>
   <article class="mc-card" aria-labelledby="mc-optional">
     <p class="mc-k"><Plug class="h-4 w-4" aria-hidden="true" />Optional</p>
@@ -35,21 +83,73 @@ const native = [
     </ul>
   </article>
 </div>
-<p class="mc-note">Hosted model usage is billed by the provider you choose, under your account. Local models run on your own hardware. Vekrun adds no markup.</p>
+<p class="mc-note">Hosted model usage is billed by the provider you choose, under your account. Local models run on your own hardware through a supported runtime; Vekrun doesn’t ship its own inference engine and adds no markup. Running a model locally doesn’t make every workflow offline: Git hosts, package registries and integrations still need a connection.</p>
 
 <style>
   .mc { display: grid; gap: 1.25rem; }
-  @media (min-width: 56rem) { .mc { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); } }
+  @media (min-width: 56rem) { .mc { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: start; } }
   .mc-card { display: flex; flex-direction: column; padding: 1.6rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
   .mc-card.is-primary { border-color: var(--border-interactive); box-shadow: var(--glow-accent); }
   .mc-k { margin: 0; display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.8125rem; font-weight: 560; color: var(--foreground-secondary); }
   .is-primary .mc-k { color: var(--accent-text); }
   .mc-card h3 { margin: 0.6rem 0 0; font-size: 1.35rem; font-weight: 620; letter-spacing: -0.02em; color: var(--foreground); }
   .mc-p { margin: 0.6rem 0 0; font-size: 0.98rem; line-height: 1.55; color: var(--foreground-secondary); }
+  .mc-big { margin: 1.1rem 0 0; display: flex; align-items: center; gap: 0.55rem; font-size: 1.2rem; font-weight: 620; letter-spacing: -0.015em; color: var(--foreground); }
+  .mc-big :global(svg) { flex-shrink: 0; color: var(--accent-text); }
+  .mc-big + .mc-p { margin-top: 0.45rem; }
+
+  .lib { margin: 1.25rem 0 0; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); overflow: hidden; }
+  .lib-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); }
+  .lib-t { font-size: 0.85rem; font-weight: 600; color: var(--foreground); }
+  .lib-sub { margin-left: 0.35rem; font-weight: 450; color: var(--foreground-secondary); }
+  .lib-tag { flex-shrink: 0; padding: 0.05rem 0.4rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.7rem; color: var(--foreground-secondary); }
+  .lib-rows { margin: 0; padding: 0; list-style: none; }
+  .lib-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
+  .lib-row:last-child { border-bottom: 0; }
+  .lib-main { min-width: 0; }
+  .lib-name { margin: 0; font-size: 0.9rem; font-weight: 600; color: var(--foreground); }
+  .lib-row.is-off .lib-name { color: var(--foreground-secondary); }
+  .lib-meta { margin: 0.3rem 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; font-size: 0.78rem; color: var(--foreground-secondary); }
+  .lib-cap { padding: 0 0.35rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.7rem; }
+  .lib-fit { margin: 0.3rem 0 0; display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.78rem; font-weight: 520; }
+  .lib-fit.is-ok { color: var(--accent-text); }
+  .lib-fit.is-no { color: var(--foreground-secondary); }
+  .lib-act { flex-shrink: 0; display: grid; justify-items: end; gap: 0.35rem; min-width: 7.5rem; }
+  .lib-btn { display: inline-flex; align-items: center; height: 1.8rem; padding: 0 0.7rem; border-radius: var(--radius-sm); font-size: 0.78rem; font-weight: 600; background: var(--accent); color: #1b1c23; transition: background-color var(--dur-fast), color var(--dur-fast); }
+  .lib-btn.is-quiet, .lib-btn[data-s='downloading'] { background: transparent; border: 1px solid var(--border); color: var(--foreground-secondary); font-weight: 520; }
+  .lib-btn[data-s='installed'] { background: var(--accent-subtle); color: var(--accent-text); }
+  .lib-bar { display: block; width: 7.5rem; height: 5px; border-radius: 999px; background: var(--surface-strong); overflow: hidden; }
+  .lib-bar span { display: block; height: 100%; width: 100%; border-radius: inherit; background: var(--accent); transition: width 160ms linear; }
+  .lib-pct { font-size: 0.72rem; color: var(--foreground-secondary); font-variant-numeric: tabular-nums; }
+  .lib-foot { margin: 0; padding: 0.55rem 1rem; border-top: 1px solid var(--border); font-size: 0.75rem; color: var(--foreground-secondary); }
+  @media (max-width: 30rem) { .lib-row { flex-direction: column; align-items: stretch; } .lib-act { justify-items: start; } .lib-sub { display: block; margin: 0.1rem 0 0; } }
+
+  .mc-ben { margin: 1.4rem 0 0; padding: 1.25rem 0 0; border-top: 1px solid var(--border); list-style: none; display: grid; gap: 1rem 1.5rem; }
+  @media (min-width: 40rem) { .mc-ben { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .mc-ben li { display: flex; gap: 0.6rem; align-items: flex-start; }
+  .mc-ben :global(svg) { margin-top: 0.2rem; flex-shrink: 0; color: var(--accent-text); }
+  .mc-ben h4 { margin: 0; font-size: 0.95rem; font-weight: 600; color: var(--foreground); }
+  .mc-ben p { margin: 0.2rem 0 0; font-size: 0.88rem; line-height: 1.5; color: var(--foreground-secondary); }
   .mc-logos { margin: 1.25rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; }
   .mc-logos li { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.75rem 0.35rem 0.4rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); font-size: 0.9rem; font-weight: 540; color: var(--foreground); }
-  .mc-list { margin: 1.25rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.5rem; font-size: 0.95rem; color: var(--foreground); }
-  .mc-list li { display: flex; gap: 0.55rem; align-items: flex-start; }
-  .mc-list :global(svg) { margin-top: 0.2rem; flex-shrink: 0; color: var(--accent-text); }
   .mc-note { margin: 1.25rem 0 0; max-width: 46rem; font-size: 0.92rem; line-height: 1.55; color: var(--foreground-secondary); }
 </style>
+
+<script>
+  import { createSequence, type Step } from '@/scripts/sequence';
+  for (const root of document.querySelectorAll<HTMLElement>('[data-mdl]')) {
+    const btn = root.querySelector<HTMLElement>('[data-state-btn]')!;
+    const bar = root.querySelector<HTMLElement>('[data-bar]')!;
+    const pct = root.querySelector<HTMLElement>('[data-pct]')!;
+    const set = (s: 'idle' | 'downloading' | 'installed' | 'inuse', p: number) => {
+      btn.dataset.s = s;
+      btn.textContent = s === 'idle' ? 'Download' : s === 'downloading' ? 'Downloading' : s === 'installed' ? 'Installed' : 'In use';
+      bar.style.width = `${p}%`;
+      pct.textContent = s === 'downloading' ? `${(9 * p / 100).toFixed(1)} of 9.0 GB` : s === 'idle' ? '9.0 GB' : s === 'installed' ? 'Ready' : 'Selected for coding';
+    };
+    const steps: Step[] = [{ t: 900, run: () => set('downloading', 0) }];
+    for (let i = 1; i <= 20; i++) steps.push({ t: 900 + i * 150, run: () => set('downloading', i * 5) });
+    steps.push({ t: 4200, run: () => set('installed', 100) }, { t: 5600, run: () => set('inuse', 100) });
+    createSequence(root, steps, { reset: () => set('idle', 0), loopAfter: 5000 });
+  }
+</script>

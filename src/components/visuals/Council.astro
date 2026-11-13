@@ -6,7 +6,6 @@
  * the script brings the seats in one by one, then the decision. Demonstration data.
  */
 import Window from '@/components/mock/Window.astro';
-import ConceptNotice from '@/components/ConceptNotice.astro';
 interface Props { compact?: boolean; class?: string }
 const { compact = false, class: className = '' } = Astro.props;
 
@@ -38,7 +37,6 @@ const label = { for: 'Supports', against: 'Objects', amend: 'Amends' } as const;
       </div>
     </div>
   </Window>
-  <ConceptNotice class="mt-4" text="Illustrative product concept with demonstration data." />
 </figure>
 
 <style>

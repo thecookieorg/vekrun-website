@@ -1,0 +1,61 @@
+---
+/**
+ * Before & After: what changes when Vekrun takes on the coordination. An
+ * engineering day you can switch between, eight moments compared side by
+ * side, and what it means for developers and for engineering leads.
+ * Illustrative comparisons, not customer quotes or measured savings.
+ */
+import Base from '@/layouts/Base.astro';
+import ClosingCta from '@/components/ClosingCta.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import DayCompare from '@/components/compare/DayCompare.astro';
+import CompareRows from '@/components/compare/CompareRows.astro';
+import { Check } from '@lucide/astro';
+const devs = ['Less time supervising agents and re-explaining context', 'Plans that have been challenged before you build on them', 'Proof instead of guesswork when something is “done”', 'Feedback you can act on, from people using the real app', 'Freedom to use hosted or local models'];
+const leads = ['Engineering work that follows your Git policies and approvals', 'Progress you can see without asking for a status update', 'The same verification bar on every change', 'A record of who decided what, and why', 'Fewer handoffs between people and tools'];
+---
+<Base title="Before & After" fullTitle="Before & After: from managing AI agents to directing engineering · Vekrun" description="How an engineering day changes with Vekrun: project context instead of re-explaining, planned and verified work instead of supervision, Proof Packs instead of trust, and Live Share feedback instead of screenshots." image="/og/before-and-after.png">
+  <PageHero eyebrow="Before & After" title="Stop managing AI agents. Start directing engineering." lede="AI can write code. The work around it, explaining, checking, coordinating and chasing, still lands on you. Here’s what changes when Vekrun takes that on, while you keep the decisions.">
+    <DayCompare />
+  </PageHero>
+
+  <section class="section-pad rule" aria-labelledby="moments-title">
+    <div class="container-site">
+      <SectionHeading id="moments-title" title="Eight moments from an engineering day." lede="The same work, before and with Vekrun." />
+      <div class="mt-12"><CompareRows /></div>
+      <p class="fine">Illustrative comparisons, not customer quotes. You still review, decide and approve; Vekrun reduces the coordination, not your responsibility for what ships.</p>
+    </div>
+  </section>
+
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="who-title">
+    <div class="container-site">
+      <SectionHeading id="who-title" title="What changes, and for whom." />
+      <div class="who">
+        <div class="who-c">
+          <h3>For developers</h3>
+          <ul>{devs.map((d) => <li><Check class="h-4 w-4" aria-hidden="true" />{d}</li>)}</ul>
+        </div>
+        <div class="who-c">
+          <h3>For engineering leads</h3>
+          <ul>{leads.map((d) => <li><Check class="h-4 w-4" aria-hidden="true" />{d}</li>)}</ul>
+        </div>
+      </div>
+      <p class="mt-10 links"><a href="/how-it-works/" class="text-accent link-slide">See how the workflow fits together</a><a href="/product/" class="text-accent link-slide">Explore every capability</a></p>
+    </div>
+  </section>
+
+  <ClosingCta title="Spend your day on decisions, not coordination." />
+</Base>
+
+<style>
+  .fine { margin: 1.75rem 0 0; max-width: 46rem; font-size: 0.9rem; line-height: 1.55; color: var(--foreground-secondary); }
+  .who { margin-top: 2.5rem; display: grid; gap: 1rem; }
+  @media (min-width: 48rem) { .who { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .who-c { padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
+  .who-c h3 { margin: 0; font-size: 1.2rem; font-weight: 620; letter-spacing: -0.015em; color: var(--foreground); }
+  .who-c ul { margin: 1rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.55rem; }
+  .who-c li { display: flex; gap: 0.55rem; align-items: flex-start; font-size: 0.96rem; line-height: 1.5; color: var(--foreground); }
+  .who-c :global(svg) { margin-top: 0.25rem; flex-shrink: 0; color: var(--accent-text); }
+  .links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; font-size: 0.98rem; font-weight: 540; }
+</style>

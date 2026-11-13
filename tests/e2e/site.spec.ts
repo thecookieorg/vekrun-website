@@ -8,7 +8,7 @@ const noOverflow = async (page: Page) => {
 const purchase = /buy|checkout|subscribe|start trial|free trial|sign up/i;
 const statusWords = /\b(in development|planned feature|under consideration|not (yet )?implemented|verified in development|status:)\b/i;
 
-const pages = ['/', '/product/', '/how-it-works/', '/pricing/', '/integrations/', '/download/', '/security/', '/privacy/', '/license/', '/contact/'];
+const pages = ['/', '/product/', '/how-it-works/', '/before-and-after/', '/pricing/', '/integrations/', '/download/', '/security/', '/privacy/', '/license/', '/contact/'];
 
 test.describe('every page', () => {
   for (const path of pages) {
@@ -24,7 +24,7 @@ test.describe('every page', () => {
       await expect(main).not.toContainText(/requires? (Claude Code|Codex)|(Claude Code|Codex) (is|are) required/i);
       await expect(page.getByRole('link', { name: purchase })).toHaveCount(0);
       await expect(page.getByRole('button', { name: purchase })).toHaveCount(0);
-      await expect(page.locator('a[href*="/docs/"], a[href*="/roadmap/"], a[href*="/features/"], a[href*="/teams/"], a[href*="/benefits/"], a[href*="/before-and-after/"]')).toHaveCount(0);
+      await expect(page.locator('a[href*="/docs/"], a[href*="/roadmap/"], a[href*="/features/"], a[href*="/teams/"], a[href*="/benefits/"]')).toHaveCount(0);
       await noOverflow(page);
     });
   }
@@ -49,37 +49,52 @@ test.describe('homepage', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Your AI engineering team. On your machine.');
     await expect(page.getByText('From idea to verified software.')).toBeVisible();
     await expect(page).toHaveTitle('Vekrun · Your AI engineering team. On your machine.');
-    await expect(page.getByRole('list', { name: 'Why Vekrun' }).getByRole('listitem')).toHaveText(['Local-first', 'Model-independent', 'Works with your stack', 'Free for individuals']);
+    await expect(page.getByRole('list', { name: 'Why Vekrun' }).getByRole('listitem')).toHaveText(['Local-first', 'Download local AI models', 'Model-independent', 'Works with your stack', 'Free for individuals']);
+    await expect(page.getByRole('link', { name: 'Download local AI models' })).toHaveAttribute('href', '#models');
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og\/default\.png$/);
     const types = await page.locator('script[type="application/ld+json"]').evaluateAll((els) => els.map((e) => JSON.parse(e.textContent ?? '{}')['@type']));
     expect(types).toEqual(expect.arrayContaining(['Organization', 'WebSite', 'SoftwareApplication']));
   });
 
-  test('tells one story in seven sections', async ({ page }) => {
+  test('tells the story in order, from stack to plans', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('main > section')).toHaveCount(9);
     await expect(page.locator('main h2')).toHaveText([
       'Your stack. Your repository. Your workflow.',
       'One engineering workflow, from request to pull request.',
-      'Your models. Your choice.',
-      'Your project shouldn’t start from zero every session.',
-      'Don’t send screenshots. Send the app.',
+      'Your AI. Your hardware. Your choice.',
+      'Software that understands your software.',
+      'Let anyone experience what you’re building.',
       'Done means proven, not just claimed.',
-      'Free for individuals. Cloud and Enterprise to follow.',
+      'More than an AI coding agent.',
+      'Stop managing AI agents. Start directing engineering.',
+      'Free for individuals. Cloud and Enterprise planned.',
       'Hand Vekrun your next outcome.',
     ]);
+    await expect(page.getByRole('list', { name: 'Examples of projects Vekrun can help build' }).getByRole('listitem')).toHaveCount(8);
+    for (const a of await page.locator('#more .hl a').evaluateAll((els) => els.map((e) => e.getAttribute('href')!))) expect(a).toMatch(/^\/product\/#/);
+    await expect(page.locator('#before-after .ba-row')).toHaveCount(3);
+    await expect(page.locator('#before-after').getByRole('link', { name: 'See all eight moments' })).toHaveAttribute('href', '/before-and-after/');
+    await expect(page.getByRole('list', { name: 'App types Live Share supports' }).getByRole('listitem')).toHaveText(['Web', 'iOS', 'Android', 'Expo', 'Flutter', 'Desktop']);
   });
 
   test('makes model independence unmistakable, native agent first', async ({ page }) => {
     await page.goto('/');
     const sec = page.locator('#models');
-    await expect(sec).toContainText('You don’t need to install or subscribe to Claude Code, Codex or any other coding-agent CLI to use Vekrun.');
+    await expect(sec).toContainText('You don’t need a paid AI API, or to install or subscribe to Claude Code, Codex or any other coding-agent CLI, to use Vekrun.');
     const cards = sec.locator('article');
     await expect(cards.first()).toContainText('Vekrun’s native agent');
     await expect(cards.first()).toContainText('OpenRouter');
     await expect(cards.nth(1)).toContainText('Optional');
     await expect(cards.nth(1)).toContainText('None of them is required');
     await expect(sec).toContainText('billed by the provider you choose');
+    await expect(cards.first().getByText('Download local AI models')).toBeVisible();
+    for (const t of ['Discover models', 'Download from Vekrun', 'Run locally', 'Connect cloud models', 'Choose per workflow', 'Change your setup']) await expect(cards.first().getByRole('heading', { name: t })).toBeVisible();
+    const lib = sec.locator('[data-mdl]');
+    await expect(lib).toContainText('Example');
+    for (const t of ['9.0 GB', 'Runs well on this machine', 'Needs 64 GB of memory', 'Too large', 'Installed', 'Downloads through Ollama']) await expect(lib).toContainText(t);
+    await expect(sec).toContainText('doesn’t ship its own inference engine');
+    await expect(sec).toContainText('doesn’t make every workflow offline');
+    await expect(page.locator('main')).not.toContainText('Illustrative product concept');
   });
 
   test('shows the stack in two seamless marquees that stand still under reduced motion', async ({ page }) => {
@@ -92,12 +107,11 @@ test.describe('homepage', () => {
     await noOverflow(page);
   });
 
-  test('the Factory hero reaches its final state, is labelled a concept, and can replay', async ({ page }) => {
+  test('the Factory hero reaches its final state and can replay', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/');
     const f = page.locator('[data-factory]');
     await expect(f).toHaveAttribute('data-demo', 'done');
-    await expect(f.getByText('Illustrative product concept', { exact: false })).toBeVisible();
     await expect(f.locator('[data-job="j1"]')).toHaveAttribute('data-stage', '5');
     await expect(f.locator('[data-f-inbox]')).toBeVisible();
     await f.getByRole('button', { name: 'Replay' }).click();
@@ -129,6 +143,8 @@ test.describe('homepage', () => {
     await expect(page.locator('[data-memory] [data-m-q]')).toHaveText('Why do payment webhooks use an idempotency key?');
     await expect(page.locator('[data-memory] [data-m-link]')).toHaveCount(4);
     await expect(page.locator('[data-liveshare]')).toContainText('served from your machine while Live Share is on');
+    await expect(page.locator('[data-mdl] [data-state-btn]')).toHaveText('In use');
+    await expect(page.locator('[data-mdl] [data-pct]')).toHaveText('Selected for coding');
   });
 
   test('every call to action on the homepage resolves', async ({ page }) => {
@@ -150,12 +166,14 @@ test.describe('pricing', () => {
     await expect(free).toContainText('forever');
     await expect(free.getByRole('link', { name: 'Request early access' })).toHaveAttribute('href', '/download/');
     await expect(cloud).toContainText('Coming soon');
-    await expect(cloud).toContainText('Pricing TBD');
+    await expect(cloud.locator('.plan-price')).toHaveText(/\$99\s*per developer \/ month/);
+    await expect(cloud).toContainText('$1,188 per developer per year. Proposed price.');
     await expect(cloud.getByRole('link', { name: 'Join the wishlist' })).toHaveAttribute('href', '/pricing/#cloud-wishlist');
     await expect(ent).toContainText('Custom');
     await expect(ent.getByRole('link', { name: 'Register interest' })).toHaveAttribute('href', /^mailto:support@vekrunapp\.com\?subject=Vekrun%20Enterprise%20interest/);
     for (const p of [cloud, ent]) await expect(p).toContainText('Planned. Not available yet.');
-    await expect(page.locator('main')).not.toContainText(/\$199|\$99|per engineer|calculator/i);
+    await expect(page.locator('main')).not.toContainText(/\$199|per engineer|calculator|unlimited compute|unlimited usage/i);
+    await expect(page.locator('main')).toContainText('Custom model connections are in every plan, not only Enterprise');
     await expect(page.locator('main')).toContainText('Every plan uses the models you choose');
     await expect(page.locator('[data-teams-calc]')).toHaveCount(0);
   });
@@ -176,6 +194,7 @@ test.describe('pricing', () => {
     const body = decodeURIComponent(href.split('body=')[1]!);
     expect(body).toContain('email me about Vekrun Cloud');
     expect(body).toContain('Individual / Team / Enterprise');
+    expect(body).toContain('Would $99 per developer per month work for you?');
     await expect(wl).toContainText('reply “unsubscribe” to be removed');
     await expect(wl.getByRole('link', { name: 'Privacy' })).toHaveAttribute('href', '/privacy/');
     await expect(page.locator('form')).toHaveCount(0);
@@ -187,6 +206,7 @@ test.describe('pricing', () => {
     await faq.locator('summary').click();
     await expect(faq).toHaveAttribute('open', '');
     await expect(faq).toContainText('optional integrations');
+    await expect(page.locator('details.faq-i').filter({ hasText: 'Are cloud compute and AI usage included' })).toHaveCount(1);
     const ld = await page.locator('script[type="application/ld+json"]').evaluateAll((els) => els.map((e) => JSON.parse(e.textContent ?? '{}')));
     const faqLd = ld.find((d) => d['@type'] === 'FAQPage');
     expect(faqLd.mainEntity.length).toBe(await page.locator('details.faq-i').count());
@@ -231,7 +251,7 @@ test.describe('how it works', () => {
 });
 
 test.describe('conversion paths', () => {
-  for (const path of ['/', '/product/', '/how-it-works/', '/integrations/']) {
+  for (const path of ['/', '/product/', '/how-it-works/', '/before-and-after/', '/integrations/']) {
     test(`${path} ends with early access and pricing`, async ({ page }) => {
       await page.goto(path);
       const next = page.locator('section[aria-labelledby="next-title"]');
@@ -266,7 +286,7 @@ test.describe('live share and privacy', () => {
 });
 
 test.describe('product', () => {
-  test('every product demo plays to completion and is labelled a concept', async ({ page }) => {
+  test('every product demo plays to completion', async ({ page }) => {
     test.setTimeout(180_000);
     await page.goto('/product/');
     const roots = page.locator('[data-demo-root]');
@@ -274,28 +294,57 @@ test.describe('product', () => {
     for (let i = 0; i < (await roots.count()); i++) {
       await roots.nth(i).scrollIntoViewIfNeeded();
       await expect(roots.nth(i)).toHaveAttribute('data-demo', 'done', { timeout: 60_000 });
-      await expect(roots.nth(i).getByText(/Illustrative product concept/).first()).toBeVisible();
     }
   });
 
   test('has every section the old URLs point at, models first', async ({ page }) => {
     await page.goto('/product/');
     await expect(page.getByRole('navigation', { name: 'On this page' }).getByRole('link').first()).toHaveText('Models');
-    for (const id of ['models', 'memory', 'live-share', 'stack', 'board', 'mobile', 'tools']) await expect(page.locator(`#${id}`), id).toHaveCount(1);
+    for (const id of ['models', 'council', 'memory', 'architecture', 'live-share', 'browser', 'proof', 'delivery', 'board', 'environments', 'voice', 'apps', 'stack', 'mobile', 'tools']) await expect(page.locator(`#${id}`), id).toHaveCount(1);
   });
 
-  test('Live Share and Memory use real screenshots that load', async ({ page }) => {
+  test('real screenshots load: Memory, Live Share and the Interactive Browser', async ({ page }) => {
     await page.goto('/product/');
-    for (const [id, shot] of [['live-share', 'liveshare-review'], ['memory', 'memory-understand']] as const) {
+    for (const [id, shot] of [['live-share', 'liveshare-review'], ['memory', 'memory-understand'], ['browser', 'browser-annotate']] as const) {
       const img = page.locator(`#${id} img[src="/shots/${shot}-1440.webp"]`);
       await img.scrollIntoViewIfNeeded();
       await expect(img, shot).toHaveJSProperty('complete', true);
       expect(await img.evaluate((i: HTMLImageElement) => i.naturalWidth), shot).toBeGreaterThan(0);
-      await expect(page.locator(`#${id} figcaption`)).toContainText('Vekrun desktop app');
+      await expect(page.locator(`#${id} figcaption`).last()).toContainText('Vekrun desktop app');
     }
     await expect(page.locator('#live-share a[href="/privacy/#live-share"]')).toBeVisible();
-    await expect(page.locator('#live-share')).toContainText('not hosted for you');
-    await expect(page.locator('#memory')).toContainText('Obsidian vault');
+    await expect(page.locator('#memory')).toContainText('Obsidian');
+  });
+
+  test('Live Share covers web, mobile and desktop, and states its limits', async ({ page }) => {
+    await page.goto('/product/');
+    const sec = page.locator('#live-share');
+    await expect(sec.getByRole('heading', { level: 2 })).toHaveText('Let anyone experience what you’re building.');
+    await expect(sec).toContainText('Don’t send screenshots. Send the app.');
+    await expect(sec.getByRole('list', { name: 'How a Live Share review works' }).getByRole('listitem')).toHaveCount(7);
+    const targets = sec.getByRole('list', { name: 'Apps you can share with Live Share' });
+    for (const t of ['Web apps', 'iOS', 'Android', 'Expo and React Native', 'Flutter', 'Swift and Kotlin', 'Desktop apps']) await expect(targets.getByRole('heading', { name: t, exact: true })).toBeVisible();
+    await expect(sec).toContainText('doesn’t replace device testing');
+    await expect(sec).toContainText('it isn’t hosting');
+  });
+
+  test('marks what is planned and does not overclaim the Council', async ({ page }) => {
+    await page.goto('/product/');
+    await expect(page.locator('#memory .state').first()).toHaveText('Available');
+    await expect(page.locator('#architecture .state')).toHaveText('Planned');
+    await expect(page.locator('#architecture')).toContainText('planned and not available yet');
+    await expect(page.locator('#council')).toContainText('Not every task convenes a Council');
+    await expect(page.locator('#council')).toContainText('still being certified');
+    await expect(page.locator('main')).not.toContainText(/every review is independent|fully offline/i);
+  });
+
+  test('the architecture graph, voice and environment examples reach their final state', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/product/');
+    for (const sel of ['[data-arch]', '[data-voice]', '[data-env]', '[data-lsflow]']) await expect(page.locator(sel), sel).toHaveAttribute('data-demo', 'done');
+    await expect(page.locator('[data-arch] [data-impact]')).toBeVisible();
+    await expect(page.locator('[data-voice]')).toContainText('Proposed Work Item');
+    await expect(page.locator('[data-env]')).toContainText('Install once yourself');
   });
 
   test('the Board flow ends with a pull request waiting for a person', async ({ page }) => {
@@ -308,12 +357,37 @@ test.describe('product', () => {
   });
 });
 
+test.describe('before and after', () => {
+  test('is a real page with eight moments and an honest note', async ({ page }) => {
+    await page.goto('/before-and-after/');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Stop managing AI agents. Start directing engineering.');
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og\/before-and-after\.png$/);
+    await expect(page.locator('.ba-row')).toHaveCount(8);
+    await expect(page.locator('main')).toContainText('Illustrative comparisons, not customer quotes.');
+    await expect(page.locator('main blockquote, main q')).toHaveCount(0);
+    await expect(page.locator('main')).not.toContainText(/\d+\s?%|\d+x faster|hours saved/i);
+  });
+
+  test('the day comparison switches with the mouse and the keyboard', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/before-and-after/');
+    const tabs = page.getByRole('tablist', { name: 'Compare an engineering day' });
+    await expect(tabs.getByRole('tab', { name: 'With Vekrun' })).toHaveAttribute('aria-selected', 'true');
+    await tabs.getByRole('tab', { name: 'Before' }).click();
+    await expect(page.locator('#dc-before')).toBeVisible();
+    await expect(page.locator('#dc-after')).toBeHidden();
+    await page.keyboard.press('ArrowRight');
+    await expect(tabs.getByRole('tab', { name: 'With Vekrun' })).toBeFocused();
+    await expect(page.locator('#dc-after')).toContainText('Review the Proof Pack');
+  });
+});
+
 test.describe('navigation and theme', () => {
   test('the desktop header has Product, How It Works and Pricing, and Get Vekrun', async ({ page, isMobile }) => {
     test.skip(isMobile, 'desktop navigation only');
     await page.goto('/');
     const nav = page.getByRole('navigation', { name: 'Primary' });
-    await expect(nav.getByRole('link')).toHaveText(['Product', 'How It Works', 'Pricing']);
+    await expect(nav.getByRole('link')).toHaveText(['Product', 'How It Works', 'Before & After', 'Pricing']);
     await expect(page.locator('header').getByRole('link', { name: 'Get Vekrun' })).toHaveAttribute('href', '/download/');
     await expect(page.getByRole('button', { name: 'Open menu' })).toBeHidden();
     for (const l of await nav.getByRole('link').all()) {
@@ -330,7 +404,7 @@ test.describe('navigation and theme', () => {
     await page.getByRole('button', { name: 'Open menu' }).click();
     const mnav = page.getByRole('navigation', { name: 'Primary, mobile' });
     await expect(mnav).toBeVisible();
-    for (const label of ['Product', 'How It Works', 'Pricing', 'Get Vekrun']) await expect(mnav.getByRole('link', { name: label })).toBeVisible();
+    for (const label of ['Product', 'How It Works', 'Before & After', 'Pricing', 'Get Vekrun']) await expect(mnav.getByRole('link', { name: label })).toBeVisible();
     await expect(mnav).not.toContainText(/Docs|Roadmap|Teams|Benefits/);
     await expect(page.getByRole('button', { name: 'Close menu' })).toHaveAttribute('aria-expanded', 'true');
     await page.keyboard.press('Escape');
@@ -401,7 +475,7 @@ test.describe('get vekrun', () => {
 
 test.describe('brand', () => {
   test('logo, favicon, touch icon and OG images are published in the charcoal and lime palette', async ({ page }) => {
-    for (const asset of ['/favicon.svg', '/apple-touch-icon.png', '/brand/vekrun-mark.svg', '/og/default.png', '/og/pricing.png', '/og/how-it-works.png']) {
+    for (const asset of ['/favicon.svg', '/apple-touch-icon.png', '/brand/vekrun-mark.svg', '/og/default.png', '/og/pricing.png', '/og/how-it-works.png', '/og/before-and-after.png', '/og/product.png']) {
       expect((await page.request.get(asset)).status(), asset).toBe(200);
     }
     const fav = await (await page.request.get('/favicon.svg')).text();
@@ -423,8 +497,7 @@ test.describe('retired routes and SEO', () => {
       ['/features/engineering-memory/', /\/product\/#memory$/],
       ['/cloud/', /\/pricing\/#cloud-wishlist$/],
       ['/teams/', /\/pricing\/$/],
-      ['/benefits/', /vekrunapp\.com\/$|localhost:\d+\/$/],
-      ['/before-and-after/', /\/how-it-works\/$/],
+      ['/benefits/', /\/before-and-after\/$/],
       ['/open-source/', /\/license\/$/],
     ] as const) {
       await page.goto(from);
@@ -448,7 +521,7 @@ test.describe('retired routes and SEO', () => {
   test('sitemap lists only live pages, and robots points at it', async ({ page }) => {
     const sm = await (await page.request.get('/sitemap-0.xml')).text();
     for (const p of pages) expect(sm, p).toContain(`<loc>https://vekrunapp.com${p}</loc>`);
-    expect(sm).not.toMatch(/\/(docs|roadmap|features|cloud|teams|benefits|before-and-after)\//);
+    expect(sm).not.toMatch(/\/(docs|roadmap|features|cloud|teams|benefits)\//);
     const robots = await (await page.request.get('/robots.txt')).text();
     expect(robots).toContain('Sitemap: https://vekrunapp.com/sitemap-index.xml');
   });

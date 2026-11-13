@@ -14,7 +14,7 @@ import ApprovalsDemo from '@/components/org/ApprovalsDemo.astro';
 import ProofPack from '@/components/factory/ProofPack.astro';
 import HowFlow from '@/components/home/HowFlow.astro';
 import { howSections } from '@/data/site';
-import { Target, Ticket, FileText, Layers, Network, Box, BadgeCheck, GitBranch, GitPullRequest, ShieldCheck, Workflow, FlaskConical, Eye, CircleDashed } from '@lucide/astro';
+import { ArrowRight, Target, Ticket, FileText, Layers, Network, Box, BadgeCheck, GitBranch, GitPullRequest, ShieldCheck, Workflow, FlaskConical, Eye, CircleDashed } from '@lucide/astro';
 
 const describe = [
   { i: Target, t: 'An outcome, not a prompt chain', d: 'Say what should be true when it’s done: “Saved carts work in the app and the API.”' },
@@ -24,7 +24,7 @@ const describe = [
 const build = [
   { i: Layers, t: 'Work Items', d: 'A big outcome is planned into pieces that can each be built, tested and shipped on their own.' },
   { i: Network, t: 'Dependency-aware', d: 'A Work Item starts when what it depends on is in. Independent ones run side by side.' },
-  { i: Box, t: 'Isolated environments', d: 'Each task runs in its own VM, on its own branch, so parallel work never collides.' },
+  { i: Box, t: 'Isolated environments', d: 'Each task runs in its own isolated environment, on its own branch, so parallel work never collides.' },
 ];
 const verify = [
   { i: FlaskConical, t: 'Real test runs', d: 'Your project’s tests and browser checks run in an isolated environment.' },
@@ -59,7 +59,7 @@ const git = [
 
   <section id="council" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="council-title">
     <div class="container-site">
-      <SectionHeading id="council-title" kicker="2 · Plan" title="Decisions get argued before they get built." lede="The Coordinator brings in several models as a Council. They investigate, disagree and settle on an approach, and the reasoning and dissent stay on record." />
+      <SectionHeading id="council-title" kicker="2 · Plan" title="Decisions get argued before they get built." lede="Vekrun plans the work into Work Items. When a decision deserves it, a Council of models investigates, disagrees and settles on an approach, and the reasoning and dissent stay on record." />
       <div class="mt-12"><Council /></div>
     </div>
   </section>
@@ -94,7 +94,15 @@ const git = [
     </div>
   </section>
 
-  <ClosingCta title="Hand Vekrun your next outcome." class="bg-bg-elevated" />
+  <section class="section-pad rule bg-bg-elevated" aria-labelledby="ba-link-title">
+    <div class="container-site">
+      <h2 id="ba-link-title" class="heading-3 text-text">What it changes in your day.</h2>
+      <p class="lede mt-3 max-w-2xl">Eight moments, before and with Vekrun: from re-explaining your project to reviewing a Proof Pack.</p>
+      <p class="mt-6"><a href="/before-and-after/" class="link-more group">See Before &amp; After<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
+    </div>
+  </section>
+
+  <ClosingCta title="Hand Vekrun your next outcome." />
 </Base>
 
 <style>

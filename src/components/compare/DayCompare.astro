@@ -1,0 +1,94 @@
+---
+/**
+ * An engineering day, before and with Vekrun, as two timelines you can switch
+ * between. Your own tasks are solid; work Vekrun carries is outlined. The
+ * point is less coordination, not no involvement: you still describe, decide,
+ * review and approve. Qualitative only, no invented time savings.
+ */
+type B = { t: string; you: boolean };
+const before: B[] = [
+  { t: 'Re-explain the project', you: true }, { t: 'Prompt', you: true }, { t: 'Check the output', you: true },
+  { t: 'Fix a mistake', you: true }, { t: 'Compare two plans', you: true }, { t: 'Prompt again', you: true },
+  { t: 'Run the tests yourself', you: true }, { t: 'Open the pull request', you: true }, { t: 'Chase a review', you: true },
+  { t: 'Decode screenshot feedback', you: true },
+];
+const after: B[] = [
+  { t: 'Describe the outcome', you: true }, { t: 'Plan', you: false }, { t: 'Answer one question', you: true },
+  { t: 'Build', you: false }, { t: 'Verify', you: false }, { t: 'Review the Proof Pack', you: true },
+  { t: 'Approve', you: true }, { t: 'Pull request', you: false },
+];
+---
+<div class="dc" data-day>
+  <div class="dc-tabs" role="tablist" aria-label="Compare an engineering day">
+    <button type="button" role="tab" id="dc-tab-before" aria-controls="dc-before" aria-selected="false" data-tab="before">Before</button>
+    <button type="button" role="tab" id="dc-tab-after" aria-controls="dc-after" aria-selected="true" data-tab="after">With Vekrun</button>
+  </div>
+  <div class="dc-panel" role="tabpanel" id="dc-before" aria-labelledby="dc-tab-before" data-panel="before">
+    <p class="dc-cap">You coordinate every step.</p>
+    <ol class="dc-line">{before.map((b, i) => <li class="is-you" style={`--i:${i}`}>{b.t}</li>)}</ol>
+  </div>
+  <div class="dc-panel" role="tabpanel" id="dc-after" aria-labelledby="dc-tab-after" data-panel="after">
+    <p class="dc-cap">You decide and review. Vekrun carries the coordination.</p>
+    <ol class="dc-line">{after.map((b, i) => <li class:list={[b.you ? 'is-you' : 'is-v']} style={`--i:${i}`}>{b.t}</li>)}</ol>
+  </div>
+  <ul class="dc-key" aria-label="Key">
+    <li><span class="is-you" aria-hidden="true"></span>Your time</li>
+    <li><span class="is-v" aria-hidden="true"></span>Handled by Vekrun</li>
+  </ul>
+</div>
+
+<style>
+  .dc { padding: 1.25rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-md); }
+  .dc-tabs { display: inline-flex; padding: 0.2rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); }
+  .dc-tabs button { height: 2.1rem; padding: 0 0.95rem; border-radius: var(--radius-sm); font-size: 0.875rem; font-weight: 560; color: var(--foreground-secondary); }
+  .dc-tabs button[aria-selected='true'] { background: var(--surface-elevated); color: var(--foreground); box-shadow: var(--shadow-sm); }
+  .dc-tabs button:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+  .dc-panel { margin-top: 1rem; }
+  .dc-panel + .dc-panel { margin-top: 1.5rem; }
+  [data-day-js] .dc-panel + .dc-panel { margin-top: 1rem; }
+  .dc-cap { margin: 0; font-size: 0.95rem; font-weight: 560; color: var(--foreground); }
+  .dc-line { margin: 0.8rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .dc-line li { padding: 0.4rem 0.7rem; border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 520; }
+  .dc-line .is-you { background: var(--surface-strong); color: var(--foreground); }
+  .dc-line .is-v { border: 1px dashed var(--border-interactive); color: var(--accent-text); }
+  [data-day-js] .dc-panel:not([hidden]) .dc-line li { animation: dc-in 380ms var(--ease-out) both; animation-delay: calc(var(--i) * 60ms); }
+  @keyframes dc-in { from { opacity: 0; transform: translateY(4px); } }
+  @media (prefers-reduced-motion: reduce) { [data-day-js] .dc-panel:not([hidden]) .dc-line li { animation: none; } }
+  .dc-key { margin: 1.1rem 0 0; padding: 0.9rem 0 0; border-top: 1px solid var(--border); list-style: none; display: flex; gap: 1.2rem; font-size: 0.8rem; color: var(--foreground-secondary); }
+  .dc-key li { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .dc-key span { width: 0.8rem; height: 0.8rem; border-radius: 3px; }
+  .dc-key .is-you { background: var(--surface-strong); }
+  .dc-key .is-v { border: 1px dashed var(--border-interactive); }
+</style>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>('[data-day]')) {
+    root.dataset.dayJs = '';
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-tab]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-panel]'));
+    let touched = false;
+    const select = (k: string, focus = false) => {
+      tabs.forEach((t) => { const on = t.dataset.tab === k; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; if (on && focus) t.focus(); });
+      panels.forEach((p) => { p.hidden = p.dataset.panel !== k; });
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => { touched = true; select(t.dataset.tab!); });
+      t.addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+        e.preventDefault(); touched = true;
+        select(tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]!.dataset.tab!, true);
+      });
+    });
+    select('before');
+    // Show the day before, then switch once to the day with Vekrun when it scrolls into view.
+    if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      let done = false;
+      const io = new IntersectionObserver((es) => {
+        if (done || !es.some((e) => e.isIntersecting)) return;
+        done = true; io.disconnect();
+        setTimeout(() => { if (!touched) select('after'); }, 2600);
+      }, { threshold: 0.5 });
+      io.observe(root);
+    } else select('after');
+  }
+</script>

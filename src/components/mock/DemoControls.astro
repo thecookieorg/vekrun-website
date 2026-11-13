@@ -1,12 +1,12 @@
 ---
-/** Play/pause and replay for a scripted demo, plus the preview notice. Pair with createSequence(). */
+/** Play/pause and replay for a scripted demo, plus an optional note. Pair with createSequence(). */
 import { Pause, Play, RotateCcw } from '@lucide/astro';
 import ConceptNotice from '@/components/ConceptNotice.astro';
 interface Props { notice?: string; class?: string }
 const { notice, class: className = '' } = Astro.props;
 ---
-<div class:list={['mt-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between', className]}>
-  <ConceptNotice class="max-w-xl" text={notice} />
+<div class:list={['mt-4 flex flex-col gap-3 sm:flex-row sm:items-start', notice ? 'sm:justify-between' : 'sm:justify-end', className]}>
+  {notice && <ConceptNotice class="max-w-xl" text={notice} />}
   <div class="flex shrink-0 items-center gap-2" data-demo-controls>
     <button type="button" class="demo-btn" data-demo-play aria-label="Pause or play the demonstration">
       <Play class="demo-icon-play h-3.5 w-3.5" aria-hidden="true" />

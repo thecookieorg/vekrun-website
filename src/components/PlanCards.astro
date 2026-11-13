@@ -1,7 +1,8 @@
 ---
 /**
- * The three plans side by side: Free (the product as it exists), Cloud and
- * Enterprise (planned, no prices, no checkout). `compact` shows a short list
+ * The three plans side by side: Free (the product as it exists), Cloud
+ * (planned, with a proposed price) and Enterprise (planned, custom). Nothing
+ * here can be bought: there is no checkout. `compact` shows a short list
  * for the homepage; the Pricing page shows everything.
  */
 import { Check } from '@lucide/astro';
@@ -19,6 +20,7 @@ const { compact = false, class: className = '' } = Astro.props;
       </div>
       <p class="plan-k">{p.audience}</p>
       <p class="plan-price"><b>{p.price}</b>{p.priceNote && <span>{p.priceNote}</span>}</p>
+      {p.priceAlt && <p class="plan-alt">{p.priceAlt}</p>}
       <p class="plan-p">{p.summary}</p>
       <ul class="plan-list" aria-label={p.planned ? `${p.name}, planned` : `${p.name} includes`}>
         {(compact ? p.features.slice(0, 4) : p.features).map((i) => <li><Check class="h-4 w-4" aria-hidden="true" />{i}</li>)}
@@ -40,7 +42,8 @@ const { compact = false, class: className = '' } = Astro.props;
   .plan-k { margin: 0.4rem 0 0; font-size: 0.875rem; color: var(--foreground-secondary); }
   .plan-price { margin: 1.1rem 0 0; display: flex; align-items: baseline; gap: 0.5rem; min-height: 2.6rem; }
   .plan-price b { font-size: 2.25rem; font-weight: 640; letter-spacing: -0.04em; line-height: 1; color: var(--foreground); }
-  .is-cloud .plan-price b, .is-enterprise .plan-price b { font-size: 1.6rem; letter-spacing: -0.03em; }
+  .is-enterprise .plan-price b { font-size: 1.6rem; letter-spacing: -0.03em; }
+  .plan-alt { margin: 0.4rem 0 0; font-size: 0.8125rem; color: var(--foreground-secondary); }
   .plan-price span { font-size: 0.95rem; color: var(--foreground-secondary); }
   .plan-p { margin: 0.9rem 0 0; font-size: 0.95rem; line-height: 1.55; color: var(--foreground-secondary); }
   .plan-list { margin: 1.2rem 0 0; padding: 1.2rem 0 0; border-top: 1px solid var(--border); list-style: none; display: grid; gap: 0.5rem; font-size: 0.92rem; color: var(--foreground); }

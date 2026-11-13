@@ -17,7 +17,7 @@ export const toolGroups: ToolGroup[] = [
     key: 'models',
     kind: 'models',
     title: 'Vekrun’s native agent',
-    line: 'Vekrun’s own agent does the work. Connect hosted models through OpenRouter, or run open-weight models on your own hardware.',
+    line: 'Vekrun’s own agent does the work. Connect hosted models through OpenRouter, or discover and download local models through Ollama or LM Studio and run them on your own hardware.',
     tools: [
       { id: 'openrouter', name: 'OpenRouter', mono: 'Or' },
       { id: 'ollama', name: 'Ollama', mono: 'Ol' },
@@ -28,7 +28,7 @@ export const toolGroups: ToolGroup[] = [
     key: 'agents',
     kind: 'agents',
     title: 'Optional coding agents',
-    line: 'Prefer a coding-agent CLI? Bring it, signed in with your own account. Each Factory task runs in its own isolated VM. None of them is required.',
+    line: 'Prefer a coding-agent CLI? Bring it, signed in with your own account. Each Factory task runs in its own isolated environment. None of them is required.',
     tools: [
       { id: 'claude-code', name: 'Claude Code', mono: 'Cc' },
       { id: 'codex', name: 'Codex', mono: 'Cx' },

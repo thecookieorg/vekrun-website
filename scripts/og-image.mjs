@@ -10,7 +10,9 @@ const mark = readFileSync('public/brand/vekrun-mark.svg', 'utf8');
 const images = [
   { file: 'default', kicker: 'From idea to verified software', title: 'Your AI engineering team. On your machine.' },
   { file: 'how-it-works', kicker: 'How Vekrun works', title: 'Describe, plan, build, verify, review.' },
-  { file: 'pricing', kicker: 'Pricing', title: 'Free on your machine. Cloud and Enterprise to follow.', foot: 'Vekrun Free costs nothing for individual developers' },
+  { file: 'pricing', kicker: 'Pricing', title: 'Free on your machine. Cloud and Enterprise planned.', foot: 'Vekrun Free costs nothing for individual developers' },
+  { file: 'before-and-after', kicker: 'Before & After', title: 'Stop managing AI agents. Start directing engineering.' },
+  { file: 'product', kicker: 'Product', title: 'Everything your AI engineering team can do.' },
 ];
 
 const page = (i) => `<!doctype html><html><head><style>

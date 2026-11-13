@@ -1,0 +1,103 @@
+---
+/**
+ * Living Architecture Intelligence, as a concept: the parts of a project and
+ * how they relate, then the likely impact of one change. A planned capability,
+ * drawn as an illustration; nothing here reflects how the graph is built.
+ * The markup carries the final state; the script draws the edges in, then
+ * highlights what a change would touch.
+ */
+type N = { id: string; x: number; y: number; t: string; k: 'service' | 'endpoint' | 'data' | 'test' | 'decision' };
+const nodes: N[] = [
+  { id: 'web', x: 90, y: 70, t: 'Checkout web app', k: 'service' },
+  { id: 'mobile', x: 90, y: 290, t: 'Mobile app', k: 'service' },
+  { id: 'api', x: 320, y: 180, t: 'Orders API', k: 'service' },
+  { id: 'hook', x: 560, y: 70, t: 'Payment webhooks', k: 'endpoint' },
+  { id: 'db', x: 560, y: 290, t: 'Orders database', k: 'data' },
+  { id: 'tests', x: 320, y: 330, t: 'Checkout tests', k: 'test' },
+  { id: 'dec', x: 320, y: 40, t: 'Decision: idempotent retries', k: 'decision' },
+];
+const edges: [string, string][] = [['web', 'api'], ['mobile', 'api'], ['api', 'db'], ['hook', 'api'], ['hook', 'db'], ['tests', 'api'], ['dec', 'hook'], ['dec', 'api']];
+const impacted = new Set(['hook', 'api', 'db', 'tests', 'dec']);
+const at = (id: string) => nodes.find((n) => n.id === id)!;
+const W = 200, H = 40;
+const kind = { service: 'Service', endpoint: 'Endpoint', data: 'Data', test: 'Tests', decision: 'Decision' } as const;
+---
+<figure class="ag" data-arch data-impact-on aria-label="Example: a project's architecture as connected parts, with the likely impact of a change highlighted">
+  <div class="ag-head">
+    <span class="ag-change"><span class="ag-dot" aria-hidden="true"></span>Change under review: retry payment webhooks</span>
+    <span class="ag-tag">Concept</span>
+  </div>
+  <div class="ag-scroll" tabindex="0" role="region" aria-label="Architecture graph. Scroll sideways on small screens.">
+    <svg viewBox="-20 0 700 370" class="ag-svg" role="img" aria-label="Checkout web app and mobile app call the Orders API. Payment webhooks write to the Orders API and database. Checkout tests cover the Orders API. A recorded decision about idempotent retries applies to the webhooks and the API. The webhook change may affect the webhooks, Orders API, Orders database, the decision and the checkout tests.">
+      <g class="ag-edges">
+        {edges.map(([a, b], i) => {
+          const A = at(a), B = at(b);
+          const hit = impacted.has(a) && impacted.has(b);
+          return <path d={`M${A.x},${A.y} C${(A.x + B.x) / 2},${A.y} ${(A.x + B.x) / 2},${B.y} ${B.x},${B.y}`} class:list={['ag-e', hit && 'is-hit']} pathLength="1" data-e={i} />;
+        })}
+      </g>
+      <g class="ag-nodes">
+        {nodes.map((n) => (
+          <g class:list={['ag-n', `is-${n.k}`, impacted.has(n.id) && 'is-hit']} transform={`translate(${n.x - W / 2},${n.y - H / 2})`} data-n={n.id}>
+            <rect width={W} height={H} rx="9" />
+            <circle cx="16" cy={H / 2} r="4.5" class="ag-k" />
+            <text x="30" y={H / 2 + 4.5}>{n.t}</text>
+          </g>
+        ))}
+      </g>
+    </svg>
+  </div>
+  <div class="ag-foot">
+    <ul class="ag-legend" aria-label="Legend">
+      {Object.entries(kind).map(([k, l]) => <li class={`is-${k}`}><span aria-hidden="true"></span>{l}</li>)}
+    </ul>
+    <p class="ag-impact" data-impact>May affect 3 components and 1 decision. Re-verify Checkout tests.</p>
+  </div>
+</figure>
+
+<style>
+  .ag { margin: 0; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); overflow: hidden; }
+  .ag-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.8rem 1.1rem; border-bottom: 1px solid var(--border); }
+  .ag-change { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 560; color: var(--foreground); }
+  .ag-dot { width: 0.5rem; height: 0.5rem; border-radius: 999px; background: var(--accent); box-shadow: 0 0 0 4px var(--accent-subtle); }
+  .ag-tag { flex-shrink: 0; padding: 0.05rem 0.4rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.7rem; color: var(--foreground-secondary); }
+  .ag-scroll { overflow-x: auto; padding: 0.75rem 0.5rem; }
+  .ag-scroll:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: -2px; }
+  .ag-svg { display: block; width: 100%; min-width: 34rem; height: auto; }
+  .ag-e { fill: none; stroke: var(--border-strong); stroke-width: 1.5; stroke-dasharray: 1; stroke-dashoffset: 0; transition: stroke-dashoffset 700ms var(--ease-out), stroke var(--dur); }
+  .ag-e.is-off { stroke-dashoffset: 1; }
+  .ag[data-impact-on] .ag-e.is-hit { stroke: var(--accent-text); stroke-width: 2; }
+  .ag-n rect { fill: var(--background); stroke: var(--border); stroke-width: 1; transition: stroke var(--dur), fill var(--dur); }
+  .ag-n text { font-family: var(--font-sans, inherit); font-size: 13.5px; font-weight: 540; fill: var(--foreground); }
+  .ag-n { transition: opacity 400ms var(--ease-out); }
+  .ag-n.is-off { opacity: 0; }
+  .ag[data-impact-on] .ag-n.is-hit rect { stroke: var(--accent-text); stroke-width: 1.5; fill: var(--accent-subtle); }
+  .ag-k { fill: var(--foreground-muted); }
+  .is-service .ag-k, .ag-legend .is-service span { fill: #7aa7ff; background: #7aa7ff; }
+  .is-endpoint .ag-k, .ag-legend .is-endpoint span { fill: #c79bff; background: #c79bff; }
+  .is-data .ag-k, .ag-legend .is-data span { fill: #f2b766; background: #f2b766; }
+  .is-test .ag-k, .ag-legend .is-test span { fill: #6fd3c2; background: #6fd3c2; }
+  .is-decision .ag-k, .ag-legend .is-decision span { fill: var(--accent); background: var(--accent); }
+  .ag-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem 1.5rem; padding: 0.8rem 1.1rem; border-top: 1px solid var(--border); }
+  .ag-legend { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; font-size: 0.78rem; color: var(--foreground-secondary); }
+  .ag-legend li { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .ag-legend span { width: 0.55rem; height: 0.55rem; border-radius: 999px; }
+  .ag-impact { margin: 0; font-size: 0.82rem; font-weight: 560; color: var(--accent-text); transition: opacity var(--dur); }
+  .ag:not([data-impact-on]) .ag-impact { opacity: 0; }
+  @media (prefers-reduced-motion: reduce) { .ag-e, .ag-n, .ag-impact { transition: none; } }
+</style>
+
+<script>
+  import { createSequence, type Step } from '@/scripts/sequence';
+  for (const root of document.querySelectorAll<HTMLElement>('[data-arch]')) {
+    const ns = Array.from(root.querySelectorAll<SVGElement>('[data-n]'));
+    const es = Array.from(root.querySelectorAll<SVGElement>('[data-e]'));
+    const reset = () => { ns.forEach((n) => n.classList.add('is-off')); es.forEach((e) => e.classList.add('is-off')); delete root.dataset.impactOn; };
+    const steps: Step[] = [
+      ...ns.map((n, i) => ({ t: 200 + i * 220, run: () => n.classList.remove('is-off') })),
+      ...es.map((e, i) => ({ t: 1900 + i * 260, run: () => e.classList.remove('is-off') })),
+      { t: 4600, run: () => { root.dataset.impactOn = ''; } },
+    ];
+    createSequence(root, steps, { reset, loopAfter: 6000 });
+  }
+</script>

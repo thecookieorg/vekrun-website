@@ -1,8 +1,10 @@
 ---
 /**
- * The homepage tells one story in seven sections: what Vekrun is, that it
- * works in any stack, how it works, that the models are your choice, the three
- * things only Vekrun does, the plans, and how to get it.
+ * The homepage tells one story: what Vekrun is, that it works in any stack,
+ * how it works, that the models (including local ones you download) are your
+ * choice, the capabilities that set it apart, what changes day to day, the
+ * plans, and how to get it. Depth lives on Product, How It Works and
+ * Before & After; every section here links on.
  */
 import Base from '@/layouts/Base.astro';
 import PageHero from '@/components/PageHero.astro';
@@ -16,20 +18,31 @@ import ModelChoice from '@/components/home/ModelChoice.astro';
 import MemoryDemo from '@/components/home/MemoryDemo.astro';
 import LiveShareDemo from '@/components/home/LiveShareDemo.astro';
 import PlanCards from '@/components/PlanCards.astro';
+import CompareRows from '@/components/compare/CompareRows.astro';
+import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
 import { site, personalCta } from '@/data/site';
-import { ArrowRight, Check } from '@lucide/astro';
+import { toolById } from '@/data/integrations';
+import { projectExamples, highlights } from '@/data/capabilities';
+import { ArrowRight, Check, Download, Globe, Monitor, Users, MousePointerClick, GitPullRequest, Wrench, Mic, Smartphone } from '@lucide/astro';
+
+const hlIcons = { council: Users, browser: MousePointerClick, delivery: GitPullRequest, environments: Wrench, voice: Mic, apps: Smartphone } as const;
+const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : id === 'android' ? 'Android' : id, mono: id.slice(0, 2) };
+const shareTargets = [
+  { id: 'web', name: 'Web' }, { id: 'ios', name: 'iOS' }, { id: 'android', name: 'Android' },
+  { id: 'expo', name: 'Expo' }, { id: 'flutter', name: 'Flutter' }, { id: 'desktop', name: 'Desktop' },
+];
 
 const showcases = [
   {
-    id: 'memory', title: 'Your project shouldn’t start from zero every session.',
-    lede: 'Engineering Memory keeps what Vekrun learns about your project: the repository’s structure, the decisions and why they were made, every Work Item and the evidence behind it, and your team’s own notes. Ask, and the answer comes with its sources.',
-    points: ['Decisions with their rationale and dissent', 'Work Item history and verification evidence', 'Architecture notes, marked as interpretation until the code proves them', 'Your team’s Obsidian vaults, read-only'],
-    href: '/product/#memory', link: 'How Engineering Memory works',
+    id: 'memory', title: 'Software that understands your software.',
+    lede: 'Vekrun builds an evolving understanding of your project, connecting decisions, changes, requirements and evidence, so you work with context instead of starting over every session. Ask a question and the answer comes with its sources.',
+    points: ['Your repository’s structure and conventions', 'Decisions with their reasoning and dissent', 'Work Items linked to their verification evidence', 'Your docs and Obsidian vaults, read-only'],
+    href: '/product/#memory', link: 'Engineering Memory, and what’s next',
   },
   {
-    id: 'live-share', title: 'Don’t send screenshots. Send the app.',
-    lede: 'Live Share puts the app you’re building on a secure link while you build it. Reviewers open it in a browser, point at what’s wrong and say why. Their feedback waits in your Review Inbox until you approve it; then the Factory fixes it and verifies the fix.',
-    points: ['One link that stays the same between sessions', 'Anyone with the link, a password, or off', 'Feedback keeps the page, region and revision', 'Nothing becomes work until you approve it'],
+    id: 'live-share', title: 'Let anyone experience what you’re building.',
+    lede: 'Don’t send screenshots. Send the app. Share an interactive preview with your designer, tester or client while development is still underway. They use it in their browser, point at what’s wrong, and approved feedback becomes verified work.',
+    points: ['Supported web, mobile and desktop previews', 'Nothing for reviewers to install', 'Comments stay tied to their screen or element', 'Nothing becomes work until you approve it'],
     href: '/product/#live-share', link: 'How Live Share works',
   },
   {
@@ -53,16 +66,23 @@ const structuredData = [
 <Base title={site.name} fullTitle={`${site.name} · ${site.headline}`} description={site.description} structuredData={structuredData} page="home">
   <PageHero title={site.headline} subtitle={site.subheadline} lede={site.subheading} cta={personalCta} secondary={{ label: 'See how it works', href: '/how-it-works/' }} wide>
     <ul slot="after" class="trust enter" style="--i: 4" aria-label="Why Vekrun">
-      {site.trust.map((t) => <li><Check class="h-4 w-4" aria-hidden="true" />{t}</li>)}
+      {site.trust.map((t) => t === 'Download local AI models'
+        ? <li class="is-lead"><a href="#models"><Download class="h-4 w-4" aria-hidden="true" />{t}</a></li>
+        : <li><Check class="h-4 w-4" aria-hidden="true" />{t}</li>)}
     </ul>
     <FactoryHero />
   </PageHero>
 
   <section class="section-pad rule" aria-labelledby="stack-title">
     <div class="container-site">
-      <SectionHeading id="stack-title" title="Your stack. Your repository. Your workflow." lede="Vekrun works in the repositories you already have, whatever they’re built with. It reads your project, follows its conventions and runs its own tests." />
+      <SectionHeading id="stack-title" title="Your stack. Your repository. Your workflow." lede="Vekrun isn’t tied to one language or web framework. It works in the repositories you already have, follows their conventions and runs their own tests, across web, mobile, desktop and backend projects." />
     </div>
     <div class="container-wide mt-12"><StackMarquee /></div>
+    <div class="container-site">
+      <ul class="ex" aria-label="Examples of projects Vekrun can help build">
+        {projectExamples.map((e) => <li><span class="ex-logos">{e.logos.map((id) => { const t = logo(id); return <IntegrationLogo id={t.id} name={t.name} monogram={t.mono} size="sm" />; })}</span>{e.title}</li>)}
+      </ul>
+    </div>
   </section>
 
   <section class="section-pad rule bg-bg-elevated" aria-labelledby="how-title">
@@ -75,8 +95,8 @@ const structuredData = [
 
   <section id="models" class="section-pad rule scroll-mt-16" aria-labelledby="models-title">
     <div class="container-site">
-      <SectionHeading id="models-title" title="Your models. Your choice." lede="Use Vekrun’s native agent with OpenRouter or compatible local models. Prefer Claude Code, Codex or Antigravity? Bring them too. They’re optional." />
-      <p class="callout mt-8"><Check class="h-4 w-4" aria-hidden="true" />You don’t need to install or subscribe to Claude Code, Codex or any other coding-agent CLI to use Vekrun.</p>
+      <SectionHeading id="models-title" title="Your AI. Your hardware. Your choice." lede="Connect OpenRouter, or discover and download compatible local models through Vekrun. Run AI on your own hardware, without needing a paid cloud model subscription. Claude Code, Codex and Antigravity are optional." />
+      <p class="callout mt-8"><Check class="h-4 w-4" aria-hidden="true" />You don’t need a paid AI API, or to install or subscribe to Claude Code, Codex or any other coding-agent CLI, to use Vekrun.</p>
       <div class="mt-8"><ModelChoice /></div>
       <p class="mt-8"><a href="/integrations/" class="link-more group">All models and integrations<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
     </div>
@@ -89,6 +109,12 @@ const structuredData = [
           <h2 id={`${s.id}-title`} class="heading-2 text-text">{s.title}</h2>
           <p class="lede mt-4">{s.lede}</p>
           <ul class="show-pts">{s.points.map((p) => <li><Check class="h-4 w-4" aria-hidden="true" />{p}</li>)}</ul>
+          {s.id === 'live-share' && (
+            <ul class="targets" aria-label="App types Live Share supports">
+              {shareTargets.map((t) => <li>{t.id === 'web' ? <Globe class="h-4 w-4" aria-hidden="true" /> : t.id === 'desktop' ? <Monitor class="h-4 w-4" aria-hidden="true" /> : <IntegrationLogo id={t.id} name={t.name} monogram={t.name.slice(0, 2)} size="sm" />}{t.name}</li>)}
+            </ul>
+          )}
+          {s.id === 'memory' && <p class="next"><span class="next-k">Planned</span>Living Architecture Intelligence: a map of how your system fits together and what a change will touch.</p>}
           <p class="mt-8"><a href={s.href} class="link-more group">{s.link}<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
         </div>
         <div class="min-w-0">
@@ -100,9 +126,29 @@ const structuredData = [
     </section>
   ))}
 
+  <section id="more" class="section-pad rule scroll-mt-16" aria-labelledby="more-title">
+    <div class="container-site">
+      <SectionHeading id="more-title" title="More than an AI coding agent." lede="A whole engineering team’s worth of capabilities, working together." />
+      <ul class="hl">
+        {highlights.map((h) => { const I = hlIcons[h.id as keyof typeof hlIcons]; return (
+          <li><a href={`/product/#${h.id}`}><span class="hl-ic"><I class="h-4 w-4" aria-hidden="true" /></span><h3>{h.title}</h3><p>{h.line}</p></a></li>
+        ); })}
+      </ul>
+      <p class="mt-10"><a href="/product/" class="link-more group">Explore every capability<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
+    </div>
+  </section>
+
+  <section id="before-after" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="ba-title">
+    <div class="container-site">
+      <SectionHeading id="ba-title" title="Stop managing AI agents. Start directing engineering." lede="The work around the code, explaining, checking and coordinating, is what Vekrun takes on. You keep the decisions." />
+      <div class="mt-12"><CompareRows ids={['starting', 'verification', 'feedback']} compact /></div>
+      <p class="mt-10"><a href="/before-and-after/" class="link-more group">See all eight moments<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
+    </div>
+  </section>
+
   <section id="pricing" class="section-pad rule scroll-mt-16" aria-labelledby="plans-title">
     <div class="container-site">
-      <SectionHeading id="plans-title" title="Free for individuals. Cloud and Enterprise to follow." lede="The full engineering workflow is free on your own machine. Hosted and self-managed plans are planned." />
+      <SectionHeading id="plans-title" title="Free for individuals. Cloud and Enterprise planned." lede="The full engineering workflow is free on your own machine. Cloud is planned at a proposed $99 per developer per month; Enterprise will be priced to fit." />
       <div class="mt-12"><PlanCards compact /></div>
       <p class="mt-10"><a href="/pricing/" class="link-more group">Compare plans<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
     </div>
@@ -115,6 +161,8 @@ const structuredData = [
   .trust { margin: 1.75rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem 1.4rem; }
   .trust li { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.92rem; font-weight: 520; color: var(--foreground-secondary); }
   .trust :global(svg) { color: var(--accent-text); }
+  .trust .is-lead a { display: inline-flex; align-items: center; gap: 0.45rem; color: var(--foreground); text-decoration: underline; text-decoration-color: var(--border-strong); text-underline-offset: 0.25em; }
+  .trust .is-lead a:hover { text-decoration-color: var(--accent-text); }
   .callout { display: flex; align-items: flex-start; gap: 0.6rem; max-width: 46rem; padding: 0.9rem 1.1rem; border: 1px solid var(--border-interactive); border-radius: var(--radius-md); background: var(--accent-subtle); font-size: 1rem; font-weight: 540; color: var(--foreground); }
   .callout :global(svg) { margin-top: 0.25rem; flex-shrink: 0; color: var(--accent-text); }
   .show { display: grid; gap: 2.5rem; }
@@ -122,4 +170,22 @@ const structuredData = [
   .show-pts { margin: 1.75rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.55rem; }
   .show-pts li { display: flex; gap: 0.55rem; align-items: flex-start; font-size: 0.98rem; color: var(--foreground); }
   .show-pts :global(svg) { margin-top: 0.25rem; flex-shrink: 0; color: var(--accent-text); }
+  .ex { margin: 2.5rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.5rem; }
+  @media (min-width: 40rem) { .ex { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 64rem) { .ex { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .ex li { display: flex; align-items: center; gap: 0.65rem; padding: 0.6rem 0.75rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); font-size: 0.9rem; font-weight: 540; color: var(--foreground); }
+  .ex-logos { display: flex; gap: 0.25rem; flex-shrink: 0; }
+  .targets { margin: 1.5rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .targets li { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.65rem 0.25rem 0.3rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); font-size: 0.86rem; font-weight: 540; color: var(--foreground); }
+  .targets li > :global(svg) { margin-left: 0.3rem; color: var(--foreground); }
+  .next { margin: 1.5rem 0 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem; font-size: 0.92rem; line-height: 1.5; color: var(--foreground-secondary); }
+  .next-k { padding: 0.05rem 0.45rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.72rem; font-weight: 560; }
+  .hl { margin: 2.5rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.75rem; }
+  @media (min-width: 40rem) { .hl { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 64rem) { .hl { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .hl a { display: grid; gap: 0.45rem; height: 100%; padding: 1.3rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); transition: border-color var(--dur-fast), background-color var(--dur-fast); }
+  .hl a:hover { border-color: var(--border-interactive); background: var(--surface-hover); }
+  .hl-ic { display: inline-flex; width: 2rem; height: 2rem; align-items: center; justify-content: center; border-radius: var(--radius-sm); background: var(--accent-subtle); color: var(--accent-text); }
+  .hl h3 { margin: 0.3rem 0 0; font-size: 1.05rem; font-weight: 600; color: var(--foreground); }
+  .hl p { margin: 0; font-size: 0.9rem; line-height: 1.5; color: var(--foreground-secondary); }
 </style>

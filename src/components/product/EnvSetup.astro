@@ -1,0 +1,47 @@
+---
+/**
+ * Environment preparation, as an example: what Vekrun detected in a project,
+ * what it prepared on its own, and the one prerequisite you install yourself.
+ * Demonstration data. Markup is the final state; the script ticks the steps.
+ */
+import { Check, CircleAlert } from '@lucide/astro';
+const detected = ['Ruby 3.3', 'Rails 7.2', 'PostgreSQL 16', 'Redis', 'Node 20', 'Expo'];
+const steps = ['Ruby and gems installed', 'PostgreSQL ready, test database created', 'Redis running for background jobs', 'Node and assets built', 'Test suite runs: 412 tests'];
+---
+<figure class="es" data-env aria-label="Example: Vekrun preparing a Rails and Expo project">
+  <div class="es-head"><span class="es-t">Preparing <b>shop</b></span><span class="es-tag">Example</span></div>
+  <p class="es-k">Detected</p>
+  <ul class="es-chips">{detected.map((d) => <li>{d}</li>)}</ul>
+  <p class="es-k">Prepared automatically</p>
+  <ul class="es-steps">{steps.map((s) => <li data-es><Check class="h-4 w-4" aria-hidden="true" />{s}</li>)}</ul>
+  <p class="es-pre" data-es><CircleAlert class="h-4 w-4" aria-hidden="true" /><span><b>Install once yourself:</b> Xcode, for the iOS build of the Expo app.</span></p>
+</figure>
+
+<style>
+  .es { margin: 0; padding: 1.1rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
+  .es-head { display: flex; align-items: center; justify-content: space-between; font-size: 0.88rem; color: var(--foreground-secondary); }
+  .es-head b { color: var(--foreground); font-weight: 600; }
+  .es-tag { padding: 0.05rem 0.4rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.7rem; }
+  .es-k { margin: 1rem 0 0; font-size: 0.75rem; font-weight: 600; color: var(--foreground-secondary); }
+  .es-chips { margin: 0.45rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .es-chips li { padding: 0.15rem 0.5rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--background); font-size: 0.8rem; color: var(--foreground); }
+  .es-steps { margin: 0.45rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.4rem; }
+  .es-steps li { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--foreground); }
+  .es-steps :global(svg) { flex-shrink: 0; color: var(--accent-text); }
+  .es-pre { margin: 1rem 0 0; display: flex; gap: 0.5rem; align-items: flex-start; padding: 0.65rem 0.75rem; border: 1px dashed var(--border-strong); border-radius: var(--radius-md); font-size: 0.86rem; line-height: 1.45; color: var(--foreground-secondary); }
+  .es-pre :global(svg) { margin-top: 0.1rem; flex-shrink: 0; }
+  .es-pre b { color: var(--foreground); font-weight: 600; }
+  [data-es] { transition: opacity 280ms var(--ease-out); }
+  [data-es].is-off { opacity: 0.25; }
+  [data-es].is-off :global(svg) { opacity: 0; }
+  @media (prefers-reduced-motion: reduce) { [data-es] { transition: none; } }
+</style>
+
+<script>
+  import { createSequence, type Step } from '@/scripts/sequence';
+  for (const root of document.querySelectorAll<HTMLElement>('[data-env]')) {
+    const parts = Array.from(root.querySelectorAll<HTMLElement>('[data-es]'));
+    const steps: Step[] = parts.map((p, i) => ({ t: 500 + i * 900, run: () => p.classList.remove('is-off') }));
+    createSequence(root, steps, { reset: () => parts.forEach((p) => p.classList.add('is-off')), loopAfter: 5000 });
+  }
+</script>

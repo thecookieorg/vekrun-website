@@ -17,7 +17,9 @@ const faq = [
   ['What do I pay for models?', 'Hosted models are billed by the provider you choose, such as OpenRouter, under your own account. Local models run on your hardware. Vekrun adds no markup.'],
   ['Do I need Claude Code, Codex or another coding-agent subscription?', 'No. Vekrun’s native agent runs the workflow with the models you connect. Claude Code, Codex and Antigravity are optional integrations if you already use them.'],
   ['Are custom model connections only for Enterprise?', 'No. Every plan uses the models you choose. Enterprise is about where Vekrun runs and how it’s governed: private deployment, private model infrastructure, SSO, audit and policy.'],
-  ['When will Cloud be available, and what will it cost?', 'Neither is decided. We’ll build Vekrun Cloud when there’s enough demand for it. Join the wishlist and we’ll email you when there’s news.'],
+  ['What will Cloud cost?', 'The proposed price is $99 per developer per month, which is $1,188 per developer per year. Cloud isn’t on sale yet, and the price could change before launch. Join the wishlist to tell us whether it works for you.'],
+  ['Are cloud compute and AI usage included in Cloud?', 'That isn’t decided, and nothing is unlimited. Model usage through your own providers stays billed by them. We’ll publish what Cloud includes before anyone can buy it.'],
+  ['When will Cloud be available?', 'There’s no date yet. We’ll build Vekrun Cloud when there’s enough demand. Wishlist members hear first.'],
   ['Can I buy anything today?', 'Not yet. There is no checkout or billing. Vekrun Free is in early access by email.'],
 ];
 
@@ -29,26 +31,27 @@ const structuredData = [
   { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) },
 ];
 ---
-<Base title="Pricing" fullTitle="Pricing: Free, Cloud and Enterprise · Vekrun" description="Vekrun Free runs the full AI engineering workflow on your machine at no cost. Vekrun Cloud (hosted workspaces) and Enterprise (private deployment and governance) are planned. Join the Cloud wishlist." image="/og/pricing.png" structuredData={structuredData}>
-  <PageHero eyebrow="Pricing" title="Free on your machine. Cloud and Enterprise to follow." lede="The full engineering workflow costs nothing for individual developers. Hosted and self-managed plans are planned, and their prices aren’t set." />
+<Base title="Pricing" fullTitle="Pricing: Free, Cloud and Enterprise · Vekrun" description="Vekrun Free runs the full AI engineering workflow on your machine at no cost. Vekrun Cloud is planned at a proposed $99 per developer per month; Enterprise is custom. Join the Cloud wishlist." image="/og/pricing.png" structuredData={structuredData}>
+  <PageHero eyebrow="Pricing" title="Free on your machine. Cloud and Enterprise planned." lede="The full engineering workflow costs nothing for individual developers. Cloud is planned at a proposed $99 per developer per month, and Enterprise will be priced for your organization. Nothing is on sale yet." />
 
   <section class="rule pb-20 pt-14" aria-label="Plans">
     <div class="container-site">
       <PlanCards />
-      <p class="mt-8 max-w-3xl text-[0.92rem] text-text-2">Every plan uses the models you choose: OpenRouter, local models, or optional coding agents. Model usage is billed by your provider. Cloud and Enterprise capabilities are planned and not available yet.</p>
+      <p class="mt-8 max-w-3xl text-[0.92rem] text-text-2">Every plan uses the models you choose: OpenRouter, local models, or optional coding agents. Custom model connections are in every plan, not only Enterprise; Enterprise is about deployment, governance and control. Model usage is billed by your provider. Cloud and Enterprise are planned and not available yet, and Cloud’s price is a proposal.</p>
     </div>
   </section>
 
   <section id="cloud-wishlist" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="wishlist-title">
     <div class="container-site wl">
       <div>
-        <SectionHeading id="wishlist-title" title="Join the Vekrun Cloud wishlist." lede="We’ll build Vekrun Cloud when enough people want it. Tell us you do, and what you’d use it for." />
+        <SectionHeading id="wishlist-title" title="Join the Vekrun Cloud wishlist." lede="We’re testing demand at a proposed $99 per developer per month. Tell us whether that works for you, and what you’d use Cloud for." />
         <p class="mt-6 max-w-xl text-[0.92rem] leading-relaxed text-text-2">The button opens an email to {site.earlyAccess.email} in your email app, with optional questions filled in. Nothing is sent until you send it. We use your address only for Vekrun Cloud updates; reply “unsubscribe” to be removed. <a href="/privacy/" class="text-accent link-slide">Privacy</a></p>
       </div>
       <div class="wl-card">
         <p class="wl-k">The email asks, optionally:</p>
         <ul class="wl-list">
           <li>Individual, team or enterprise use</li>
+          <li>Whether $99 per developer per month works for you</li>
           <li>The Cloud capability you want most</li>
         </ul>
         <Button href={cloudWishlistMailto} size="lg" class="mt-6" data-wishlist><Mail class="h-4 w-4" aria-hidden="true" />Join the wishlist</Button>
