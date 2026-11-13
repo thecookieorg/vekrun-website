@@ -11,7 +11,7 @@ import {
   siHoneybadger, siAppsignal, siPagerduty, siGithubactions, siDocker, siVercel, siShopify, siFirebase, siFlutter,
   siTauri, siExpo, siRubyonrails, siNextdotjs, siSwift, siKotlin, siAnthropic, siObsidian, siModelcontextprotocol,
   siLaravel, siDjango, siNodedotjs, siReact, siPython, siTypescript, siRuby, siPhp, siGo, siRust, siVuedotjs, siSvelte,
-  siElectron, siMysql, siRedis } from 'simple-icons';
+  siElectron, siMysql, siRedis, siApple, siAndroid } from 'simple-icons';
 
 interface Props { id: string; name: string; monogram: string; size?: 'sm' | 'md' | 'lg'; class?: string }
 const { id, name, monogram, size = 'md', class: className = '' } = Astro.props;
@@ -28,7 +28,7 @@ const map: Record<string, Icon> = {
   tauri: siTauri, obsidian: siObsidian, mcp: siModelcontextprotocol, expo: siExpo, rails: siRubyonrails, nextjs: siNextdotjs, swift: siSwift, kotlin: siKotlin,
   laravel: siLaravel, django: siDjango, nodejs: siNodedotjs, react: siReact, 'react-native': siReact, python: siPython,
   typescript: siTypescript, ruby: siRuby, php: siPhp, go: siGo, rust: siRust, vue: siVuedotjs, svelte: siSvelte,
-  electron: siElectron, mysql: siMysql, redis: siRedis,
+  electron: siElectron, mysql: siMysql, redis: siRedis, ios: siApple, android: siAndroid,
 };
 const icon = map[id];
 const luminance = (hex: string) => {

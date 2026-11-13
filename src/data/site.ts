@@ -57,6 +57,7 @@ export const cloudWishlistMailto = mailto(
     'Add me to the Vekrun Cloud wishlist and email me about Vekrun Cloud. I can unsubscribe by replying "unsubscribe".',
     '',
     'Intended use (Individual / Team / Enterprise):',
+    'Would $99 per developer per month work for you? (Yes / Maybe / No):',
     'The Cloud capability I want most:',
   ].join('\n'),
 );
@@ -68,6 +69,8 @@ export type Plan = {
   name: string;
   price: string;
   priceNote: string;
+  /** A second way to read the price, such as the yearly total. Must be arithmetic on `price`, never a discount nobody agreed. */
+  priceAlt?: string;
   audience: string;
   summary: string;
   /** Planned plans say so on the card. Free is the product as it exists. */
@@ -78,10 +81,15 @@ export type Plan = {
 };
 
 /**
- * Three plans. Free is the product. Cloud and Enterprise are planned: no
- * prices, no checkout, no hosted infrastructure. Custom model connections
- * are in every plan; Enterprise differs by infrastructure and governance.
+ * Three plans. Free is the product. Cloud and Enterprise are planned: Cloud
+ * has a proposed price to test demand against, but nothing is on sale and
+ * there is no checkout. Custom model connections are in every plan;
+ * Enterprise differs by deployment, governance and operational control.
  */
+export const cloudPrice = { monthly: 99, currency: 'USD' } as const;
+export const cloudYearly = cloudPrice.monthly * 12;
+const usd = (n: number) => `$${n.toLocaleString('en-US')}`;
+
 export const plans: Plan[] = [
   {
     key: 'free',
@@ -106,17 +114,18 @@ export const plans: Plan[] = [
   {
     key: 'cloud',
     name: 'Cloud',
-    price: 'Pricing TBD',
-    priceNote: '',
-    audience: 'For individuals and teams who want Vekrun anywhere',
+    price: usd(cloudPrice.monthly),
+    priceNote: 'per developer / month',
+    priceAlt: `${usd(cloudYearly)} per developer per year. Proposed price.`,
+    audience: 'For developers and teams who want Vekrun anywhere',
     summary: 'Hosted workspaces and Factory execution, so work continues when your laptop doesn’t.',
     planned: true,
     status: 'Coming soon',
     features: [
-      'Engineering workspace in the browser',
-      'Continue anywhere, on any device',
-      'Persistent cloud workspaces',
-      'Cloud Factory execution',
+      'Browser-accessible engineering workspaces',
+      'Continue Anywhere, on any device',
+      'Persistent cloud development environments',
+      'Hosted Factory execution options',
       'Shared engineering state',
       'Team collaboration',
       'Managed infrastructure',
@@ -133,13 +142,13 @@ export const plans: Plan[] = [
     planned: true,
     status: 'Planned',
     features: [
-      'Self-hosted or private deployment',
-      'Private model infrastructure',
-      'Organization-wide Engineering Memory',
+      'Self-hosted and private deployments',
+      'Organization governance',
       'SSO and access controls',
-      'Audit and policy governance',
-      'Private execution workers',
-      'Deployment and support options',
+      'Private execution infrastructure',
+      'Private model infrastructure',
+      'Organization-wide engineering intelligence',
+      'Support and deployment options',
     ],
     cta: { label: 'Register interest', href: enterpriseMailto },
   },
@@ -153,6 +162,7 @@ export type NavItem = { label: string; href: string };
 export const primaryNav: NavItem[] = [
   { label: 'Product', href: '/product/' },
   { label: 'How It Works', href: '/how-it-works/' },
+  { label: 'Before & After', href: '/before-and-after/' },
   { label: 'Pricing', href: '/pricing/' },
 ];
 
@@ -189,13 +199,21 @@ export const footerColumns: { title: string; items: NavItem[] }[] = [
 /** Sections of the Product page, used for its in-page index and for redirects. */
 export const productSections: { id: string; label: string }[] = [
   { id: 'models', label: 'Models' },
-  { id: 'memory', label: 'Engineering Memory' },
+  { id: 'council', label: 'Council' },
+  { id: 'memory', label: 'Memory' },
   { id: 'live-share', label: 'Live Share' },
-  { id: 'stack', label: 'Your stack' },
-  { id: 'board', label: 'Board' },
-  { id: 'mobile', label: 'Mobile' },
-  { id: 'tools', label: 'Your tools' },
+  { id: 'browser', label: 'Browser' },
+  { id: 'proof', label: 'Proof Packs' },
+  { id: 'delivery', label: 'Delivery' },
+  { id: 'environments', label: 'Environments' },
+  { id: 'voice', label: 'Voice' },
+  { id: 'apps', label: 'Apps' },
+  { id: 'stack', label: 'Stack' },
+  { id: 'mobile', label: 'On your phone' },
+  { id: 'tools', label: 'Tools' },
 ];
+/** Anchors inside Product sections that old URLs may also point at. */
+export const productSubAnchors = ['architecture', 'board'];
 
 /** Sections of How It Works: the five stages, in order. */
 export const howSections: { id: string; label: string }[] = [

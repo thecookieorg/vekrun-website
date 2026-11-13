@@ -1,0 +1,56 @@
+---
+/**
+ * Voice and Brainstorm, as an example conversation: a question about the
+ * project, a reasoned answer, a challenge, and an approved decision turned
+ * into a proposed Work Item. Demonstration data. Markup is the final state;
+ * the script reveals the turns one by one.
+ */
+import { Mic, ListChecks } from '@lucide/astro';
+const turns = [
+  { who: 'You', t: 'Should saved carts live on the phone or on the server?' },
+  { who: 'Vekrun', t: 'On the server, if they need to follow people between web and mobile. The Orders API already keeps guest carts, so it can extend that.' },
+  { who: 'You', t: 'What could go wrong?' },
+  { who: 'Vekrun', t: 'A cart from before sign-in has to merge with the account’s cart. I’d add a merge rule and tests for it.' },
+];
+---
+<figure class="vd" data-voice aria-label="Example: a brainstorm with Vekrun that ends in a proposed Work Item">
+  <div class="vd-head"><span class="vd-mic"><Mic class="h-3.5 w-3.5" aria-hidden="true" />Brainstorm</span><span class="vd-tag">Example</span></div>
+  <ol class="vd-turns">
+    {turns.map((t) => <li class:list={['vd-turn', t.who === 'You' ? 'is-you' : 'is-v']} data-vd><span class="vd-who">{t.who}</span><p>{t.t}</p></li>)}
+  </ol>
+  <div class="vd-wi" data-vd>
+    <ListChecks class="h-4 w-4" aria-hidden="true" />
+    <div><p class="vd-wi-k">Proposed Work Item</p><p class="vd-wi-t">Saved carts on the Orders API, with a merge rule for sign-in</p></div>
+    <span class="vd-ok">Approve</span>
+  </div>
+</figure>
+
+<style>
+  .vd { margin: 0; padding: 1.1rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
+  .vd-head { display: flex; align-items: center; justify-content: space-between; }
+  .vd-mic { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.2rem 0.55rem; border-radius: 999px; background: var(--accent-subtle); color: var(--accent-text); font-size: 0.78rem; font-weight: 560; }
+  .vd-tag { padding: 0.05rem 0.4rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.7rem; color: var(--foreground-secondary); }
+  .vd-turns { margin: 0.9rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.6rem; }
+  .vd-turn { max-width: 88%; padding: 0.6rem 0.8rem; border-radius: var(--radius-md); background: var(--background); border: 1px solid var(--border); }
+  .vd-turn.is-you { justify-self: end; background: var(--surface-elevated); }
+  .vd-who { font-size: 0.72rem; font-weight: 600; color: var(--foreground-secondary); }
+  .vd-turn p { margin: 0.15rem 0 0; font-size: 0.9rem; line-height: 1.5; color: var(--foreground); }
+  .vd-wi { margin-top: 0.9rem; display: flex; align-items: center; gap: 0.7rem; padding: 0.75rem 0.85rem; border: 1px solid var(--border-interactive); border-radius: var(--radius-md); background: var(--accent-subtle); }
+  .vd-wi > :global(svg) { flex-shrink: 0; color: var(--accent-text); }
+  .vd-wi div { min-width: 0; flex: 1; }
+  .vd-wi-k { margin: 0; font-size: 0.72rem; font-weight: 600; color: var(--accent-text); }
+  .vd-wi-t { margin: 0.1rem 0 0; font-size: 0.88rem; font-weight: 560; color: var(--foreground); }
+  .vd-ok { flex-shrink: 0; padding: 0.3rem 0.6rem; border-radius: var(--radius-sm); background: var(--accent); color: #1b1c23; font-size: 0.78rem; font-weight: 600; }
+  [data-vd].is-off { opacity: 0; transform: translateY(4px); }
+  [data-vd] { transition: opacity 320ms var(--ease-out), transform 320ms var(--ease-out); }
+  @media (prefers-reduced-motion: reduce) { [data-vd] { transition: none; } }
+</style>
+
+<script>
+  import { createSequence, type Step } from '@/scripts/sequence';
+  for (const root of document.querySelectorAll<HTMLElement>('[data-voice]')) {
+    const parts = Array.from(root.querySelectorAll<HTMLElement>('[data-vd]'));
+    const steps: Step[] = parts.map((p, i) => ({ t: 400 + i * 1500, run: () => p.classList.remove('is-off') }));
+    createSequence(root, steps, { reset: () => parts.forEach((p) => p.classList.add('is-off')), loopAfter: 5000 });
+  }
+</script>

@@ -1,0 +1,50 @@
+---
+/**
+ * What kinds of apps a Live Share preview covers, each with how it's
+ * previewed. Web apps open directly; mobile apps stream from the iOS
+ * Simulator or Android emulator; desktop support depends on the target.
+ * Limits are stated under the grid, not hidden.
+ */
+import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
+import { Globe, Monitor } from '@lucide/astro';
+type Target = { id: string; name: string; how: string; kind: 'browser' | 'simulator' | 'selected'; icon?: 'globe' | 'monitor' };
+const targets: Target[] = [
+  { id: 'web', name: 'Web apps', how: 'Rails, Laravel, Django, Next.js and other web apps, live in the reviewer’s browser.', kind: 'browser', icon: 'globe' },
+  { id: 'ios', name: 'iOS', how: 'Native iOS apps, streamed from the iOS Simulator.', kind: 'simulator' },
+  { id: 'android', name: 'Android', how: 'Native Android apps, streamed from the Android emulator.', kind: 'simulator' },
+  { id: 'expo', name: 'Expo and React Native', how: 'Reviewed in the simulator or emulator, without Expo Go on the reviewer’s phone.', kind: 'simulator' },
+  { id: 'flutter', name: 'Flutter', how: 'A web build in the browser, or the mobile app in the simulator or emulator.', kind: 'simulator' },
+  { id: 'swift', name: 'Swift and Kotlin', how: 'Native mobile projects, previewed in the simulator or emulator.', kind: 'simulator' },
+  { id: 'other', name: 'Other web interfaces', how: 'Admin tools, dashboards, docs sites and anything else your project serves locally.', kind: 'browser', icon: 'globe' },
+  { id: 'desktop', name: 'Desktop apps', how: 'Web-based desktop apps such as Tauri and Electron, through their interface. Other targets vary.', kind: 'selected', icon: 'monitor' },
+];
+const label = { browser: 'Browser preview', simulator: 'Simulator preview', selected: 'Selected targets' } as const;
+---
+<ul class="lst" aria-label="Apps you can share with Live Share">
+  {targets.map((t) => (
+    <li class="lst-i">
+      <span class="lst-logo">
+        {t.icon === 'globe' ? <Globe class="h-5 w-5" aria-hidden="true" /> : t.icon === 'monitor' ? <Monitor class="h-5 w-5" aria-hidden="true" /> : <IntegrationLogo id={t.id} name={t.name} monogram={t.name.slice(0, 2)} size="sm" />}
+      </span>
+      <div>
+        <h4>{t.name}</h4>
+        <p class="lst-how">{t.how}</p>
+        <p class:list={['lst-kind', `is-${t.kind}`]}>{label[t.kind]}</p>
+      </div>
+    </li>
+  ))}
+</ul>
+<p class="lst-note">For streamed simulator previews, reviewers don’t need TestFlight, Expo Go or an APK. Those are still how you test on physical devices and release builds; Live Share doesn’t replace device testing or store certification. Physical devices and arbitrary native desktop apps aren’t covered.</p>
+
+<style>
+  .lst { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.75rem; }
+  @media (min-width: 40rem) { .lst { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 64rem) { .lst { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .lst-i { display: flex; gap: 0.8rem; align-items: flex-start; padding: 1.1rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
+  .lst-logo { flex-shrink: 0; display: inline-flex; width: 2.25rem; height: 2.25rem; align-items: center; justify-content: center; border-radius: var(--radius-sm); background: var(--surface-elevated); color: var(--foreground); }
+  .lst h4 { margin: 0.1rem 0 0; font-size: 1rem; font-weight: 600; color: var(--foreground); }
+  .lst-how { margin: 0.3rem 0 0; font-size: 0.86rem; line-height: 1.5; color: var(--foreground-secondary); }
+  .lst-kind { display: inline-block; margin: 0.55rem 0 0; padding: 0.1rem 0.45rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.72rem; font-weight: 540; color: var(--foreground-secondary); }
+  .lst-kind.is-browser { border-color: var(--border-interactive); color: var(--accent-text); background: var(--accent-subtle); }
+  .lst-note { margin: 1.25rem 0 0; max-width: 52rem; font-size: 0.9rem; line-height: 1.55; color: var(--foreground-secondary); }
+</style>

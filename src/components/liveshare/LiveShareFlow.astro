@@ -1,0 +1,52 @@
+---
+/**
+ * Live Share from the reviewer's first click to verified work, in seven
+ * steps. The script walks a highlight down the list; the markup's final state
+ * shows every step complete. Describes the experience, not the transport.
+ */
+import { Share2, Globe, MousePointerClick, MessageSquareText, Inbox, ListChecks, BadgeCheck } from '@lucide/astro';
+const steps = [
+  { i: Share2, t: 'Share the running app', d: 'Turn on Live Share for the app you’re building and send the link.' },
+  { i: Globe, t: 'Open it anywhere', d: 'A designer, tester or client opens it in a normal browser. Nothing to install.' },
+  { i: MousePointerClick, t: 'Use it for real', d: 'They click, scroll and type through the app as it is today.' },
+  { i: MessageSquareText, t: 'Point and comment', d: 'They select the screen or element that’s wrong and say why.' },
+  { i: Inbox, t: 'Feedback reaches you', d: 'Each comment lands in your Review Inbox with its screen and revision.' },
+  { i: ListChecks, t: 'Approve it into work', d: 'Approved feedback becomes a Work Item. Nothing happens without you.' },
+  { i: BadgeCheck, t: 'See it verified', d: 'The change is built and verified, and the reviewer checks it on the same link.' },
+];
+---
+<ol class="lsf" data-lsflow aria-label="How a Live Share review works">
+  {steps.map((s, n) => (
+    <li class="lsf-step is-done" data-lsf={n}>
+      <span class="lsf-icon"><s.i class="h-4 w-4" aria-hidden="true" /></span>
+      <div><h4>{s.t}</h4><p>{s.d}</p></div>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .lsf { position: relative; margin: 0; padding: 0; list-style: none; display: grid; gap: 0.35rem; }
+  .lsf::before { content: ''; position: absolute; left: 1.05rem; top: 1rem; bottom: 1rem; width: 1px; background: var(--border); }
+  .lsf-step { position: relative; display: flex; gap: 0.85rem; align-items: flex-start; padding: 0.55rem 0.6rem 0.55rem 0; transition: opacity var(--dur) var(--ease-out); }
+  .lsf-step.is-todo { opacity: 0.45; }
+  .lsf-icon { position: relative; z-index: 1; flex-shrink: 0; display: inline-flex; width: 2.1rem; height: 2.1rem; align-items: center; justify-content: center; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--foreground-secondary); transition: background-color var(--dur), color var(--dur), border-color var(--dur), box-shadow var(--dur); }
+  .lsf-step.is-done .lsf-icon { background: var(--accent-subtle); border-color: var(--border-interactive); color: var(--accent-text); }
+  .lsf-step.is-now .lsf-icon { background: var(--accent); border-color: var(--accent); color: #1b1c23; box-shadow: var(--glow-accent); }
+  .lsf h4 { margin: 0.2rem 0 0; font-size: 1rem; font-weight: 600; color: var(--foreground); }
+  .lsf p { margin: 0.15rem 0 0; font-size: 0.9rem; line-height: 1.5; color: var(--foreground-secondary); }
+  @media (prefers-reduced-motion: reduce) { .lsf-step, .lsf-icon { transition: none; } }
+</style>
+
+<script>
+  import { createSequence, type Step } from '@/scripts/sequence';
+  for (const root of document.querySelectorAll<HTMLElement>('[data-lsflow]')) {
+    const items = Array.from(root.querySelectorAll<HTMLElement>('[data-lsf]'));
+    const show = (n: number) => items.forEach((el, i) => {
+      el.classList.toggle('is-done', i < n || n === items.length);
+      el.classList.toggle('is-now', i === n);
+      el.classList.toggle('is-todo', i > n && n < items.length);
+    });
+    const steps: Step[] = [...items.map((_, n) => ({ t: 300 + n * 1300, run: () => show(n) })), { t: 300 + items.length * 1300, run: () => show(items.length) }];
+    createSequence(root, steps, { reset: () => show(-1), loopAfter: 3500 });
+  }
+</script>
