@@ -83,7 +83,7 @@ illustration).
 
 | Claim | Where | Status on site | Needs confirmation |
 |---|---|---|---|
-| Native agent runs the workflow with OpenRouter or local models | Home, Product, Integrations, Pricing | Available | No |
+| Native agent runs the workflow with OpenRouter or local models | Home, Product, Integrations, Pricing | Qualified: local models power supported workflows; a fully local autonomous Factory is still being certified | Yes: drop the qualifier once local-only Factory certification passes |
 | Discover and download local models through Ollama / LM Studio, with hardware fit | Home, Product | Available, with Example model library | Yes: confirm LM Studio downloads, and that hardware-fit guidance is shown |
 | Vekrun ships no inference engine; local models don't make every workflow offline | Home, Product | Qualified | No |
 | Claude Code, Codex, Antigravity optional | Everywhere | Available | No |
@@ -101,7 +101,7 @@ illustration).
 | Voice and Brainstorm, decisions into Work Items | Home, Product | Qualified: nothing becomes work without approval | **Yes**: confirm voice input ships, not only text brainstorm |
 | Building iOS, Android, Expo, Flutter, Tauri, Electron apps | Product | Qualified: needs Xcode / Android SDK | **Yes** |
 | Vekrun Mobile for iOS and Android (using Vekrun from a phone) | Product | Available (unchanged from earlier passes) | Yes, if not yet released |
-| Cloud $99 per developer per month, proposed | Home, Pricing | Planned | No |
+| Cloud $99 USD per developer per month, billed monthly, proposed | Home, Pricing | Planned | No |
 | Enterprise custom | Home, Pricing | Planned | No |
 
 The owner has asked that brief claims be trusted as marketing direction
@@ -116,3 +116,16 @@ the $99 price, the capability wanted most). There is no form, database or
 analytics, by the owner's choice. To make it a real signup, connect a form
 service or list provider and replace `cloudWishlistMailto`; until then, the
 inbox is the list.
+
+## Credibility pass (later on 2026-11-12)
+
+Follow-up to an external review of the merged site.
+
+| Item | Decision |
+|---|---|
+| Yearly Cloud price | Removed. Cloud shows $99 USD per developer per month, billed monthly, proposed and subject to change. No yearly figure anywhere. |
+| Native integrations | Owner confirmed that work tracking (Jira, Linear, Asana), monitoring (Sentry, Honeybadger, AppSignal, Datadog), docs and design (Notion, Confluence, Figma, Slack) and Obsidian are built as direct integrations. The Integrations page is unchanged. |
+| Local-only Factory | Qualified wherever local models are sold: they power supported workflows, and running the entire autonomous Factory on a local model alone is still being certified. |
+| Operating systems | macOS is the alpha platform (early access). Windows and Linux are marked Planned on Download; structured data lists macOS only; demo data no longer shows Windows or Linux machines. |
+| Homepage length | Project chips and the six model benefits removed from the homepage (both stay on Product). Desktop height 12.1 → 11.6 screens. |
+| Real workflow example | Not added. It needs a real completed project and its evidence (for example the OpenRouter-only two-Work-Item run, or the cross-model certification once it passes). Supply the request, Work Items, test results and Proof Pack and it can be published as a case study. |

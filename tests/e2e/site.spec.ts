@@ -70,7 +70,6 @@ test.describe('homepage', () => {
       'Free for individuals. Cloud and Enterprise planned.',
       'Hand Vekrun your next outcome.',
     ]);
-    await expect(page.getByRole('list', { name: 'Examples of projects Vekrun can help build' }).getByRole('listitem')).toHaveCount(8);
     for (const a of await page.locator('#more .hl a').evaluateAll((els) => els.map((e) => e.getAttribute('href')!))) expect(a).toMatch(/^\/product\/#/);
     await expect(page.locator('#before-after .ba-row')).toHaveCount(3);
     await expect(page.locator('#before-after').getByRole('link', { name: 'See all eight moments' })).toHaveAttribute('href', '/before-and-after/');
@@ -80,7 +79,7 @@ test.describe('homepage', () => {
   test('makes model independence unmistakable, native agent first', async ({ page }) => {
     await page.goto('/');
     const sec = page.locator('#models');
-    await expect(sec).toContainText('You don’t need a paid AI API, or to install or subscribe to Claude Code, Codex or any other coding-agent CLI, to use Vekrun.');
+    await expect(sec).toContainText('You don’t need Claude Code, Codex or any other coding-agent subscription to use Vekrun.');
     const cards = sec.locator('article');
     await expect(cards.first()).toContainText('Vekrun’s native agent');
     await expect(cards.first()).toContainText('OpenRouter');
@@ -88,7 +87,7 @@ test.describe('homepage', () => {
     await expect(cards.nth(1)).toContainText('None of them is required');
     await expect(sec).toContainText('billed by the provider you choose');
     await expect(cards.first().getByText('Download local AI models')).toBeVisible();
-    for (const t of ['Discover models', 'Download from Vekrun', 'Run locally', 'Connect cloud models', 'Choose per workflow', 'Change your setup']) await expect(cards.first().getByRole('heading', { name: t })).toBeVisible();
+    await expect(sec).toContainText('running the entire autonomous Factory on a local model alone is still being certified');
     const lib = sec.locator('[data-mdl]');
     await expect(lib).toContainText('Example');
     for (const t of ['9.0 GB', 'Runs well on this machine', 'Needs 64 GB of memory', 'Too large', 'Installed', 'Downloads through Ollama']) await expect(lib).toContainText(t);
@@ -167,7 +166,8 @@ test.describe('pricing', () => {
     await expect(free.getByRole('link', { name: 'Request early access' })).toHaveAttribute('href', '/download/');
     await expect(cloud).toContainText('Coming soon');
     await expect(cloud.locator('.plan-price')).toHaveText(/\$99\s*per developer \/ month/);
-    await expect(cloud).toContainText('$1,188 per developer per year. Proposed price.');
+    await expect(cloud).toContainText('USD, billed monthly. Proposed price, subject to change.');
+    await expect(page.locator('main')).not.toContainText(/1,188|per year|annual/i);
     await expect(cloud.getByRole('link', { name: 'Join the wishlist' })).toHaveAttribute('href', '/pricing/#cloud-wishlist');
     await expect(ent).toContainText('Custom');
     await expect(ent.getByRole('link', { name: 'Register interest' })).toHaveAttribute('href', /^mailto:support@vekrunapp\.com\?subject=Vekrun%20Enterprise%20interest/);
@@ -286,6 +286,13 @@ test.describe('live share and privacy', () => {
 });
 
 test.describe('product', () => {
+  test('explains local models in full, qualified', async ({ page }) => {
+    await page.goto('/product/');
+    const sec = page.locator('#models');
+    for (const t of ['Discover models', 'Download from Vekrun', 'Run locally', 'Connect cloud models', 'Choose per workflow', 'Change your setup']) await expect(sec.getByRole('heading', { name: t })).toBeVisible();
+    await expect(sec).toContainText('still being certified');
+  });
+
   test('every product demo plays to completion', async ({ page }) => {
     test.setTimeout(180_000);
     await page.goto('/product/');
@@ -354,6 +361,18 @@ test.describe('product', () => {
     await bf.scrollIntoViewIfNeeded();
     await expect(bf).toHaveAttribute('data-demo', 'done');
     await expect(bf.locator('[data-bf-state]')).toHaveText('Waiting for review');
+  });
+});
+
+test.describe('platforms', () => {
+  test('lists macOS as the alpha platform and Windows and Linux as planned', async ({ page }) => {
+    await page.goto('/');
+    const ld = (await page.locator('script[type="application/ld+json"]').allTextContents()).join(' ');
+    expect(ld).toContain('"operatingSystem":"macOS"');
+    expect(ld).not.toMatch(/Windows|Linux/);
+    await page.goto('/download/');
+    await expect(page.locator('main')).toContainText('Alpha, by early access');
+    await expect(page.locator('main')).toContainText('Planned');
   });
 });
 
