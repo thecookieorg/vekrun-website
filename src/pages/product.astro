@@ -1,36 +1,25 @@
 ---
 /**
- * The Product page: what Vekrun does, in the order a job experiences it.
- * One heading, one sentence and one visual per capability. The section ids are
- * stable: old feature, docs and How it works URLs redirect to them.
+ * The Product page: what Vekrun is made of. Models first (the native agent,
+ * optional coding agents), then Engineering Memory, Live Share, your stack, the
+ * Board, mobile and the hands-on tools. The workflow itself is on How It Works.
+ * Section ids are stable: old feature and docs URLs redirect to them.
  */
 import Base from '@/layouts/Base.astro';
 import ClosingCta from '@/components/ClosingCta.astro';
 import PageHero from '@/components/PageHero.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import Screenshot from '@/components/visuals/Screenshot.astro';
-import Council from '@/components/visuals/Council.astro';
-import JobFlow from '@/components/factory/JobFlow.astro';
+import ModelChoice from '@/components/home/ModelChoice.astro';
+import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
 import BoardFlow from '@/components/factory/BoardFlow.astro';
-import ApprovalsDemo from '@/components/org/ApprovalsDemo.astro';
-import ProofPack from '@/components/factory/ProofPack.astro';
 import MobileHost from '@/components/factory/MobileHost.astro';
 import { productSections } from '@/data/site';
-import { SquareTerminal, FileDiff, GitBranch, MessagesSquare, ArrowRight, Layers, Network, BadgeCheck, GitPullRequest, ShieldCheck, Workflow, Link2, KeyRound, MousePointerClick, Wrench, ScanSearch, Compass, NotebookText, ScrollText } from '@lucide/astro';
+import { stackRows } from '@/data/integrations';
+import { SquareTerminal, FileDiff, GitBranch, MessagesSquare, ArrowRight, Link2, KeyRound, MousePointerClick, Wrench, ScanSearch, Compass, NotebookText, ScrollText } from '@lucide/astro';
 
-const delivery = [
-  { i: Layers, t: 'Work Items in parallel', d: 'A big outcome is planned into pieces that can each be built, tested and shipped on their own.' },
-  { i: Network, t: 'Dependencies respected', d: 'A Work Item starts when what it depends on is in. Independent ones run side by side.' },
-  { i: BadgeCheck, t: 'Verified one by one', d: 'Each piece is proved independently, on the exact commit it was integrated at.' },
-];
-const git = [
-  { i: GitBranch, t: 'Your branches and rules', d: 'Vekrun works inside your branching model and respects protected branches.' },
-  { i: GitPullRequest, t: 'Pull requests, not surprises', d: 'Work arrives as pull or merge requests with the evidence attached.' },
-  { i: ShieldCheck, t: 'Approvals where you want them', d: 'Require a person per Work Item or per merge. Nothing merges past your policy.' },
-  { i: Workflow, t: 'Workflows from a sentence', d: 'Describe how your team ships. Vekrun drafts the workflow and you review it before it’s used.' },
-];
 const share = [
-  { i: Link2, t: 'One permanent HTTPS link', d: 'The app you’re building, live at the same address every time it runs.' },
+  { i: Link2, t: 'One permanent HTTPS link', d: 'The app you’re building, at the same address every time you share it. It’s served from your machine while Live Share is on, not hosted for you.' },
   { i: KeyRound, t: 'You decide who gets in', d: 'Anyone with the link, a password, or off. Sign everyone out whenever you like.' },
   { i: MousePointerClick, t: 'Reviewers point at it', d: 'Clients and teammates select what’s wrong on the page and say why. No account needed.' },
   { i: Wrench, t: 'Approved feedback gets fixed', d: 'Feedback waits in your Review Inbox. Approve it and the Factory fixes it and verifies the fix.' },
@@ -48,108 +37,77 @@ const tools = [
   { i: MessagesSquare, t: 'Coding sessions', d: 'Pair with a model directly when you’d rather drive.' },
 ];
 ---
-<Base title="Product" fullTitle="Product: the AI software engineering Factory · Vekrun" description="How Vekrun works: describe an outcome and the AI Factory plans it into Work Items, builds them with your coding agents inside your Git workflow, verifies each one and delivers reviewable pull requests. Live Share gets your app in front of reviewers on a permanent link.">
-  <PageHero eyebrow="Product" title="Tell Vekrun what to build. It handles the engineering." lede="The AI Factory turns an outcome into verified, reviewable work, across every project you own." cta={{ label: 'Request early access', href: '/download/#early-access' }} secondary={{ label: 'See Live Share', href: '#live-share' }} wide>
-    <Screenshot name="browser-annotate" eager alt="The Vekrun desktop app's Interactive Browser: a checkout page with two numbered comments, each queued as work for a coding agent." caption="The Interactive Browser in the Vekrun desktop app. Point at what’s wrong; each comment becomes verified work." />
+<Base title="Product" fullTitle="Product: your AI engineering team, on your machine · Vekrun" description="Vekrun's native agent runs the engineering workflow with the models you choose: OpenRouter or local models, with Claude Code, Codex and Antigravity as optional integrations. Engineering Memory, Live Share and any stack.">
+  <PageHero eyebrow="Product" title="An AI engineering team that runs on your machine." lede="Vekrun’s own agent, the models you choose, a memory of your project and a way to show the app while you build it." cta={{ label: 'Request early access', href: '/download/' }} secondary={{ label: 'How it works', href: '/how-it-works/' }} wide>
+    <Screenshot name="browser-annotate" eager alt="The Vekrun desktop app's Interactive Browser: a checkout page with two numbered comments, each queued as work for an agent." caption="The Interactive Browser in the Vekrun desktop app. Point at what’s wrong; each comment becomes verified work." />
   </PageHero>
 
   <nav class="pnav" aria-label="On this page">
     <div class="container-site"><ul>{productSections.map((s) => <li><a href={`#${s.id}`}>{s.label}</a></li>)}</ul></div>
   </nav>
 
-  <section id="how" class="section-pad anchor" aria-labelledby="how-title">
+  <section id="models" class="section-pad anchor" aria-labelledby="models-title">
     <div class="container-site">
-      <SectionHeading id="how-title" title="From request to pull request." lede="Seven steps you no longer run by hand." class="reveal" />
-      <div class="mt-12"><JobFlow /></div>
+      <SectionHeading id="models-title" title="Your models. Your choice." lede="Vekrun’s native agent runs the whole workflow with OpenRouter or a local model. Claude Code, Codex and Antigravity are optional: bring them if you already use them." />
+      <div class="mt-12"><ModelChoice /></div>
     </div>
   </section>
 
-  <section id="factory" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="factory-title">
+  <section id="memory" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="memory-title">
     <div class="container-site">
-      <SectionHeading id="factory-title" title="Big outcomes, delivered in pieces." lede="Ask for a whole feature. The Factory plans it into Work Items, runs them in parallel where it can and integrates each one only once it’s proven." class="reveal" />
-      <div class="reveal mt-12"><Screenshot name="project-delivery" alt="Project Delivery in the Vekrun desktop app: an online-store outcome planned into seven Work Items, each marked integrated and verified on its own commit, with dependencies and cost shown." caption="Project Delivery in the Vekrun desktop app. Seven Work Items, each proved on the commit it was integrated at." /></div>
-      <ul class="pts pts-3 reveal-group">
-        {delivery.map((t) => <li><t.i class="h-5 w-5 text-mint" aria-hidden="true" /><h3>{t.t}</h3><p>{t.d}</p></li>)}
+      <SectionHeading id="memory-title" title="Your project shouldn’t start from zero every session." lede="Engineering Memory starts with your repository and your team’s own notes, and grows with every decision the Factory makes." />
+      <div class="mt-12"><Screenshot name="memory-understand" width={1440} height={437} alt="Engineering Memory in the Vekrun desktop app: Understand this project lists what was read (files and languages, manifests and CI, entry points, code map, docs and tests, Git history, interpretations), above Knowledge sources with an Add Obsidian vault button." caption="Engineering Memory in the Vekrun desktop app: project understanding and knowledge sources." /></div>
+      <ul class="pts">
+        {memory.map((t) => <li><t.i class="h-5 w-5 text-accent" aria-hidden="true" /><h3>{t.t}</h3><p>{t.d}</p></li>)}
       </ul>
     </div>
   </section>
 
-  <section id="git" class="section-pad rule anchor" aria-labelledby="git-title">
+  <section id="live-share" class="section-pad rule anchor" aria-labelledby="share-title">
     <div class="container-site">
-      <SectionHeading id="git-title" title="It ships the way your team already ships." lede="Vekrun adapts to your Git workflow instead of asking you to adopt its own." class="reveal" />
-      <ul class="pts reveal-group">
-        {git.map((t) => <li><t.i class="h-5 w-5 text-mint" aria-hidden="true" /><h3>{t.t}</h3><p>{t.d}</p></li>)}
+      <SectionHeading id="share-title" title="Don’t send screenshots. Send the app." lede="Live Share puts the app you’re building on a secure link while you build it. Reviewers point at what’s wrong; the Factory fixes what you approve and proves the fix." />
+      <div class="mt-12"><Screenshot name="liveshare-review" alt="The Live Share Review Inbox in the Vekrun desktop app: a reviewer’s comment about a cramped checkout heading, with the region they selected highlighted on the page and the page, viewport and revision recorded." caption="Live Share’s Review Inbox in the Vekrun desktop app. Each comment keeps the exact region, page and revision it refers to." /></div>
+      <ul class="pts">
+        {share.map((t) => <li><t.i class="h-5 w-5 text-accent" aria-hidden="true" /><h3>{t.t}</h3><p>{t.d}</p></li>)}
+      </ul>
+      <p class="mt-8 text-[0.92rem] text-text-2">Live Share is optional and relays through a gateway Vekrun operates. <a href="/privacy/#live-share" class="text-accent link-slide">What it relays and keeps</a></p>
+    </div>
+  </section>
+
+  <section id="stack" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="stack-title">
+    <div class="container-site">
+      <SectionHeading id="stack-title" title="Built for whole products, in any stack." lede="An Expo app and its Rails API, a Laravel shop, a Tauri desktop client. Vekrun works in your repositories with your project’s own tooling and coordinates the pieces together." />
+      <ul class="plat" aria-label="Technologies">
+        {stackRows.flat().map((t) => <li><IntegrationLogo id={t.id} name={t.name} monogram={t.mono} size="sm" />{t.name}</li>)}
       </ul>
     </div>
   </section>
 
-  <section id="live-share" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="share-title">
+  <section id="board" class="section-pad rule anchor" aria-labelledby="board-title">
     <div class="container-site">
-      <SectionHeading id="share-title" title="Show it running. Get feedback you can act on." lede="Live Share puts the app you’re building on a permanent HTTPS link. Reviewers point at what’s wrong; the Factory fixes what you approve and proves the fix." class="reveal" />
-      <div class="reveal mt-12"><Screenshot name="liveshare-review" alt="The Live Share Review Inbox in the Vekrun desktop app: a reviewer’s comment about a cramped checkout heading, with the region they selected highlighted on the page and the page, viewport and revision recorded." caption="Live Share’s Review Inbox in the Vekrun desktop app. Each comment keeps the exact region, page and revision it refers to." /></div>
-      <ul class="pts reveal-group">
-        {share.map((t) => <li><t.i class="h-5 w-5 text-mint" aria-hidden="true" /><h3>{t.t}</h3><p>{t.d}</p></li>)}
-      </ul>
-      <p class="mt-8 text-[0.92rem] text-text-2 reveal">Live Share is optional and relays through a gateway Vekrun operates. <a href="/privacy/#live-share" class="text-accent link-slide">What it relays and keeps</a></p>
-    </div>
-  </section>
-
-  <section id="council" class="section-pad rule anchor" aria-labelledby="council-title">
-    <div class="container-site">
-      <SectionHeading id="council-title" title="Decisions get argued before they get built." lede="Several models investigate, disagree and settle on an approach. The reasoning stays on record." class="reveal" />
-      <div class="reveal mt-12"><Council /></div>
-    </div>
-  </section>
-
-  <section id="board" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="board-title">
-    <div class="container-site">
-      <SectionHeading id="board-title" title="All your engineering work on one Board." lede="Tickets, pull requests and production errors, each one a job away from a fix." class="reveal" />
-      <div class="reveal mt-12"><BoardFlow /></div>
-    </div>
-  </section>
-
-  <section id="inbox" class="section-pad rule anchor" aria-labelledby="inbox-title">
-    <div class="container-site">
-      <SectionHeading id="inbox-title" title="Only the decisions that need you." lede="Approvals, questions and reviews wait in one Inbox. Everything else keeps moving." class="reveal" />
-      <div class="reveal mt-12"><ApprovalsDemo /></div>
-    </div>
-  </section>
-
-  <section id="verification" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="verify-title">
-    <div class="container-site">
-      <SectionHeading id="verify-title" title="Every result arrives with its proof." lede="Tests, browser checks and an independent verifier, packed into a Proof Pack on the pull request." class="reveal" />
-      <div class="reveal mt-12"><ProofPack full /></div>
-    </div>
-  </section>
-
-  <section id="memory" class="section-pad rule anchor" aria-labelledby="memory-title">
-    <div class="container-site">
-      <SectionHeading id="memory-title" title="It understands your project before it changes it." lede="Engineering Memory starts with your repository and your team’s own notes, and grows with every decision the Factory makes." class="reveal" />
-      <div class="reveal mt-12"><Screenshot name="memory-understand" width={1440} height={437} alt="Engineering Memory in the Vekrun desktop app: Understand this project lists what was read (files and languages, manifests and CI, entry points, code map, docs and tests, Git history, interpretations), above Knowledge sources with an Add Obsidian vault button." caption="Engineering Memory in the Vekrun desktop app: project understanding and knowledge sources." /></div>
-      <ul class="pts reveal-group">
-        {memory.map((t) => <li><t.i class="h-5 w-5 text-mint" aria-hidden="true" /><h3>{t.t}</h3><p>{t.d}</p></li>)}
-      </ul>
+      <SectionHeading id="board-title" title="All your engineering work on one Board." lede="Tickets, pull requests and production errors, each one a job away from a fix." />
+      <div class="mt-12"><BoardFlow /></div>
     </div>
   </section>
 
   <section id="mobile" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="mobile-title">
     <div class="container-site">
-      <SectionHeading id="mobile-title" title="Your Factory, in your pocket." lede="Assign work and approve it from your phone, while your own machine does the building." class="reveal" />
-      <div class="reveal mt-12"><MobileHost /></div>
-      <p class="mt-10 reveal"><a href="/teams/#remote" class="link-more group">Running it for a team? Teams keeps the Factory on your servers<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
+      <SectionHeading id="mobile-title" title="Your Factory, in your pocket." lede="Assign work and approve it from your phone, while your own machine does the building." />
+      <div class="mt-12"><MobileHost /></div>
+      <p class="mt-10"><a href="/pricing/" class="link-more group">Want it hosted or on your servers? See Cloud and Enterprise<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
     </div>
   </section>
 
   <section id="tools" class="section-pad rule anchor" aria-labelledby="tools-title">
     <div class="container-site">
-      <SectionHeading id="tools-title" title="Step in whenever you want." lede="Every job comes with the tools to take over by hand. Your editor stays your editor." class="reveal" />
-      <ul class="pts reveal-group">
-        {tools.map((t) => <li><t.i class="h-5 w-5 text-mint" aria-hidden="true" /><h3>{t.t}</h3><p>{t.d}</p></li>)}
+      <SectionHeading id="tools-title" title="Step in whenever you want." lede="Every job comes with the tools to take over by hand. Your editor stays your editor." />
+      <ul class="pts">
+        {tools.map((t) => <li><t.i class="h-5 w-5 text-accent" aria-hidden="true" /><h3>{t.t}</h3><p>{t.d}</p></li>)}
       </ul>
     </div>
   </section>
 
-  <ClosingCta title="Hand Vekrun the next outcome." class="bg-bg-elevated" />
+  <ClosingCta title="Hand Vekrun your next outcome." class="bg-bg-elevated" />
 </Base>
 
 <style>
@@ -159,8 +117,8 @@ const tools = [
   .pnav ul::-webkit-scrollbar { display: none; }
   .pnav a { display: inline-flex; align-items: center; height: 2rem; padding: 0 0.75rem; border-radius: var(--radius-sm); font-size: 0.875rem; color: var(--text-2); white-space: nowrap; }
   .pnav a:hover { color: var(--text); background: var(--surface); }
-  .split { display: grid; gap: 2.5rem; }
-  @media (min-width: 64rem) { .split { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 4rem; align-items: center; } }
+  .plat { margin: 2.5rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .plat li { display: inline-flex; align-items: center; gap: 0.55rem; padding: 0.4rem 0.85rem 0.4rem 0.45rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); font-size: 0.95rem; color: var(--text); }
   .pts { margin: 3rem 0 0; padding: 0; list-style: none; display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
   @media (min-width: 40rem) { .pts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (min-width: 64rem) { .pts { grid-template-columns: repeat(4, minmax(0, 1fr)); } .pts-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }

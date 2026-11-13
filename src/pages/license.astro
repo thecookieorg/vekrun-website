@@ -2,19 +2,18 @@
 /** Licence: Vekrun is proprietary, all rights reserved. Not a contract. */
 import Base from '@/layouts/Base.astro';
 import PageHero from '@/components/PageHero.astro';
-import { site, personal, teams, pricing, usd } from '@/data/site';
-const t = pricing.teams;
+import { site } from '@/data/site';
 ---
-<Base title="Licence" fullTitle="Licence: Vekrun is proprietary software · Vekrun" description="Vekrun is proprietary software, all rights reserved. Vekrun Personal is free to use; Vekrun Teams is a paid, self-hosted licence.">
+<Base title="Licence" fullTitle="Licence: Vekrun is proprietary software · Vekrun" description="Vekrun is proprietary software, all rights reserved. Vekrun Free costs nothing for individual developers; Cloud and Enterprise are planned.">
   <PageHero eyebrow="Licence" title="Vekrun is proprietary software." lede={site.licence.summary} />
   <section class="rule pb-24 pt-14">
     <div class="container-site prose-site max-w-3xl text-[1.0625rem] leading-relaxed">
       <p class="!mt-0">Vekrun and its source code are owned by Vekrun. All rights reserved. The source code is not public.</p>
       <ul>
-        <li><strong>{personal.name}</strong> is free to use. It isn’t a trial with hidden limits.</li>
-        <li><strong>{teams.name}</strong> is one paid, self-hosted licence: {usd(t.base)} a month for up to {t.includedEngineers} engineers and {usd(t.perAdditionalEngineer)} a month for each additional engineer, as planned launch pricing.</li>
+        <li><strong>Vekrun Free</strong> costs nothing for individual developers. It isn’t a trial with hidden limits.</li>
+        <li><strong>Vekrun Cloud</strong> and <strong>Vekrun Enterprise</strong> are planned. Their terms and prices will be published before either is available.</li>
       </ul>
-      <p>Tools and services you connect, such as coding agents, model providers and Git hosts, keep their own licences and terms.</p>
+      <p>Tools and services you connect, such as model providers, optional coding agents and Git hosts, keep their own licences and terms.</p>
     </div>
   </section>
 </Base>

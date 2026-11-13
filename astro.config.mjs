@@ -10,11 +10,17 @@ const site = 'https://vekrunapp.com';
  * small meta-refresh page with a canonical link to its new home. Every target is
  * a live page; nothing chains through another redirect.
  *
- * The public documentation portal, the public roadmap, How it works and the
- * per-feature pages were retired on 2026-11-01. Their sources are kept in git
- * under the tag archive/docs-and-roadmap-2026-11-01.
+ * The public documentation portal, the public roadmap and the per-feature
+ * pages were retired on 2026-11-01. Their sources are kept in git under the tag
+ * archive/docs-and-roadmap-2026-11-01. Benefits, Before & After and Teams were
+ * retired on 2026-11-13, when pricing became Free, Cloud and Enterprise.
+ *
+ * The workflow sections (council, factory, verification, inbox, git) moved
+ * from Product to How It Works; `product()` sends those anchors there.
  */
-const product = (anchor = '') => `/product/${anchor ? `#${anchor}` : ''}`;
+const howAnchors = new Set(['how', 'council', 'factory', 'verification', 'inbox', 'git']);
+const product = (anchor = '') =>
+  howAnchors.has(anchor) ? `/how-it-works/${anchor === 'how' ? '' : `#${anchor}`}` : `/product/${anchor ? `#${anchor}` : ''}`;
 
 /** Old documentation pages, by topic, to the closest page that now covers it. */
 const docsTargets = {
@@ -25,7 +31,7 @@ const docsTargets = {
   '/docs/getting-started/validating-the-environment/': product('factory'),
   '/docs/getting-started/first-outcome/': product('factory'),
   '/docs/getting-started/inspecting-evidence/': product('verification'),
-  '/docs/getting-started/mobile-and-teams/': '/teams/',
+  '/docs/getting-started/mobile-and-teams/': product('mobile'),
   '/docs/factory/overview/': product('factory'),
   '/docs/factory/planning/': product('council'),
   '/docs/factory/council/': product('council'),
@@ -62,8 +68,8 @@ const docsTargets = {
   '/docs/settings/credentials/': '/security/',
   '/docs/settings/permissions/': '/security/',
   '/docs/settings/data-storage/': '/privacy/',
-  '/docs/ai-coding/choosing-models/': '/integrations/',
-  '/docs/ai-coding/openrouter/': '/integrations/',
+  '/docs/ai-coding/choosing-models/': product('models'),
+  '/docs/ai-coding/openrouter/': product('models'),
   '/docs/ai-coding/coding-sessions/': product('tools'),
   '/docs/ai-coding/editing-code/': product('tools'),
   '/docs/ai-coding/permissions/': '/security/',
@@ -78,7 +84,7 @@ const docsTargets = {
   '/docs/advanced/rust-internals/': product(),
   '/docs/advanced/progress/': product(),
   '/docs/advanced/mcp/': '/integrations/',
-  '/docs/advanced/remote-workers/': '/teams/',
+  '/docs/advanced/remote-workers/': '/pricing/',
   // Older documentation addresses that already redirected once.
   '/docs/ai/providers/': '/integrations/',
   '/docs/ai/agent-modes/': product('tools'),
@@ -100,10 +106,10 @@ const docsTargets = {
   '/docs/getting-started/connecting-ai/': '/integrations/',
   '/docs/getting-started/opening-a-project/': product('factory'),
   '/docs/getting-started/first-launch/': '/download/',
-  '/docs/getting-started/local-models/': '/integrations/',
+  '/docs/getting-started/local-models/': product('models'),
   '/docs/getting-started/terminal-setup/': product('tools'),
   '/docs/terminal/themes/': product('tools'),
-  '/docs/advanced/self-hosting/': '/teams/',
+  '/docs/advanced/self-hosting/': '/pricing/',
   '/docs/advanced/cli/': product(),
   '/docs/advanced/agent-apis/': product(),
   '/docs/advanced/extension-development/': product(),
@@ -130,11 +136,12 @@ export const redirects = {
   '/features/planning/': product('council'),
   '/features/agent-platform/': product(),
   '/features/ai-teams/': product('factory'),
-  '/how-it-works/': product('how'),
   '/roadmap/': product(),
   // Earlier repositioning.
-  '/cloud/': '/teams/',
-  '/pricing/': '/teams/#pricing',
+  '/cloud/': '/pricing/#cloud-wishlist',
+  '/teams/': '/pricing/',
+  '/benefits/': '/',
+  '/before-and-after/': '/how-it-works/',
   '/ai-teams/': product('factory'),
   '/factory/': product('factory'),
   '/open-source/': '/license/',

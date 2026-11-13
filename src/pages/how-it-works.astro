@@ -1,0 +1,113 @@
+---
+/**
+ * How It Works: the five stages of one engineering workflow, each with the
+ * part of Vekrun that does it. Section ids are stable; old Product anchors and
+ * docs URLs redirect here.
+ */
+import Base from '@/layouts/Base.astro';
+import ClosingCta from '@/components/ClosingCta.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import Screenshot from '@/components/visuals/Screenshot.astro';
+import Council from '@/components/visuals/Council.astro';
+import ApprovalsDemo from '@/components/org/ApprovalsDemo.astro';
+import ProofPack from '@/components/factory/ProofPack.astro';
+import HowFlow from '@/components/home/HowFlow.astro';
+import { howSections } from '@/data/site';
+import { Target, Ticket, FileText, Layers, Network, Box, BadgeCheck, GitBranch, GitPullRequest, ShieldCheck, Workflow, FlaskConical, Eye, CircleDashed } from '@lucide/astro';
+
+const describe = [
+  { i: Target, t: 'An outcome, not a prompt chain', d: 'Say what should be true when it’s done: “Saved carts work in the app and the API.”' },
+  { i: Ticket, t: 'Or start from a ticket', d: 'Issues from Jira, Linear or GitHub, and errors from Sentry or Honeybadger, become work for the Factory.' },
+  { i: FileText, t: 'With the context it needs', d: 'Vekrun reads the repository and Engineering Memory before it plans, so you don’t re-explain the project.' },
+];
+const build = [
+  { i: Layers, t: 'Work Items', d: 'A big outcome is planned into pieces that can each be built, tested and shipped on their own.' },
+  { i: Network, t: 'Dependency-aware', d: 'A Work Item starts when what it depends on is in. Independent ones run side by side.' },
+  { i: Box, t: 'Isolated environments', d: 'Each task runs in its own VM, on its own branch, so parallel work never collides.' },
+];
+const verify = [
+  { i: FlaskConical, t: 'Real test runs', d: 'Your project’s tests and browser checks run in an isolated environment.' },
+  { i: BadgeCheck, t: 'Pinned to a revision', d: 'Evidence belongs to the exact commit it was taken on. A new commit means new evidence.' },
+  { i: Eye, t: 'Checked separately', d: 'A verifier, run apart from the agent that wrote the change, checks the result against your request.' },
+  { i: CircleDashed, t: 'Honest about gaps', d: 'What failed, what was fixed and what wasn’t checked are listed, not hidden.' },
+];
+const git = [
+  { i: GitBranch, t: 'Your branches and rules', d: 'Vekrun works inside your branching model and respects protected branches.' },
+  { i: GitPullRequest, t: 'Pull requests, not surprises', d: 'Work arrives as pull or merge requests with the Proof Pack attached.' },
+  { i: ShieldCheck, t: 'Approvals where you want them', d: 'Require a person per Work Item or per merge. Nothing merges past your policy.' },
+  { i: Workflow, t: 'Workflows from a sentence', d: 'Describe how your team ships. Vekrun drafts the workflow and you review it before it’s used.' },
+];
+---
+<Base title="How It Works" fullTitle="How Vekrun works: describe, plan, build, verify, review · Vekrun" description="How Vekrun turns an outcome into verified software: the Council plans it, the Factory builds dependency-aware Work Items in isolated environments, Proof Packs record the evidence and your Git rules decide what merges." image="/og/how-it-works.png">
+  <PageHero eyebrow="How It Works" title="From idea to verified software, in five steps." lede="You describe the outcome and review the result. Vekrun runs the engineering in between, and shows its work." cta={{ label: 'Request early access', href: '/download/' }} secondary={{ label: 'See pricing', href: '/pricing/' }}>
+    <HowFlow />
+  </PageHero>
+
+  <nav class="pnav" aria-label="On this page">
+    <div class="container-site"><ul>{howSections.map((s) => <li><a href={`#${s.id}`}>{s.label}</a></li>)}</ul></div>
+  </nav>
+
+  <section id="describe" class="section-pad anchor" aria-labelledby="describe-title">
+    <div class="container-site">
+      <SectionHeading id="describe-title" kicker="1 · Describe" title="Start with what should be true." lede="Describe the outcome in plain words, or hand Vekrun a ticket or an incident." />
+      <ul class="pts pts-3">
+        {describe.map((t) => <li><t.i class="h-5 w-5 text-accent" aria-hidden="true" /><h3>{t.t}</h3><p>{t.d}</p></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section id="council" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="council-title">
+    <div class="container-site">
+      <SectionHeading id="council-title" kicker="2 · Plan" title="Decisions get argued before they get built." lede="The Coordinator brings in several models as a Council. They investigate, disagree and settle on an approach, and the reasoning and dissent stay on record." />
+      <div class="mt-12"><Council /></div>
+    </div>
+  </section>
+
+  <section id="factory" class="section-pad rule anchor" aria-labelledby="factory-title">
+    <div class="container-site">
+      <SectionHeading id="factory-title" kicker="3 · Build" title="Big outcomes, delivered in pieces." lede="The Factory plans an outcome into Work Items, runs them in parallel where it can and integrates each one only once it’s proven." />
+      <div class="mt-12"><Screenshot name="project-delivery" alt="Project Delivery in the Vekrun desktop app: an online-store outcome planned into seven Work Items, each marked integrated and verified on its own commit, with dependencies and cost shown." caption="Project Delivery in the Vekrun desktop app. Seven Work Items, each proved on the commit it was integrated at." /></div>
+      <ul class="pts pts-3">
+        {build.map((t) => <li><t.i class="h-5 w-5 text-accent" aria-hidden="true" /><h3>{t.t}</h3><p>{t.d}</p></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section id="verification" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="verify-title">
+    <div class="container-site">
+      <SectionHeading id="verify-title" kicker="4 · Verify" title="Done means proven, not just claimed." lede="Every result comes with a Proof Pack: the evidence that it works, and an honest list of what wasn’t checked. Evidence, not a guarantee." />
+      <div class="mt-12"><ProofPack full /></div>
+      <ul class="pts">
+        {verify.map((t) => <li><t.i class="h-5 w-5 text-accent" aria-hidden="true" /><h3>{t.t}</h3><p>{t.d}</p></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section id="git" class="section-pad rule anchor" aria-labelledby="git-title">
+    <div class="container-site">
+      <SectionHeading id="git-title" kicker="5 · Review" title="It ships the way your team already ships." lede="Results arrive as pull requests inside your Git workflow. Only the decisions that need you reach your Inbox." />
+      <ul class="pts">
+        {git.map((t) => <li><t.i class="h-5 w-5 text-accent" aria-hidden="true" /><h3>{t.t}</h3><p>{t.d}</p></li>)}
+      </ul>
+      <div id="inbox" class="anchor mt-12"><ApprovalsDemo /></div>
+    </div>
+  </section>
+
+  <ClosingCta title="Hand Vekrun your next outcome." class="bg-bg-elevated" />
+</Base>
+
+<style>
+  .anchor { scroll-margin-top: 7rem; }
+  .pnav { position: sticky; top: 4rem; z-index: 20; border-block: 1px solid var(--border); background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+  .pnav ul { margin: 0; padding: 0.5rem 0; list-style: none; display: flex; gap: 0.25rem; overflow-x: auto; scrollbar-width: none; }
+  .pnav ul::-webkit-scrollbar { display: none; }
+  .pnav a { display: inline-flex; align-items: center; height: 2rem; padding: 0 0.75rem; border-radius: var(--radius-sm); font-size: 0.875rem; color: var(--text-2); white-space: nowrap; }
+  .pnav a:hover { color: var(--text); background: var(--surface); }
+  .pts { margin: 3rem 0 0; padding: 0; list-style: none; display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  @media (min-width: 40rem) { .pts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 64rem) { .pts { grid-template-columns: repeat(4, minmax(0, 1fr)); } .pts-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .pts li { display: grid; gap: 0.5rem; align-content: start; padding: 1.5rem; background: var(--surface); }
+  .pts h3 { margin: 0.25rem 0 0; font-size: 1.05rem; font-weight: 600; color: var(--text); }
+  .pts p { margin: 0; font-size: 0.92rem; line-height: 1.5; color: var(--text-2); }
+</style>

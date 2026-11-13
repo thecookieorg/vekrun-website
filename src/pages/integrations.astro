@@ -1,7 +1,8 @@
 ---
 /**
- * Integrations, split the way the product splits them: the coding agents and
- * models that do the work, the services Vekrun connects to natively, and
+ * Integrations, split the way the product splits them: the models Vekrun's
+ * native agent runs on (first, because no coding-agent CLI is required), the
+ * optional coding agents, the services Vekrun connects to natively, and
  * anything else through MCP servers the customer adds. Only what ships is
  * listed as a tool; anything planned says so. Logos mean compatibility,
  * never endorsement.
@@ -13,7 +14,7 @@ import SectionHeading from '@/components/SectionHeading.astro';
 import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
 import { toolGroups, platforms, plannedConnections } from '@/data/integrations';
 
-const agentGroups = toolGroups.filter((g) => g.kind === 'agents');
+const agentGroups = toolGroups.filter((g) => g.kind !== 'native');
 const nativeGroups = toolGroups.filter((g) => g.kind === 'native');
 const mcp = [
   ['Local or remote', 'Add any MCP server. A local one starts enabled; a remote one stays off until you turn it on.'],
@@ -21,22 +22,22 @@ const mcp = [
   ['Untrusted by default', 'What a server returns is treated as data, never as instructions.'],
 ];
 const facts = [
-  ['Your accounts, your bills', 'Coding agents use your own subscriptions. Model providers bill you directly. Vekrun adds no markup.'],
-  ['Logins stay yours', 'Coding agents sign in through their own official flow. Vekrun never reads or stores their credentials.'],
+  ['Your accounts, your bills', 'Model providers bill you directly, under your own account. Local models cost nothing to run beyond your hardware. Vekrun adds no markup.'],
+  ['Logins stay yours', 'Optional coding agents sign in through their own official flow. Vekrun never reads or stores their credentials.'],
   ['You choose what agents can touch', 'Each connection says what it can do, and you decide what agents may use.'],
 ];
 ---
-<Base title="Integrations" fullTitle="Integrations: keep the tools you love · Vekrun" description="Vekrun works with Claude Code, Codex, Antigravity CLI, OpenRouter, Ollama, GitHub, GitLab, Jira, Linear, Sentry, Notion, Figma, Slack and Obsidian, plus any MCP server you add.">
-  <PageHero eyebrow="Integrations" title="Keep the tools you love. Let Vekrun coordinate them." lede="Your coding agents and models do the work. Vekrun connects them to your trackers, Git hosts, monitoring and docs, and to any MCP server you add." />
+<Base title="Integrations" fullTitle="Integrations: models, coding agents and tools · Vekrun" description="Vekrun's native agent runs on OpenRouter, Ollama or LM Studio. Claude Code, Codex and Antigravity CLI are optional. Native integrations with GitHub, GitLab, Jira, Linear, Sentry, Notion, Figma, Slack and Obsidian, plus any MCP server you add.">
+  <PageHero eyebrow="Integrations" title="Your models, your tools. Vekrun coordinates them." lede="Vekrun’s native agent does the work with the models you connect; coding-agent CLIs are optional. Vekrun connects to your trackers, Git hosts, monitoring and docs, and to any MCP server you add." />
 
   {agentGroups.map((g, i) => (
     <section class:list={['group-sec rule', i % 2 === 0 && 'bg-bg-elevated']} aria-labelledby={`g-${g.key}`}>
       <div class="container-site group-in">
-        <div class="reveal">
+        <div>
           <h2 id={`g-${g.key}`} class="heading-3 text-text">{g.title}</h2>
           <p class="mt-2 max-w-sm text-[0.98rem] text-text-2">{g.line}</p>
         </div>
-        <ul class="tiles reveal-group">
+        <ul class="tiles">
           {g.tools.map((t) => <li><IntegrationLogo id={t.id} name={t.name} monogram={t.mono} /><span>{t.name}</span></li>)}
         </ul>
       </div>
@@ -45,17 +46,17 @@ const facts = [
 
   <section class="section-pad rule pb-0" aria-labelledby="native-title">
     <div class="container-site">
-      <SectionHeading id="native-title" title="Native integrations." lede="Vekrun connects to these directly. Work comes in as issues and incidents; results go back as pull requests, comments and updates." class="reveal" />
+      <SectionHeading id="native-title" title="Native integrations." lede="Vekrun connects to these directly. Work comes in as issues and incidents; results go back as pull requests, comments and updates." />
     </div>
   </section>
   {nativeGroups.map((g) => (
     <section class="group-sec" aria-labelledby={`g-${g.key}`}>
       <div class="container-site group-in">
-        <div class="reveal">
+        <div>
           <h3 id={`g-${g.key}`} class="heading-3 text-text">{g.title}</h3>
           <p class="mt-2 max-w-sm text-[0.98rem] text-text-2">{g.line}</p>
         </div>
-        <ul class="tiles reveal-group">
+        <ul class="tiles">
           {g.tools.map((t) => <li><IntegrationLogo id={t.id} name={t.name} monogram={t.mono} /><span>{t.name}</span></li>)}
         </ul>
       </div>
@@ -64,21 +65,21 @@ const facts = [
 
   <section id="mcp" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="mcp-title">
     <div class="container-site">
-      <div class="mcp-head reveal">
+      <div class="mcp-head">
         <IntegrationLogo id="mcp" name="Model Context Protocol" monogram="Mc" size="lg" />
-        <SectionHeading id="mcp-title" title="Everything else, through MCP." lede="Databases, cloud consoles, payment dashboards: if a service has an MCP server, your agents can use it, on your terms. A catalog of vendor-published servers is built in." />
+        <SectionHeading id="mcp-title" title="Everything else, through MCP." lede="Databases, cloud consoles, payment dashboards: if a service has an MCP server, Vekrun’s agents can use it, on your terms. A catalog of vendor-published servers is built in." />
       </div>
-      <dl class="facts facts-grid facts-lg reveal-group mt-10">
+      <dl class="facts facts-grid facts-lg mt-10">
         {mcp.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
       </dl>
-      <p class="mt-10 text-[0.95rem] text-text-2 reveal">Planned: {plannedConnections.join('; ')}.</p>
+      <p class="mt-10 text-[0.95rem] text-text-2">Planned: {plannedConnections.join('; ')}.</p>
     </div>
   </section>
 
   <section class="section-pad rule" aria-labelledby="platforms-title">
     <div class="container-site">
-      <SectionHeading id="platforms-title" title="Built for whole products, not single repos." lede="An Expo app and its Rails API, a Shopify storefront, a Tauri desktop client. Vekrun coordinates them together." class="reveal" />
-      <ul class="plat reveal-group" aria-label="Platforms">
+      <SectionHeading id="platforms-title" title="Built for whole products, not single repos." lede="An Expo app and its Rails API, a Shopify storefront, a Tauri desktop client. Vekrun coordinates them together." />
+      <ul class="plat" aria-label="Platforms">
         {platforms.map((t) => <li><IntegrationLogo id={t.id} name={t.name} monogram={t.mono} size="sm" />{t.name}</li>)}
       </ul>
     </div>
@@ -86,11 +87,11 @@ const facts = [
 
   <section class="section-pad rule bg-bg-elevated" aria-labelledby="connect-title">
     <div class="container-site">
-      <SectionHeading id="connect-title" title="Connecting is simple. Staying in control is the point." class="reveal" />
-      <dl class="facts facts-grid facts-lg reveal-group mt-10">
+      <SectionHeading id="connect-title" title="Connecting is simple. Staying in control is the point." />
+      <dl class="facts facts-grid facts-lg mt-10">
         {facts.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
       </dl>
-      <p class="mt-10 text-[0.95rem] text-text-2 reveal">Each service connects its own way: a signed-in CLI, a sign-in with the service, or an API key kept in your system keychain. How data is handled is on the <a href="/security/" class="text-accent link-slide">security page</a>.</p>
+      <p class="mt-10 text-[0.95rem] text-text-2">Each service connects its own way: a signed-in CLI, a sign-in with the service, or an API key kept in your system keychain. How data is handled is on the <a href="/security/" class="text-accent link-slide">security page</a>.</p>
       <p class="mt-6 text-[0.8125rem] text-text-3">Logos are trademarks of their owners and show compatibility, not endorsement.</p>
     </div>
   </section>

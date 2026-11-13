@@ -8,14 +8,17 @@ export const site = {
   domain: 'vekrunapp.com',
   url: 'https://vekrunapp.com',
   /** Category line, used in titles, the footer and structured data. */
-  tagline: 'The AI software engineering Factory.',
-  headline: 'From prompt to verified outcome.',
-  subheading: 'Describe what you want built. Vekrun plans the work, puts your coding agents on it and checks the result before it reaches you.',
+  tagline: 'Your AI engineering team. On your machine.',
+  headline: 'Your AI engineering team. On your machine.',
+  subheadline: 'From idea to verified software.',
+  subheading: 'Describe what you want built. Vekrun plans the work, coordinates AI models, writes and tests code in isolated environments, and delivers results you can verify.',
   description:
-    'Vekrun is a local-first AI software engineering Factory. Describe the outcome; it plans the work, coordinates your coding agents, builds and tests in isolated environments, verifies the result and hands you reviewable work with evidence.',
+    'Vekrun is a local-first AI software engineering platform. Describe an outcome; Vekrun plans the work, coordinates the models you choose, builds and tests in isolated environments and delivers pull requests with the evidence attached. No coding-agent subscription required.',
+  /** Short trust signals under the homepage hero. Each one must stay true. */
+  trust: ['Local-first', 'Model-independent', 'Works with your stack', 'Free for individuals'],
   licence: {
     model: 'Proprietary',
-    summary: 'Vekrun is proprietary software. Vekrun Personal is free to use; Vekrun Teams is a paid, self-hosted licence.',
+    summary: 'Vekrun is proprietary software. Vekrun Free costs nothing for individual developers. Cloud and Enterprise are planned.',
   },
   /**
    * Release facts. These must stay true: flip `downloadAvailable` only when a
@@ -27,101 +30,154 @@ export const site = {
   },
   contact: {
     securityEmail: null as string | null,
-    generalEmail: null as string | null,
+    generalEmail: 'support@vekrunapp.com' as string | null,
   },
   /**
-   * Early access goes to a real inbox by email: a plain mailto link, no form.
+   * Early access and the Cloud wishlist go to a real inbox by email: plain
+   * mailto links, no forms and no third-party form service.
    */
   earlyAccess: {
-    email: 'manoylo@hey.com',
+    email: 'support@vekrunapp.com',
   },
 } as const;
 
+const mailto = (subject: string, body?: string) =>
+  `mailto:${site.earlyAccess.email}?subject=${encodeURIComponent(subject)}${body ? `&body=${encodeURIComponent(body)}` : ''}`;
+
+/** The early access email: subject only, the visitor writes the rest. */
+export const earlyAccessMailto = mailto('Vekrun early access');
+
 /**
- * Two packages. No Cloud plan, no Enterprise plan, no per-task fees.
- * Prices are planned launch pricing: there is no checkout, trial or billing yet.
+ * The Cloud wishlist email. Every field is optional except the address the
+ * visitor sends from; replying "unsubscribe" removes them.
  */
-export const pricing = {
-  currency: 'USD',
-  label: 'Planned launch pricing',
-  /** True only once a real checkout exists. Purchase controls render only then. */
-  purchasable: false,
-  notForSale: 'Planned launch pricing. Vekrun Teams isn’t on sale yet.',
-  teams: { base: 199, includedEngineers: 10, perAdditionalEngineer: 10, calculatorMax: 500 },
-} as const;
+export const cloudWishlistMailto = mailto(
+  'Vekrun Cloud wishlist',
+  [
+    'Add me to the Vekrun Cloud wishlist and email me about Vekrun Cloud. I can unsubscribe by replying "unsubscribe".',
+    '',
+    'Intended use (Individual / Team / Enterprise):',
+    'The Cloud capability I want most:',
+  ].join('\n'),
+);
 
-/** Monthly Vekrun Teams price in USD: 199 + 10 × max(0, engineers − 10). */
-export function teamsMonthly(engineers: number): number {
-  const n = Math.max(1, Math.floor(engineers));
-  return pricing.teams.base + pricing.teams.perAdditionalEngineer * Math.max(0, n - pricing.teams.includedEngineers);
-}
+export const enterpriseMailto = mailto('Vekrun Enterprise interest');
 
-export const usd = (n: number) => `$${n.toLocaleString('en-US')}`;
+export type Plan = {
+  key: 'free' | 'cloud' | 'enterprise';
+  name: string;
+  price: string;
+  priceNote: string;
+  audience: string;
+  summary: string;
+  /** Planned plans say so on the card. Free is the product as it exists. */
+  planned: boolean;
+  status?: string;
+  features: string[];
+  cta: { label: string; href: string };
+};
 
-export const personal = {
-  name: 'Vekrun Personal',
-  price: 'Free',
-  summary: 'The whole Factory on your own machine, for individual engineers.',
-  runsOn: 'Runs on your own computer.',
-  includes: [
-    'AI Factory across all your projects',
-    'Council, Board and Inbox',
-    'Isolated environments and Proof Packs',
-    'Interactive Browser and Live Share',
-    'Engineering Memory, including Obsidian vaults',
-    'Insights',
-    'Vekrun Mobile with your own Host',
-  ],
-  bring: 'Bring your own coding agents, model accounts, local models and compute.',
-} as const;
+/**
+ * Three plans. Free is the product. Cloud and Enterprise are planned: no
+ * prices, no checkout, no hosted infrastructure. Custom model connections
+ * are in every plan; Enterprise differs by infrastructure and governance.
+ */
+export const plans: Plan[] = [
+  {
+    key: 'free',
+    name: 'Free',
+    price: '$0',
+    priceNote: 'forever',
+    audience: 'For individual developers',
+    summary: 'The whole engineering workflow on your own machine, with the models you choose.',
+    planned: false,
+    features: [
+      'Local-first engineering workspace',
+      'Vekrun’s native agent, with your own model connections',
+      'Council and Factory',
+      'Work Items and Git workflows',
+      'Engineering Memory',
+      'Proof Packs',
+      'Live Share',
+      'Bring your own models and local compute',
+    ],
+    cta: { label: 'Request early access', href: '/download/' },
+  },
+  {
+    key: 'cloud',
+    name: 'Cloud',
+    price: 'Pricing TBD',
+    priceNote: '',
+    audience: 'For individuals and teams who want Vekrun anywhere',
+    summary: 'Hosted workspaces and Factory execution, so work continues when your laptop doesn’t.',
+    planned: true,
+    status: 'Coming soon',
+    features: [
+      'Engineering workspace in the browser',
+      'Continue anywhere, on any device',
+      'Persistent cloud workspaces',
+      'Cloud Factory execution',
+      'Shared engineering state',
+      'Team collaboration',
+      'Managed infrastructure',
+    ],
+    cta: { label: 'Join the wishlist', href: '/pricing/#cloud-wishlist' },
+  },
+  {
+    key: 'enterprise',
+    name: 'Enterprise',
+    price: 'Custom',
+    priceNote: '',
+    audience: 'For organizations with infrastructure and compliance requirements',
+    summary: 'Vekrun on your infrastructure, under your policies.',
+    planned: true,
+    status: 'Planned',
+    features: [
+      'Self-hosted or private deployment',
+      'Private model infrastructure',
+      'Organization-wide Engineering Memory',
+      'SSO and access controls',
+      'Audit and policy governance',
+      'Private execution workers',
+      'Deployment and support options',
+    ],
+    cta: { label: 'Register interest', href: enterpriseMailto },
+  },
+];
 
-export const teams = {
-  name: 'Vekrun Teams',
-  href: '/teams/',
-  summary: 'One shared Factory for your engineering organization, on infrastructure you control.',
-  runsOn: 'Will run on your servers. Your team works with it from anywhere.',
-  /** Teams ships after Personal. Pages describe it in the future tense and say so. */
-  availability: 'Vekrun Teams comes after Personal.',
-  earlyAccessHref: '/download/#early-access',
-  includes: [
-    'Everything in Personal, for every engineer',
-    'Remote Factory: hand off and approve work from anywhere',
-    'Shared Coordinator on your servers',
-    'Shared Board, Inbox and Factory queues',
-    'SSO, roles and permissions',
-    'Approvals, policies and audit',
-    'Team-wide Memory and Insights',
-  ],
-  notIncluded: ['Model and API usage, billed by your providers', 'Your servers and workers'],
-} as const;
+export const planByKey = (k: Plan['key']) => plans.find((p) => p.key === k)!;
 
 export type NavItem = { label: string; href: string };
 
-/** The five primary destinations. Confirmed; keep the order. */
+/** The primary destinations. "Get Vekrun" is the header's call to action. */
 export const primaryNav: NavItem[] = [
   { label: 'Product', href: '/product/' },
-  { label: 'Benefits', href: '/benefits/' },
-  { label: 'Before & After', href: '/before-and-after/' },
-  { label: 'Integrations', href: '/integrations/' },
-  { label: 'Teams & Pricing', href: '/teams/' },
+  { label: 'How It Works', href: '/how-it-works/' },
+  { label: 'Pricing', href: '/pricing/' },
 ];
 
 /** The header call to action: the Get Vekrun page, with early access first. */
-export const primaryCta: NavItem = { label: 'Get early access', href: '/download/' };
+export const primaryCta: NavItem = { label: 'Get Vekrun', href: '/download/' };
 
 /**
  * The two conversion paths, used wherever a page ends. Early access is a real
  * email to the team (see `site.earlyAccess`); there is no public download yet.
  */
-export const personalCta: NavItem = { label: 'Request early access', href: '/download/#early-access' };
-export const teamsCta: NavItem = { label: 'Explore Vekrun Teams', href: '/teams/' };
+export const personalCta: NavItem = { label: 'Request early access', href: '/download/' };
+export const pricingCta: NavItem = { label: 'See pricing', href: '/pricing/' };
 
 export const footerColumns: { title: string; items: NavItem[] }[] = [
-  { title: 'Vekrun', items: primaryNav },
+  {
+    title: 'Vekrun',
+    items: [
+      ...primaryNav,
+      { label: 'Integrations', href: '/integrations/' },
+      { label: 'Get Vekrun', href: '/download/' },
+    ],
+  },
   {
     title: 'More',
     items: [
-      { label: 'Get Vekrun', href: '/download/' },
       { label: 'Security', href: '/security/' },
       { label: 'Privacy', href: '/privacy/' },
       { label: 'Licence', href: '/license/' },
@@ -132,15 +188,20 @@ export const footerColumns: { title: string; items: NavItem[] }[] = [
 
 /** Sections of the Product page, used for its in-page index and for redirects. */
 export const productSections: { id: string; label: string }[] = [
-  { id: 'how', label: 'How it works' },
-  { id: 'factory', label: 'Delivery' },
-  { id: 'git', label: 'Git workflow' },
+  { id: 'models', label: 'Models' },
+  { id: 'memory', label: 'Engineering Memory' },
   { id: 'live-share', label: 'Live Share' },
-  { id: 'council', label: 'Council' },
+  { id: 'stack', label: 'Your stack' },
   { id: 'board', label: 'Board' },
-  { id: 'inbox', label: 'Inbox' },
-  { id: 'verification', label: 'Verification' },
-  { id: 'memory', label: 'Memory' },
   { id: 'mobile', label: 'Mobile' },
   { id: 'tools', label: 'Your tools' },
+];
+
+/** Sections of How It Works: the five stages, in order. */
+export const howSections: { id: string; label: string }[] = [
+  { id: 'describe', label: 'Describe' },
+  { id: 'council', label: 'Plan' },
+  { id: 'factory', label: 'Build' },
+  { id: 'verification', label: 'Verify' },
+  { id: 'git', label: 'Review' },
 ];

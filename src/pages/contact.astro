@@ -4,13 +4,14 @@ import Base from '@/layouts/Base.astro';
 import PageHero from '@/components/PageHero.astro';
 import { site } from '@/data/site';
 ---
-<Base title="Contact" fullTitle="Contact · Vekrun" description="How to reach Vekrun.">
+<Base title="Contact" fullTitle="Contact · Vekrun" description="How to reach Vekrun: early access, the Cloud wishlist, Enterprise interest and security reports.">
   <PageHero eyebrow="Contact" title="Get in touch." lede={site.contact.generalEmail ? `Email ${site.contact.generalEmail}.` : 'A public address will be published here before the first release.'} />
   <section class="rule pb-24 pt-14">
     <div class="container-site">
       <dl class="facts facts-grid facts-lg max-w-3xl">
         <div><dt>Early access</dt><dd>Request it on the <a href="/download/#early-access" class="text-accent link-slide">Get Vekrun page</a>, or email {site.earlyAccess.email}.</dd></div>
-        <div><dt>Vekrun Teams</dt><dd>Plans and pricing are on the <a href="/teams/" class="text-accent link-slide">Teams page</a>.</dd></div>
+        <div><dt>Vekrun Cloud</dt><dd>Join the wishlist on the <a href="/pricing/#cloud-wishlist" class="text-accent link-slide">Pricing page</a>.</dd></div>
+        <div><dt>Enterprise</dt><dd>Email {site.earlyAccess.email} with what your organization needs, or see <a href="/pricing/" class="text-accent link-slide">Pricing</a>.</dd></div>
         <div><dt>Security reports</dt><dd>Never in a public issue. See the <a href="/security/" class="text-accent link-slide">security page</a>.</dd></div>
       </dl>
     </div>

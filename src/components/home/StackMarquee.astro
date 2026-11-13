@@ -1,0 +1,41 @@
+---
+/**
+ * The stacks Vekrun works in, as two slow marquees moving in opposite
+ * directions. Each row is rendered twice and translated by half its width, so
+ * the loop is seamless. Hover or keyboard focus pauses it; under reduced motion
+ * the rows stand still and wrap so every logo is visible.
+ */
+import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
+import { stackRows } from '@/data/integrations';
+---
+<div class="mq" role="region" aria-label="Technologies Vekrun works with">
+  <ul class="sr-only">{stackRows.flat().map((t) => <li>{t.name}</li>)}</ul>
+  {stackRows.map((row, r) => (
+    <div class:list={['mq-row', r % 2 === 1 && 'is-reverse']} aria-hidden="true">
+      <div class="mq-track">
+        {[0, 1].map((copy) => (
+          <ul class="mq-set" data-copy={copy}>
+            {row.map((t) => <li><IntegrationLogo id={t.id} name={t.name} monogram={t.mono} size="sm" /><span>{t.name}</span></li>)}
+          </ul>
+        ))}
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .mq { display: grid; gap: 0.75rem; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+  .mq-row { overflow: hidden; }
+  .mq-track { display: flex; width: max-content; animation: mq-slide 70s linear infinite; }
+  .mq-row.is-reverse .mq-track { animation-direction: reverse; animation-duration: 80s; }
+  .mq:hover .mq-track, .mq:focus-within .mq-track { animation-play-state: paused; }
+  .mq-set { margin: 0; padding: 0 0.75rem 0 0; list-style: none; display: flex; gap: 0.75rem; }
+  .mq-set li { display: inline-flex; align-items: center; gap: 0.6rem; height: 3rem; padding: 0 1rem 0 0.6rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); font-size: 0.95rem; font-weight: 540; color: var(--foreground); white-space: nowrap; }
+  @keyframes mq-slide { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) {
+    .mq { mask-image: none; -webkit-mask-image: none; }
+    .mq-track { animation: none; width: auto; }
+    .mq-set { flex-wrap: wrap; padding: 0; }
+    .mq-set[data-copy='1'] { display: none; }
+  }
+</style>
