@@ -2,7 +2,7 @@
 /**
  * Model independence, made unmistakable: Vekrun's native agent comes first and
  * leads with discovering and downloading local models (through supported
- * runtimes such as Ollama and LM Studio), then hosted models through OpenRouter.
+ * through Ollama; LM Studio models are connected, not downloaded by Vekrun), then hosted models through OpenRouter.
  * Third-party coding-agent CLIs are a separate, optional group.
  *
  * The model library is an example with demonstration data, not a working
@@ -18,7 +18,7 @@ const models = modelIds.map((id) => toolById(id)!);
 const agents = agentIds.map((id) => toolById(id)!);
 const benefits = [
   { i: Search, t: 'Discover models', d: 'Browse available models and see which ones suit your hardware before you download.' },
-  { i: Download, t: 'Download from Vekrun', d: 'Install supported models through a local runtime such as Ollama, with progress as it goes.' },
+  { i: Download, t: 'Download from Vekrun', d: 'Install compatible models through Vekrun’s Ollama integration, with progress as it goes. Already use LM Studio? Connect the models it serves.' },
   { i: HardDrive, t: 'Run locally', d: 'Inference stays on your own hardware, without hosted inference charges.' },
   { i: KeyRound, t: 'Connect cloud models', d: 'Prefer hosted models? Use compatible ones through OpenRouter with your own key.' },
   { i: SlidersHorizontal, t: 'Choose per workflow', d: 'Decide which models power each supported engineering workflow.' },
