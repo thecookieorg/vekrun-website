@@ -99,7 +99,13 @@ const provisioning = [
   'The server appears as a place the Factory can run',
   'Work Items run there, and come back verified',
 ];
-const providers = ['Hetzner', 'DigitalOcean', 'Vultr', 'Akamai Linode', 'AWS'];
+const providers = [
+  { id: 'hetzner', name: 'Hetzner', mono: 'HZ' },
+  { id: 'digitalocean', name: 'DigitalOcean', mono: 'DO' },
+  { id: 'vultr', name: 'Vultr', mono: 'VU' },
+  { id: 'akamai', name: 'Akamai Linode', mono: 'AK' },
+  { id: 'aws', name: 'AWS', mono: 'AW' },
+];
 const secure = [
   { t: 'Closed by default', d: 'Inbound traffic is denied unless it’s needed.' },
   { t: 'Private access', d: 'Reach the server over a private network such as Tailscale, then close public SSH once private access works.' },
@@ -378,7 +384,7 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
         <div>
           <h3 class="h3">From zero to a working server.</h3>
           <ol class="prov">{provisioning.map((c, i) => <li><span>{i + 1}</span>{c}</li>)}</ol>
-          <ul class="prov-p" aria-label="Hosting providers we intend to support">{providers.map((p) => <li>{p}</li>)}<li>Any existing server</li></ul>
+          <ul class="prov-p" aria-label="Hosting providers we intend to support">{providers.map((p) => <li><IntegrationLogo id={p.id} name={p.name} monogram={p.mono} size="sm" />{p.name}</li>)}<li><span class="prov-srv"><Server class="h-3.5 w-3.5" aria-hidden="true" /></span>Any existing server</li></ul>
           <p class="fine">These providers are integration targets, not finished integrations. Vekrun will use provider APIs and command-line tools where they help, and a provider-independent path for servers you already have.</p>
         </div>
       </div>
@@ -552,7 +558,8 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
   .prov li { display: flex; align-items: center; gap: 0.7rem; font-size: 0.95rem; color: var(--foreground); }
   .prov span { display: inline-grid; place-items: center; flex-shrink: 0; width: 1.6rem; height: 1.6rem; border-radius: 999px; background: var(--accent-subtle); font-size: 0.78rem; font-weight: 640; color: var(--accent-text); }
   .prov-p { margin: 1.25rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; }
-  .prov-p li { padding: 0.25rem 0.65rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); font-size: 0.84rem; color: var(--foreground); }
+  .prov-p li { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0.7rem 0.3rem 0.35rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); font-size: 0.84rem; color: var(--foreground); }
+  .prov-srv { display: inline-grid; place-items: center; width: 1.5rem; height: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface-elevated); color: var(--foreground-secondary); }
   .sec { margin: 2rem 0 0; padding: 0; list-style: none; display: grid; gap: 1px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--border); }
   @media (min-width: 40rem) { .sec { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (min-width: 64rem) { .sec { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
