@@ -17,7 +17,10 @@ const steps = [
 <ol class="hf" data-howflow aria-label="How Vekrun works">
   {steps.map((s, n) => (
     <li class="hf-step is-done" data-hf={n}>
-      <span class="hf-icon"><s.i class="h-4 w-4" aria-hidden="true" /></span>
+      <div class="hf-top">
+        <span class="hf-icon"><s.i class="h-4 w-4" aria-hidden="true" /></span>
+        <span class="hf-n" aria-hidden="true">{n + 1}</span>
+      </div>
       <h3>{s.t}</h3>
       <p>{s.d}</p>
       <span class="hf-chip">{s.c}</span>
@@ -29,17 +32,19 @@ const steps = [
   .hf { position: relative; margin: 0; padding: 0; list-style: none; display: grid; gap: 0.75rem; }
   @media (min-width: 40rem) { .hf { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (min-width: 60rem) { .hf { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-  @media (min-width: 80rem) { .hf { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
-  .hf-step { position: relative; display: grid; align-content: start; gap: 0.45rem; padding: 1.25rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); transition: border-color var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out), opacity var(--dur) var(--ease-out); }
+  .hf-step { position: relative; display: flex; flex-direction: column; padding: 1.25rem 1.35rem 0; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); transition: border-color var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out), opacity var(--dur) var(--ease-out); }
   .hf-step.is-todo { opacity: 0.55; }
   .hf-step.is-now { border-color: var(--border-interactive); box-shadow: var(--glow-accent); opacity: 1; }
+  .hf-top { display: flex; align-items: center; justify-content: space-between; }
   .hf-icon { display: inline-flex; width: 2rem; height: 2rem; align-items: center; justify-content: center; border-radius: var(--radius-sm); background: var(--surface-elevated); color: var(--foreground-secondary); transition: background-color var(--dur), color var(--dur); }
   .hf-step.is-done .hf-icon, .hf-step.is-now .hf-icon { background: var(--accent-subtle); color: var(--accent-text); }
-  .hf-step h3 { margin: 0.35rem 0 0; font-size: 1.1rem; font-weight: 600; letter-spacing: -0.015em; color: var(--foreground); }
-  .hf-step p { margin: 0; font-size: 0.9rem; line-height: 1.5; color: var(--foreground-secondary); }
-  .hf-chip { justify-self: start; margin-top: 0.35rem; padding: 0.2rem 0.5rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 0.7rem; color: var(--foreground-secondary); }
-  .hf-step.is-now .hf-chip { border-color: var(--border-interactive); color: var(--accent-text); }
-  @media (prefers-reduced-motion: reduce) { .hf-step, .hf-icon { transition: none; } }
+  .hf-n { font-size: 0.85rem; font-weight: 560; font-variant-numeric: tabular-nums; color: var(--foreground-muted); }
+  .hf-step.is-now .hf-n { color: var(--accent-text); }
+  .hf-step h3 { margin: 0.9rem 0 0; font-size: 1.1rem; font-weight: 600; letter-spacing: -0.015em; color: var(--foreground); }
+  .hf-step p { margin: 0.35rem 0 1.1rem; font-size: 0.92rem; line-height: 1.5; color: var(--foreground-secondary); }
+  .hf-chip { margin: auto -1.35rem 0; padding: 0.7rem 1.35rem; border-top: 1px solid var(--border); font-size: 0.8rem; font-weight: 520; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--foreground-secondary); transition: color var(--dur); }
+  .hf-step.is-now .hf-chip, .hf-step.is-done .hf-chip { color: var(--accent-text); }
+  @media (prefers-reduced-motion: reduce) { .hf-step, .hf-icon, .hf-chip { transition: none; } }
 </style>
 
 <script>

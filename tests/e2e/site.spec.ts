@@ -20,6 +20,7 @@ test.describe('every page', () => {
       await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /^https:\/\/vekrunapp\.com\/og\/.+\.png$/);
       const main = page.locator('main');
       await expect(main).not.toContainText(statusWords);
+      await expect(main, 'no Planned labels').not.toContainText(/\bPlanned\b/);
       await expect(main).not.toContainText(/Vekrun is (free and )?open[- ]source|Apache License|AI-native terminal|Vekrun Personal/i);
       await expect(main, 'no old Cloud or Enterprise plans').not.toContainText(/Vekrun Cloud|Cloud wishlist|Vekrun Enterprise|Enterprise (tier|plan) is|\$99|per developer/i);
       await expect(main).not.toContainText(/requires? (Claude Code|Codex)|(Claude Code|Codex) (is|are) required/i);
@@ -175,7 +176,7 @@ test.describe('pricing', () => {
     await expect(teams.locator('.plan-price')).toHaveText(/\$199\s*per month, includes 10 engineers/);
     await expect(teams).toContainText('USD. $10 per month for each additional engineer.');
     await expect(teams).toContainText('self-hosted');
-    await expect(teams).toContainText('Planned. Not available yet.');
+    await expect(teams).toContainText('Not available yet.');
     await expect(teams.getByRole('link', { name: 'Register Teams interest' })).toHaveAttribute('href', /^mailto:support@vekrunapp\.com\?subject=Vekrun%20Teams%20interest&body=/);
     await expect(page.locator('main')).toContainText('Vekrun charges no usage fees');
     await expect(teams.locator('li').first()).toHaveText(/Shared Engineering Memory/);
@@ -233,7 +234,7 @@ test.describe('pricing', () => {
   test('compares personal engineering with team coordination', async ({ page }) => {
     await page.goto('/pricing/');
     const table = page.getByRole('table');
-    await expect(table.locator('thead th')).toHaveText(['Compared', 'Free', /Teams\s*Planned/]);
+    await expect(table.locator('thead th')).toHaveText(['Compared', 'Free', 'Teams']);
     await expect(table.locator('tbody tr')).toHaveCount(12);
     await expect(table.locator('tbody tr').nth(1)).toContainText('Personal Engineering Memory');
     await expect(table.getByRole('row', { name: /Remote execution/ })).toContainText('personal remote execution on your own VPS');
@@ -258,7 +259,7 @@ test.describe('pricing', () => {
     expect(faqLd.mainEntity.length).toBe(await page.locator('details.faq-i').count());
     const app = ld.find((d) => d['@type'] === 'SoftwareApplication');
     expect(app.offers).toEqual([{ '@type': 'Offer', name: 'Vekrun Free', price: '0', priceCurrency: 'USD' }]);
-    expect(await page.locator('meta[name="description"]').getAttribute('content')).toMatch(/Vekrun Teams is planned and self-hosted: \$199 USD per month for up to 10 engineers, plus \$10 per additional engineer\./);
+    expect(await page.locator('meta[name="description"]').getAttribute('content')).toMatch(/Vekrun Teams is self-hosted: \$199 USD per month for up to 10 engineers, plus \$10 per additional engineer\./);
   });
 
   test('the homepage summarizes both plans and links to Teams', async ({ page }) => {
@@ -417,7 +418,7 @@ test.describe('live share and privacy', () => {
     await expect(page.locator('main')).toContainText('Antigravity CLI');
     await expect(page.locator('main')).not.toContainText(/Gemini CLI|Kamal|Vercel|PagerDuty/);
     await expect(page.getByRole('heading', { name: 'Native integrations.' })).toBeVisible();
-    await expect(page.locator('#mcp')).toContainText('Planned: Asana tools for agents');
+    await expect(page.locator('#mcp')).toContainText('Coming soon: Asana tools for agents');
   });
 });
 
@@ -479,8 +480,7 @@ test.describe('product', () => {
     for (const k of ['Architecture Explorer', 'Git Time Machine', 'Change Impact Intelligence', 'Revision-bound graphs']) await expect(page.locator('#architecture')).toContainText(k);
     await expect(page.locator('#architecture')).toContainText('marked as inferred');
     await expect(page.locator('#memory').getByRole('link', { name: 'Vekrun Teams' })).toHaveAttribute('href', '/teams/');
-    await expect(page.locator('#work-anywhere .state')).toHaveText('Planned · Free and Teams');
-    await expect(page.locator('#next .state')).toHaveText('Planned');
+    await expect(page.locator('#work-anywhere .state')).toHaveText('Free and Teams');
     await expect(page.locator('#next h3')).toHaveText(['Safer autonomous delivery', 'Learning from engineering evidence', 'Connected developer workspaces']);
     await expect(page.locator('#next')).toContainText('CLI and MCP work today');
     await expect(page.locator('#next')).toContainText('PR Guardian already merges when you authorize it');
@@ -523,7 +523,7 @@ test.describe('platforms', () => {
     await expect(page.locator('main')).toContainText('Alpha, by early access');
     await expect(page.getByRole('list', { name: 'What to expect from early access' })).toContainText('Apple Silicon or Intel');
     await expect(page.locator('main')).not.toContainText(/batch|waitlist position|within \d+ days/i);
-    await expect(page.locator('main')).toContainText('Planned');
+    await expect(page.locator('main')).toContainText('Coming later');
   });
 });
 

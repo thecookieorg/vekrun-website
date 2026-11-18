@@ -99,7 +99,13 @@ const provisioning = [
   'The server appears as a place the Factory can run',
   'Work Items run there, and come back verified',
 ];
-const providers = ['Hetzner', 'DigitalOcean', 'Vultr', 'Akamai Linode', 'AWS'];
+const providers = [
+  { id: 'hetzner', name: 'Hetzner', mono: 'HZ' },
+  { id: 'digitalocean', name: 'DigitalOcean', mono: 'DO' },
+  { id: 'vultr', name: 'Vultr', mono: 'VU' },
+  { id: 'akamai', name: 'Akamai Linode', mono: 'AK' },
+  { id: 'aws', name: 'AWS', mono: 'AW' },
+];
 const secure = [
   { t: 'Closed by default', d: 'Inbound traffic is denied unless it’s needed.' },
   { t: 'Private access', d: 'Reach the server over a private network such as Tailscale, then close public SSH once private access works.' },
@@ -257,7 +263,7 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
           <ul class="ticks mt-0">{memoryNow.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
           <div class="min-w-0"><MemoryDemo /></div>
         </div>
-        <p class="tier-line"><Brain class="h-4 w-4" aria-hidden="true" />Vekrun Free includes personal Engineering Memory. Shared Engineering Memory across a team is planned for <a href="/teams/" class="text-accent link-slide">Vekrun Teams</a>.</p>
+        <p class="tier-line"><Brain class="h-4 w-4" aria-hidden="true" />Vekrun Free includes personal Engineering Memory. Shared Engineering Memory across a team is coming to <a href="/teams/" class="text-accent link-slide">Vekrun Teams</a>.</p>
         <div class="mt-10"><Screenshot name="memory-understand" width={1440} height={437} alt="Engineering Memory in the Vekrun desktop app: Understand this project lists what was read (files and languages, manifests and CI, entry points, code map, docs and tests, Git history, interpretations), above Knowledge sources with an Add Obsidian vault button." caption="Engineering Memory in the Vekrun desktop app: project understanding and knowledge sources." /></div>
       </div>
       <div id="architecture" class="sub anchor">
@@ -367,7 +373,7 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
 
   <section id="work-anywhere" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="anywhere-title">
     <div class="container-site">
-      <div class="sub-head"><span class="state">Planned · Free and Teams</span></div>
+      <div class="sub-head"><span class="state">Free and Teams</span></div>
       <SectionHeading id="anywhere-title" class="mt-4" title="Your laptop isn’t your build server. Unless you want it to be." lede="Work Anywhere runs your engineering Factory locally or on infrastructure you control. Use your own VPS for builds, tests and autonomous work, without buying Vekrun-hosted compute. It will be included in Vekrun Free." />
       <div class="mt-12"><WorkAnywhere /></div>
       <div class="split mt-14">
@@ -378,14 +384,14 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
         <div>
           <h3 class="h3">From zero to a working server.</h3>
           <ol class="prov">{provisioning.map((c, i) => <li><span>{i + 1}</span>{c}</li>)}</ol>
-          <ul class="prov-p" aria-label="Hosting providers we intend to support">{providers.map((p) => <li>{p}</li>)}<li>Any existing server</li></ul>
+          <ul class="prov-p" aria-label="Hosting providers we intend to support">{providers.map((p) => <li><IntegrationLogo id={p.id} name={p.name} monogram={p.mono} size="sm" />{p.name}</li>)}<li><span class="prov-srv"><Server class="h-3.5 w-3.5" aria-hidden="true" /></span>Any existing server</li></ul>
           <p class="fine">These providers are integration targets, not finished integrations. Vekrun will use provider APIs and command-line tools where they help, and a provider-independent path for servers you already have.</p>
         </div>
       </div>
       <h3 class="h3 h3-gap"><Lock class="inline h-5 w-5 align-[-3px] text-accent" aria-hidden="true" /> Private from the first boot.</h3>
       <p class="sub-lede">Vekrun is designed to set up remote workers with public management ports closed, authenticated private connectivity and isolated engineering environments.</p>
       <ul class="sec">{secure.map((c) => <li><h4>{c.t}</h4><p>{c.d}</p></li>)}</ul>
-      <p class="fine">Planned. Security depends on your provider and server too; Vekrun aims for safe defaults, not a guarantee. A Tailscale-style private network and outbound tunnels are the design; neither Tailscale nor any provider integration is finished, and Cloudflare Tunnel won’t be required. Teams adds shared worker pools; see <a href="/teams/#workers" class="text-accent link-slide">Vekrun Teams</a>.</p>
+      <p class="fine">Security depends on your provider and server too; Vekrun aims for safe defaults, not a guarantee. A Tailscale-style private network and outbound tunnels are the design; neither Tailscale nor any provider integration is finished, and Cloudflare Tunnel won’t be required. Teams adds shared worker pools; see <a href="/teams/#workers" class="text-accent link-slide">Vekrun Teams</a>.</p>
     </div>
   </section>
 
@@ -465,8 +471,7 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
 
   <section id="next" class="section-pad rule anchor" aria-labelledby="whats-next-title">
     <div class="container-site">
-      <div class="sub-head"><span class="state">Planned</span></div>
-      <SectionHeading id="whats-next-title" class="mt-4" title="What’s next for Vekrun." lede="What we’re building now, grouped by what it will mean for you. These are planned, not available yet, and we don’t publish dates." />
+      <SectionHeading id="whats-next-title" title="What’s next for Vekrun." lede="What we’re building now, grouped by what it will mean for you. None of it is available yet, and we don’t publish dates." />
       <div class="nx">
         {next.map((g) => (
           <section class="nx-g" aria-label={g.theme}>
@@ -553,7 +558,8 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
   .prov li { display: flex; align-items: center; gap: 0.7rem; font-size: 0.95rem; color: var(--foreground); }
   .prov span { display: inline-grid; place-items: center; flex-shrink: 0; width: 1.6rem; height: 1.6rem; border-radius: 999px; background: var(--accent-subtle); font-size: 0.78rem; font-weight: 640; color: var(--accent-text); }
   .prov-p { margin: 1.25rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; }
-  .prov-p li { padding: 0.25rem 0.65rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); font-size: 0.84rem; color: var(--foreground); }
+  .prov-p li { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0.7rem 0.3rem 0.35rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); font-size: 0.84rem; color: var(--foreground); }
+  .prov-srv { display: inline-grid; place-items: center; width: 1.5rem; height: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface-elevated); color: var(--foreground-secondary); }
   .sec { margin: 2rem 0 0; padding: 0; list-style: none; display: grid; gap: 1px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--border); }
   @media (min-width: 40rem) { .sec { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (min-width: 64rem) { .sec { grid-template-columns: repeat(4, minmax(0, 1fr)); } }

@@ -22,7 +22,8 @@ describe('plans and pricing', () => {
   it('makes Free $0 forever for individuals and Teams a planned team plan', () => {
     const [free, teams] = plans;
     expect(free).toMatchObject({ price: '$0', priceNote: 'forever', planned: false, audience: 'For individual engineers' });
-    expect(teams).toMatchObject({ price: '$199', priceNote: 'per month, includes 10 engineers', planned: true, status: 'Planned' });
+    expect(teams).toMatchObject({ price: '$199', priceNote: 'per month, includes 10 engineers', planned: true });
+    expect(JSON.stringify(plans)).not.toMatch(/Planned/);
     expect(teams!.priceAlt).toBe('USD. $10 per month for each additional engineer.');
   });
   it('keeps the full individual engineering platform in Free', () => {
