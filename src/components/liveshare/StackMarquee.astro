@@ -6,6 +6,8 @@
  * reduced motion it becomes a static, wrapped list.
  */
 import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
+interface Props { label?: string; class?: string }
+const { label = 'Stacks Live Share previews', class: className = '' } = Astro.props;
 const stacks: [string, string][] = [
   ['rails', 'Rails'], ['django', 'Django'], ['fastapi', 'FastAPI'], ['flask', 'Flask'], ['laravel', 'Laravel'],
   ['symfony', 'Symfony'], ['react', 'React'], ['nextjs', 'Next.js'], ['vue', 'Vue'], ['nuxt', 'Nuxt'],
@@ -14,7 +16,7 @@ const stacks: [string, string][] = [
   ['xcode', 'Xcode iOS'], ['android', 'Android Gradle'], ['tauri', 'Tauri'], ['electron', 'Electron'],
 ];
 ---
-<div class="sm" aria-label="Stacks Live Share previews">
+<div class:list={['sm', className]} aria-label={label}>
   <div class="sm-track">
     {[0, 1].map((copy) => (
       <ul class="sm-set" aria-hidden={copy === 1 ? 'true' : undefined}>
