@@ -12,6 +12,7 @@
 import Base from '@/layouts/Base.astro';
 import PageHero from '@/components/PageHero.astro';
 import EngineHero from '@/components/home/EngineHero.astro';
+import StackMarquee from '@/components/liveshare/StackMarquee.astro';
 import JourneyDemo from '@/components/home/JourneyDemo.astro';
 import MemoryBridge from '@/components/home/MemoryBridge.astro';
 import CompeteDemo from '@/components/compete/CompeteDemo.astro';
@@ -37,6 +38,10 @@ const structuredData = [
   <PageHero breakTitle title={site.headline} subtitle={site.subheadline} lede="Describe what you want built. Vekrun plans it, builds competing approaches, verifies the work and hands you a pull request with the evidence." cta={personalCta} secondary={{ label: 'See it in action', href: '#demo' }} class="home-hero" wide>
     <p slot="after" class="hero-line enter" style="--i: 4">Free for individuals. Runs with the models you choose, including local ones.</p>
     <EngineHero />
+    <div class="hero-stacks">
+      <p class="hero-stacks-k">Builds, tests and previews the stack you already use</p>
+      <StackMarquee label="Stacks Vekrun works with" />
+    </div>
   </PageHero>
 
   <!-- Act 2: the differentiator -->
@@ -118,6 +123,8 @@ const structuredData = [
   @media (min-width: 64rem) { :global(.home-hero) { padding-top: 6rem !important; padding-bottom: 6rem !important; } }
   :global(.home-hero .display) { font-size: clamp(2.5rem, 1.5rem + 4vw, 4.75rem); }
   :global(.home-hero .page-hero-stage) { margin-top: 3.5rem !important; }
+  .hero-stacks { margin-top: 3rem; }
+  .hero-stacks-k { margin: 0; text-align: center; font-size: 0.9rem; color: var(--foreground-secondary); }
   .hero-line { margin: 1.25rem 0 0; font-size: 0.9rem; color: var(--foreground-secondary); }
 
   .act { padding-block: 5.5rem; border-top: 1px solid var(--border); }

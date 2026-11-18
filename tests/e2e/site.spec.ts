@@ -75,9 +75,10 @@ test.describe('homepage', () => {
     await expect(page.locator('#team-memory').getByRole('heading', { level: 3 })).toHaveText('Your team shares a codebase. Now it can share an engineering brain.');
     await expect(page.locator('#team-memory').getByRole('link', { name: 'Explore Vekrun Teams' })).toHaveAttribute('href', '/teams/');
     await expect(page.locator('main')).not.toContainText(/What’s next for Vekrun|coming to Vekrun Free|Work Anywhere is coming/i);
-    // Provider catalogues and marquees live on Integrations, not here.
+    // Provider catalogues live on Integrations. The only logos here are the stack strip under the hero.
     await expect(page.getByRole('region', { name: 'Technologies Vekrun works with' })).toHaveCount(0);
-    await expect(page.locator('main .logo-glyph, main .vendor-glyph')).toHaveCount(0);
+    const logos = 'main .logo-glyph, main .vendor-glyph, main .vendor-img';
+    expect(await page.locator(logos).count()).toBe(await page.locator('[aria-label="Stacks Vekrun works with"]').locator('.logo-glyph, .vendor-glyph, .vendor-img').count());
   });
 
   test('Act 5 states the control promise, names models and agents in one line and offers both plans', async ({ page }) => {
@@ -926,5 +927,18 @@ test.describe('vekrun to vekrun', () => {
     await page.getByRole('button', { name: 'Pause or play the demonstration' }).first().waitFor();
     await expect(mesh.locator('[data-vm-count]')).toHaveText('7', { timeout: 15000 });
     await expect(mesh.locator('[data-ev="5"]')).toHaveClass(/is-on/, { timeout: 20000 });
+  });
+});
+
+test.describe('home stacks', () => {
+  test('shows the stack strip right under the hero app window', async ({ page }) => {
+    await page.goto('/');
+    const strip = page.getByLabel('Stacks Vekrun works with');
+    await expect(strip).toBeVisible();
+    await expect(strip.locator('ul:not([aria-hidden]) li')).toHaveCount(24);
+    const heroBottom = await page.locator('[data-engine-hero], .home-hero').first().evaluate((el) => el.getBoundingClientRect().bottom + window.scrollY);
+    const stripTop = await strip.evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
+    expect(stripTop).toBeLessThan(heroBottom + 1);
+    expect(stripTop).toBeLessThan(await page.locator('#competitive').evaluate((el) => el.getBoundingClientRect().top + window.scrollY));
   });
 });
