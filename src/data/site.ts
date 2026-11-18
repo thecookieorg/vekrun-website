@@ -210,7 +210,7 @@ export const productSections: { id: string; label: string }[] = [
   { id: 'remember', label: 'Remember and collaborate' },
 ];
 /** Anchors inside Product chapters. Older URLs point at these, so each must stay on the page. */
-export const productSubAnchors = ['competitive', 'experiments', 'improvement-lab', 'council', 'architecture', 'production', 'voice', 'board', 'work-anywhere', 'environments', 'templates', 'tools', 'apps', 'stack', 'mobile', 'proof', 'high-assurance', 'browser', 'delivery', 'guardian', 'memory', 'collaborate', 'live-share', 'models'];
+export const productSubAnchors = ['competitive', 'experiments', 'improvement-lab', 'council', 'architecture', 'production', 'voice', 'board', 'work-anywhere', 'environments', 'templates', 'tools', 'apps', 'stack', 'mobile', 'proof', 'high-assurance', 'browser', 'delivery', 'guardian', 'memory', 'collaborate', 'live-share', 'vekrun-to-vekrun', 'models'];
 
 /** Sections of How It Works: the six stages, in order. */
 export const howSections: { id: string; label: string }[] = [

@@ -690,7 +690,7 @@ test.describe('product', () => {
     await expect(page.locator('#architecture')).toContainText('Understand your software before changing it.');
     for (const k of ['Git Time Machine', 'tied to its revision', 'cites its source', 'inferred ones are marked']) await expect(page.locator('#architecture')).toContainText(k);
     await expect(page.locator('#architecture [data-arch] .ag-revb')).toHaveCount(3);
-    await expect(page.locator('#remember').getByRole('link', { name: 'Vekrun Teams' })).toHaveAttribute('href', '/teams/');
+    await expect(page.locator('#remember').getByRole('link', { name: 'Vekrun Teams' }).first()).toHaveAttribute('href', '/teams/');
     await expect(page.locator('#work-anywhere')).toContainText('included in Vekrun Free');
     await expect(page.locator('#council')).toContainText('Not every task convenes a Council');
     await expect(page.locator('#council')).not.toContainText('still being certified');
@@ -912,5 +912,18 @@ test.describe('live share stacks', () => {
     const names = strip.locator('ul:not([aria-hidden]) li');
     for (const t of ['React Native', 'Expo', 'Ruby on Rails', 'Python and Django', 'PHP and Laravel', 'Elixir', 'Android native', 'iOS native', 'Flutter', 'Electron', 'Tauri']) await expect(names.filter({ hasText: t })).toHaveCount(1);
     await expect(strip.locator('ul:not([aria-hidden]) li svg, ul:not([aria-hidden]) li img')).toHaveCount(await names.count());
+  });
+});
+
+test.describe('vekrun to vekrun', () => {
+  test('shows seven Macs working in one shared workspace, each move narrated', async ({ page }) => {
+    await page.goto('/product/#vekrun-to-vekrun');
+    const mesh = page.locator('#vekrun-to-vekrun [data-vmesh]');
+    await expect(page.locator('#vekrun-to-vekrun')).toContainText('Seven engineers. Seven Macs. One workspace.');
+    await expect(mesh.locator('[data-mac]')).toHaveCount(7);
+    await expect(mesh.getByRole('list', { name: 'Workspace activity' }).getByRole('listitem')).toHaveCount(6);
+    await page.getByRole('button', { name: 'Pause or play the demonstration' }).first().waitFor();
+    await expect(mesh.locator('[data-vm-count]')).toHaveText('7', { timeout: 15000 });
+    await expect(mesh.locator('[data-ev="5"]')).toHaveClass(/is-on/, { timeout: 20000 });
   });
 });
