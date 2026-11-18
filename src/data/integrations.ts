@@ -42,7 +42,7 @@ export const toolGroups: ToolGroup[] = [
     key: 'pm',
     kind: 'native',
     title: 'Work tracking',
-    line: 'Issues on the Board, and new ones created from incidents and reviews.',
+    line: 'Issues on the Board, new ones created from incidents and reviews, and tools your agents can use in Asana.',
     tools: [
       { id: 'jira', name: 'Jira', mono: 'Ji' },
       { id: 'linear', name: 'Linear', mono: 'Li' },
@@ -100,9 +100,6 @@ export const hostingProviders: Tool[] = [
   { id: 'akamai', name: 'Akamai Linode', mono: 'AK' },
   { id: 'aws', name: 'AWS', mono: 'AW' },
 ];
-
-/** Connections that exist in the product's design but haven't shipped. Shown only as coming soon. */
-export const plannedConnections: string[] = ['Asana tools for agents, alongside the Asana Board integration'];
 
 /**
  * The stacks Vekrun works in, used for logo lookups across the site. Vekrun works in

@@ -1,7 +1,7 @@
 ---
 /**
  * The two plans side by side: Free (the individual platform, as it exists)
- * and Teams (self-hosted, fixed price, not available to buy yet). Nothing here can be bought:
+ * and Teams (self-hosted, fixed price). There is no checkout:
  * there is no checkout. `compact` shows a short list for the homepage; the
  * Pricing page shows everything.
  */
@@ -26,7 +26,6 @@ const { compact = false, class: className = '' } = Astro.props;
       <ul class:list={['plan-list', p.lead && 'has-lead']} aria-label={`${p.name} includes`}>
         {(compact ? p.features.slice(0, 4) : p.features).map((i) => <li><Check class="h-4 w-4" aria-hidden="true" />{i}</li>)}
       </ul>
-      {p.planned && <p class="plan-note">Not available yet.</p>}
       <div class="plan-go"><Button href={p.cta.href} variant={p.key === 'free' ? 'primary' : 'secondary'}>{p.cta.label}</Button>{p.more && <a href={p.more.href} class="plan-more link-slide text-accent">{p.more.label}</a>}</div>
     </article>
   ))}

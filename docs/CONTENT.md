@@ -36,9 +36,10 @@ examples and the eight Before & After comparisons.
 
 Describe what people can do, never how Vekrun does it internally. Never use
 the word "Planned" or status badges in demos. Present capabilities as
-experience and value; state commercial availability once, briefly, next to the
-relevant call to action ("not available to buy yet"). Work Anywhere is
-included in Vekrun Free today; never describe it as coming.
+experience and value, and present everything as done: never write "coming
+soon", "coming later", "not available yet", "yet" or similar anywhere, including
+for Teams, platforms, downloads and integrations. Calls to action are "Request
+early access" and "Register Teams interest"; an e2e test bans the wording site-wide.
 Living Architecture Intelligence is
 available; show its sources and uncertainty rather than claiming it sees every
 relationship. SSO and RBAC are included in Teams: never present them as an

@@ -15,6 +15,7 @@ import {
   siElectron, siMysql, siRedis, siApple, siAndroid, siHetzner, siDigitalocean, siVultr, siAkamai, siOkta, siGoogle } from 'simple-icons';
 import awsLogo from '@/assets/brand/aws.svg?raw';
 import entraLogo from '@/assets/brand/microsoft-entra-id.svg?raw';
+import antigravityLogo from '@/assets/brand/antigravity-icon.svg?raw';
 import grokOnDark from '@/assets/brand/grok-logomark-light.svg?raw';
 import grokOnLight from '@/assets/brand/grok-logomark-dark.svg?raw';
 import spacexaiOnDark from '@/assets/brand/spacexai-symbol-white.svg?raw';
@@ -40,7 +41,7 @@ const map: Record<string, Icon> = {
   okta: siOkta, 'google-workspace': siGoogle,
 };
 /** Vendor-supplied SVGs, inlined so `currentColor` parts follow the theme. */
-const raw: Record<string, string> = { aws: awsLogo, 'microsoft-entra-id': entraLogo };
+const raw: Record<string, string> = { aws: awsLogo, 'microsoft-entra-id': entraLogo, antigravity: antigravityLogo };
 const vendor = raw[id]?.replace(/<!--[\s\S]*?-->/g, '').trim();
 /**
  * Official marks whose owner forbids any alteration (x.ai brand guidelines):

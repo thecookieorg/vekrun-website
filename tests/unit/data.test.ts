@@ -80,9 +80,10 @@ describe('email paths', () => {
 });
 
 describe('availability', () => {
-  it('states download availability plainly and never claims a download that does not exist', () => {
+  it('offers early access instead of a public installer, without coming-soon wording', () => {
     expect(site.release.downloadAvailable).toBe(false);
-    expect(site.release.line).toMatch(/isn’t available to download yet/);
+    expect(site.release.line).toBe('Vekrun is in early access on macOS.');
+    expect(JSON.stringify(site)).not.toMatch(/coming|\byet\b|not available/i);
   });
 });
 
