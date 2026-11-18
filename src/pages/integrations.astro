@@ -13,6 +13,7 @@ import Base from '@/layouts/Base.astro';
 import ClosingCta from '@/components/ClosingCta.astro';
 import PageHero from '@/components/PageHero.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
+import StackMarquee from '@/components/liveshare/StackMarquee.astro';
 import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
 import { toolGroups, platforms, hostingProviders } from '@/data/integrations';
 import { Bot, KeyRound, Route, Search } from '@lucide/astro';
@@ -123,9 +124,7 @@ const facts = [
   <section class="section-pad rule" aria-labelledby="platforms-title">
     <div class="container-site">
       <SectionHeading id="platforms-title" title="Built for whole products, not single repos." lede="An Expo app and its Rails API, a Shopify storefront, a Tauri desktop client. Vekrun coordinates them together." />
-      <ul class="plat" aria-label="Platforms">
-        {platforms.map((t) => <li><IntegrationLogo id={t.id} name={t.name} monogram={t.mono} size="sm" />{t.name}</li>)}
-      </ul>
+      <StackMarquee label="Stacks Vekrun coordinates" class="plat-strip" extra={platforms.map((t) => [t.id, t.name] as [string, string])} />
     </div>
   </section>
 
@@ -175,8 +174,7 @@ const facts = [
   .finder-n { margin: 0.6rem 0 0; min-height: 1.3em; font-size: 0.85rem; color: var(--foreground-secondary); }
   .finder-none { padding-block: 4rem; font-size: 1rem; color: var(--foreground-secondary); }
   [data-cat][hidden], [data-q][hidden] { display: none !important; }
-  .plat { margin: 2.5rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; }
-  .plat li { display: inline-flex; align-items: center; gap: 0.55rem; padding: 0.4rem 0.85rem 0.4rem 0.45rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); font-size: 0.95rem; color: var(--text); }
+  :global(.plat-strip) { margin-top: 2.5rem; }
 </style>
 
 <script>
