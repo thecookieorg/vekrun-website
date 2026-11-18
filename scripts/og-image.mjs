@@ -9,7 +9,7 @@ const mark = readFileSync('public/brand/vekrun-mark.svg', 'utf8');
 
 const images = [
   { file: 'default', kicker: 'From idea to verified software', title: 'Your AI engineering team. On your machine.' },
-  { file: 'how-it-works', kicker: 'How Vekrun works', title: 'Describe, plan, build, verify, review.' },
+  { file: 'how-it-works', kicker: 'How Vekrun works', title: 'From idea to verified software, in six steps.' },
   { file: 'teams', kicker: 'Vekrun Teams', title: 'One engineering brain for your whole team.', foot: 'Shared Engineering Memory, SSO and shared workers. Self-hosted' },
   { file: 'pricing', kicker: 'Pricing', title: 'Free for you. Teams on your infrastructure.', foot: 'Free for individuals. Teams from $199 a month for 10 engineers' },
   { file: 'before-and-after', kicker: 'Before & After', title: 'Stop managing AI agents. Start directing engineering.' },

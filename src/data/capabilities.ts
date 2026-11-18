@@ -16,16 +16,6 @@ export const projectExamples: { logos: string[]; title: string; line: string }[]
   { logos: ['tauri', 'electron'], title: 'A Tauri or Electron desktop app', line: 'Desktop clients built on web technology.' },
 ];
 
-/** The homepage's short tour of capabilities beyond its showcases. `href` is a Product anchor. */
-export const highlights: { id: string; href: string; title: string; line: string }[] = [
-  { id: 'experiments', href: '/product/#experiments', title: 'Measured experiments', line: 'Before-and-after performance, with invariants and a rehearsed rollback.' },
-  { id: 'production', href: '/product/#production', title: 'Production to code', line: 'Errors and stack traces connected to the code and its context.' },
-  { id: 'guardian', href: '/product/#guardian', title: 'PR Guardian', line: 'Fixes failing CI and requested changes when you’ve authorized it.' },
-  { id: 'templates', href: '/product/#templates', title: 'Workflow Templates', line: 'Start from proven workflows, or take over work on an existing branch.' },
-  { id: 'live', href: '/product/#browser', title: 'Interactive Browser', line: 'Point at the problem in your running app instead of describing it.' },
-  { id: 'anywhere', href: '/product/#work-anywhere', title: 'Work Anywhere', line: 'Coming to Free: run the Factory on your own VPS, private from the first boot.' },
-];
-
 export type Comparison = { id: string; title: string; before: string; after: string; beforeDetail: string; afterDetail: string };
 
 /** Before & After: eight moments from an engineering day. Illustrative, not customer quotes. */

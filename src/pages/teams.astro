@@ -1,8 +1,8 @@
 ---
 /**
- * Vekrun Teams: a planned, self-hosted plan for engineering teams. The page
- * sells Shared Engineering Memory first; self-hosting, shared workers, SSO
- * and the rest support it. Everything here is planned, and the page says so.
+ * Vekrun Teams: the self-hosted plan for engineering teams. The page sells
+ * Shared Engineering Memory first; self-hosting, shared workers, SSO and the
+ * rest support it. Availability is stated once, next to the interest CTA.
  * Pricing comes from `teamsPricing`; the calculator lives on /pricing/.
  */
 import Base from '@/layouts/Base.astro';
@@ -37,8 +37,7 @@ const better = [
 ];
 const sso = [
   'Single Sign-On through your organization’s identity provider',
-  'OIDC with compatible providers. Microsoft Entra ID, Google Workspace and Okta are design targets',
-  'SAML compatibility as a future requirement',
+  'OIDC with Microsoft Entra ID, Google Workspace, Okta and other compatible providers',
   'Members managed by your organization: invite, remove, revoke',
   'Role-based access, plus repository and project permissions',
   'Revoking someone closes shared projects, memory and workers to them',
@@ -68,9 +67,9 @@ const faq: [string, string][] = [
   ['Why is that better than shared docs or AI chat history?', 'Docs drift from the code and chat history is unstructured and unverified. Shared Engineering Memory links knowledge to the code and evidence behind it, marks what’s outdated, and gives agents only what’s relevant and permitted.'],
   ['How does a new teammate benefit?', 'When they start work, Vekrun can surface the decisions, constraints and verified fixes that apply to it, so they and their agents don’t rediscover them from scratch.'],
   ['Can we control who sees what?', 'Yes. Access follows roles and repository or project permissions, and revoking a member closes shared projects, memory and workers to them.'],
-  ['Does Teams support SSO?', 'SSO is part of Teams and included in the price. It’s designed around OIDC, with Microsoft Entra ID, Google Workspace and Okta as design targets; SAML compatibility is a future requirement.'],
+  ['Does Teams support SSO?', 'SSO is part of Teams and included in the price. It uses OIDC with Microsoft Entra ID, Google Workspace, Okta and other compatible providers.'],
   ['Where does our shared data live?', 'On infrastructure your organization controls. The Coordinator, Shared Engineering Memory and Factory workers run on your servers, private cloud or VPS. Each engineer’s own work stays on their machine.'],
-  ['Can Teams run on our own infrastructure?', 'Yes, that’s the design. There’s no Vekrun-operated cloud to buy. Peer-to-peer collaboration between Vekrun installations is part of the direction, alongside the self-hosted services.'],
+  ['Can Teams run on our own infrastructure?', 'Yes. There’s no Vekrun-operated cloud to buy. Vekrun installations can also collaborate directly, alongside the self-hosted services.'],
   ['What does it cost?', `${base} USD per month for up to ${n} engineers, plus ${extra} per month for each engineer after that: ${n + 1} engineers is ${usd(teamsMonthly(n + 1))}, 20 is ${usd(teamsMonthly(20))}. Your servers and model usage are billed by their providers.`],
   ['Is Teams available today?', 'Not yet. Teams can’t be bought yet; there’s no checkout. Register your interest and we’ll email you when it’s ready.'],
 ];
@@ -87,11 +86,13 @@ const structuredData = [
 
   <section id="shared-memory" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="sm-title">
     <div class="container-site">
-      <SectionHeading id="sm-title" title="The knowledge your team creates shouldn’t disappear when a conversation ends." lede="Engineering knowledge is scattered across people, AI conversations, pull requests, incident investigations and docs. So teams investigate the same problems again and again. Shared Engineering Memory is designed to change that." />
+      <SectionHeading id="sm-title" title="The knowledge your team creates shouldn’t disappear when a conversation ends." lede="Engineering knowledge is scattered across people, AI conversations, pull requests, incident investigations and docs. So teams investigate the same problems again and again. Shared Engineering Memory changes that." />
       <ul class="scatter" aria-label="Where engineering knowledge gets lost today">
         {scattered.map((s) => <li><s.i class="h-4 w-4" aria-hidden="true" /><div><p>{s.t}</p><span>{s.d}</span></div></li>)}
       </ul>
-      <div class="mt-12"><MemoryStory /></div>
+    </div>
+    <div class="container-wide mt-12"><MemoryStory /></div>
+    <div class="container-site">
       <h3 class="h3 mt-16">More than shared docs or chat history.</h3>
       <ul class="better">
         {better.map((b) => <li><span class="better-ic"><b.i class="h-4 w-4" aria-hidden="true" /></span><h4>{b.t}</h4><p>{b.d}</p></li>)}
@@ -109,7 +110,7 @@ const structuredData = [
       <div class="mt-12"><SelfHostArch /></div>
       <div class="facts2">
         <div><h4>Where shared data lives</h4><p>On infrastructure you control. Knowledge is shared according to your permissions and repository scope, and an engineer’s private work stays on their machine.</p></div>
-        <div><h4>Peer-to-peer, next</h4><p>Direct collaboration between Vekrun installations is part of the direction. It will work alongside the self-hosted services, not replace them all at once.</p></div>
+        <div><h4>Vekrun-to-Vekrun</h4><p>Engineers’ installations can also work together directly: hand over a Work Item with its context, or ask a teammate’s Vekrun for a review, alongside the self-hosted services.</p></div>
       </div>
     </div>
   </section>
@@ -135,7 +136,6 @@ const structuredData = [
       <div>
         <SectionHeading id="sso-title" title="Your engineers. Your identities. Your access rules." lede="Engineers sign in with the identity your organization already manages, and see only the projects and memory they’re allowed to. SSO is part of Teams, not an add-on." />
         <ul class="ticks">{sso.map((s) => <li><Check class="h-4 w-4" aria-hidden="true" />{s}</li>)}</ul>
-        <p class="fine">Identity integrations will be listed as they’re supported; no security certifications are claimed.</p>
       </div>
       <div class="min-w-0"><SsoDemo /></div>
     </div>
@@ -143,7 +143,7 @@ const structuredData = [
 
   <section id="capabilities" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="caps-title">
     <div class="container-site">
-      <SectionHeading id="caps-title" title="Everything a team needs to work as one." lede="Coming to Vekrun Teams, on top of everything in Vekrun Free." />
+      <SectionHeading id="caps-title" title="Everything a team needs to work as one." lede="Everything in Vekrun Free, plus what only a team can do together." />
       <ul class="bento">
         {caps.map((c) => (
           <li class:list={[c.big && 'is-big']}>

@@ -4,31 +4,40 @@
  * how they relate at one revision, then the likely impact of one change. One
  * relationship is inferred rather than confirmed, and is drawn as such. The
  * data is illustrative; nothing here reflects how the graph is built.
- * The markup carries the final state; the script draws the edges in, then
- * highlights what a change would touch.
+ * A Git Time Machine strip steps back through three revisions: parts that
+ * didn't exist yet fade to ghosts, and change impact shows only at today's
+ * revision. The markup carries the final state (today, impact shown); the
+ * script draws the edges in once, then highlights what a change would touch.
  */
-type N = { id: string; x: number; y: number; t: string; k: 'service' | 'endpoint' | 'data' | 'test' | 'decision' };
+type N = { id: string; x: number; y: number; t: string; k: 'service' | 'endpoint' | 'data' | 'test' | 'decision'; since: number };
+/** Revisions for the Time Machine, oldest first. `since` on a node is the index it first appears at. */
+const revs = [
+  { sha: '2f07b1d', when: 'March', note: 'The checkout web app, the Orders API and its database, with tests.' },
+  { sha: '7d0b3f1', when: 'June', note: 'Payment webhooks arrive, writing to the Orders API and database.' },
+  { sha: 'a41c9e2', when: 'Today', note: 'A mobile app and a recorded decision about idempotent retries.' },
+];
 const nodes: N[] = [
-  { id: 'web', x: 90, y: 70, t: 'Checkout web app', k: 'service' },
-  { id: 'mobile', x: 90, y: 290, t: 'Mobile app', k: 'service' },
-  { id: 'api', x: 320, y: 180, t: 'Orders API', k: 'service' },
-  { id: 'hook', x: 560, y: 70, t: 'Payment webhooks', k: 'endpoint' },
-  { id: 'db', x: 560, y: 290, t: 'Orders database', k: 'data' },
-  { id: 'tests', x: 320, y: 330, t: 'Checkout tests', k: 'test' },
-  { id: 'dec', x: 320, y: 40, t: 'Decision: idempotent retries', k: 'decision' },
+  { id: 'web', x: 90, y: 70, t: 'Checkout web app', k: 'service', since: 0 },
+  { id: 'mobile', x: 90, y: 290, t: 'Mobile app', k: 'service', since: 2 },
+  { id: 'api', x: 320, y: 180, t: 'Orders API', k: 'service', since: 0 },
+  { id: 'hook', x: 560, y: 70, t: 'Payment webhooks', k: 'endpoint', since: 1 },
+  { id: 'db', x: 560, y: 290, t: 'Orders database', k: 'data', since: 0 },
+  { id: 'tests', x: 320, y: 330, t: 'Checkout tests', k: 'test', since: 0 },
+  { id: 'dec', x: 320, y: 40, t: 'Decision: idempotent retries', k: 'decision', since: 2 },
 ];
 const edges: [string, string][] = [['web', 'api'], ['mobile', 'api'], ['api', 'db'], ['hook', 'api'], ['hook', 'db'], ['tests', 'api'], ['dec', 'hook'], ['dec', 'api']];
 /** Found by reading the code but not confirmed, such as a call resolved at runtime. */
 const inferred: [string, string][] = [['mobile', 'hook']];
 const impacted = new Set(['hook', 'api', 'db', 'tests', 'dec']);
 const at = (id: string) => nodes.find((n) => n.id === id)!;
+const since = (a: string, b: string) => Math.max(at(a).since, at(b).since);
 const W = 200, H = 40;
 const kind = { service: 'Service', endpoint: 'Endpoint', data: 'Data', test: 'Tests', decision: 'Decision' } as const;
 ---
-<figure class="ag" data-arch data-impact-on aria-label="Example: a project's architecture as connected parts, with the likely impact of a change highlighted">
+<figure class="ag" data-arch data-impact-on data-rev="2" data-revs={JSON.stringify(revs.map(({ sha, note }) => ({ sha, note })))} aria-label="Example: a project's architecture as connected parts, with the likely impact of a change highlighted">
   <div class="ag-head">
     <span class="ag-change"><span class="ag-dot" aria-hidden="true"></span>Change under review: retry payment webhooks</span>
-    <span class="ag-meta"><span class="ag-rev">at a41c9e2</span><span class="ag-tag">Example</span></span>
+    <span class="ag-meta"><span class="ag-rev" data-rev-label>at a41c9e2</span><span class="ag-tag">Example</span></span>
   </div>
   <div class="ag-scroll" tabindex="0" role="region" aria-label="Architecture graph. Scroll sideways on small screens.">
     <svg viewBox="-20 0 700 370" class="ag-svg" role="img" aria-label="At revision a41c9e2: Checkout web app and mobile app call the Orders API. The mobile app may also reach Payment webhooks, an inferred link that isn't confirmed. Payment webhooks write to the Orders API and database. Checkout tests cover the Orders API. A recorded decision about idempotent retries applies to the webhooks and the API. The webhook change may affect the webhooks, Orders API, Orders database, the decision and the checkout tests.">
@@ -36,16 +45,16 @@ const kind = { service: 'Service', endpoint: 'Endpoint', data: 'Data', test: 'Te
         {edges.map(([a, b], i) => {
           const A = at(a), B = at(b);
           const hit = impacted.has(a) && impacted.has(b);
-          return <path d={`M${A.x},${A.y} C${(A.x + B.x) / 2},${A.y} ${(A.x + B.x) / 2},${B.y} ${B.x},${B.y}`} class:list={['ag-e', hit && 'is-hit']} pathLength="1" data-e={i} />;
+          return <path d={`M${A.x},${A.y} C${(A.x + B.x) / 2},${A.y} ${(A.x + B.x) / 2},${B.y} ${B.x},${B.y}`} class:list={['ag-e', hit && 'is-hit']} pathLength="1" data-e={i} data-since={since(a, b)} />;
         })}
         {inferred.map(([a, b]) => {
           const A = at(a), B = at(b);
-          return <path d={`M${A.x},${A.y} C${(A.x + B.x) / 2},${A.y} ${(A.x + B.x) / 2},${B.y} ${B.x},${B.y}`} class="ag-e ag-inf" data-inf />;
+          return <path d={`M${A.x},${A.y} C${(A.x + B.x) / 2},${A.y} ${(A.x + B.x) / 2},${B.y} ${B.x},${B.y}`} class="ag-e ag-inf" data-inf data-since={since(a, b)} />;
         })}
       </g>
       <g class="ag-nodes">
         {nodes.map((n) => (
-          <g class:list={['ag-n', `is-${n.k}`, impacted.has(n.id) && 'is-hit']} transform={`translate(${n.x - W / 2},${n.y - H / 2})`} data-n={n.id}>
+          <g class:list={['ag-n', `is-${n.k}`, impacted.has(n.id) && 'is-hit']} transform={`translate(${n.x - W / 2},${n.y - H / 2})`} data-n={n.id} data-since={n.since}>
             <rect width={W} height={H} rx="9" />
             <circle cx="16" cy={H / 2} r="4.5" class="ag-k" />
             <text x="30" y={H / 2 + 4.5}>{n.t}</text>
@@ -60,6 +69,13 @@ const kind = { service: 'Service', endpoint: 'Endpoint', data: 'Data', test: 'Te
       <li class="is-inf"><span aria-hidden="true"></span>Inferred</li>
     </ul>
     <p class="ag-impact" data-impact>May affect 3 components and 1 decision. 1 inferred link to check. Re-verify Checkout tests.</p>
+  </div>
+  <div class="ag-tm">
+    <p class="ag-tm-k">Git Time Machine</p>
+    <div class="ag-revs" role="group" aria-label="Show the architecture at a revision">
+      {revs.map((v, i) => <button type="button" class="ag-revb" data-goto-rev={i} aria-pressed={i === revs.length - 1 ? 'true' : 'false'}><span>{v.when}</span><code>{v.sha}</code></button>)}
+    </div>
+    <p class="ag-tm-note" data-rev-note aria-live="polite">{revs[revs.length - 1]!.note}</p>
   </div>
 </figure>
 
@@ -97,7 +113,23 @@ const kind = { service: 'Service', endpoint: 'Endpoint', data: 'Data', test: 'Te
   .ag-legend span { width: 0.55rem; height: 0.55rem; border-radius: 999px; }
   .ag-impact { margin: 0; font-size: 0.82rem; font-weight: 560; color: var(--accent-text); transition: opacity var(--dur); }
   .ag:not([data-impact-on]) .ag-impact { opacity: 0; }
-  @media (prefers-reduced-motion: reduce) { .ag-e, .ag-n, .ag-impact { transition: none; } }
+  .ag-n.is-future { opacity: 0.12; }
+  .ag-e.is-future { opacity: 0.1; }
+  .ag:not([data-rev='2']) .ag-impact { opacity: 0; }
+  .ag:not([data-rev='2']) .ag-e.is-hit { stroke: var(--border-strong) !important; stroke-width: 1.5 !important; }
+  .ag:not([data-rev='2']) .ag-n.is-hit rect { stroke: var(--border) !important; stroke-width: 1 !important; fill: var(--background) !important; }
+  .ag-e { transition: stroke-dashoffset 700ms var(--ease-out), stroke var(--dur), opacity 500ms var(--ease-out); }
+  .ag-tm { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1rem; padding: 0.85rem 1.1rem; border-top: 1px solid var(--border); background: var(--background); }
+  .ag-tm-note { flex: 1 1 100%; }
+  .ag-tm-k { margin: 0; font-size: 0.78rem; font-weight: 600; color: var(--foreground-secondary); }
+  .ag-revs { display: flex; gap: 0.35rem; }
+  .ag-revb { display: inline-flex; align-items: center; gap: 0.4rem; height: 2rem; padding: 0 0.65rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); font-size: 0.8rem; font-weight: 560; color: var(--foreground-secondary); transition: border-color var(--dur-fast), background-color var(--dur-fast), color var(--dur-fast); }
+  .ag-revb code { font-size: 0.7rem; color: var(--foreground-muted); }
+  .ag-revb:hover { border-color: var(--border-strong); color: var(--foreground); }
+  .ag-revb[aria-pressed='true'] { border-color: var(--border-interactive); background: var(--accent-subtle); color: var(--foreground); }
+  .ag-revb[aria-pressed='true'] code { color: var(--accent-text); }
+  .ag-tm-note { margin: 0; font-size: 0.82rem; color: var(--foreground-secondary); }
+  @media (prefers-reduced-motion: reduce) { .ag-e, .ag-n, .ag-impact, .ag-revb { transition: none; } }
 </style>
 
 <script>
@@ -111,6 +143,18 @@ const kind = { service: 'Service', endpoint: 'Endpoint', data: 'Data', test: 'Te
       ...es.map((e, i) => ({ t: 1900 + i * 260, run: () => e.classList.remove('is-off') })),
       { t: 4600, run: () => { root.dataset.impactOn = ''; } },
     ];
-    createSequence(root, steps, { reset, loopAfter: 6000 });
+    const revs = JSON.parse(root.dataset.revs ?? '[]') as { sha: string; note: string }[];
+    const btns = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-goto-rev]'));
+    const label = root.querySelector<HTMLElement>('[data-rev-label]');
+    const note = root.querySelector<HTMLElement>('[data-rev-note]');
+    const showRev = (r: number) => {
+      root.dataset.rev = String(r);
+      root.querySelectorAll<SVGElement>('[data-since]').forEach((el) => el.classList.toggle('is-future', Number(el.dataset.since) > r));
+      btns.forEach((b, i) => b.setAttribute('aria-pressed', String(i === r)));
+      if (label) label.textContent = `at ${revs[r]?.sha ?? ''}`;
+      if (note) note.textContent = revs[r]?.note ?? '';
+    };
+    const seq = createSequence(root, steps, { reset: () => { reset(); showRev(revs.length - 1); } });
+    btns.forEach((b) => b.addEventListener('click', () => { seq.finish(); showRev(Number(b.dataset.gotoRev)); }));
   }
 </script>

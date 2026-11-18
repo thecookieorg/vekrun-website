@@ -6,10 +6,11 @@
  * far to trust it (verified, inferred, superseded) and who may see it.
  *
  * The markup holds the final state (all three steps). The script steps
- * through the story; the step buttons jump to any point and pause playback.
- * A planned Teams capability; the data is an example.
+ * through the story once; the step buttons jump to any point and pause
+ * playback. A flow strip above shows knowledge moving: Alex and Priya feed the
+ * shared memory, and the memory feeds Sam's agent. The data is an example.
  */
-import { Building2, Bug, Sparkles, Check, CircleDashed, History, Lock, FileCode2, GitCommitHorizontal, Bot } from '@lucide/astro';
+import { Building2, Bug, Sparkles, Check, CircleDashed, History, Lock, FileCode2, GitCommitHorizontal, Bot, Brain } from '@lucide/astro';
 import DemoControls from '@/components/mock/DemoControls.astro';
 
 const steps = [
@@ -40,6 +41,17 @@ const trustIcon = { verified: Check, inferred: CircleDashed, superseded: History
 <figure class="ms" data-mstory data-step="3" aria-label="Example: three engineers sharing engineering knowledge through Vekrun Teams">
   <div class="ms-head">
     <span class="ms-proj"><span class="ms-dot" aria-hidden="true"></span>shop-rails · Checkout team</span>
+  </div>
+
+  <div class="ms-flow" aria-hidden="true">
+    <div class="ms-fl-people">
+      <span class="ms-fl-p" data-fl="1"><span class="ms-av">A</span>Alex’s discovery</span>
+      <span class="ms-fl-p" data-fl="2"><span class="ms-av">P</span>Priya’s verified fix</span>
+    </div>
+    <span class="ms-fl-line is-in"><span data-fl-line="1"></span><span data-fl-line="2"></span></span>
+    <span class="ms-fl-hub"><Brain class="h-5 w-5" />Shared Engineering Memory<small>Cited · revision-bound · permission-aware</small></span>
+    <span class="ms-fl-line is-out"><span data-fl-line="3"></span></span>
+    <span class="ms-fl-p is-agent" data-fl="3"><span class="ms-av is-bot"><Bot class="h-3.5 w-3.5" /></span>Sam’s agent starts informed</span>
   </div>
 
   <ol class="ms-steps" aria-label="The story">
@@ -100,6 +112,22 @@ const trustIcon = { verified: Check, inferred: CircleDashed, superseded: History
   .ms-dot { width: 0.5rem; height: 0.5rem; border-radius: 999px; background: var(--accent); box-shadow: 0 0 0 4px var(--accent-subtle); }
   .ms-tag { padding: 0.05rem 0.45rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.7rem; color: var(--foreground-secondary); }
 
+  .ms-flow { display: none; }
+  @media (min-width: 56rem) {
+    .ms-flow { margin-top: 1rem; display: grid; grid-template-columns: minmax(0, 1fr) 3.5rem auto 3.5rem minmax(0, 1fr); align-items: center; padding: 1.1rem 1.25rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: radial-gradient(ellipse 40% 90% at 50% 50%, var(--accent-subtle), transparent 70%), var(--background); }
+  }
+  .ms-fl-people { display: grid; gap: 0.5rem; justify-items: end; }
+  .ms-fl-p { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0.75rem 0.3rem 0.3rem; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); font-size: 0.82rem; font-weight: 560; color: var(--foreground); transition: border-color var(--dur), box-shadow var(--dur), opacity var(--dur); }
+  .ms-fl-p.is-agent { justify-self: start; }
+  .ms-av.is-bot { background: var(--accent); color: #12140f; }
+  .ms-fl-line { position: relative; display: grid; gap: 1.6rem; }
+  .ms-fl-line > span { display: block; height: 2px; border-radius: 2px; background: var(--border); transition: background-color 600ms var(--ease-out); }
+  .ms-fl-hub { display: grid; justify-items: center; gap: 0.3rem; padding: 0.9rem 1.2rem; border: 1px solid var(--border-interactive); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--glow-accent); font-size: 0.95rem; font-weight: 640; color: var(--foreground); text-align: center; }
+  .ms-fl-hub :global(svg) { color: var(--accent-text); }
+  .ms-fl-hub small { font-size: 0.72rem; font-weight: 500; color: var(--foreground-secondary); }
+  .ms[data-step='1'] [data-fl-line='1'], .ms[data-step='2'] [data-fl-line='1'], .ms[data-step='2'] [data-fl-line='2'], .ms[data-step='3'] [data-fl-line] { background: var(--accent); }
+  .ms[data-step='1'] [data-fl='1'], .ms[data-step='2'] [data-fl='2'], .ms[data-step='3'] [data-fl='3'] { border-color: var(--border-interactive); box-shadow: var(--glow-accent); }
+  .ms[data-step='0'] [data-fl], .ms[data-step='1'] [data-fl='2'], .ms[data-step='1'] [data-fl='3'], .ms[data-step='2'] [data-fl='3'] { opacity: 0.45; }
   .ms-steps { margin: 1rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.6rem; }
   @media (min-width: 48rem) { .ms-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   .ms-step { display: grid; align-content: start; gap: 0.35rem; padding: 0.85rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); transition: border-color var(--dur) var(--ease-out), opacity var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out); }
@@ -150,7 +178,7 @@ const trustIcon = { verified: Check, inferred: CircleDashed, superseded: History
   .ms[data-step='1'] .ms-step[data-s='1'], .ms[data-step='2'] .ms-step[data-s='2'], .ms[data-step='3'] .ms-step[data-s='3'] { border-color: var(--border-interactive); box-shadow: var(--glow-accent); }
   .ms[data-step='1'] .ms-rec[data-from='1'], .ms[data-step='2'] .ms-rec[data-from='2'], .ms[data-step='3'] .ms-agent { border-color: var(--border-interactive); }
   :global(.ms-ctl) { margin-top: 0.75rem; }
-  @media (prefers-reduced-motion: reduce) { .ms-step, .ms-rec, .ms-agent { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .ms-step, .ms-rec, .ms-agent, .ms-fl-p, .ms-fl-line > span { transition: none; } }
 </style>
 
 <script>
@@ -162,7 +190,7 @@ const trustIcon = { verified: Check, inferred: CircleDashed, superseded: History
       { t: 3600, run: () => set(2) },
       { t: 6900, run: () => set(3) },
     ];
-    const seq = createSequence(root, steps, { reset: () => set(0), loopAfter: 6000 });
+    const seq = createSequence(root, steps, { reset: () => set(0) });
     root.querySelectorAll<HTMLButtonElement>('[data-goto]').forEach((b) => b.addEventListener('click', () => {
       seq.pause();
       set(Number(b.dataset.goto));

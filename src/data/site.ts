@@ -206,26 +206,16 @@ export const footerColumns: { title: string; items: NavItem[] }[] = [
 
 /** Sections of the Product page, used for its in-page index and for redirects. */
 export const productSections: { id: string; label: string }[] = [
+  { id: 'think', label: 'Think' },
+  { id: 'build', label: 'Build' },
+  { id: 'prove', label: 'Prove' },
+  { id: 'deliver', label: 'Deliver' },
+  { id: 'remember', label: 'Remember' },
+  { id: 'collaborate', label: 'Collaborate' },
   { id: 'models', label: 'Models' },
-  { id: 'council', label: 'Council' },
-  { id: 'competitive', label: 'Competitive Engineering' },
-  { id: 'memory', label: 'Memory and architecture' },
-  { id: 'live-share', label: 'Live Share' },
-  { id: 'browser', label: 'Browser' },
-  { id: 'proof', label: 'Proof Packs' },
-  { id: 'production', label: 'Production errors' },
-  { id: 'delivery', label: 'Delivery' },
-  { id: 'work-anywhere', label: 'Work Anywhere' },
-  { id: 'environments', label: 'Environments' },
-  { id: 'voice', label: 'Voice' },
-  { id: 'apps', label: 'Apps' },
-  { id: 'stack', label: 'Stack' },
-  { id: 'mobile', label: 'On your phone' },
-  { id: 'tools', label: 'Tools' },
-  { id: 'next', label: 'What’s next' },
 ];
-/** Anchors inside Product sections that old URLs may also point at. */
-export const productSubAnchors = ['architecture', 'board', 'experiments', 'improvement-lab', 'high-assurance', 'guardian', 'templates'];
+/** Anchors inside Product chapters. Older URLs point at these, so each must stay on the page. */
+export const productSubAnchors = ['competitive', 'experiments', 'improvement-lab', 'council', 'architecture', 'production', 'voice', 'board', 'work-anywhere', 'environments', 'templates', 'tools', 'apps', 'stack', 'mobile', 'proof', 'high-assurance', 'browser', 'delivery', 'guardian', 'memory', 'live-share'];
 
 /** Sections of How It Works: the six stages, in order. */
 export const howSections: { id: string; label: string }[] = [

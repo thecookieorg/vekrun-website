@@ -1,0 +1,95 @@
+---
+/**
+ * Model independence as a workflow: different AI systems take part in one
+ * Vekrun engineering workflow (decide, implement, review), and Vekrun runs the
+ * real tests and keeps the engineering record underneath every step. The
+ * participants are examples of what a team could choose, not a fixed lineup.
+ *
+ * The markup is the final state (every step done, the record complete). The
+ * script walks the steps once and fills the record as it goes.
+ */
+import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
+import Logo from '@/components/Logo.astro';
+import DemoControls from '@/components/mock/DemoControls.astro';
+import { Check } from '@lucide/astro';
+const steps = [
+  { t: 'Decide', q: 'Which design should we build?', who: [{ id: 'claude-code', n: 'Claude', m: 'Cl' }, { id: 'xai', n: 'Grok', m: 'Gk' }], out: 'Postgres cart table. One objection kept on record.' },
+  { t: 'Implement', q: 'Build it, two ways.', who: [{ id: 'codex', n: 'Codex', m: 'Cx' }, { id: 'grok-build', n: 'Grok Build', m: 'Gb' }], out: 'Two branches from the same revision.' },
+  { t: 'Review', q: 'Does it do what was asked?', who: [{ id: 'gemini', n: 'Gemini', m: 'Ge' }, { id: 'ollama', n: 'Local model', m: 'Lm' }], out: 'A reviewer from another model family finds one issue; it’s fixed.' },
+];
+const record = ['Decision and objection', 'Approach A, approach B', 'Review findings', '52 tests · Proof Pack 9c41a7e'];
+---
+<figure class="mo" data-orchestra data-step="4" aria-label="Example: Claude and Grok weigh a design, Codex and Grok Build each implement an approach, a model from another family reviews, and Vekrun runs the tests and keeps the record">
+  <ol class="mo-steps">
+    {steps.map((s, n) => (
+      <li class="mo-s" data-mo={n}>
+        <p class="mo-t"><span class="mo-n">{n + 1}</span>{s.t}</p>
+        <p class="mo-q">{s.q}</p>
+        <ul class="mo-who" aria-label={`Taking part in ${s.t.toLowerCase()}`}>
+          {s.who.map((w) => <li><IntegrationLogo id={w.id} name={w.n} monogram={w.m} size="sm" />{w.n}</li>)}
+        </ul>
+        <p class="mo-out"><Check class="h-3.5 w-3.5" aria-hidden="true" />{s.out}</p>
+      </li>
+    ))}
+    <li class="mo-s is-ev" data-mo="3">
+      <p class="mo-t"><span class="mo-n">4</span>Evidence</p>
+      <p class="mo-q">Vekrun runs the actual tests.</p>
+      <p class="mo-big">Models propose. Evidence decides.</p>
+      <p class="mo-out"><Check class="h-3.5 w-3.5" aria-hidden="true" />Approach A passes every criterion. B is kept with its results.</p>
+    </li>
+  </ol>
+  <div class="mo-spine">
+    <span class="mo-brand"><Logo size={22} wordmark={false} />Vekrun keeps the plan, the permissions, the verification and the record</span>
+    <ul class="mo-rec" aria-label="Engineering record">
+      {record.map((r, i) => <li data-rec={i}><Check class="h-3 w-3" aria-hidden="true" />{r}</li>)}
+    </ul>
+  </div>
+  <div class="mo-foot"><span class="mo-tag">Example</span><DemoControls class="mo-ctl" /></div>
+</figure>
+
+<style>
+  .mo { margin: 0; }
+  .mo-steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.75rem; }
+  @media (min-width: 48rem) { .mo-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 72rem) { .mo-steps { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .mo-s { position: relative; display: flex; flex-direction: column; padding: 1.15rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); transition: border-color var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out), opacity 500ms var(--ease-out); }
+  .mo-s.is-now { border-color: var(--border-interactive); box-shadow: var(--glow-accent); }
+  .mo-s.is-todo { opacity: 0.45; }
+  .mo-s.is-ev { background: color-mix(in srgb, var(--accent) 6%, var(--surface)); }
+  .mo-t { margin: 0; display: flex; align-items: center; gap: 0.55rem; font-size: 0.85rem; font-weight: 620; color: var(--foreground-secondary); }
+  .mo-n { display: inline-grid; place-items: center; width: 1.45rem; height: 1.45rem; border-radius: 999px; background: var(--surface-elevated); font-size: 0.74rem; color: var(--foreground); }
+  .mo-s:not(.is-todo) .mo-n { background: var(--accent); color: #12140f; }
+  .mo-q { margin: 0.65rem 0 0; font-size: 1.08rem; font-weight: 620; letter-spacing: -0.015em; color: var(--foreground); }
+  .mo-who { margin: 0.9rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .mo-who li { display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.2rem 0.6rem 0.2rem 0.25rem; border: 1px solid var(--border); border-radius: 999px; background: var(--background); font-size: 0.8rem; font-weight: 560; color: var(--foreground); }
+  .mo-who li :global(> span:first-child) { border-radius: 999px !important; }
+  .mo-big { margin: 0.9rem 0 0; font-size: 1.02rem; font-weight: 620; color: var(--accent-text); }
+  .mo-out { margin: auto 0 0; padding-top: 1rem; display: flex; gap: 0.4rem; align-items: flex-start; font-size: 0.84rem; line-height: 1.45; color: var(--foreground-secondary); }
+  .mo-out :global(svg) { margin-top: 0.2rem; flex-shrink: 0; color: var(--accent-text); }
+  .mo-s.is-todo .mo-out, .mo-s.is-now .mo-out { visibility: hidden; }
+  .mo-spine { margin-top: 0.75rem; display: grid; gap: 0.75rem; padding: 0.9rem 1.1rem; border: 1px solid var(--border-interactive); border-radius: var(--radius-lg); background: var(--accent-subtle); }
+  .mo-brand { display: inline-flex; align-items: center; gap: 0.6rem; font-size: 0.9rem; font-weight: 600; color: var(--foreground); }
+  .mo-rec { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .mo-rec li { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.15rem 0.55rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); font-size: 0.76rem; color: var(--foreground); transition: opacity 450ms var(--ease-out), transform 450ms var(--ease-out); }
+  .mo-rec :global(svg) { color: var(--accent-text); }
+  .mo-rec li.is-off { opacity: 0; transform: translateY(4px); }
+  .mo-foot { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+  .mo-tag { margin-top: 1.25rem; padding: 0.05rem 0.45rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.7rem; color: var(--foreground-secondary); }
+  .mo-foot :global(.mo-ctl) { margin-top: 1rem; }
+  @media (prefers-reduced-motion: reduce) { .mo-s, .mo-rec li { transition: none !important; } }
+</style>
+
+<script>
+  import { createSequence, type Step } from '@/scripts/sequence';
+  for (const root of document.querySelectorAll<HTMLElement>('[data-orchestra]')) {
+    const items = Array.from(root.querySelectorAll<HTMLElement>('[data-mo]'));
+    const recs = Array.from(root.querySelectorAll<HTMLElement>('[data-rec]'));
+    const show = (n: number) => {
+      root.dataset.step = String(n);
+      items.forEach((el, i) => { el.classList.toggle('is-now', i === n); el.classList.toggle('is-todo', i > n); });
+      recs.forEach((el, i) => el.classList.toggle('is-off', i >= n));
+    };
+    const steps: Step[] = [...items.map((_, n) => ({ t: 300 + n * 1800, run: () => show(n) })), { t: 300 + items.length * 1800, run: () => show(items.length) }];
+    createSequence(root, steps, { reset: () => show(-1) });
+  }
+</script>

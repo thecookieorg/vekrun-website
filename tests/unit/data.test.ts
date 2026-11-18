@@ -5,8 +5,8 @@
 import { describe, expect, it } from 'vitest';
 import { existsSync } from 'node:fs';
 import { footerColumns, primaryNav, primaryCta, personalCta, pricingCta, productSections, productSubAnchors, howSections, site, plans, teamsPricing, teamsMonthly, teamsInterestMailto, earlyAccessMailto } from '@/data/site';
-import { comparisons, projectExamples, highlights } from '@/data/capabilities';
-import { toolGroups, platforms, allTools, stackRows } from '@/data/integrations';
+import { comparisons, projectExamples } from '@/data/capabilities';
+import { toolGroups, platforms, allTools, stackRows, toolById, modelIds, agentIds } from '@/data/integrations';
 import { redirects } from '../../astro.config.mjs';
 
 const pagesDir = new URL('../../src/pages/', import.meta.url);
@@ -147,11 +147,20 @@ describe('integrations', () => {
     expect(toolGroups[1]!.line).toMatch(/None of them is required/);
   });
   it('lists the shipped models and coding CLIs, and nothing that only connects through MCP', () => {
-    expect(toolGroups[0]!.tools.map((t) => t.id)).toEqual(['openrouter', 'ollama', 'lm-studio']);
-    expect(toolGroups[1]!.tools.map((t) => t.id)).toEqual(['claude-code', 'codex', 'antigravity']);
+    expect(toolGroups[0]!.tools.map((t) => t.id)).toEqual(['openrouter', 'xai', 'ollama', 'lm-studio']);
+    expect(toolGroups[1]!.tools.map((t) => t.id)).toEqual(['claude-code', 'codex', 'antigravity', 'grok-build']);
     const ids = allTools.map((t) => t.id);
     for (const gone of ['gemini-cli', 'kamal', 'docker', 'vercel', 'cloudflare', 'supabase', 'stripe', 'postgres', 'pagerduty', 'llama-cpp']) expect(ids, gone).not.toContain(gone);
     expect(ids).toContain('obsidian');
+  });
+  it('keeps Grok Build and xAI as two separate integrations, and the homepage lists match the groups', () => {
+    expect(toolById('xai')?.name).toBe('xAI');
+    expect(toolById('grok-build')?.name).toBe('Grok Build');
+    expect(toolGroups[0]!.tools.map((t) => t.id)).not.toContain('grok-build');
+    expect(toolGroups[1]!.tools.map((t) => t.id)).not.toContain('xai');
+    expect([...modelIds]).toEqual(toolGroups[0]!.tools.map((t) => t.id));
+    expect([...agentIds]).toEqual(toolGroups[1]!.tools.map((t) => t.id));
+    expect(toolGroups[1]!.line).toMatch(/planning, permissions, verification and delivery/);
   });
   it('shows the agreed stack in two marquee rows', () => {
     const stack = stackRows.flat().map((t) => t.name);
@@ -168,18 +177,12 @@ describe('capabilities', () => {
     expect(comparisons.map((c) => c.id)).toEqual(['starting', 'planning', 'implementation', 'verification', 'git', 'feedback', 'knowledge', 'models']);
     for (const c of comparisons) for (const k of ['before', 'after', 'beforeDetail', 'afterDetail'] as const) expect(c[k].length, `${c.id}.${k}`).toBeGreaterThan(10);
   });
-  it('links every homepage highlight to a real Product section', () => {
-    const ids = new Set([...productSections.map((s) => s.id), ...productSubAnchors]);
-    for (const h of highlights) {
-      expect(h.href, h.id).toMatch(/^\/product\/#/);
-      expect(ids.has(h.href.split('#')[1]!), h.href).toBe(true);
-    }
-  });
-  it('lists the Product sections in story order, Competitive Engineering right after Council', () => {
-    const ids = productSections.map((s) => s.id);
-    expect(ids.indexOf('competitive')).toBe(ids.indexOf('council') + 1);
-    for (const id of ['memory', 'production', 'work-anywhere', 'next']) expect(ids, id).toContain(id);
-    for (const a of ['architecture', 'experiments', 'improvement-lab', 'high-assurance', 'guardian', 'templates']) expect(productSubAnchors, a).toContain(a);
+  it('lists the Product chapters in order, with every older section kept as an anchor and no roadmap', () => {
+    expect(productSections.map((s) => s.label)).toEqual(['Think', 'Build', 'Prove', 'Deliver', 'Remember', 'Collaborate', 'Models']);
+    const all = [...productSections.map((s) => s.id), ...productSubAnchors];
+    for (const a of ['council', 'competitive', 'memory', 'live-share', 'browser', 'proof', 'production', 'delivery', 'work-anywhere', 'environments', 'voice', 'apps', 'stack', 'mobile', 'tools', 'architecture', 'board', 'experiments', 'improvement-lab', 'high-assurance', 'guardian', 'templates']) expect(all, a).toContain(a);
+    expect(all).not.toContain('next');
+    expect(new Set(all).size).toBe(all.length);
   });
   it('walks How It Works in six stages', () => {
     expect(howSections.map((s) => s.label)).toEqual(['Describe', 'Plan and compare', 'Build', 'Verify', 'Deliver', 'Remember']);
@@ -188,7 +191,7 @@ describe('capabilities', () => {
     expect(projectExamples.map((e) => e.title).join(' ')).toMatch(/Rails.*Django.*Laravel.*Next\.js.*Expo.*Flutter.*Swift or Kotlin.*Tauri or Electron/);
   });
   it('never claims every review is independent or that models guarantee correctness', () => {
-    const all = JSON.stringify({ comparisons, highlights, projectExamples });
+    const all = JSON.stringify({ comparisons, projectExamples });
     expect(all).not.toMatch(/every review is independent|guarantee|fully offline|never need to/i);
   });
 });

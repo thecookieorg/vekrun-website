@@ -1,11 +1,11 @@
 ---
 /**
- * The Product page: everything Vekrun's AI engineering team can do, one
- * capability per section. Models first, then how decisions, knowledge,
- * feedback, verification and delivery work, then the kinds of software you
- * can build and the tools around it. The workflow narrative lives on How It
- * Works. Section ids are stable: old feature and docs URLs redirect to them.
- * Copy sells what people can do, never how it's implemented.
+ * The Product page, as six chapters of engineering work: Think, Build, Prove,
+ * Deliver, Remember and Collaborate, then the models it all runs on. Each
+ * chapter leads with one large demonstration and keeps the rest compact.
+ * Every older section id survives as an anchor inside its chapter, so feature
+ * and docs URLs keep landing in the right place. Copy sells what people can
+ * do, never how it's implemented.
  */
 import Base from '@/layouts/Base.astro';
 import ClosingCta from '@/components/ClosingCta.astro';
@@ -17,9 +17,7 @@ import ModelChoice from '@/components/home/ModelChoice.astro';
 import MemoryDemo from '@/components/home/MemoryDemo.astro';
 import LiveShareDemo from '@/components/home/LiveShareDemo.astro';
 import LiveShareFlow from '@/components/liveshare/LiveShareFlow.astro';
-import LiveShareTargets from '@/components/liveshare/LiveShareTargets.astro';
 import ArchGraph from '@/components/memory/ArchGraph.astro';
-import VoiceDemo from '@/components/product/VoiceDemo.astro';
 import EnvSetup from '@/components/product/EnvSetup.astro';
 import ProofPack from '@/components/factory/ProofPack.astro';
 import CompeteDemo from '@/components/compete/CompeteDemo.astro';
@@ -28,9 +26,9 @@ import BoardFlow from '@/components/factory/BoardFlow.astro';
 import MobileHost from '@/components/factory/MobileHost.astro';
 import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
 import { productSections } from '@/data/site';
-import { stackRows, toolById } from '@/data/integrations';
+import { toolById } from '@/data/integrations';
 import { projectExamples } from '@/data/capabilities';
-import { Check, ArrowRight, SquareTerminal, FileDiff, GitBranch, MessagesSquare, Monitor, Terminal, ShieldAlert, Gauge, FlaskConical, Workflow, Lock, ShieldCheck, Server, Brain, Network } from '@lucide/astro';
+import { Check, ArrowRight, SquareTerminal, FileDiff, GitBranch, MessagesSquare, Monitor, Terminal, ShieldAlert, Gauge, FlaskConical, Workflow, Lock, ShieldCheck, Server, Brain, Network, Eye, SlidersHorizontal, GitPullRequest, History, Crosshair, Users, Mic } from '@lucide/astro';
 
 const council = [
   'Different models can evaluate the same engineering problem',
@@ -39,65 +37,11 @@ const council = [
   'A change can be reviewed by a model from a different family',
   'Verification evidence shows what was checked, and what wasn’t',
 ];
-const memoryNow = [
-  'Understands your repository’s structure and conventions',
-  'Remembers engineering decisions and the reasoning behind them',
-  'Tracks Work Items and links them to their verification evidence',
-  'Reads your documentation and Obsidian vaults, without editing them',
-  'Answers project questions with links to its sources',
-  'Means less re-explaining between sessions',
-];
-const competitive = [
-  'Designs two or three genuinely different approaches',
-  'Builds each one independently, from the same starting revision',
-  'Tests every approach against the same acceptance requirements',
-  'Compares verification, performance, cost, change size and architectural impact',
-  'Recommends an approach only when the evidence supports it',
-  'Leaves the choice to you, and keeps the alternatives and their reasoning',
-];
-const arch = [
-  { t: 'Architecture Explorer', d: 'See how components relate and what depends on what.' },
-  { t: 'Git Time Machine', d: 'Step back through history and see how the architecture evolved.' },
-  { t: 'Change Impact Intelligence', d: 'See what a proposed change might affect before it’s made.' },
-  { t: 'Revision-bound graphs', d: 'Every view is tied to the exact revision it describes.' },
-  { t: 'Sources and dependencies', d: 'Relationships cite the code they were found in.' },
-  { t: 'Part of Engineering Memory', d: 'Decisions and evidence connect to the parts of the system they concern.' },
-];
-const production = [
-  'Connects production errors and stack traces to the code involved',
-  'Shows that code in its architectural context: what calls it and what it affects',
-  'Links recent changes that may have introduced the problem',
-  'Turns an error into a Work Item, with the context already attached',
-];
 const guardian = [
   'Watches your pull requests after they’re opened',
   'Notices failing CI and requested changes',
   'Repairs them when you’ve authorized it, with fresh evidence',
   'Merges verified code only if you’ve explicitly allowed it',
-];
-const templates = [
-  'Start from predefined workflows, such as a bug fix or a dependency upgrade',
-  'Customize the steps, checks and approvals for your team',
-  'Take over unfinished work on an existing branch',
-];
-const anywhere = [
-  'Work locally or on remote infrastructure you control',
-  'Keep long builds and engineering jobs off your laptop',
-  'Connect an existing server, or provision a new one',
-  'Choose your own hosting provider',
-  'Follow and manage remote Work Items in Vekrun',
-  'Open remote previews through secured connections',
-  'No Vekrun per-worker or per-execution fees',
-];
-const provisioning = [
-  'Open Work Anywhere',
-  'Pick a hosting provider, or connect an existing server',
-  'Choose a server size',
-  'Authorize Vekrun to set it up',
-  'Vekrun installs its headless worker securely',
-  'Private access and firewall rules are put in place',
-  'The server appears as a place the Factory can run',
-  'Work Items run there, and come back verified',
 ];
 const providers = [
   { id: 'hetzner', name: 'Hetzner', mono: 'HZ' },
@@ -107,44 +51,10 @@ const providers = [
   { id: 'aws', name: 'AWS', mono: 'AW' },
 ];
 const secure = [
-  { t: 'Closed by default', d: 'Inbound traffic is denied unless it’s needed.' },
-  { t: 'Private access', d: 'Reach the server over a private network such as Tailscale, then close public SSH once private access works.' },
-  { t: 'Enrolled securely', d: 'The worker is set up and registered with your machine from the first boot.' },
-  { t: 'Least privilege', d: 'The worker gets only the permissions it needs.' },
+  { t: 'Closed by default', d: 'Inbound traffic is denied, and public SSH closes once private access works.' },
+  { t: 'Least privilege', d: 'The worker gets only the permissions it needs, with credentials stored and rotated.' },
   { t: 'Isolated work', d: 'Each Work Item runs separately from the others.' },
-  { t: 'Previews without open ports', d: 'Approved app previews leave over outbound-only tunnels, compatible with Live Share.' },
-  { t: 'Credentials handled with care', d: 'Stored securely and rotated.' },
-  { t: 'Nothing hidden', d: 'See the server’s security settings at a glance.' },
-];
-const next = [
-  { theme: 'Safer autonomous delivery', items: [
-    { t: 'Risk Intelligence', d: 'Understand how risky a change is before it moves forward.' },
-    { t: 'Adaptive Verification', d: 'Match the depth of checking to the risk of the change.' },
-    { t: 'Autonomy Controller', d: 'Decide how much autonomy each change has earned. PR Guardian already merges when you authorize it.' },
-    { t: 'Advanced PR Intelligence', d: 'Deeper understanding of pull requests, reviews and their history.' },
-  ] },
-  { theme: 'Learning from engineering evidence', items: [
-    { t: 'Verified Failure Learning', d: 'Learn from failures that were proven and fixed, so they aren’t repeated.' },
-    { t: 'Context Engine Optimization', d: 'Give every agent sharper, smaller context for each task.' },
-  ] },
-  { theme: 'Connected developer workspaces', items: [
-    { t: 'Full headless CLI and MCP', d: 'Everything in the app from the terminal and other agents. CLI and MCP work today; full parity is coming.' },
-    { t: 'Vekrun-to-Vekrun collaboration', d: 'Installations working together directly.' },
-  ] },
-];
-const share = [
-  'Review software while it’s still being built',
-  'Open supported previews in a normal browser',
-  'Interact with the running app remotely',
-  'No development tools needed on the reviewer’s side',
-  'Comments stay tied to their screen or element',
-  'Approve what becomes work, then see the fix verified',
-];
-const browser = [
-  'Click through your running app inside Vekrun',
-  'Select the element that’s wrong and say why',
-  'Each comment carries its page, viewport and revision',
-  'Approved comments become Work Items, and the fix is checked in the same browser',
+  { t: 'Previews without open ports', d: 'Approved previews leave over outbound-only tunnels, ready for Live Share.' },
 ];
 const proof = [
   'Test results from your project’s own suite',
@@ -164,18 +74,6 @@ const delivery = [
   'Changes integrated safely into existing checkouts',
   'A Board that shows what’s in flight and what shipped',
 ];
-const envs = [
-  'Detects what your project needs from its own files',
-  'Prepares supported language toolchains and dependencies',
-  'Starts the databases and services your tests rely on',
-  'Tells you plainly about one-time prerequisites, such as Xcode or Android Studio',
-];
-const voice = [
-  'Discuss ideas and options out loud or in text',
-  'Ask questions about your project and get sourced answers',
-  'Challenge an approach and hear the trade-offs',
-  'Turn an approved decision into a Work Item',
-];
 const apps = [
   { logos: ['ios', 'swift'], t: 'iOS', d: 'Swift projects built and tested with your Xcode toolchain, and previewed in the iOS Simulator.' },
   { logos: ['android', 'kotlin'], t: 'Android', d: 'Kotlin projects built and tested with the Android SDK, and previewed in the emulator.' },
@@ -184,53 +82,54 @@ const apps = [
   { logos: ['tauri', 'electron'], t: 'Desktop', d: 'Tauri and Electron apps, built and checked through their web interface.' },
 ];
 const tools = [
+  { i: Terminal, t: 'Headless CLI and MCP', d: 'Run Vekrun from your terminal, a script or another agent, with the same plans, permissions and Proof Packs as the app.' },
   { i: SquareTerminal, t: 'Terminal and SSH', d: 'Open a shell in any job, here or on a remote machine.' },
   { i: FileDiff, t: 'Code and diffs', d: 'Read exactly what changed before it goes anywhere.' },
   { i: GitBranch, t: 'Git and worktrees', d: 'Branches per job, so work never collides.' },
   { i: MessagesSquare, t: 'Coding sessions', d: 'Pair with a model directly when you’d rather drive.' },
-  { i: Terminal, t: 'CLI and MCP', d: 'Drive Vekrun from your terminal or from another agent.' },
+];
+const prove = [
+  { i: Gauge, t: 'Risk Intelligence', d: 'Every change is weighed before it moves: what it touches, how far it reaches and what has gone wrong there before.' },
+  { i: ShieldCheck, t: 'Adaptive Verification', d: 'A copy fix gets a quick check. A payment change gets browser runs, an independent review and a mutation challenge.' },
+  { i: Eye, t: 'Independent review', d: 'A model from another AI developer reviews the work against your request, and its objections stay on the record.' },
+];
+const deliverMore = [
+  { i: SlidersHorizontal, t: 'Autonomy Controller', d: 'Decide how much freedom each kind of change has earned: draft only, open a pull request, or merge when the evidence and your rules allow it.' },
+  { i: GitPullRequest, t: 'Advanced PR Intelligence', d: 'Vekrun understands each pull request in context: its review history, the risk it carries and what reviewers will ask about.' },
+];
+const remember = [
+  { i: History, t: 'Verified Failure Learning', d: 'When a failure is proven and fixed, the lesson is kept with its evidence, so the same mistake isn’t investigated twice.' },
+  { i: Crosshair, t: 'Context Engine', d: 'Each agent gets the decisions, code and lessons that matter for its task, smaller and sharper, instead of everything.' },
+  { i: Network, t: 'Living Architecture', d: 'Decisions and evidence stay attached to the parts of the system they concern.' },
+];
+const anywhereFacts = [
+  'Keep long builds and engineering jobs off your laptop',
+  'Connect an existing server, or let Vekrun set up a new one',
+  'Follow and manage remote Work Items from your Mac',
+  'No Vekrun per-worker or per-execution fees',
 ];
 const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : id === 'android' ? 'Android' : id, mono: id.slice(0, 2) };
 ---
-<Base title="Product" fullTitle="Product: everything your AI engineering team can do · Vekrun" image="/og/product.png" description="Competitive Engineering, Living Architecture Intelligence, Proof Packs with high-assurance checks, PR Guardian, Live Share and Engineering Memory, with OpenRouter or local models you download through Vekrun. Work Anywhere is coming to Free.">
-  <PageHero eyebrow="Product" title="Everything your AI engineering team can do." lede="Vekrun plans, builds, verifies and delivers real software with the models you choose, and keeps you in control of every decision that matters." cta={{ label: 'Request early access', href: '/download/' }} secondary={{ label: 'How it works', href: '/how-it-works/' }} />
+<Base title="Product" fullTitle="Product: everything your AI engineering team can do · Vekrun" image="/og/product.png" description="Think, build, prove, deliver, remember and collaborate: Competitive Engineering, Living Architecture Intelligence, Proof Packs, PR Guardian, Engineering Memory and Live Share, with Grok, Claude, OpenRouter or local models you download through Vekrun.">
+  <PageHero eyebrow="Product" title="Everything your AI engineering team can do." lede="Vekrun thinks through the problem, builds it, proves it works and delivers it, then remembers what it learned. You stay in control of every decision that matters." cta={{ label: 'Request early access', href: '/download/' }} secondary={{ label: 'How it works', href: '/how-it-works/' }} />
 
   <nav class="pnav" aria-label="On this page">
     <div class="container-site"><ul>{productSections.map((s) => <li><a href={`#${s.id}`}>{s.label}</a></li>)}</ul></div>
   </nav>
 
-  <section id="models" class="section-pad anchor" aria-labelledby="models-title">
+  <!-- Think -->
+  <section id="think" class="section-pad anchor" aria-labelledby="think-title">
     <div class="container-site">
-      <SectionHeading id="models-title" title="Your AI. Your hardware. Your choice." lede="Connect OpenRouter, or discover and download compatible local models through Vekrun. Run AI on your own hardware, with no paid cloud model subscription needed for supported workflows." />
-      <div class="mt-12"><ModelChoice /></div>
-    </div>
-  </section>
+      <header class="ch"><p class="ch-k">Think</p><h2 id="think-title" class="heading-2 text-text">Decide with evidence, before code is written.</h2><p class="ch-l">A Council of models weighs the approach, competing implementations settle what opinion can’t, and Living Architecture shows what a change will touch.</p></header>
 
-  <section id="council" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="council-title">
-    <div class="container-site split">
-      <div>
-        <SectionHeading id="council-title" title="Better engineering decisions deserve more than one perspective." lede="Vekrun can bring different AI models together to assess an approach, surface disagreements and identify risks. You see the reasoning, the objections and the decision." />
-        <ul class="ticks">{council.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
-        <div class="second">
-          <h3>A second opinion that actually challenges the first.</h3>
-          <p>Vekrun can bring a model from another AI developer into the review process, helping identify weaknesses that the original implementation and its tests may have missed. In one recent review the tests were passing, and the reviewer still found that they didn’t properly test the ranking they were meant to prove.</p>
-        </div>
-        <p class="fine">Not every task convenes a Council, and more models don’t guarantee a correct answer: they make the reasoning visible and harder to get wrong quietly.</p>
+      <div id="competitive" class="blk anchor">
+        <h3 class="blk-t">Competitive Engineering</h3>
+        <p class="blk-big">Don’t guess which approach is better. Build both. Prove it.</p>
+        <p class="sub-lede">Vekrun designs two or three genuinely different approaches, builds each from the same revision, tests them against the same requirements and compares the evidence: verification, performance, cost and change size. You choose; the alternatives are kept. If none qualifies, it says so.</p>
       </div>
-      <div class="min-w-0"><Council /></div>
     </div>
-  </section>
-
-  <section id="competitive" class="section-pad rule anchor" aria-labelledby="competitive-title">
+    <div class="container-wide mt-10"><CompeteDemo /></div>
     <div class="container-site">
-      <SectionHeading id="competitive-title" title="Don’t guess which approach is better. Build both. Prove it." lede="Most AI coding tools give you one implementation. Vekrun can build competing approaches, verify each against the same requirements, compare the evidence and help you choose." />
-      <div class="split mt-12">
-        <div>
-          <ul class="ticks mt-0">{competitive.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
-          <p class="fine">If no approach meets the requirements, Vekrun says so instead of picking the least bad one.</p>
-        </div>
-        <div class="min-w-0"><CompeteDemo /></div>
-      </div>
       <div class="duo">
         <div id="experiments" class="duo-i anchor">
           <span class="duo-ic"><Gauge class="h-4 w-4" aria-hidden="true" /></span>
@@ -242,7 +141,6 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
             <div><dt>Invariants</dt><dd><Check class="h-3.5 w-3.5" aria-hidden="true" />Results and prices unchanged</dd></div>
             <div><dt>Rollback</dt><dd><Check class="h-3.5 w-3.5" aria-hidden="true" />Rehearsed and clean</dd></div>
           </dl>
-          <p class="exp-cap">Example figures.</p>
         </div>
         <div id="improvement-lab" class="duo-i anchor">
           <span class="duo-ic"><FlaskConical class="h-4 w-4" aria-hidden="true" /></span>
@@ -251,235 +149,209 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
           <p class="duo-q">Better means more verified outcomes, not more confident claims.</p>
         </div>
       </div>
-    </div>
-  </section>
 
-  <section id="memory" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="memory-title">
-    <div class="container-site">
-      <SectionHeading id="memory-title" title="Software that understands your software." lede="Vekrun builds an evolving understanding of your project, connecting decisions, changes, requirements and evidence, so your team works with context instead of starting over." />
-      <div class="sub">
-        <div class="sub-head"><h3>Engineering Memory</h3></div>
-        <div class="split mt-6">
-          <ul class="ticks mt-0">{memoryNow.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
-          <div class="min-w-0"><MemoryDemo /></div>
-        </div>
-        <p class="tier-line"><Brain class="h-4 w-4" aria-hidden="true" />Vekrun Free includes personal Engineering Memory. Shared Engineering Memory across a team is coming to <a href="/teams/" class="text-accent link-slide">Vekrun Teams</a>.</p>
-        <div class="mt-10"><Screenshot name="memory-understand" width={1440} height={437} alt="Engineering Memory in the Vekrun desktop app: Understand this project lists what was read (files and languages, manifests and CI, entry points, code map, docs and tests, Git history, interpretations), above Knowledge sources with an Add Obsidian vault button." caption="Engineering Memory in the Vekrun desktop app: project understanding and knowledge sources." /></div>
-      </div>
-      <div id="architecture" class="sub anchor">
-        <div class="sub-head"><h3>Living Architecture Intelligence</h3></div>
-        <p class="sub-big">Understand your codebase, not just its files.</p>
-        <p class="sub-lede">Explore how components relate, what depends on what, how the architecture evolved, and what a proposed change might affect.</p>
-        <div class="split mt-6">
-          <ul class="arch">{arch.map((a) => <li><Network class="h-4 w-4" aria-hidden="true" /><div><p>{a.t}</p><span>{a.d}</span></div></li>)}</ul>
-          <div class="min-w-0"><ArchGraph /></div>
-        </div>
-        <p class="fine">The graph is built from what Vekrun can see in your code and its history. Some relationships, such as ones resolved only at runtime, can be missed or are marked as inferred. Vekrun shows its sources and its uncertainty, so you know how far to trust each connection.</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="live-share" class="section-pad rule anchor" aria-labelledby="share-title">
-    <div class="container-site">
-      <SectionHeading id="share-title" title="Let anyone experience what you’re building." lede="Share an interactive preview with your team, designer, tester or client while development is still underway. They explore the app in their browser, leave feedback in context and help improve the result without waiting for a release." />
-      <p class="big-line">Don’t send screenshots. Send the app.</p>
-      <div class="split mt-10">
-        <LiveShareFlow />
-        <div class="min-w-0"><LiveShareDemo /></div>
-      </div>
-      <h3 class="h3 h3-gap">Web, mobile and desktop.</h3>
-      <p class="sub-lede">Live Share works with the kinds of apps you build, each previewed the way that suits it.</p>
-      <div class="mt-6"><LiveShareTargets /></div>
-      <div class="split mt-14">
+      <div id="council" class="blk split anchor">
         <div>
-          <h3 class="h3">What reviewers and you get.</h3>
-          <ul class="ticks">{share.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
-          <p class="fine">Your review link stays the same between sessions, but it isn’t hosting: the app runs on your machine, so reviewers can use it while Live Share is on and your machine is running. Choose who gets in: anyone with the link, a password, or no one. Live Share relays through a gateway Vekrun operates. <a href="/privacy/#live-share" class="text-accent link-slide">What it relays and keeps</a></p>
+          <h3 class="blk-t">The Council</h3>
+          <p class="blk-big">More than one perspective on decisions that matter.</p>
+          <p class="sub-lede">Vekrun can bring models from different AI developers together to assess an approach, surface disagreements and name the risks. You see the reasoning, the objections and the decision, and a reviewer from another model family challenges the result later.</p>
+          <ul class="ticks">{council.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
+          <p class="fine">Not every task convenes a Council, and more models don’t guarantee a correct answer: they make the reasoning visible and harder to get wrong quietly.</p>
         </div>
-        <div class="min-w-0"><Screenshot name="liveshare-review" alt="The Live Share Review Inbox in the Vekrun desktop app: a reviewer’s comment about a cramped checkout heading, with the region they selected highlighted on the page and the page, viewport and revision recorded." caption="Live Share’s Review Inbox in the Vekrun desktop app. Each comment keeps the exact region, page and revision it refers to." /></div>
+        <div class="min-w-0"><Council /></div>
       </div>
-    </div>
-  </section>
 
-  <section id="browser" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="browser-title">
-    <div class="container-site split">
-      <div>
-        <SectionHeading id="browser-title" title="Point at the problem instead of explaining it." lede="The Interactive Browser lets you use your running app inside Vekrun, mark what’s wrong and turn it into work. Live Share brings other people in; the Interactive Browser is for you." />
-        <ul class="ticks">{browser.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
-      </div>
-      <div class="min-w-0"><Screenshot name="browser-annotate" alt="The Vekrun desktop app's Interactive Browser: a checkout page with two numbered comments, each queued as work for an agent." caption="The Interactive Browser in the Vekrun desktop app. Point at what’s wrong; each comment becomes verified work." /></div>
-    </div>
-  </section>
-
-  <section id="proof" class="section-pad rule anchor" aria-labelledby="proof-title">
-    <div class="container-site split">
-      <div>
-        <SectionHeading id="proof-title" title="Done means proven, not just claimed." lede="Every result comes with a Proof Pack: the evidence that it works on the exact revision, and an honest list of what wasn’t checked." />
-        <ul class="ticks">{proof.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
-        <p class="fine">Passing tests are strong evidence, not a guarantee that every part of an app works. That’s why gaps are listed.</p>
-        <div id="high-assurance" class="second anchor">
-          <h3>Do your tests actually catch mistakes?</h3>
-          <p>For high-assurance work, a Proof Pack can include a mutation challenge: Vekrun makes small deliberate changes to the code and checks whether your tests notice. Tests that miss them are listed, so you know where coverage is thin.</p>
+      <div id="architecture" class="blk split anchor">
+        <div>
+          <h3 class="blk-t">Living Architecture Intelligence</h3>
+          <p class="blk-big">Understand your software before changing it.</p>
+          <p class="sub-lede">Explore how components relate, step back through history with the Git Time Machine and see what a proposed change might affect. Every view is tied to its revision, and every relationship cites its source; inferred ones are marked.</p>
+          <div id="production" class="mini anchor">
+            <p class="mini-t"><ShieldAlert class="h-4 w-4" aria-hidden="true" />From a production error to the code behind it</p>
+            <p>Production-to-Code Intelligence connects errors from your monitoring tools to the code involved, shows it in its architectural context, links the change that likely caused it and turns it into a Work Item.</p>
+          </div>
+          <div id="voice" class="mini anchor">
+            <p class="mini-t"><Mic class="h-4 w-4" aria-hidden="true" />Talk it through</p>
+            <p>Discuss options out loud or in text with a colleague who knows the codebase. Agree on a direction and it becomes work you approve.</p>
+          </div>
         </div>
+        <div class="min-w-0"><ArchGraph /></div>
       </div>
-      <div class="min-w-0"><ProofPack /></div>
     </div>
   </section>
 
-  <section id="production" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="production-title">
-    <div class="container-site split">
-      <div>
-        <SectionHeading id="production-title" title="From a production error to the code behind it." lede="Production-to-Code Intelligence connects errors and stack traces from your monitoring tools to the relevant code, and shows it in its architectural context." />
-        <ul class="ticks">{production.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
-      </div>
-      <figure class="trace" aria-label="Example: a production error traced to code">
-        <div class="trace-head"><ShieldAlert class="h-4 w-4" aria-hidden="true" /><span>NoMethodError in CheckoutTotal#apply_discount</span><em>Example</em></div>
-        <ol class="trace-steps">
-          <li><span>Error</span><p>312 events in the last hour · Honeybadger</p></li>
-          <li><span>Code</span><p><code>app/services/checkout_total.rb:42</code></p></li>
-          <li><span>Context</span><p>Called by Orders API · used by web and mobile checkout</p></li>
-          <li><span>Likely cause</span><p>Changed in PR #471, two days ago</p></li>
-          <li class="is-go"><span>Next</span><p>Work Item created with this context attached</p></li>
-        </ol>
-      </figure>
-    </div>
-  </section>
-
-  <section id="delivery" class="section-pad rule anchor" aria-labelledby="delivery-title">
+  <!-- Build -->
+  <section id="build" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="build-title">
     <div class="container-site">
-      <SectionHeading id="delivery-title" title="Your branches. Your policies. Your approvals." lede="Vekrun manages engineering work inside the workflow you already have. It keeps parallel work coordinated and respects your team’s Git rules." />
-      <ul class="ticks cols">{delivery.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
-      <div class="duo">
-        <div id="guardian" class="duo-i anchor">
-          <span class="duo-ic"><ShieldCheck class="h-4 w-4" aria-hidden="true" /></span>
-          <h3>PR Guardian</h3>
-          <p>Looks after your pull requests once they’re open.</p>
+      <header class="ch"><p class="ch-k">Build</p><h2 id="build-title" class="heading-2 text-text">A Factory that works while you don’t.</h2><p class="ch-l">Work is planned into Work Items, each built in its own isolated environment, on your Mac or on a server you control, and you can step in at any point.</p></header>
+      <div id="board" class="blk anchor">
+        <h3 class="blk-t">Factory and Work Items</h3>
+        <p class="blk-big">All your engineering work on one Board.</p>
+        <p class="sub-lede">Tickets, pull requests and production errors, each one a job away from a fix. Dependencies are respected and independent work runs in parallel.</p>
+        <div class="mt-8"><BoardFlow /></div>
+      </div>
+
+      <div id="work-anywhere" class="blk anchor">
+        <h3 class="blk-t">Work Anywhere</h3>
+        <p class="blk-big">Your laptop isn’t your build server. Unless you want it to be.</p>
+        <p class="sub-lede">Run the Factory locally or on infrastructure you control. Send builds, tests and autonomous work to your own VPS, and get verified results back on your Mac.</p>
+        <div class="mt-8"><WorkAnywhere /></div>
+        <div class="split mt-10">
+          <div>
+            <ul class="ticks mt-0">{anywhereFacts.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
+            <ul class="prov-p" aria-label="Hosting providers">{providers.map((p) => <li><IntegrationLogo id={p.id} name={p.name} monogram={p.mono} size="sm" />{p.name}</li>)}<li><span class="prov-srv"><Server class="h-3.5 w-3.5" aria-hidden="true" /></span>Any existing server</li></ul>
+          </div>
+          <div>
+            <p class="mini-t"><Lock class="h-4 w-4" aria-hidden="true" />Private from the first boot</p>
+            <ul class="sec">{secure.map((c) => <li><h4>{c.t}</h4><p>{c.d}</p></li>)}</ul>
+          </div>
+        </div>
+        <p class="fine">Work Anywhere is coming to Vekrun Free. Teams adds shared worker pools; see <a href="/teams/#workers" class="text-accent link-slide">Vekrun Teams</a>.</p>
+      </div>
+
+      <div id="environments" class="blk split anchor">
+        <div>
+          <h3 class="blk-t">Environments</h3>
+          <p class="blk-big">Less time configuring. More time building.</p>
+          <p class="sub-lede">Vekrun reads your project and prepares what it needs: supported toolchains, dependencies, and the databases and services your tests rely on. One-time prerequisites, such as Xcode, are called out plainly.</p>
+          <div id="templates" class="mini anchor">
+            <p class="mini-t"><Workflow class="h-4 w-4" aria-hidden="true" />Workflow Templates</p>
+            <p>Start from a proven way of working, such as a bug fix or a dependency upgrade, and customize its steps, checks and approvals. Or take over unfinished work on an existing branch.</p>
+          </div>
+        </div>
+        <div class="min-w-0"><EnvSetup /></div>
+      </div>
+
+      <div id="tools" class="blk anchor">
+        <h3 class="blk-t">Step in whenever you want</h3>
+        <ul class="pts">{tools.map((t) => <li><t.i class="h-5 w-5 text-accent" aria-hidden="true" /><h4>{t.t}</h4><p>{t.d}</p></li>)}</ul>
+      </div>
+
+      <div id="apps" class="blk anchor">
+        <h3 class="blk-t">Every screen, not just the browser</h3>
+        <ul class="apps">
+          {apps.map((a) => (
+            <li>
+              <span class="apps-logos">{a.t === 'Desktop' && <span class="apps-ic"><Monitor class="h-4 w-4" aria-hidden="true" /></span>}{a.logos.map((id) => { const t = logo(id); return <IntegrationLogo id={t.id} name={t.name} monogram={t.mono} size="sm" />; })}</span>
+              <h4>{a.t}</h4>
+              <p>{a.d}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div id="stack" class="blk anchor">
+        <h3 class="blk-t">Your stack. Your repository. Your workflow.</h3>
+        <p class="sub-lede">Vekrun works in your repositories with your project’s own tooling. <a href="/integrations/" class="text-accent link-slide">See the integrations</a></p>
+        <ul class="ex">
+          {projectExamples.map((e) => (
+            <li>
+              <span class="ex-logos">{e.logos.map((id) => { const t = logo(id); return <IntegrationLogo id={t.id} name={t.name} monogram={t.mono} size="sm" />; })}</span>
+              <h4>{e.title}</h4>
+              <p>{e.line}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div id="mobile" class="blk anchor">
+        <h3 class="blk-t">Your Factory, in your pocket</h3>
+        <p class="sub-lede">Assign and approve work from your phone while your own machine does the building.</p>
+        <div class="mt-8"><MobileHost /></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Prove -->
+  <section id="prove" class="section-pad rule anchor" aria-labelledby="prove-title">
+    <div class="container-site">
+      <header class="ch"><p class="ch-k">Prove</p><h2 id="prove-title" class="heading-2 text-text">Done means proven, not just claimed.</h2><p class="ch-l">The depth of checking follows the risk of the change, and every result arrives with a Proof Pack: the evidence on the exact revision, and an honest list of what wasn’t checked.</p></header>
+      <ul class="trio">{prove.map((c) => <li><span class="duo-ic"><c.i class="h-4 w-4" aria-hidden="true" /></span><h3>{c.t}</h3><p>{c.d}</p></li>)}</ul>
+      <div id="proof" class="blk split anchor">
+        <div>
+          <h3 class="blk-t">Proof Packs</h3>
+          <p class="blk-big">Evidence you can read in a minute.</p>
+          <ul class="ticks">{proof.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
+          <div id="high-assurance" class="mini anchor">
+            <p class="mini-t"><FlaskConical class="h-4 w-4" aria-hidden="true" />Do your tests actually catch mistakes?</p>
+            <p>For high-assurance work, a mutation challenge makes small deliberate changes to the code and checks whether your tests notice. Tests that miss them are listed.</p>
+          </div>
+        </div>
+        <div class="min-w-0"><ProofPack /></div>
+      </div>
+      <div id="browser" class="blk split anchor">
+        <div>
+          <h3 class="blk-t">Interactive Browser</h3>
+          <p class="blk-big">Point at the problem instead of explaining it.</p>
+          <p class="sub-lede">Click through your running app inside Vekrun, select what’s wrong and say why. Each comment carries its page, viewport and revision, becomes a Work Item, and the fix is checked in the same browser.</p>
+        </div>
+        <div class="min-w-0"><Screenshot name="browser-annotate" alt="The Vekrun desktop app's Interactive Browser: a checkout page with two numbered comments, each queued as work for an agent." caption="The Interactive Browser in the Vekrun desktop app." /></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Deliver -->
+  <section id="deliver" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="deliver-title">
+    <div class="container-site">
+      <header class="ch"><p class="ch-k">Deliver</p><h2 id="deliver-title" class="heading-2 text-text">Your branches. Your policies. Your approvals.</h2><p class="ch-l">Vekrun delivers inside the Git workflow you already have, and you decide how far it goes on its own.</p></header>
+      <div id="delivery" class="blk split anchor">
+        <div id="guardian" class="anchor">
+          <h3 class="blk-t">PR Guardian</h3>
+          <p class="blk-big">Pull requests that look after themselves.</p>
           <ul class="ticks">{guardian.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
         </div>
-        <div id="templates" class="duo-i anchor">
-          <span class="duo-ic"><Workflow class="h-4 w-4" aria-hidden="true" /></span>
-          <h3>Workflow Templates</h3>
-          <p>Start from a proven way of working instead of a blank prompt.</p>
-          <ul class="ticks">{templates.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
-        </div>
-      </div>
-      <div id="board" class="anchor mt-12">
-        <h3 class="h3">All your engineering work on one Board.</h3>
-        <p class="sub-lede">Tickets, pull requests and production errors, each one a job away from a fix.</p>
-        <div class="mt-6"><BoardFlow /></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="work-anywhere" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="anywhere-title">
-    <div class="container-site">
-      <div class="sub-head"><span class="state">Free and Teams</span></div>
-      <SectionHeading id="anywhere-title" class="mt-4" title="Your laptop isn’t your build server. Unless you want it to be." lede="Work Anywhere runs your engineering Factory locally or on infrastructure you control. Use your own VPS for builds, tests and autonomous work, without buying Vekrun-hosted compute. It will be included in Vekrun Free." />
-      <div class="mt-12"><WorkAnywhere /></div>
-      <div class="split mt-14">
         <div>
-          <h3 class="h3">What you get.</h3>
-          <ul class="ticks">{anywhere.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
+          <h3 class="blk-t">Git, your way</h3>
+          <ul class="ticks">{delivery.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
         </div>
+      </div>
+      <ul class="trio is-two">{deliverMore.map((c) => <li><span class="duo-ic"><c.i class="h-4 w-4" aria-hidden="true" /></span><h3>{c.t}</h3><p>{c.d}</p></li>)}</ul>
+    </div>
+  </section>
+
+  <!-- Remember -->
+  <section id="remember" class="section-pad rule anchor" aria-labelledby="remember-title">
+    <div class="container-site">
+      <header class="ch"><p class="ch-k">Remember</p><h2 id="remember-title" class="heading-2 text-text">Every task leaves the project better understood.</h2><p class="ch-l">Engineering Memory keeps decisions, verified fixes and their evidence, so the next task starts from what your team already knows.</p></header>
+      <div id="memory" class="blk split anchor">
         <div>
-          <h3 class="h3">From zero to a working server.</h3>
-          <ol class="prov">{provisioning.map((c, i) => <li><span>{i + 1}</span>{c}</li>)}</ol>
-          <ul class="prov-p" aria-label="Hosting providers we intend to support">{providers.map((p) => <li><IntegrationLogo id={p.id} name={p.name} monogram={p.mono} size="sm" />{p.name}</li>)}<li><span class="prov-srv"><Server class="h-3.5 w-3.5" aria-hidden="true" /></span>Any existing server</li></ul>
-          <p class="fine">These providers are integration targets, not finished integrations. Vekrun will use provider APIs and command-line tools where they help, and a provider-independent path for servers you already have.</p>
+          <h3 class="blk-t">Engineering Memory</h3>
+          <p class="blk-big">Ask why, and get the answer with its sources.</p>
+          <p class="sub-lede">Vekrun understands your repository’s structure and conventions, reads your docs and Obsidian vaults without editing them, and links Work Items to their evidence.</p>
+          <ul class="stack3">{remember.map((c) => <li><span class="duo-ic"><c.i class="h-4 w-4" aria-hidden="true" /></span><div><h4>{c.t}</h4><p>{c.d}</p></div></li>)}</ul>
         </div>
+        <div class="min-w-0"><MemoryDemo /></div>
       </div>
-      <h3 class="h3 h3-gap"><Lock class="inline h-5 w-5 align-[-3px] text-accent" aria-hidden="true" /> Private from the first boot.</h3>
-      <p class="sub-lede">Vekrun is designed to set up remote workers with public management ports closed, authenticated private connectivity and isolated engineering environments.</p>
-      <ul class="sec">{secure.map((c) => <li><h4>{c.t}</h4><p>{c.d}</p></li>)}</ul>
-      <p class="fine">Security depends on your provider and server too; Vekrun aims for safe defaults, not a guarantee. A Tailscale-style private network and outbound tunnels are the design; neither Tailscale nor any provider integration is finished, and Cloudflare Tunnel won’t be required. Teams adds shared worker pools; see <a href="/teams/#workers" class="text-accent link-slide">Vekrun Teams</a>.</p>
+      <p class="tier-line"><Brain class="h-4 w-4" aria-hidden="true" /><span>Personal Engineering Memory is in Vekrun Free. <a href="/teams/" class="text-accent link-slide">Vekrun Teams</a> shares it across engineers, repositories and their agents.</span></p>
     </div>
   </section>
 
-  <section id="environments" class="section-pad rule anchor" aria-labelledby="env-title">
-    <div class="container-site split">
-      <div>
-        <SectionHeading id="env-title" title="Spend less time configuring environments. More time building." lede="Vekrun reads your project and prepares what it needs to build and test: supported toolchains, dependencies and services for Rails, Node.js, Python, Flutter, Expo and more." />
-        <ul class="ticks">{envs.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
-        <p class="fine">Automatic setup covers supported toolchains. Some platforms need a one-time install from you, such as Xcode for iOS or Android Studio for Android.</p>
+  <!-- Collaborate -->
+  <section id="collaborate" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="collaborate-title">
+    <div class="container-site">
+      <header class="ch"><p class="ch-k">Collaborate</p><h2 id="collaborate-title" class="heading-2 text-text">Bring people, and other Vekruns, into the work.</h2><p class="ch-l">Reviewers use what you’re building while it’s being built, and Vekrun installations can work together directly.</p></header>
+      <div id="live-share" class="blk anchor">
+        <h3 class="blk-t">Live Share</h3>
+        <p class="blk-big">Don’t send screenshots. Send the app.</p>
+        <div class="split mt-8">
+          <LiveShareFlow />
+          <div class="min-w-0"><LiveShareDemo /></div>
+        </div>
+        <p class="fine">Web, iOS, Android, Expo, Flutter and desktop apps, each previewed the way that suits it. Your review link stays the same, but it isn’t hosting: the app runs on your machine, so reviewers can use it while Live Share is on. Choose who gets in. <a href="/privacy/#live-share" class="text-accent link-slide">What Live Share relays and keeps</a></p>
       </div>
-      <div class="min-w-0"><EnvSetup /></div>
-    </div>
-  </section>
-
-  <section id="voice" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="voice-title">
-    <div class="container-site split">
-      <div>
-        <SectionHeading id="voice-title" title="Talk through the problem. Turn the decision into progress." lede="Brainstorm with Vekrun like you would with a colleague who knows the codebase. When you agree on a direction, it becomes work you can approve." />
-        <ul class="ticks">{voice.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
-        <p class="fine">Voice is for discussing and deciding. Nothing becomes work until you approve it.</p>
+      <div class="mini is-wide">
+        <p class="mini-t"><Users class="h-4 w-4" aria-hidden="true" />Vekrun-to-Vekrun collaboration</p>
+        <p>Your Vekrun and a teammate’s can work together directly: hand over a Work Item with its context, ask another installation for a review, or split a project across machines, each keeping its own permissions.</p>
       </div>
-      <div class="min-w-0"><VoiceDemo /></div>
     </div>
   </section>
 
-  <section id="apps" class="section-pad rule anchor" aria-labelledby="apps-title">
+  <!-- Models -->
+  <section id="models" class="section-pad rule anchor" aria-labelledby="models-title">
     <div class="container-site">
-      <SectionHeading id="apps-title" title="Build for every screen, not just the browser." lede="Vekrun develops mobile and desktop apps as well as web apps: it builds them with your project’s toolchain, runs their tests and lets people preview supported targets through Live Share." />
-      <ul class="apps">
-        {apps.map((a) => (
-          <li>
-            <span class="apps-logos">{a.t === 'Desktop' && <span class="apps-ic"><Monitor class="h-4 w-4" aria-hidden="true" /></span>}{a.logos.map((id) => { const t = logo(id); return <IntegrationLogo id={t.id} name={t.name} monogram={t.mono} size="sm" />; })}</span>
-            <h3>{a.t}</h3>
-            <p>{a.d}</p>
-          </li>
-        ))}
-      </ul>
-      <p class="fine">Building for iOS needs a Mac with Xcode, and Android needs the Android SDK. Support depends on your project and toolchain. Looking for Vekrun itself on your phone? <a href="#mobile" class="text-accent link-slide">That’s below</a>.</p>
-    </div>
-  </section>
-
-  <section id="stack" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="stack-title">
-    <div class="container-site">
-      <SectionHeading id="stack-title" title="Your stack. Your repository. Your workflow." lede="Vekrun’s value isn’t tied to one language or framework. It works in your repositories with your project’s own tooling, across languages, frameworks and services." />
-      <ul class="ex">
-        {projectExamples.map((e) => (
-          <li>
-            <span class="ex-logos">{e.logos.map((id) => { const t = logo(id); return <IntegrationLogo id={t.id} name={t.name} monogram={t.mono} size="sm" />; })}</span>
-            <h3>{e.title}</h3>
-            <p>{e.line}</p>
-          </li>
-        ))}
-      </ul>
-      <ul class="plat" aria-label="Technologies">
-        {stackRows.flat().map((t) => <li><IntegrationLogo id={t.id} name={t.name} monogram={t.mono} size="sm" />{t.name}</li>)}
-      </ul>
-      <p class="fine">Examples of compatible projects. Every project is different; Vekrun works with your setup rather than certifying every combination.</p>
-    </div>
-  </section>
-
-  <section id="mobile" class="section-pad rule anchor" aria-labelledby="mobile-title">
-    <div class="container-site">
-      <SectionHeading id="mobile-title" title="Your Factory, in your pocket." lede="Using Vekrun from your phone: assign work and approve it while your own machine does the building." />
-      <div class="mt-12"><MobileHost /></div>
-      <p class="mt-10"><a href="/teams/" class="link-more group">Bringing Vekrun to your team? See Vekrun Teams<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
-    </div>
-  </section>
-
-  <section id="tools" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="tools-title">
-    <div class="container-site">
-      <SectionHeading id="tools-title" title="Step in whenever you want." lede="Every job comes with the tools to take over by hand. Your editor stays your editor." />
-      <ul class="pts">
-        {tools.map((t) => <li><t.i class="h-5 w-5 text-accent" aria-hidden="true" /><h3>{t.t}</h3><p>{t.d}</p></li>)}
-      </ul>
-    </div>
-  </section>
-
-  <section id="next" class="section-pad rule anchor" aria-labelledby="whats-next-title">
-    <div class="container-site">
-      <SectionHeading id="whats-next-title" title="What’s next for Vekrun." lede="What we’re building now, grouped by what it will mean for you. None of it is available yet, and we don’t publish dates." />
-      <div class="nx">
-        {next.map((g) => (
-          <section class="nx-g" aria-label={g.theme}>
-            <h3>{g.theme}</h3>
-            <ul>{g.items.map((it) => <li><p>{it.t}</p><span>{it.d}</span></li>)}</ul>
-          </section>
-        ))}
-      </div>
+      <SectionHeading id="models-title" kicker="Models" title="Your AI. Your hardware. Your choice." lede="Use Vekrun’s native agent with OpenRouter, Grok through xAI, or compatible local models you download through Vekrun. Bring Claude Code, Codex, Antigravity CLI or Grok Build if you like; none is required." />
+      <div class="mt-12"><ModelChoice /></div>
+      <p class="mt-10"><a href="/integrations/#grok" class="link-more group">Three ways to bring Grok into Vekrun<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
     </div>
   </section>
 
@@ -487,6 +359,33 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
 </Base>
 
 <style>
+  .ch { max-width: 48rem; }
+  .ch-k { margin: 0; font-size: clamp(2.6rem, 1.8rem + 3vw, 4.2rem); line-height: 1; font-weight: 680; letter-spacing: -0.045em; color: var(--accent-text); }
+  .ch h2 { margin-top: 1rem; }
+  .ch-l { margin: 1rem 0 0; font-size: 1.1rem; line-height: 1.55; color: var(--foreground-secondary); }
+  .blk { margin-top: 4rem; }
+  @media (min-width: 64rem) { .blk { margin-top: 5rem; } }
+  .blk-t { margin: 0; font-size: 0.9rem; font-weight: 600; color: var(--foreground-secondary); }
+  .blk-big { margin: 0.4rem 0 0; max-width: 40rem; font-size: clamp(1.4rem, 1.1rem + 1.2vw, 2rem); line-height: 1.2; font-weight: 640; letter-spacing: -0.025em; color: var(--foreground); }
+  .mini { margin-top: 1.5rem; padding: 1.1rem 1.2rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); }
+  .mini.is-wide { margin-top: 3rem; max-width: 52rem; }
+  .mini-t { margin: 0; display: flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 620; color: var(--foreground); }
+  .mini-t :global(svg) { flex-shrink: 0; color: var(--accent-text); }
+  .mini > p:not(.mini-t) { margin: 0.45rem 0 0; font-size: 0.93rem; line-height: 1.55; color: var(--foreground-secondary); }
+  .trio { margin: 3rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.75rem; }
+  @media (min-width: 56rem) { .trio { grid-template-columns: repeat(3, minmax(0, 1fr)); } .trio.is-two { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .trio li { padding: 1.3rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
+  .trio h3 { margin: 0.75rem 0 0; font-size: 1.1rem; font-weight: 620; color: var(--foreground); }
+  .trio p { margin: 0.4rem 0 0; font-size: 0.93rem; line-height: 1.55; color: var(--foreground-secondary); }
+  .stack3 { margin: 1.75rem 0 0; padding: 0; list-style: none; display: grid; gap: 1.1rem; }
+  .stack3 li { display: flex; gap: 0.8rem; align-items: flex-start; }
+  .stack3 h4 { margin: 0.15rem 0 0; font-size: 1rem; font-weight: 620; color: var(--foreground); }
+  .stack3 p { margin: 0.2rem 0 0; font-size: 0.92rem; line-height: 1.5; color: var(--foreground-secondary); }
+  .sec { margin-top: 1rem !important; }
+  @media (min-width: 64rem) { .sec { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } }
+  .apps h4, .ex h4, .pts h4 { margin: 0; font-size: 1rem; font-weight: 600; color: var(--foreground); }
+  @media (min-width: 64rem) { .pts { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; } }
+  .pts { margin-top: 1.25rem !important; }
   .anchor { scroll-margin-top: 7rem; }
   .pnav { position: sticky; top: 4rem; z-index: 20; border-block: 1px solid var(--border); background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
   .pnav ul { margin: 0; padding: 0.5rem 0; list-style: none; display: flex; gap: 0.25rem; overflow-x: auto; scrollbar-width: none; }
@@ -566,13 +465,6 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
   .sec li { padding: 1.1rem; background: var(--surface); }
   .sec h4 { margin: 0; font-size: 0.95rem; font-weight: 600; color: var(--foreground); }
   .sec p { margin: 0.3rem 0 0; font-size: 0.86rem; line-height: 1.5; color: var(--foreground-secondary); }
-  .nx { margin-top: 2.5rem; display: grid; gap: 0.75rem; }
-  @media (min-width: 60rem) { .nx { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-  .nx-g { padding: 1.3rem; border: 1px dashed var(--border-strong); border-radius: var(--radius-lg); }
-  .nx-g h3 { margin: 0; font-size: 1.05rem; font-weight: 620; color: var(--foreground); }
-  .nx-g ul { margin: 1rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.85rem; }
-  .nx-g p { margin: 0; font-size: 0.92rem; font-weight: 600; color: var(--foreground); }
-  .nx-g span { display: block; margin-top: 0.15rem; font-size: 0.86rem; line-height: 1.5; color: var(--foreground-secondary); }
   .plat { margin: 2rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; }
   .plat li { display: inline-flex; align-items: center; gap: 0.55rem; padding: 0.4rem 0.85rem 0.4rem 0.45rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); font-size: 0.95rem; color: var(--text); }
   .pts { margin: 3rem 0 0; padding: 0; list-style: none; display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }

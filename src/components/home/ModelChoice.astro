@@ -2,7 +2,7 @@
 /**
  * Model independence, made unmistakable: Vekrun's native agent comes first and
  * leads with discovering and downloading local models (through supported
- * through Ollama; LM Studio models are connected, not downloaded by Vekrun), then hosted models through OpenRouter.
+ * through Ollama; LM Studio models are connected, not downloaded by Vekrun), then hosted models through OpenRouter or directly through xAI.
  * Third-party coding-agent CLIs are a separate, optional group.
  *
  * The model library is an example with demonstration data, not a working
@@ -20,7 +20,7 @@ const benefits = [
   { i: Search, t: 'Discover models', d: 'Browse available models and see which ones suit your hardware before you download.' },
   { i: Download, t: 'Download from Vekrun', d: 'Install compatible models through Vekrun’s Ollama integration, with progress as it goes. Already use LM Studio? Connect the models it serves.' },
   { i: HardDrive, t: 'Run locally', d: 'Inference stays on your own hardware, without hosted inference charges.' },
-  { i: KeyRound, t: 'Connect cloud models', d: 'Prefer hosted models? Use compatible ones through OpenRouter with your own key.' },
+  { i: KeyRound, t: 'Connect cloud models', d: 'Prefer hosted models? Connect Grok directly through xAI, or use compatible models through OpenRouter, with your own key.' },
   { i: SlidersHorizontal, t: 'Choose per workflow', d: 'Decide which models power each supported engineering workflow.' },
   { i: RefreshCw, t: 'Change your setup', d: 'Switch providers or models whenever you like. You’re never tied to one.' },
 ];
@@ -81,7 +81,7 @@ const library = [
   <article class="mc-card" aria-labelledby="mc-optional">
     <p class="mc-k"><Plug class="h-4 w-4" aria-hidden="true" />Optional</p>
     <h3 id="mc-optional">Coding agents you already use</h3>
-    <p class="mc-p">Prefer Claude Code, Codex or Antigravity? Connect them with your own accounts and Vekrun can hand them work. None of them is required.</p>
+    <p class="mc-p">Prefer Claude Code, Codex, Antigravity CLI or Grok Build? Connect them with your own accounts and Vekrun can hand them implementation, review or one side of a comparison. None of them is required.</p>
     <ul class="mc-logos" aria-label="Optional coding agents">
       {agents.map((t) => <li><IntegrationLogo id={t.id} name={t.name} monogram={t.mono} size="sm" />{t.name}</li>)}
     </ul>

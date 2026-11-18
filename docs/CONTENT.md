@@ -23,22 +23,27 @@ Show the product instead of describing it. Avoid "revolutionize", "seamlessly",
 - `teamsInterestMailto`: the Teams interest email to the support inbox.
 - `primaryNav`, `footerColumns`: Product, How It Works, Teams, Pricing; the
   footer adds Before & After and the utility pages.
-- `productSections`: the Product page index; old URLs redirect to these ids.
+- `productSections`: the Product page's six chapters (Think, Build, Prove,
+  Deliver, Remember, Collaborate) plus Models. `productSubAnchors` lists the
+  older section ids that now live inside a chapter; old URLs redirect to
+  either list, and every id must stay on the page. There is no roadmap section.
 
 `src/data/capabilities.ts` holds content shared between pages: project
-examples, the homepage highlights and the eight Before & After comparisons.
+examples and the eight Before & After comparisons.
 
 ## Claims
 
-Describe what people can do, never how Vekrun does it internally. Mark planned
-capabilities as planned where they appear (Teams, Shared Engineering Memory,
-SSO, Work Anywhere, What's next). Living Architecture Intelligence is
+Describe what people can do, never how Vekrun does it internally. Never use
+the word "Planned" or status badges in demos. Present capabilities as
+experience and value; state commercial availability once, briefly, next to the
+relevant call to action ("coming to Vekrun Free", "not available to buy yet").
+Living Architecture Intelligence is
 available; show its sources and uncertainty rather than claiming it sees every
 relationship. SSO and RBAC are included in Teams: never present them as an
 add-on or an Enterprise upsell. Remote execution runs on the customer's own
 servers; never imply Vekrun hosting, guaranteed security or certifications.
-Example measurements (Competitive Engineering, experiments) are labelled as
-illustrative. Don't claim every task convenes a Council, every review is
+Example measurements (Competitive Engineering, experiments) carry a small
+"Example" tag. Don't claim every task convenes a Council, every review is
 independent, fully offline execution, or support for physical devices. See
 `docs/content-audit-2026-11-12.md` for claims still awaiting confirmation.
 
@@ -47,7 +52,12 @@ independent, fully offline execution, or support for physical devices. See
 `src/data/integrations.ts` lists the groups shown on `/integrations/`. Add a
 tool to the right group with an `id`, `name` and a two-letter `mono` fallback.
 Brand marks come from `simple-icons` in `src/components/brand/IntegrationLogo.astro`.
-Never add availability badges to integrations.
+Never add availability badges to integrations. Grok reaches Vekrun three
+ways, kept distinct everywhere: Grok Build (optional coding agent, `grok-build`),
+Grok models directly through the xAI API (model provider, `xai`), and Grok
+models through OpenRouter. Each signs in and bills differently. Name a current
+model only as an example, and never imply a partnership or endorsement. xAI
+and Grok Build use monogram tiles until official marks are confirmed.
 
 ## Product concepts and screenshots
 
