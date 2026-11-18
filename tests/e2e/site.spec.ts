@@ -903,3 +903,14 @@ test.describe('retired routes and SEO', () => {
     expect(robots).toContain('Sitemap: https://vekrunapp.com/sitemap-index.xml');
   });
 });
+
+test.describe('live share stacks', () => {
+  test('shows the previewable stacks as a strip of official logos under the Live Share copy', async ({ page }) => {
+    await page.goto('/product/');
+    const strip = page.getByLabel('Stacks Live Share previews');
+    await expect(strip).toBeVisible();
+    const names = strip.locator('ul:not([aria-hidden]) li');
+    for (const t of ['React Native', 'Expo', 'Ruby on Rails', 'Python and Django', 'PHP and Laravel', 'Elixir', 'Android native', 'iOS native', 'Flutter', 'Electron', 'Tauri']) await expect(names.filter({ hasText: t })).toHaveCount(1);
+    await expect(strip.locator('ul:not([aria-hidden]) li svg, ul:not([aria-hidden]) li img')).toHaveCount(await names.count());
+  });
+});

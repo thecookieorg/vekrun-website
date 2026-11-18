@@ -18,6 +18,7 @@ import ModelChoice from '@/components/home/ModelChoice.astro';
 import MemoryDemo from '@/components/home/MemoryDemo.astro';
 import LiveShareDemo from '@/components/home/LiveShareDemo.astro';
 import LiveShareFlow from '@/components/liveshare/LiveShareFlow.astro';
+import StackMarquee from '@/components/liveshare/StackMarquee.astro';
 import ArchGraph from '@/components/memory/ArchGraph.astro';
 import EnvSetup from '@/components/product/EnvSetup.astro';
 import ProofPack from '@/components/factory/ProofPack.astro';
@@ -292,6 +293,7 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
           <div class="min-w-0"><LiveShareDemo /></div>
         </div>
         <p class="fine">Web, iOS, Android, Expo, Flutter and desktop apps, each previewed the way that suits it. Your review link stays the same, but it isn’t hosting: the app runs on your machine, so reviewers can use it while Live Share is on. Choose who gets in. <a href="/privacy/#live-share" class="text-accent link-slide">What Live Share relays and keeps</a></p>
+        <StackMarquee />
       </div>
       <div class="mini is-wide">
         <p class="mini-t"><Users class="h-4 w-4" aria-hidden="true" />Vekrun-to-Vekrun collaboration</p>
