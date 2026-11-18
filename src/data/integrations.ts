@@ -3,7 +3,8 @@
  * trademarks of their owners and show compatibility, never endorsement.
  * `id` keys the logo in IntegrationLogo; `mono` is the fallback monogram.
  */
-export type Tool = { id: string; name: string; mono: string };
+/** `tag` says how a tool connects when that differs within a group, such as direct, gateway or local. */
+export type Tool = { id: string; name: string; mono: string; tag?: string };
 /**
  * `models`: what Vekrun's native agent runs on. This comes first: no coding-agent
  * CLI is required. `agents`: optional third-party coding-agent CLIs.
@@ -16,13 +17,13 @@ export const toolGroups: ToolGroup[] = [
   {
     key: 'models',
     kind: 'models',
-    title: 'Vekrun’s native agent',
-    line: 'Vekrun’s own agent does the work. Connect hosted models through OpenRouter, connect Grok models directly through the xAI API, discover and download compatible models through Vekrun’s Ollama integration, or connect models served by LM Studio. Local models run on your own hardware.',
+    title: 'Model providers',
+    line: 'What Vekrun’s own agent runs on. Connect a provider directly, as with Grok models through the xAI API; route many models, Grok among them, through a gateway such as OpenRouter; or run compatible models on your own hardware with Ollama, which Vekrun can download for you, or LM Studio.',
     tools: [
-      { id: 'openrouter', name: 'OpenRouter', mono: 'Or' },
-      { id: 'xai', name: 'xAI', mono: 'xA' },
-      { id: 'ollama', name: 'Ollama', mono: 'Ol' },
-      { id: 'lm-studio', name: 'LM Studio', mono: 'Lm' },
+      { id: 'openrouter', name: 'OpenRouter', mono: 'Or', tag: 'Gateway' },
+      { id: 'xai', name: 'xAI', mono: 'xA', tag: 'Direct' },
+      { id: 'ollama', name: 'Ollama', mono: 'Ol', tag: 'Local' },
+      { id: 'lm-studio', name: 'LM Studio', mono: 'Lm', tag: 'Local' },
     ],
   },
   {
@@ -87,11 +88,24 @@ export const toolGroups: ToolGroup[] = [
   },
 ];
 
+/**
+ * Where Work Anywhere workers can run. These are hosts for the user's own
+ * servers, not services Vekrun reads from or reports to, so they're listed
+ * apart from the integrations above.
+ */
+export const hostingProviders: Tool[] = [
+  { id: 'hetzner', name: 'Hetzner', mono: 'HZ' },
+  { id: 'digitalocean', name: 'DigitalOcean', mono: 'DO' },
+  { id: 'vultr', name: 'Vultr', mono: 'VU' },
+  { id: 'akamai', name: 'Akamai Linode', mono: 'AK' },
+  { id: 'aws', name: 'AWS', mono: 'AW' },
+];
+
 /** Connections that exist in the product's design but haven't shipped. Shown only as coming soon. */
 export const plannedConnections: string[] = ['Asana tools for agents, alongside the Asana Board integration'];
 
 /**
- * The stacks Vekrun works in, shown in the homepage marquees. Vekrun works in
+ * The stacks Vekrun works in, used for logo lookups across the site. Vekrun works in
  * the repository and with the project's own tooling; this is not a claim of
  * platform-specific verification for each one.
  */

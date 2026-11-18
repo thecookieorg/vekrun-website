@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { existsSync } from 'node:fs';
 import { footerColumns, primaryNav, primaryCta, personalCta, pricingCta, productSections, productSubAnchors, howSections, site, plans, teamsPricing, teamsMonthly, teamsInterestMailto, earlyAccessMailto } from '@/data/site';
 import { comparisons, projectExamples } from '@/data/capabilities';
-import { toolGroups, platforms, allTools, stackRows, toolById, modelIds, agentIds } from '@/data/integrations';
+import { toolGroups, platforms, allTools, stackRows, toolById, modelIds, agentIds, hostingProviders } from '@/data/integrations';
 import { redirects } from '../../astro.config.mjs';
 
 const pagesDir = new URL('../../src/pages/', import.meta.url);
@@ -39,9 +39,9 @@ describe('plans and pricing', () => {
     for (const k of ['SSO', 'role-based access', 'Work Items', 'policies', 'worker pools', 'your servers', 'installations', 'verification', 'Git']) expect(t).toContain(k);
     expect(teams.more).toEqual({ label: 'Explore Vekrun Teams', href: '/teams/' });
   });
-  it('plans Work Anywhere for Free, at no Vekrun cost', () => {
-    const up = (plans[0]!.upcoming ?? []).join(' ');
-    for (const k of ['Work Anywhere', 'own VPS', 'headless workers', 'Remote engineering previews']) expect(up).toContain(k);
+  it('includes Work Anywhere in Free today, at no Vekrun cost, and lists nothing as coming', () => {
+    expect(plans[0]!.features.join(' ')).toMatch(/Work Anywhere: run the Factory on your own VPS/);
+    for (const p of plans) expect([p.summary, p.audience, p.priceNote, p.lead ?? '', ...p.features].join(' '), p.name).not.toMatch(/coming|planned/i);
     expect(JSON.stringify(plans[0])).not.toMatch(/per minute|per worker|limit/i);
   });
   it('prices Teams at $199 for up to 10 engineers and $10 for each one after', () => {
@@ -87,8 +87,8 @@ describe('availability', () => {
 });
 
 describe('navigation', () => {
-  it('has Product, How It Works, Teams and Pricing, with Get Vekrun as the call to action', () => {
-    expect(primaryNav.map((n) => n.label)).toEqual(['Product', 'How It Works', 'Teams', 'Pricing']);
+  it('has Product, Teams, Pricing and Integrations, with Get Vekrun as the call to action', () => {
+    expect(primaryNav.map((n) => n.label)).toEqual(['Product', 'Teams', 'Pricing', 'Integrations']);
     expect(primaryCta).toEqual({ label: 'Get Vekrun', href: '/download/' });
   });
   it('keeps Docs and Roadmap out of every navigation', () => {
@@ -104,8 +104,8 @@ describe('navigation', () => {
       expect(pageExists(n.href), n.href).toBe(true);
     }
   });
-  it('puts Teams, Before & After, Integrations, Get Vekrun, Security, Privacy, Licence and Contact in the footer', () => {
-    expect(footerColumns.flatMap((c) => c.items).map((n) => n.label)).toEqual(expect.arrayContaining(['Teams', 'Before & After', 'Integrations', 'Get Vekrun', 'Security', 'Privacy', 'Licence', 'Contact']));
+  it('keeps How It Works and Before & After reachable from the footer, with every other page', () => {
+    expect(footerColumns.flatMap((c) => c.items).map((n) => n.label)).toEqual(expect.arrayContaining(['Product', 'How It Works', 'Before & After', 'Teams', 'Pricing', 'Integrations', 'Get Vekrun', 'Security', 'Privacy', 'Licence', 'Contact']));
   });
 });
 
@@ -138,11 +138,13 @@ describe('redirects', () => {
 });
 
 describe('integrations', () => {
-  it('has unique ids and puts the native agent first, then optional coding agents', () => {
+  it('has unique ids and puts model providers first, then optional coding agents', () => {
     const ids = allTools.map((t) => t.id);
     expect(new Set(ids).size).toBe(ids.length);
     expect(toolGroups.map((g) => g.key)).toEqual(['models', 'agents', 'pm', 'git', 'monitoring', 'context']);
-    expect(toolGroups[0]!.title).toMatch(/native agent/);
+    expect(toolGroups[0]!.title).toBe('Model providers');
+    expect(toolGroups[0]!.line).toMatch(/Vekrun’s own agent/);
+    expect(toolGroups[0]!.tools.map((t) => t.tag)).toEqual(['Gateway', 'Direct', 'Local', 'Local']);
     expect(toolGroups[1]!.title).toMatch(/Optional/);
     expect(toolGroups[1]!.line).toMatch(/None of them is required/);
   });
@@ -162,10 +164,14 @@ describe('integrations', () => {
     expect([...agentIds]).toEqual(toolGroups[1]!.tools.map((t) => t.id));
     expect(toolGroups[1]!.line).toMatch(/planning, permissions, verification and delivery/);
   });
-  it('shows the agreed stack in two marquee rows', () => {
+  it('keeps the agreed stack in two rows', () => {
     const stack = stackRows.flat().map((t) => t.name);
     for (const n of ['Ruby on Rails', 'Laravel', 'Django', 'Node.js', 'Next.js', 'React', 'Python', 'TypeScript', 'Ruby', 'PHP', 'Expo', 'React Native', 'Flutter', 'Swift', 'Kotlin', 'Tauri', 'Electron', 'PostgreSQL', 'MySQL', 'Redis', 'Docker', 'Supabase']) expect(stack, n).toContain(n);
     expect(stackRows).toHaveLength(2);
+  });
+  it('lists Work Anywhere hosts apart from the integrations, with an official logo id each', () => {
+    expect(hostingProviders.map((h) => h.name)).toEqual(['Hetzner', 'DigitalOcean', 'Vultr', 'Akamai Linode', 'AWS']);
+    for (const h of hostingProviders) expect(toolGroups.flatMap((g) => g.tools).map((t) => t.id), h.id).not.toContain(h.id);
   });
   it('keeps Shopify, Supabase and Firebase among the platforms', () => {
     expect(platforms.map((p) => p.id)).toEqual(expect.arrayContaining(['shopify', 'supabase', 'firebase']));
@@ -178,9 +184,9 @@ describe('capabilities', () => {
     for (const c of comparisons) for (const k of ['before', 'after', 'beforeDetail', 'afterDetail'] as const) expect(c[k].length, `${c.id}.${k}`).toBeGreaterThan(10);
   });
   it('lists the Product chapters in order, with every older section kept as an anchor and no roadmap', () => {
-    expect(productSections.map((s) => s.label)).toEqual(['Think', 'Build', 'Prove', 'Deliver', 'Remember', 'Collaborate', 'Models']);
+    expect(productSections.map((s) => s.label)).toEqual(['Think', 'Build', 'Prove', 'Deliver', 'Remember and collaborate']);
     const all = [...productSections.map((s) => s.id), ...productSubAnchors];
-    for (const a of ['council', 'competitive', 'memory', 'live-share', 'browser', 'proof', 'production', 'delivery', 'work-anywhere', 'environments', 'voice', 'apps', 'stack', 'mobile', 'tools', 'architecture', 'board', 'experiments', 'improvement-lab', 'high-assurance', 'guardian', 'templates']) expect(all, a).toContain(a);
+    for (const a of ['collaborate', 'models', 'council', 'competitive', 'memory', 'live-share', 'browser', 'proof', 'production', 'delivery', 'work-anywhere', 'environments', 'voice', 'apps', 'stack', 'mobile', 'tools', 'architecture', 'board', 'experiments', 'improvement-lab', 'high-assurance', 'guardian', 'templates']) expect(all, a).toContain(a);
     expect(all).not.toContain('next');
     expect(new Set(all).size).toBe(all.length);
   });

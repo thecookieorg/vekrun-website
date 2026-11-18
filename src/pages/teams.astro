@@ -15,25 +15,17 @@ import SelfHostArch from '@/components/teams/SelfHostArch.astro';
 import WorkerPool from '@/components/teams/WorkerPool.astro';
 import SsoDemo from '@/components/teams/SsoDemo.astro';
 import { site, teamsInterestMailto, teamsPricing, teamsMonthly, usd } from '@/data/site';
-import { ArrowRight, Check, ChevronDown, MessagesSquare, GitPullRequest, FileText, Search, Brain, Users, Cpu, Scale, Network, GitMerge, KeyRound, BarChart3, FileCode2, CircleDashed, GitCommitHorizontal, Lock, History, Bot } from '@lucide/astro';
+import { ArrowRight, Check, ChevronDown, Brain, Users, Cpu, Scale, Network, GitMerge, KeyRound, BarChart3, FileCode2, CircleDashed, GitCommitHorizontal, Lock } from '@lucide/astro';
 
 const base = usd(teamsPricing.base);
 const extra = usd(teamsPricing.perExtra);
 const n = teamsPricing.included;
 
-const scattered = [
-  { i: MessagesSquare, t: 'AI conversations', d: 'Closed when the session ends.' },
-  { i: GitPullRequest, t: 'Pull requests', d: 'The reasoning is buried in review threads.' },
-  { i: Search, t: 'Incident investigations', d: 'Solved once, then rediscovered.' },
-  { i: FileText, t: 'Internal docs', d: 'Written once, rarely tied to the code.' },
-];
 const better = [
   { i: FileCode2, t: 'Cites its sources', d: 'Every record links to the code, pull request or incident it came from.' },
   { i: GitCommitHorizontal, t: 'Knows its revision', d: 'Knowledge is tied to the revision it was true at, so outdated facts can be spotted.' },
   { i: CircleDashed, t: 'Separates proven from inferred', d: 'Verified fixes carry their evidence. Guesses are labelled as guesses.' },
-  { i: History, t: 'Retires what’s superseded', d: 'When a decision changes, the old one is marked, not silently reused.' },
-  { i: Lock, t: 'Respects permissions', d: 'People and agents see only what their role and repositories allow.' },
-  { i: Bot, t: 'Ready for agents', d: 'Your engineers’ AI agents get the context that matters, not everything.' },
+  { i: Lock, t: 'Respects permissions', d: 'People and agents see only what their role and repositories allow. Superseded decisions are marked, never silently reused.' },
 ];
 const sso = [
   'Single Sign-On through your organization’s identity provider',
@@ -44,7 +36,7 @@ const sso = [
   'Organizational actions recorded in an audit trail',
 ];
 const caps = [
-  { i: Brain, t: 'Shared Engineering Memory', d: 'Collective understanding of your code, decisions, verified fixes and reusable knowledge, shared by permission.', big: true },
+  { i: Brain, t: 'Shared Engineering Memory', d: 'Your code, decisions, verified fixes and reusable knowledge, shared by permission.' },
   { i: Users, t: 'Team coordination', d: 'Shared Work Items, project visibility, handoffs and cross-developer workflows.' },
   { i: Cpu, t: 'Autonomous Factory workers', d: 'Approved work runs on shared workers your organization hosts.' },
   { i: Scale, t: 'Organization policies', d: 'Shared approval rules, verification requirements, risk policies and governance.' },
@@ -67,9 +59,7 @@ const faq: [string, string][] = [
   ['Why is that better than shared docs or AI chat history?', 'Docs drift from the code and chat history is unstructured and unverified. Shared Engineering Memory links knowledge to the code and evidence behind it, marks what’s outdated, and gives agents only what’s relevant and permitted.'],
   ['How does a new teammate benefit?', 'When they start work, Vekrun can surface the decisions, constraints and verified fixes that apply to it, so they and their agents don’t rediscover them from scratch.'],
   ['Can we control who sees what?', 'Yes. Access follows roles and repository or project permissions, and revoking a member closes shared projects, memory and workers to them.'],
-  ['Does Teams support SSO?', 'SSO is part of Teams and included in the price. It uses OIDC with Microsoft Entra ID, Google Workspace, Okta and other compatible providers.'],
-  ['Where does our shared data live?', 'On infrastructure your organization controls. The Coordinator, Shared Engineering Memory and Factory workers run on your servers, private cloud or VPS. Each engineer’s own work stays on their machine.'],
-  ['Can Teams run on our own infrastructure?', 'Yes. There’s no Vekrun-operated cloud to buy. Vekrun installations can also collaborate directly, alongside the self-hosted services.'],
+  ['Where does our shared data live?', 'On infrastructure your organization controls. The Coordinator, Shared Engineering Memory and Factory workers run on your servers, private cloud or VPS; there’s no Vekrun-operated cloud to buy. Each engineer’s own work stays on their machine.'],
   ['What does it cost?', `${base} USD per month for up to ${n} engineers, plus ${extra} per month for each engineer after that: ${n + 1} engineers is ${usd(teamsMonthly(n + 1))}, 20 is ${usd(teamsMonthly(20))}. Your servers and model usage are billed by their providers.`],
   ['Is Teams available today?', 'Not yet. Teams can’t be bought yet; there’s no checkout. Register your interest and we’ll email you when it’s ready.'],
 ];
@@ -86,10 +76,7 @@ const structuredData = [
 
   <section id="shared-memory" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="sm-title">
     <div class="container-site">
-      <SectionHeading id="sm-title" title="The knowledge your team creates shouldn’t disappear when a conversation ends." lede="Engineering knowledge is scattered across people, AI conversations, pull requests, incident investigations and docs. So teams investigate the same problems again and again. Shared Engineering Memory changes that." />
-      <ul class="scatter" aria-label="Where engineering knowledge gets lost today">
-        {scattered.map((s) => <li><s.i class="h-4 w-4" aria-hidden="true" /><div><p>{s.t}</p><span>{s.d}</span></div></li>)}
-      </ul>
+      <SectionHeading id="sm-title" title="The knowledge your team creates shouldn’t disappear when a conversation ends." lede="Today it’s scattered: closed AI sessions, review threads, incident notes nobody finds and docs that drift from the code. So teams solve the same problems again and again. Shared Engineering Memory changes that." />
     </div>
     <div class="container-wide mt-12"><MemoryStory /></div>
     <div class="container-site">
@@ -144,21 +131,8 @@ const structuredData = [
   <section id="capabilities" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="caps-title">
     <div class="container-site">
       <SectionHeading id="caps-title" title="Everything a team needs to work as one." lede="Everything in Vekrun Free, plus what only a team can do together." />
-      <ul class="bento">
-        {caps.map((c) => (
-          <li class:list={[c.big && 'is-big']}>
-            <span class="bento-ic"><c.i class="h-5 w-5" aria-hidden="true" /></span>
-            <h3>{c.t}</h3>
-            <p>{c.d}</p>
-            {c.big && (
-              <ul class="bento-recs" aria-hidden="true">
-                <li><span class="is-v">Verified</span>Duplicate-charge fix · 7d0b3f1</li>
-                <li><span class="is-v">Verified</span>Idempotent retries decision · a41c9e2</li>
-                <li><span class="is-i">Inferred</span>Refunds may share the webhook path</li>
-              </ul>
-            )}
-          </li>
-        ))}
+      <ul class="caps">
+        {caps.map((c) => <li><c.i class="h-4 w-4" aria-hidden="true" /><h3>{c.t}</h3><p>{c.d}</p></li>)}
       </ul>
     </div>
   </section>
@@ -199,19 +173,12 @@ const structuredData = [
   .split { display: grid; gap: 2.5rem; }
   @media (min-width: 64rem) { .split { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 4rem; align-items: start; } }
   .h3 { font-size: 1.35rem; font-weight: 620; letter-spacing: -0.02em; color: var(--foreground); }
-  .scatter { margin: 2.5rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.6rem; }
-  @media (min-width: 40rem) { .scatter { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (min-width: 64rem) { .scatter { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-  .scatter li { display: flex; gap: 0.6rem; align-items: flex-start; padding: 0.9rem; border: 1px dashed var(--border-strong); border-radius: var(--radius-md); }
-  .scatter li > :global(svg) { margin-top: 0.15rem; flex-shrink: 0; color: var(--foreground-muted); }
-  .scatter p { margin: 0; font-size: 0.92rem; font-weight: 600; color: var(--foreground); }
-  .scatter span { font-size: 0.82rem; color: var(--foreground-secondary); }
-  .better { margin: 1.5rem 0 0; padding: 0; list-style: none; display: grid; gap: 1.5rem 2rem; }
-  @media (min-width: 40rem) { .better { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (min-width: 64rem) { .better { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-  .better-ic { display: inline-grid; place-items: center; width: 2rem; height: 2rem; border-radius: var(--radius-sm); background: var(--accent-subtle); color: var(--accent-text); }
-  .better h4 { margin: 0.6rem 0 0; font-size: 1rem; font-weight: 600; color: var(--foreground); }
-  .better p { margin: 0.3rem 0 0; font-size: 0.9rem; line-height: 1.5; color: var(--foreground-secondary); }
+  .better { margin: 1.5rem 0 0; padding: 0; list-style: none; display: grid; column-gap: 3rem; }
+  @media (min-width: 48rem) { .better { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .better li { display: grid; grid-template-columns: 2rem minmax(0, 1fr); column-gap: 0.9rem; padding: 1.1rem 0; border-top: 1px solid var(--border); }
+  .better-ic { grid-row: span 2; display: inline-grid; place-items: center; width: 2rem; height: 2rem; border-radius: var(--radius-sm); background: var(--accent-subtle); color: var(--accent-text); }
+  .better h4 { margin: 0; font-size: 1rem; font-weight: 600; color: var(--foreground); }
+  .better p { margin: 0.3rem 0 0; font-size: 0.92rem; line-height: 1.5; color: var(--foreground-secondary); }
   .tiers { margin-top: 3rem; display: grid; gap: 1px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--border); }
   @media (min-width: 48rem) { .tiers { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .tiers > div { padding: 1.2rem 1.3rem; background: var(--surface); }
@@ -227,22 +194,13 @@ const structuredData = [
   .ticks li { display: flex; gap: 0.55rem; align-items: flex-start; font-size: 0.98rem; line-height: 1.5; color: var(--foreground); }
   .ticks :global(svg) { margin-top: 0.25rem; flex-shrink: 0; color: var(--accent-text); }
   .fine { margin: 1.5rem 0 0; font-size: 0.88rem; line-height: 1.55; color: var(--foreground-secondary); }
-  .bento { margin: 2.5rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.75rem; }
-  @media (min-width: 40rem) { .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (min-width: 64rem) { .bento { grid-template-columns: repeat(4, minmax(0, 1fr)); } .bento .is-big { grid-column: span 2; grid-row: span 2; } .bento > li:last-child { grid-column: span 2; } }
-  .bento > li { display: grid; align-content: start; gap: 0.4rem; padding: 1.25rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); transition: border-color var(--dur-fast), transform var(--dur-fast) var(--ease-out); }
-  .bento > li:hover { border-color: var(--border-interactive); }
-  .bento > li.is-big { border-color: var(--border-interactive); box-shadow: var(--glow-accent); }
-  .bento-ic { display: inline-grid; place-items: center; width: 2.2rem; height: 2.2rem; border-radius: var(--radius-sm); background: var(--accent-subtle); color: var(--accent-text); }
-  .bento h3 { margin: 0.4rem 0 0; font-size: 1.05rem; font-weight: 620; color: var(--foreground); }
-  .is-big h3 { font-size: 1.4rem; letter-spacing: -0.02em; }
-  .bento p { margin: 0; font-size: 0.9rem; line-height: 1.5; color: var(--foreground-secondary); }
-  .is-big p { font-size: 1rem; max-width: 30rem; }
-  .bento-recs { margin: 1rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.45rem; }
-  .bento-recs li { display: flex; align-items: center; gap: 0.6rem; padding: 0.55rem 0.7rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); font-size: 0.82rem; color: var(--foreground); }
-  .bento-recs span { flex-shrink: 0; padding: 0.05rem 0.4rem; border-radius: var(--radius-sm); font-size: 0.68rem; font-weight: 560; }
-  .bento-recs .is-v { background: var(--accent-subtle); color: var(--accent-text); }
-  .bento-recs .is-i { border: 1px dashed var(--border-strong); color: var(--foreground-secondary); }
+  .caps { margin: 2.5rem 0 0; padding: 0; list-style: none; display: grid; column-gap: 2.5rem; }
+  @media (min-width: 40rem) { .caps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 64rem) { .caps { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .caps li { padding: 1.1rem 0; border-top: 1px solid var(--border); }
+  .caps li > :global(svg) { color: var(--accent-text); }
+  .caps h3 { margin: 0.6rem 0 0; font-size: 1rem; font-weight: 620; color: var(--foreground); }
+  .caps p { margin: 0.3rem 0 0; font-size: 0.9rem; line-height: 1.5; color: var(--foreground-secondary); }
   .tp { display: grid; gap: 2.5rem; }
   @media (min-width: 64rem) { .tp { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 4rem; align-items: center; } }
   .tp-card { padding: 1.6rem; border: 1px solid var(--border-interactive); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--glow-accent); }
@@ -256,5 +214,4 @@ const structuredData = [
   .tp-card li { display: flex; gap: 0.55rem; align-items: flex-start; font-size: 0.93rem; color: var(--foreground); }
   .tp-card li :global(svg) { margin-top: 0.2rem; flex-shrink: 0; color: var(--accent-text); }
   .tp-fine { margin: 0.9rem 0 0; font-size: 0.8rem; color: var(--foreground-muted); }
-  @media (prefers-reduced-motion: reduce) { .bento > li { transition: none; } }
 </style>

@@ -1,20 +1,21 @@
 ---
 /**
- * Integrations, split the way the product splits them: the models Vekrun's
- * native agent runs on (first, because no coding-agent CLI is required), the
- * optional coding agents, the services Vekrun connects to natively, and
- * anything else through MCP servers the customer adds. Grok gets its own
- * explainer because it reaches Vekrun three different ways, each with its own
- * sign-in and billing. Logos mean compatibility,
- * never endorsement.
+ * Integrations, as a catalogue in three groups: the model providers Vekrun's
+ * own agent runs on (first, because no coding-agent CLI is required), the
+ * optional coding agents, and the work and delivery tools: trackers, Git
+ * hosts, monitoring, docs, MCP and the hosts Work Anywhere servers can run
+ * on. Grok gets its own explainer because it reaches Vekrun three different
+ * ways, each with its own sign-in and billing. A search box filters the
+ * catalogue; without the script everything is listed. Logos mean
+ * compatibility, never endorsement.
  */
 import Base from '@/layouts/Base.astro';
 import ClosingCta from '@/components/ClosingCta.astro';
 import PageHero from '@/components/PageHero.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
-import { toolGroups, platforms, plannedConnections } from '@/data/integrations';
-import { Bot, KeyRound, Route } from '@lucide/astro';
+import { toolGroups, platforms, plannedConnections, hostingProviders } from '@/data/integrations';
+import { Bot, KeyRound, Route, Search } from '@lucide/astro';
 
 const agentGroups = toolGroups.filter((g) => g.kind !== 'native');
 const nativeGroups = toolGroups.filter((g) => g.kind === 'native');
@@ -35,28 +36,34 @@ const facts = [
 ];
 ---
 <Base title="Integrations" fullTitle="Integrations: models, coding agents and tools · Vekrun" description="Vekrun's native agent runs on OpenRouter, xAI, Ollama or LM Studio. Claude Code, Codex, Antigravity CLI and Grok Build are optional coding agents. Native integrations with GitHub, GitLab, Jira, Linear, Sentry, Notion, Figma, Slack and Obsidian, plus any MCP server you add.">
-  <PageHero eyebrow="Integrations" title="Your models, your tools. Vekrun coordinates them." lede="Vekrun’s native agent does the work with the models you connect; coding-agent CLIs are optional. Vekrun connects to your trackers, Git hosts, monitoring and docs, and to any MCP server you add." />
+  <PageHero eyebrow="Integrations" title="Your models, your tools. Vekrun coordinates them." lede="Vekrun’s own agent does the work with the models you connect; coding-agent CLIs are optional. Vekrun connects to your trackers, Git hosts, monitoring and docs, and to any MCP server you add.">
+    <div slot="after" class="finder enter" style="--i: 4" data-finder hidden>
+      <label class="finder-box"><Search class="h-4 w-4" aria-hidden="true" /><span class="sr-only">Search integrations</span><input type="search" placeholder="Search integrations, such as Grok, Jira or Hetzner" autocomplete="off" data-finder-q /></label>
+      <p class="finder-n" aria-live="polite" data-finder-n></p>
+    </div>
+  </PageHero>
 
+  <div data-catalog>
   {agentGroups.map((g, i) => (
-    <section class:list={['group-sec rule', i % 2 === 0 && 'bg-bg-elevated']} aria-labelledby={`g-${g.key}`}>
+    <section class:list={['group-sec rule', i % 2 === 0 && 'bg-bg-elevated']} aria-labelledby={`g-${g.key}`} data-cat>
       <div class="container-site group-in">
         <div>
           <h2 id={`g-${g.key}`} class="heading-3 text-text">{g.title}</h2>
           <p class="mt-2 max-w-sm text-[0.98rem] text-text-2">{g.line}</p>
         </div>
         <ul class="tiles">
-          {g.tools.map((t) => <li><IntegrationLogo id={t.id} name={t.name} monogram={t.mono} /><span>{t.name}</span></li>)}
+          {g.tools.map((t) => <li data-q={`${t.name} ${t.tag ?? ''} ${g.title}`}><IntegrationLogo id={t.id} name={t.name} monogram={t.mono} />{t.tag ? <span class="tile-nt"><span class="tile-n">{t.name}</span><span class="tile-tag">{t.tag}</span></span> : <span class="tile-n">{t.name}</span>}</li>)}
         </ul>
       </div>
     </section>
   ))}
 
-  <section id="grok" class="section-pad rule scroll-mt-16" aria-labelledby="grok-title">
+  <section id="grok" class="section-pad rule scroll-mt-16" aria-labelledby="grok-title" data-cat>
     <div class="container-site">
       <SectionHeading id="grok-title" title="Three ways to bring Grok into Vekrun." lede="Grok can join your engineering workflow as a coding agent, as models connected directly through xAI, or as models routed through OpenRouter. They sign in and bill differently, so here’s the difference." />
       <ul class="grok">
         {grok.map((g) => (
-          <li>
+          <li data-q={`grok xai openrouter ${g.t} ${g.who}`}>
             <div class="grok-top"><span class="grok-ic"><g.i class="h-4 w-4" aria-hidden="true" /></span><span class="grok-k">{g.who}</span></div>
             <h3>{g.t}</h3>
             <p>{g.d}</p>
@@ -68,28 +75,40 @@ const facts = [
     </div>
   </section>
 
-  <section class="section-pad rule pb-0" aria-labelledby="native-title">
+  <section id="tools" class="section-pad rule pb-0 scroll-mt-16" aria-labelledby="native-title" data-cat data-head>
     <div class="container-site">
-      <SectionHeading id="native-title" title="Native integrations." lede="Vekrun connects to these directly. Work comes in as issues and incidents; results go back as pull requests, comments and updates." />
+      <SectionHeading id="native-title" title="Work and delivery tools." lede="Vekrun connects to these directly. Work comes in as issues and incidents; results go back as pull requests, comments and updates." />
     </div>
   </section>
   {nativeGroups.map((g) => (
-    <section class="group-sec" aria-labelledby={`g-${g.key}`}>
+    <section class="group-sec" aria-labelledby={`g-${g.key}`} data-cat>
       <div class="container-site group-in">
         <div>
           <h3 id={`g-${g.key}`} class="heading-3 text-text">{g.title}</h3>
           <p class="mt-2 max-w-sm text-[0.98rem] text-text-2">{g.line}</p>
         </div>
         <ul class="tiles">
-          {g.tools.map((t) => <li><IntegrationLogo id={t.id} name={t.name} monogram={t.mono} /><span>{t.name}</span></li>)}
+          {g.tools.map((t) => <li data-q={`${t.name} ${g.title}`}><IntegrationLogo id={t.id} name={t.name} monogram={t.mono} /><span class="tile-n">{t.name}</span></li>)}
         </ul>
       </div>
     </section>
   ))}
+  <section id="hosting" class="group-sec scroll-mt-16" aria-labelledby="g-hosting" data-cat>
+    <div class="container-site group-in">
+      <div>
+        <h3 id="g-hosting" class="heading-3 text-text">Servers for Work Anywhere</h3>
+        <p class="mt-2 max-w-sm text-[0.98rem] text-text-2">Run Vekrun’s workers on a server from one of these hosts, or on any server you already have. They’re where your own servers live, not services Vekrun reads from or reports to. <a href="/product/#work-anywhere" class="text-accent link-slide">Work Anywhere</a></p>
+      </div>
+      <ul class="tiles">
+        {hostingProviders.map((t) => <li data-q={`${t.name} hosting server vps work anywhere`}><IntegrationLogo id={t.id} name={t.name} monogram={t.mono} /><span class="tile-n">{t.name}</span></li>)}
+        <li class="is-any" data-q="any existing server ssh vps hosting work anywhere"><span class="tile-n">Any existing server</span></li>
+      </ul>
+    </div>
+  </section>
 
-  <section id="mcp" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="mcp-title">
+  <section id="mcp" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="mcp-title" data-cat>
     <div class="container-site">
-      <div class="mcp-head">
+      <div class="mcp-head" data-q="mcp model context protocol databases cloud consoles payment dashboards asana">
         <IntegrationLogo id="mcp" name="Model Context Protocol" monogram="Mc" size="lg" />
         <SectionHeading id="mcp-title" title="Everything else, through MCP." lede="Databases, cloud consoles, payment dashboards: if a service has an MCP server, Vekrun’s agents can use it, on your terms. A catalog of vendor-published servers is built in." />
       </div>
@@ -99,6 +118,8 @@ const facts = [
       <p class="mt-10 text-[0.95rem] text-text-2">Coming soon: {plannedConnections.join('; ')}.</p>
     </div>
   </section>
+  <p class="container-site finder-none" data-finder-none hidden>Nothing matches that yet. If a service has an MCP server, Vekrun’s agents can still use it. <a href="mailto:support@vekrunapp.com?subject=Vekrun%20integration%20request" class="text-accent link-slide">Ask us about an integration</a></p>
+  </div>
 
   <section class="section-pad rule" aria-labelledby="platforms-title">
     <div class="container-site">
@@ -133,7 +154,6 @@ const facts = [
   .tiles { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
   @media (min-width: 40rem) { .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   .tiles li { display: flex; align-items: center; gap: 0.75rem; min-width: 0; padding: 0.7rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); font-size: 0.95rem; font-weight: 520; color: var(--text); }
-  .tiles li span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .grok { margin: 2.5rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.75rem; }
   @media (min-width: 60rem) { .grok { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   .grok li { display: flex; flex-direction: column; padding: 1.35rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
@@ -144,6 +164,52 @@ const facts = [
   .grok li > p { margin: 0.45rem 0 0; font-size: 0.93rem; line-height: 1.55; color: var(--foreground-secondary); }
   .grok .grok-how { margin-top: auto !important; padding-top: 1rem; font-size: 0.85rem !important; color: var(--foreground) !important; }
   .grok li > p:nth-of-type(1) { margin-bottom: 1rem; }
+  .tiles li .tile-n { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tile-nt { display: grid; min-width: 0; }
+  .tile-tag { font-size: 0.78rem; font-weight: 450; color: var(--foreground-secondary); }
+  .tiles li.is-any { border-style: dashed; color: var(--foreground-secondary); }
+  .finder { margin-top: 2rem; max-width: 34rem; }
+  .finder-box { display: flex; align-items: center; gap: 0.6rem; height: 3rem; padding: 0 1rem; border: 1px solid var(--border-strong); border-radius: var(--radius-md); background: var(--surface); color: var(--foreground-secondary); transition: border-color var(--dur-fast); }
+  .finder-box:focus-within { border-color: var(--accent); outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+  .finder-box input { flex: 1; min-width: 0; height: 100%; border: 0; background: transparent; font-size: 1rem; color: var(--foreground); outline: none; }
+  .finder-box input::placeholder { color: var(--foreground-muted); }
+  .finder-n { margin: 0.6rem 0 0; min-height: 1.3em; font-size: 0.85rem; color: var(--foreground-secondary); }
+  .finder-none { padding-block: 4rem; font-size: 1rem; color: var(--foreground-secondary); }
+  [data-cat][hidden], [data-q][hidden] { display: none !important; }
   .plat { margin: 2.5rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; }
   .plat li { display: inline-flex; align-items: center; gap: 0.55rem; padding: 0.4rem 0.85rem 0.4rem 0.45rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); font-size: 0.95rem; color: var(--text); }
 </style>
+
+<script>
+  const finder = document.querySelector<HTMLElement>('[data-finder]');
+  const catalog = document.querySelector<HTMLElement>('[data-catalog]');
+  if (finder && catalog) {
+    finder.hidden = false;
+    const q = finder.querySelector<HTMLInputElement>('[data-finder-q]')!;
+    const n = finder.querySelector<HTMLElement>('[data-finder-n]')!;
+    const none = catalog.querySelector<HTMLElement>('[data-finder-none]')!;
+    const cats = Array.from(catalog.querySelectorAll<HTMLElement>('[data-cat]'));
+    const tail = Array.from(document.querySelectorAll<HTMLElement>('main > section')).filter((s) => !catalog.contains(s) && !s.querySelector('[data-finder]'));
+    const run = () => {
+      const terms = q.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+      let shown = 0;
+      for (const c of cats) {
+        const items = Array.from(c.querySelectorAll<HTMLElement>('[data-q]'));
+        let any = false;
+        for (const it of items) {
+          const hay = (it.dataset.q ?? '').toLowerCase();
+          const hit = terms.every((t) => hay.includes(t));
+          it.hidden = !hit;
+          if (hit) { any = true; shown++; }
+        }
+        c.hidden = terms.length > 0 && !any && !c.hasAttribute('data-head');
+      }
+      const head = catalog.querySelector<HTMLElement>('[data-head]');
+      if (head) head.hidden = terms.length > 0 && !cats.some((c) => c !== head && !c.hidden && c.compareDocumentPosition(head) & Node.DOCUMENT_POSITION_PRECEDING);
+      tail.forEach((s) => { s.hidden = terms.length > 0; });
+      none.hidden = !(terms.length > 0 && shown === 0);
+      n.textContent = terms.length ? `${shown} ${shown === 1 ? 'match' : 'matches'}` : '';
+    };
+    q.addEventListener('input', run);
+  }
+</script>

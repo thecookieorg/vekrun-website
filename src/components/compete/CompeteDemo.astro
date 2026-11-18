@@ -1,99 +1,112 @@
 ---
 /**
- * Competitive Engineering, as an example: competing approaches built from the
- * same revision, checked against the same requirements, then compared. Two
- * scenarios: one with a clear recommendation, one where nothing qualifies.
- * All numbers are illustrative. The markup holds the final state; the script
- * replays building, testing and the verdict, switches scenarios and records
- * the visitor's choice.
+ * Competitive Engineering, as an example on a fictional Rails checkout: two
+ * approaches built by different agents from the same commit, checked against
+ * the same criteria, then compared. Every check is passed, failed or not
+ * checked, and says so. A second scenario shows that when nothing qualifies,
+ * Vekrun doesn't pick one. All data is illustrative. The markup holds the
+ * final state; the script replays building, checking and the verdict,
+ * switches scenarios and records the visitor's choice.
  */
-import { Check, X, GitBranch } from '@lucide/astro';
+import { Check, X, GitBranch, CircleDashed, GitCommitHorizontal } from '@lucide/astro';
 
-type Row = { k: string; v: string; bad?: boolean };
-type Approach = { id: string; name: string; ok: boolean; rows: Row[]; note?: string };
+type State = 'pass' | 'fail' | 'none';
+type Approach = { id: string; name: string; agent: string; ok: boolean; checks: { k: string; s: State; v: string }[]; meta: { k: string; v: string }[]; note?: string };
 type Scenario = { id: string; tab: string; goal: string; criteria: string; approaches: Approach[]; verdict: { title: string; text: string }; choose: boolean };
 
 const scenarios: Scenario[] = [
   {
-    id: 'search', tab: 'A clear winner', goal: 'Make product search fast for 50,000 products', criteria: '4 acceptance criteria, p95 under 200 ms',
+    id: 'retries', tab: 'One approach qualifies', goal: 'Make payment retries idempotent', criteria: '4 acceptance criteria',
     approaches: [
-      { id: 'A', name: 'Database full-text index', ok: true, rows: [
-        { k: 'Tests', v: '48 of 48 pass' }, { k: 'Criteria', v: '4 of 4 met' }, { k: 'Search p95', v: '940 → 120 ms' },
-        { k: 'Change', v: '+210 −40, 6 files' }, { k: 'New infrastructure', v: 'None' }, { k: 'Model usage', v: '$0.84' },
-      ] },
-      { id: 'B', name: 'Dedicated search service', ok: true, rows: [
-        { k: 'Tests', v: '48 of 48 pass' }, { k: 'Criteria', v: '4 of 4 met' }, { k: 'Search p95', v: '940 → 45 ms' },
-        { k: 'Change', v: '+1,280 −60, 23 files' }, { k: 'New infrastructure', v: 'A service and a sync job' }, { k: 'Model usage', v: '$2.10' },
-      ] },
-      { id: 'C', name: 'Cache search results', ok: false, rows: [
-        { k: 'Tests', v: '46 of 48 pass', bad: true }, { k: 'Criteria', v: '3 of 4 met', bad: true }, { k: 'Search p95', v: '940 → 30 ms' },
-        { k: 'Change', v: '+95 −10, 3 files' }, { k: 'Rollback check', v: 'Passed' }, { k: 'Model usage', v: '$0.40' },
-      ], note: 'Results went stale after a price change.' },
+      { id: 'A', name: 'Idempotency key in the database', agent: 'Codex', ok: true, checks: [
+        { k: 'Request and unit tests', s: 'pass', v: '52 of 52' },
+        { k: '200 duplicate webhooks at once', s: 'pass', v: 'No double charges' },
+        { k: 'Retry after a worker crash', s: 'pass', v: 'Charged once' },
+        { k: 'Peak-traffic load', s: 'none', v: 'No load profile yet' },
+      ], meta: [{ k: 'Change', v: '+180 −30, 5 files' }, { k: 'New infrastructure', v: 'None' }] },
+      { id: 'B', name: 'Lock in Redis', agent: 'Grok Build', ok: false, checks: [
+        { k: 'Request and unit tests', s: 'pass', v: '52 of 52' },
+        { k: '200 duplicate webhooks at once', s: 'fail', v: '3 double charges' },
+        { k: 'Retry after a worker crash', s: 'fail', v: 'Lock lost on restart' },
+        { k: 'Peak-traffic load', s: 'none', v: 'No load profile yet' },
+      ], meta: [{ k: 'Change', v: '+240 −20, 7 files' }, { k: 'New infrastructure', v: 'A Redis lock' }], note: 'A race between two webhook deliveries slips past the lock.' },
     ],
-    verdict: { title: 'Recommended: A', text: 'A meets every requirement with the smallest change and nothing new to run. B is faster, but adds a service to operate. C failed the freshness requirement, so it doesn’t qualify.' },
+    verdict: { title: 'Recommended: A', text: 'A meets every criterion that was checked, with nothing new to run. B passes its tests but double-charges under concurrency. Load wasn’t checked for either, and the Proof Pack says so.' },
     choose: true,
   },
   {
-    id: 'uploads', tab: 'Neither qualifies', goal: 'Speed up photo uploads on mobile', criteria: '3 acceptance criteria, upload p95 must not get worse',
+    id: 'uploads', tab: 'Neither qualifies', goal: 'Speed up photo uploads on mobile', criteria: '3 acceptance criteria',
     approaches: [
-      { id: 'A', name: 'Resize in the browser', ok: false, rows: [
-        { k: 'Tests', v: '31 of 32 pass', bad: true }, { k: 'Criteria', v: '2 of 3 met', bad: true }, { k: 'Upload p95', v: '1.8 → 0.9 s' },
-        { k: 'Change', v: '+140 −20, 4 files' },
-      ], note: 'Large HEIC photos fail in Safari on iOS.' },
-      { id: 'B', name: 'Resize in a background queue', ok: false, rows: [
-        { k: 'Tests', v: '32 of 32 pass' }, { k: 'Criteria', v: '3 of 3 met' }, { k: 'Upload p95', v: '1.8 → 2.3 s', bad: true },
-        { k: 'Rollback check', v: 'Passed' },
-      ], note: 'Slower under the stated workload, which breaks an invariant.' },
+      { id: 'A', name: 'Resize in the browser', agent: 'Claude Code', ok: false, checks: [
+        { k: 'Upload tests', s: 'fail', v: '31 of 32' },
+        { k: 'Large HEIC photos in Safari', s: 'fail', v: 'Upload fails' },
+        { k: 'Upload p95 not worse', s: 'pass', v: '1.8 → 0.9 s' },
+      ], meta: [{ k: 'Change', v: '+140 −20, 4 files' }] },
+      { id: 'B', name: 'Resize in a background queue', agent: 'Vekrun agent', ok: false, checks: [
+        { k: 'Upload tests', s: 'pass', v: '32 of 32' },
+        { k: 'Large HEIC photos in Safari', s: 'pass', v: 'Uploads' },
+        { k: 'Upload p95 not worse', s: 'fail', v: '1.8 → 2.3 s' },
+      ], meta: [{ k: 'Change', v: '+260 −30, 6 files' }] },
     ],
     verdict: { title: 'No recommendation', text: 'Neither approach met every requirement, so Vekrun doesn’t pick one. Both attempts and their evidence are kept, and you decide what to try next.' },
     choose: false,
   },
 ];
+const stateIcon = { pass: Check, fail: X, none: CircleDashed } as const;
+const stateLabel = { pass: 'Passed', fail: 'Failed', none: 'Not checked' } as const;
 ---
-<figure class="cx" data-compete data-phase="done" aria-label="Example: Competitive Engineering compares independently built approaches">
+<figure class="cx" data-compete data-phase="done" aria-label="Example: two approaches built from the same commit, checked against the same criteria and compared">
   <div class="cx-top">
     <div class="cx-tabs" role="tablist" aria-label="Competitive Engineering examples">
       {scenarios.map((s, i) => <button type="button" role="tab" id={`cx-t-${s.id}`} aria-controls={`cx-p-${s.id}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1} data-tab={s.id}>{s.tab}</button>)}
     </div>
-    <span class="cx-tag">Example</span>
+    <span class="cx-tag">Example data</span>
   </div>
 
   {scenarios.map((s, i) => (
     <div class="cx-panel" role="tabpanel" id={`cx-p-${s.id}`} aria-labelledby={`cx-t-${s.id}`} hidden={i !== 0} data-panel={s.id}>
       <div class="cx-goal">
         <p class="cx-goal-t">{s.goal}</p>
-        <p class="cx-goal-m"><GitBranch class="h-3.5 w-3.5" aria-hidden="true" />Same starting revision · {s.criteria}</p>
+        <p class="cx-goal-m"><span><GitBranch class="h-3.5 w-3.5" aria-hidden="true" />shop-rails</span><span><GitCommitHorizontal class="h-3.5 w-3.5" aria-hidden="true" />Both start from a41c9e2</span><span>{s.criteria}, the same for each</span></p>
       </div>
-      <ol class:list={['cx-grid', s.approaches.length === 2 && 'is-two']} aria-label="Approaches">
+      <ol class="cx-grid" aria-label="Approaches">
         {s.approaches.map((a) => (
           <li class:list={['cx-a', a.ok ? 'is-ok' : 'is-no']} data-a={a.id}>
             <div class="cx-a-head">
               <span class="cx-id" aria-hidden="true">{a.id}</span>
               <h4>{a.name}</h4>
+              <span class="cx-agent">{a.agent}</span>
             </div>
             <p class="cx-status">
               <span class="cx-s cx-s-build">Building on its own branch…</span>
-              <span class="cx-s cx-s-test">Testing against the requirements…</span>
-              <span class="cx-s cx-s-done">{a.ok ? <><Check class="h-3.5 w-3.5" aria-hidden="true" />Verified</> : <><X class="h-3.5 w-3.5" aria-hidden="true" />Not verified</>}</span>
+              <span class="cx-s cx-s-test">Checking against the criteria…</span>
+              <span class="cx-s cx-s-done">{a.ok ? <><Check class="h-3.5 w-3.5" aria-hidden="true" />Qualifies</> : <><X class="h-3.5 w-3.5" aria-hidden="true" />Doesn’t qualify</>}</span>
             </p>
+            <ul class="cx-checks" aria-label={`Checks for approach ${a.id}`}>
+              {a.checks.map((c) => { const I = stateIcon[c.s]; return (
+                <li class={`is-${c.s}`}><I class="h-3.5 w-3.5" aria-hidden="true" /><span class="cx-ck">{c.k}</span><span class="cx-cv"><span class="sr-only">{stateLabel[c.s]}: </span>{c.v}</span></li>
+              ); })}
+            </ul>
             <dl class="cx-rows">
-              {a.rows.map((r) => <div class:list={[r.bad && 'is-bad']}><dt>{r.k}</dt><dd>{r.v}</dd></div>)}
+              {a.meta.map((r) => <div><dt>{r.k}</dt><dd>{r.v}</dd></div>)}
             </dl>
             {a.note && <p class="cx-note">{a.note}</p>}
           </li>
         ))}
       </ol>
+      <ul class="cx-legend" aria-hidden="true"><li class="is-pass"><Check class="h-3 w-3" />Passed</li><li class="is-fail"><X class="h-3 w-3" />Failed</li><li class="is-none"><CircleDashed class="h-3 w-3" />Not checked</li></ul>
       <div class:list={['cx-verdict', !s.choose && 'is-none']}>
         <div>
           <p class="cx-v-t">{s.verdict.title}</p>
           <p class="cx-v-p">{s.verdict.text}</p>
         </div>
         {s.choose && (
-          <div class="cx-choose" role="group" aria-label="Choose an approach">
+          <div class="cx-choose" role="group" aria-label="Decide what happens next">
             {s.approaches.filter((a) => a.ok).map((a) => <button type="button" class="cx-btn" data-choose={a.id} aria-pressed="false">Choose {a.id}</button>)}
+            <button type="button" class="cx-btn" data-choose="retry" aria-pressed="false">Try a third approach</button>
           </div>
         )}
-        {s.choose && <p class="cx-chosen" data-chosen aria-live="polite">You decide. The approaches you don’t choose are kept, with their evidence and reasoning.</p>}
+        {s.choose && <p class="cx-chosen" data-chosen aria-live="polite">You decide. The approach you don’t choose is kept, with its evidence and reasoning.</p>}
       </div>
     </div>
   ))}
@@ -109,21 +122,36 @@ const scenarios: Scenario[] = [
   .cx-tabs button:focus-visible, .cx-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
   .cx-tag { flex-shrink: 0; padding: 0.05rem 0.4rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.7rem; color: var(--foreground-secondary); }
   .cx-panel { padding: 1.1rem; }
-  .cx-goal-t { margin: 0; font-size: 1rem; font-weight: 600; color: var(--foreground); }
-  .cx-goal-m { margin: 0.3rem 0 0; display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; color: var(--foreground-secondary); }
+  @media (min-width: 64rem) { .cx-panel { padding: 1.5rem 1.6rem 1.6rem; } }
+  .cx-goal-t { margin: 0; font-size: 1.15rem; font-weight: 640; letter-spacing: -0.015em; color: var(--foreground); }
+  .cx-goal-m { margin: 0.4rem 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 1rem; font-size: 0.82rem; color: var(--foreground-secondary); }
+  .cx-goal-m span { display: inline-flex; align-items: center; gap: 0.35rem; }
   .cx-grid { margin: 1rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.6rem; }
-  @media (min-width: 40rem) { .cx-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .cx-grid.is-two { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  .cx-a { display: grid; align-content: start; gap: 0.55rem; padding: 0.85rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); transition: border-color var(--dur), opacity var(--dur); }
+  @media (min-width: 48rem) { .cx-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.9rem; } }
+  .cx-a { display: grid; align-content: start; gap: 0.7rem; padding: 1.05rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); transition: border-color var(--dur), opacity var(--dur); }
   .cx-a-head { display: flex; align-items: center; gap: 0.5rem; }
   .cx-id { display: inline-grid; place-items: center; flex-shrink: 0; width: 1.4rem; height: 1.4rem; border-radius: var(--radius-sm); background: var(--surface-elevated); font-size: 0.75rem; font-weight: 640; color: var(--foreground); }
-  .cx-a h4 { margin: 0; font-size: 0.9rem; font-weight: 600; line-height: 1.3; color: var(--foreground); }
+  .cx-agent { margin-left: auto; flex-shrink: 0; padding: 0.05rem 0.45rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.72rem; font-weight: 560; color: var(--foreground-secondary); }
+  .cx-a h4 { margin: 0; min-width: 0; font-size: 1rem; font-weight: 600; line-height: 1.3; color: var(--foreground); }
   .cx-status { margin: 0; min-height: 1.4rem; font-size: 0.8rem; font-weight: 560; }
   .cx-s { display: none; align-items: center; gap: 0.3rem; }
   [data-phase='build'] .cx-s-build, [data-phase='test'] .cx-s-test, [data-phase='done'] .cx-s-done { display: inline-flex; }
   .cx-s-build, .cx-s-test { color: var(--foreground-secondary); }
   .is-ok .cx-s-done { color: var(--accent-text); }
   .is-no .cx-s-done { color: var(--danger, #e5484d); }
-  .cx-rows { margin: 0; display: grid; gap: 0.3rem; font-size: 0.78rem; transition: opacity var(--dur) var(--ease-out); }
+  .cx-checks { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.15rem; transition: opacity var(--dur) var(--ease-out); }
+  .cx-checks li { display: grid; grid-template-columns: 1rem minmax(0, 1fr) auto; gap: 0.5rem; align-items: center; padding: 0.4rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.86rem; }
+  .cx-checks li:nth-child(odd) { background: color-mix(in srgb, var(--surface) 70%, transparent); }
+  .cx-ck { color: var(--foreground); }
+  .cx-cv { text-align: right; font-weight: 560; font-variant-numeric: tabular-nums; color: var(--foreground-secondary); }
+  .cx-checks .is-pass > :global(svg) { color: var(--accent-text); }
+  .cx-checks .is-fail > :global(svg), .cx-checks .is-fail .cx-cv { color: var(--danger, #e5484d); }
+  .cx-checks .is-none > :global(svg) { color: var(--foreground-muted); }
+  .cx-checks .is-none .cx-cv { font-style: italic; }
+  .cx-legend { margin: 0.75rem 0 0; padding: 0; list-style: none; display: flex; gap: 1rem; font-size: 0.75rem; color: var(--foreground-secondary); }
+  .cx-legend li { display: inline-flex; align-items: center; gap: 0.3rem; }
+  .cx-legend .is-pass :global(svg) { color: var(--accent-text); } .cx-legend .is-fail :global(svg) { color: var(--danger, #e5484d); }
+  .cx-rows { margin: 0; padding-top: 0.6rem; border-top: 1px solid var(--border); display: grid; gap: 0.3rem; font-size: 0.8rem; transition: opacity var(--dur) var(--ease-out); }
   .cx-rows div { display: flex; justify-content: space-between; gap: 0.5rem; }
   .cx-rows dt { color: var(--foreground-secondary); }
   .cx-rows dd { margin: 0; text-align: right; font-weight: 560; font-variant-numeric: tabular-nums; color: var(--foreground); }
@@ -131,7 +159,7 @@ const scenarios: Scenario[] = [
   .cx-note { margin: 0; padding-top: 0.45rem; border-top: 1px solid var(--border); font-size: 0.76rem; line-height: 1.45; color: var(--foreground-secondary); }
   [data-phase='done'] .cx-a.is-ok { border-color: var(--border-interactive); }
   [data-phase='done'] .cx-a.is-no { border-style: dashed; }
-  [data-phase='build'] .cx-rows, [data-phase='build'] .cx-note, [data-phase='test'] .cx-rows, [data-phase='test'] .cx-note { opacity: 0.15; }
+  [data-phase='build'] .cx-rows, [data-phase='build'] .cx-note, [data-phase='build'] .cx-checks, [data-phase='test'] .cx-rows, [data-phase='test'] .cx-note { opacity: 0.15; }
   .cx-a.is-chosen { box-shadow: var(--glow-accent); }
   .cx-verdict { margin-top: 0.9rem; display: grid; gap: 0.75rem; padding: 0.95rem 1rem; border: 1px solid var(--border-interactive); border-radius: var(--radius-md); background: var(--accent-subtle); transition: opacity var(--dur) var(--ease-out), transform var(--dur) var(--ease-out); }
   .cx-verdict.is-none { border-color: var(--border-strong); background: var(--surface-elevated); }
@@ -139,12 +167,12 @@ const scenarios: Scenario[] = [
   [data-phase='build'] .cx-verdict, [data-phase='test'] .cx-verdict { opacity: 0; transform: translateY(6px); }
   .cx-v-t { margin: 0; font-size: 0.95rem; font-weight: 640; color: var(--foreground); }
   .cx-v-p { margin: 0.25rem 0 0; font-size: 0.85rem; line-height: 1.5; color: var(--foreground-secondary); }
-  .cx-choose { display: flex; gap: 0.4rem; }
+  .cx-choose { display: flex; flex-wrap: wrap; gap: 0.4rem; }
   .cx-btn { padding: 0.4rem 0.8rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface); font-size: 0.82rem; font-weight: 560; color: var(--foreground); transition: background-color var(--dur-fast), border-color var(--dur-fast); }
   .cx-btn:hover { background: var(--surface-hover); }
   .cx-btn[aria-pressed='true'] { border-color: var(--accent); background: var(--accent); color: #12140f; }
   .cx-chosen { margin: 0; font-size: 0.8rem; color: var(--foreground-secondary); }
-  @media (prefers-reduced-motion: reduce) { .cx-a, .cx-rows, .cx-verdict { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .cx-a, .cx-rows, .cx-checks, .cx-verdict { transition: none; } }
 </style>
 
 <script>
@@ -182,7 +210,9 @@ const scenarios: Scenario[] = [
         const id = b.dataset.choose!;
         btns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
         panel.querySelectorAll<HTMLElement>('[data-a]').forEach((a) => a.classList.toggle('is-chosen', a.dataset.a === id));
-        if (out) out.textContent = `You chose ${id}. The other approaches are kept with their evidence and reasoning, in case you revisit the decision.`;
+        if (out) out.textContent = id === 'retry'
+          ? 'Vekrun will design a third approach from the same commit. A and B stay on record with their evidence.'
+          : `You chose ${id}. The other approach is kept with its evidence and reasoning, in case you revisit the decision.`;
       }));
     }
   }

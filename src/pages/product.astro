@@ -1,8 +1,9 @@
 ---
 /**
- * The Product page, as six chapters of engineering work: Think, Build, Prove,
- * Deliver, Remember and Collaborate, then the models it all runs on. Each
- * chapter leads with one large demonstration and keeps the rest compact.
+ * The Product page, as five chapters of engineering work: Think, Build,
+ * Prove, Deliver, and Remember and collaborate, closed by the models it all
+ * runs on. Each chapter leads with one large demonstration and says the rest
+ * in a sentence or two rather than a list.
  * Every older section id survives as an anchor inside its chapter, so feature
  * and docs URLs keep landing in the right place. Copy sells what people can
  * do, never how it's implemented.
@@ -26,53 +27,15 @@ import BoardFlow from '@/components/factory/BoardFlow.astro';
 import MobileHost from '@/components/factory/MobileHost.astro';
 import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
 import { productSections } from '@/data/site';
-import { toolById } from '@/data/integrations';
+import { toolById, hostingProviders as providers } from '@/data/integrations';
 import { projectExamples } from '@/data/capabilities';
 import { Check, ArrowRight, SquareTerminal, FileDiff, GitBranch, MessagesSquare, Monitor, Terminal, ShieldAlert, Gauge, FlaskConical, Workflow, Lock, ShieldCheck, Server, Brain, Network, Eye, SlidersHorizontal, GitPullRequest, History, Crosshair, Users, Mic } from '@lucide/astro';
 
-const council = [
-  'Different models can evaluate the same engineering problem',
-  'Important decisions get extra scrutiny before code is written',
-  'Objections and alternative approaches stay visible',
-  'A change can be reviewed by a model from a different family',
-  'Verification evidence shows what was checked, and what wasn’t',
-];
-const guardian = [
-  'Watches your pull requests after they’re opened',
-  'Notices failing CI and requested changes',
-  'Repairs them when you’ve authorized it, with fresh evidence',
-  'Merges verified code only if you’ve explicitly allowed it',
-];
-const providers = [
-  { id: 'hetzner', name: 'Hetzner', mono: 'HZ' },
-  { id: 'digitalocean', name: 'DigitalOcean', mono: 'DO' },
-  { id: 'vultr', name: 'Vultr', mono: 'VU' },
-  { id: 'akamai', name: 'Akamai Linode', mono: 'AK' },
-  { id: 'aws', name: 'AWS', mono: 'AW' },
-];
 const secure = [
   { t: 'Closed by default', d: 'Inbound traffic is denied, and public SSH closes once private access works.' },
   { t: 'Least privilege', d: 'The worker gets only the permissions it needs, with credentials stored and rotated.' },
   { t: 'Isolated work', d: 'Each Work Item runs separately from the others.' },
   { t: 'Previews without open ports', d: 'Approved previews leave over outbound-only tunnels, ready for Live Share.' },
-];
-const proof = [
-  'Test results from your project’s own suite',
-  'Verification results against the acceptance criteria',
-  'Pinned to the exact revision they were taken on',
-  'Review findings, including objections',
-  'Known gaps, listed rather than hidden',
-  'Your approval, recorded with the result',
-  'Optional mutation challenges for high-assurance work',
-];
-const delivery = [
-  'Projects planned into Work Items',
-  'Dependencies respected, independent work run in parallel',
-  'Branch policies and protected branches honoured',
-  'Pull and merge requests with evidence attached',
-  'Review and approval workflows you define',
-  'Changes integrated safely into existing checkouts',
-  'A Board that shows what’s in flight and what shipped',
 ];
 const apps = [
   { logos: ['ios', 'swift'], t: 'iOS', d: 'Swift projects built and tested with your Xcode toolchain, and previewed in the iOS Simulator.' },
@@ -101,12 +64,6 @@ const remember = [
   { i: History, t: 'Verified Failure Learning', d: 'When a failure is proven and fixed, the lesson is kept with its evidence, so the same mistake isn’t investigated twice.' },
   { i: Crosshair, t: 'Context Engine', d: 'Each agent gets the decisions, code and lessons that matter for its task, smaller and sharper, instead of everything.' },
   { i: Network, t: 'Living Architecture', d: 'Decisions and evidence stay attached to the parts of the system they concern.' },
-];
-const anywhereFacts = [
-  'Keep long builds and engineering jobs off your laptop',
-  'Connect an existing server, or let Vekrun set up a new one',
-  'Follow and manage remote Work Items from your Mac',
-  'No Vekrun per-worker or per-execution fees',
 ];
 const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : id === 'android' ? 'Android' : id, mono: id.slice(0, 2) };
 ---
@@ -155,7 +112,6 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
           <h3 class="blk-t">The Council</h3>
           <p class="blk-big">More than one perspective on decisions that matter.</p>
           <p class="sub-lede">Vekrun can bring models from different AI developers together to assess an approach, surface disagreements and name the risks. You see the reasoning, the objections and the decision, and a reviewer from another model family challenges the result later.</p>
-          <ul class="ticks">{council.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
           <p class="fine">Not every task convenes a Council, and more models don’t guarantee a correct answer: they make the reasoning visible and harder to get wrong quietly.</p>
         </div>
         <div class="min-w-0"><Council /></div>
@@ -198,7 +154,7 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
         <div class="mt-8"><WorkAnywhere /></div>
         <div class="split mt-10">
           <div>
-            <ul class="ticks mt-0">{anywhereFacts.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
+            <p class="prose-s">Keep long builds off your laptop. Connect a server you already have, or let Vekrun set up a new one, then follow every remote Work Item from your Mac. Vekrun charges nothing per worker or per run.</p>
             <ul class="prov-p" aria-label="Hosting providers">{providers.map((p) => <li><IntegrationLogo id={p.id} name={p.name} monogram={p.mono} size="sm" />{p.name}</li>)}<li><span class="prov-srv"><Server class="h-3.5 w-3.5" aria-hidden="true" /></span>Any existing server</li></ul>
           </div>
           <div>
@@ -206,7 +162,7 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
             <ul class="sec">{secure.map((c) => <li><h4>{c.t}</h4><p>{c.d}</p></li>)}</ul>
           </div>
         </div>
-        <p class="fine">Work Anywhere is coming to Vekrun Free. Teams adds shared worker pools; see <a href="/teams/#workers" class="text-accent link-slide">Vekrun Teams</a>.</p>
+        <p class="fine">Work Anywhere is included in Vekrun Free. Teams adds shared worker pools; see <a href="/teams/#workers" class="text-accent link-slide">Vekrun Teams</a>.</p>
       </div>
 
       <div id="environments" class="blk split anchor">
@@ -271,7 +227,7 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
         <div>
           <h3 class="blk-t">Proof Packs</h3>
           <p class="blk-big">Evidence you can read in a minute.</p>
-          <ul class="ticks">{proof.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
+          <p class="sub-lede">Your project’s own test results, checked against the acceptance criteria and pinned to the exact revision. Review findings and objections stay in, known gaps are listed rather than hidden, and your approval is recorded with the result.</p>
           <div id="high-assurance" class="mini anchor">
             <p class="mini-t"><FlaskConical class="h-4 w-4" aria-hidden="true" />Do your tests actually catch mistakes?</p>
             <p>For high-assurance work, a mutation challenge makes small deliberate changes to the code and checks whether your tests notice. Tests that miss them are listed.</p>
@@ -298,11 +254,12 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
         <div id="guardian" class="anchor">
           <h3 class="blk-t">PR Guardian</h3>
           <p class="blk-big">Pull requests that look after themselves.</p>
-          <ul class="ticks">{guardian.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
+          <p class="sub-lede">Once a pull request is open, PR Guardian keeps watching. It notices failing CI and requested changes, repairs them when you’ve allowed it, with fresh evidence, and merges only if you’ve explicitly said it may.</p>
         </div>
         <div>
           <h3 class="blk-t">Git, your way</h3>
-          <ul class="ticks">{delivery.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
+          <p class="blk-big">Your branch rules, honoured.</p>
+          <p class="sub-lede">Projects become Work Items that respect their dependencies and run in parallel where they can. Protected branches and your review rules are honoured, changes land safely in existing checkouts, and the Board shows what’s in flight and what shipped.</p>
         </div>
       </div>
       <ul class="trio is-two">{deliverMore.map((c) => <li><span class="duo-ic"><c.i class="h-4 w-4" aria-hidden="true" /></span><h3>{c.t}</h3><p>{c.d}</p></li>)}</ul>
@@ -312,7 +269,7 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
   <!-- Remember -->
   <section id="remember" class="section-pad rule anchor" aria-labelledby="remember-title">
     <div class="container-site">
-      <header class="ch"><p class="ch-k">Remember</p><h2 id="remember-title" class="heading-2 text-text">Every task leaves the project better understood.</h2><p class="ch-l">Engineering Memory keeps decisions, verified fixes and their evidence, so the next task starts from what your team already knows.</p></header>
+      <header class="ch"><p class="ch-k">Remember</p><h2 id="remember-title" class="heading-2 text-text">Every task leaves the project better understood.</h2><p class="ch-l">Engineering Memory keeps decisions, verified fixes and their evidence, so the next task starts from what you already know. The people you work with can join in while the work is still happening.</p></header>
       <div id="memory" class="blk split anchor">
         <div>
           <h3 class="blk-t">Engineering Memory</h3>
@@ -323,13 +280,10 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
         <div class="min-w-0"><MemoryDemo /></div>
       </div>
       <p class="tier-line"><Brain class="h-4 w-4" aria-hidden="true" /><span>Personal Engineering Memory is in Vekrun Free. <a href="/teams/" class="text-accent link-slide">Vekrun Teams</a> shares it across engineers, repositories and their agents.</span></p>
-    </div>
-  </section>
-
-  <!-- Collaborate -->
-  <section id="collaborate" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="collaborate-title">
-    <div class="container-site">
-      <header class="ch"><p class="ch-k">Collaborate</p><h2 id="collaborate-title" class="heading-2 text-text">Bring people, and other Vekruns, into the work.</h2><p class="ch-l">Reviewers use what you’re building while it’s being built, and Vekrun installations can work together directly.</p></header>
+      <div id="collaborate" class="blk-sub anchor">
+        <h3 class="blk-sub-h">Bring people, and other Vekruns, into the work.</h3>
+        <p class="ch-l">Reviewers use what you’re building while it’s being built, and Vekrun installations can work together directly.</p>
+      </div>
       <div id="live-share" class="blk anchor">
         <h3 class="blk-t">Live Share</h3>
         <p class="blk-big">Don’t send screenshots. Send the app.</p>
@@ -347,7 +301,7 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
   </section>
 
   <!-- Models -->
-  <section id="models" class="section-pad rule anchor" aria-labelledby="models-title">
+  <section id="models" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="models-title">
     <div class="container-site">
       <SectionHeading id="models-title" kicker="Models" title="Your AI. Your hardware. Your choice." lede="Use Vekrun’s native agent with OpenRouter, Grok through xAI, or compatible local models you download through Vekrun. Bring Claude Code, Codex, Antigravity CLI or Grok Build if you like; none is required." />
       <div class="mt-12"><ModelChoice /></div>
@@ -355,7 +309,7 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
     </div>
   </section>
 
-  <ClosingCta title="Hand Vekrun your next outcome." class="bg-bg-elevated" />
+  <ClosingCta title="Hand Vekrun your next outcome." />
 </Base>
 
 <style>
@@ -394,6 +348,9 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
   .pnav a:hover { color: var(--text); background: var(--surface); }
   .split { display: grid; gap: 2.5rem; }
   @media (min-width: 64rem) { .split { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 4rem; align-items: start; } }
+  .prose-s { margin: 0; max-width: 34rem; font-size: 1rem; line-height: 1.6; color: var(--foreground); }
+  .blk-sub { margin-top: 6rem; padding-top: 3rem; border-top: 1px solid var(--border); max-width: 48rem; }
+  .blk-sub-h { margin: 0; font-size: clamp(1.6rem, 1.2rem + 1.5vw, 2.3rem); line-height: 1.15; font-weight: 650; letter-spacing: -0.03em; color: var(--foreground); }
   .ticks { margin: 1.75rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.6rem; }
   .ticks.mt-0 { margin-top: 0; }
   .ticks li { display: flex; gap: 0.55rem; align-items: flex-start; font-size: 0.98rem; line-height: 1.5; color: var(--foreground); }

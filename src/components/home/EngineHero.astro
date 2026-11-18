@@ -1,99 +1,127 @@
 ---
 /**
- * The homepage hero: one outcome becoming coordinated engineering work.
- * Describe → Plan (a Council weighs in) → Compete (two approaches built by
- * different agents from the same revision) → Prove (tests, independent review,
- * Proof Pack) → Deliver (a pull request ready for review, the other approach
- * kept). Demonstration data throughout.
+ * The homepage stage: one Work Item in a Vekrun window, from request to a
+ * reviewable pull request. Five steps (Request, Plan, Approaches, Verify,
+ * Pull request) fill an activity feed; the inspector holds the agents, the
+ * worker and the Proof Pack. A CLI view tells the same story headlessly.
  *
- * The markup is the final state. The script resets every `[data-at]` element
- * whose phase is still ahead, types the request, then advances one phase at a
- * time. It plays once; there is no loop and no perpetual motion.
+ * The markup is the final state, readable without the script. The script
+ * resets every `[data-at]` element whose step is still ahead and advances one
+ * step at a time, once. Clicking a step shows it and stops playback; the
+ * view switch never restarts it. Demonstration data throughout.
  */
 import DemoControls from '@/components/mock/DemoControls.astro';
-import { MessageSquareText, Users, GitCompareArrows, ShieldCheck, GitPullRequest, Check, X, Brain, GitBranch } from '@lucide/astro';
+import { Check, X, CircleDashed, GitPullRequest, GitBranch, GitCommitHorizontal, Inbox, LayoutGrid, Brain, Server, ShieldCheck, UserCheck } from '@lucide/astro';
 
 const request = 'Customers should keep their cart across web and mobile, and checkout must stay under 200 ms.';
-const phases = [
-  { i: MessageSquareText, t: 'Describe' },
-  { i: Users, t: 'Plan' },
-  { i: GitCompareArrows, t: 'Compete' },
-  { i: ShieldCheck, t: 'Prove' },
-  { i: GitPullRequest, t: 'Deliver' },
+const steps = ['Request', 'Plan', 'Approaches', 'Verify', 'Pull request'];
+const items = [
+  { id: 'WI-41', t: 'Cart API and storage' },
+  { id: 'WI-42', t: 'Sync the cart in the Expo app' },
+  { id: 'WI-43', t: 'Checkout performance check' },
 ];
-const items = ['Cart API and storage', 'Sync the cart in the Expo app', 'Checkout performance check'];
 const lanes = [
-  { id: 'A', name: 'Postgres cart table', agent: 'Codex', ok: true, result: '52 of 52 tests · p95 140 ms' },
+  { id: 'A', name: 'Postgres cart table', agent: 'Codex', ok: true, result: 'Qualifies' },
   { id: 'B', name: 'Redis-only cart', agent: 'Grok Build', ok: false, result: 'Loses carts on restart' },
 ];
-const proof = [
-  ['Tests', '52 passed'],
-  ['Browser check', 'Web and iOS Simulator'],
-  ['Independent review', 'Claude · no objections'],
-  ['Criteria', '6 of 6 met'],
+const evidence: { s: 'pass' | 'fail' | 'none'; k: string; v: string }[] = [
+  { s: 'pass', k: 'Request and unit tests', v: '52 of 52' },
+  { s: 'pass', k: 'Checkout p95 under 200 ms', v: '140 ms' },
+  { s: 'pass', k: 'Cart survives an app restart', v: 'Web and iOS' },
+  { s: 'none', k: 'Android device run', v: 'Not checked' },
+];
+const icon = { pass: Check, fail: X, none: CircleDashed } as const;
+const cli = [
+  { at: 1, h: '<b>$</b> vekrun run "Customers should keep their cart across web and mobile…"' },
+  { at: 1, h: 'Context  shop-rails · Rails + Expo · 3 related decisions' },
+  { at: 2, h: 'Plan     3 Work Items · Council: Claude, Grok · <em>approved by you</em>' },
+  { at: 3, h: 'Compete  A Postgres cart table (Codex) · B Redis-only cart (Grok Build) · from a41c9e2' },
+  { at: 3, h: 'Worker   build-01 · your VPS · isolated worktrees' },
+  { at: 4, h: '<i class="ok">✓</i> A  52/52 tests · p95 140 ms · cart survives restart' },
+  { at: 4, h: '<i class="no">✗</i> B  loses carts on restart' },
+  { at: 4, h: '<i class="un">○</i> Android device run not checked · listed in the Proof Pack' },
+  { at: 5, h: 'Proof    9c41a7e · 3 of 4 criteria proven, 1 not checked' },
+  { at: 5, h: '<i class="ok">✓</i> PR #512 opened · ready for review · B kept with its evidence' },
 ];
 ---
-<figure class="eh" data-engine data-phase="5" aria-label="Example: Vekrun turns a described outcome into a plan, two competing implementations, verified evidence and a pull request">
-  <ol class="eh-rail" aria-hidden="true">
-    {phases.map((p, n) => (
-      <li class="eh-ph" data-ph={n + 1}><span class="eh-ph-ic"><p.i class="h-3.5 w-3.5" /></span><span class="eh-ph-t">{p.t}</span></li>
-    ))}
+<figure id="demo" class="eh" data-engine data-phase="5" data-view="factory" aria-label="Example: a Vekrun Work Item going from a request to a plan, two competing approaches, verified evidence and a pull request ready for review">
+  <div class="eh-chrome">
+    <span class="eh-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="eh-title">shop-rails <span>· Factory</span></span>
+    <div class="eh-views" role="group" aria-label="View">
+      <button type="button" data-view-btn="factory" aria-pressed="true">Factory</button>
+      <button type="button" data-view-btn="cli" aria-pressed="false">CLI</button>
+    </div>
+  </div>
+
+  <ol class="eh-steps" aria-label="Steps">
+    {steps.map((s, n) => <li><button type="button" class="eh-step is-done" data-goto={n + 1} aria-pressed={n === 4 ? 'true' : 'false'}><span class="eh-step-n">{n + 1}</span>{s}</button></li>)}
   </ol>
 
-  <div class="eh-grid">
-    <section class="eh-col" aria-label="Describe">
-      <p class="eh-k"><span class="eh-av" aria-hidden="true">Y</span>You describe the outcome</p>
-      <p class="eh-req"><span data-req>{request}</span><span class="eh-caret" aria-hidden="true"></span></p>
-      <ul class="eh-ctx" data-at="1">
-        <li><GitBranch class="h-3.5 w-3.5" aria-hidden="true" />shop-rails · Rails and Expo</li>
-        <li><Brain class="h-3.5 w-3.5" aria-hidden="true" />3 related decisions in memory</li>
+  <div class="eh-body" data-pane="factory">
+    <nav class="eh-side" aria-label="Example sidebar">
+      <p class="eh-side-k">Workspace</p>
+      <ul>
+        <li><Inbox class="h-3.5 w-3.5" aria-hidden="true" />Inbox</li>
+        <li class="is-on"><LayoutGrid class="h-3.5 w-3.5" aria-hidden="true" />Board</li>
+        <li><Brain class="h-3.5 w-3.5" aria-hidden="true" />Memory</li>
       </ul>
-    </section>
+      <p class="eh-side-k">Work Items</p>
+      <ul>
+        {items.map((it) => <li data-at="2"><span class="eh-wi">{it.id}</span>{it.t}</li>)}
+      </ul>
+    </nav>
 
-    <span class="eh-link" data-link="2" aria-hidden="true"></span>
+    <div class="eh-main">
+      <p class="eh-wtitle">Saved carts across web and mobile</p>
+      <p class="eh-wmeta"><span><GitBranch class="h-3.5 w-3.5" aria-hidden="true" />feat/saved-carts</span><span><GitCommitHorizontal class="h-3.5 w-3.5" aria-hidden="true" />from a41c9e2</span></p>
 
-    <section class="eh-col" aria-label="Plan">
-      <p class="eh-k">Vekrun plans</p>
-      <div class="eh-council" data-at="2">
-        <span class="eh-chips"><span>Claude</span><span>Grok</span></span>
-        <p>Council agrees · 1 objection recorded</p>
-      </div>
-      <ol class="eh-items">
-        {items.map((it, i) => <li data-at="2" style={`--d:${i * 160}ms`}><span class="eh-dot" aria-hidden="true"></span>{it}</li>)}
+      <ol class="eh-feed">
+        <li class="eh-ev" data-at="1">
+          <span class="eh-ev-k"><span class="eh-av" aria-hidden="true">Y</span>You asked</span>
+          <p class="eh-req"><span data-req>{request}</span><span class="eh-caret" aria-hidden="true"></span></p>
+        </li>
+        <li class="eh-ev" data-at="2">
+          <span class="eh-ev-k">Vekrun planned 3 Work Items</span>
+          <p class="eh-ev-p">Claude and Grok agreed on a Postgres-backed cart; one objection about Redis is on record.</p>
+          <p class="eh-approve"><UserCheck class="h-3.5 w-3.5" aria-hidden="true" />Plan approved by you</p>
+        </li>
+        <li class="eh-ev" data-at="3">
+          <span class="eh-ev-k">Two approaches, built independently</span>
+          <ul class="eh-lanes">
+            {lanes.map((l, i) => (
+              <li class:list={['eh-lane', l.ok ? 'is-ok' : 'is-no']} style={`--d:${i * 180}ms`}>
+                <span class="eh-lane-id">{l.id}</span>
+                <span class="eh-lane-n">{l.name}</span>
+                <span class="eh-agent">{l.agent}</span>
+                <span class="eh-bar" aria-hidden="true"><span style={`--t:${2000 + i * 600}ms`}></span></span>
+                <span class="eh-res" data-at="4">{l.ok ? <Check class="h-3.5 w-3.5" aria-hidden="true" /> : <X class="h-3.5 w-3.5" aria-hidden="true" />}{l.result}</span>
+              </li>
+            ))}
+          </ul>
+        </li>
+        <li class="eh-ev is-pr" data-at="5">
+          <span class="eh-ev-k"><GitPullRequest class="h-4 w-4" aria-hidden="true" />#512 Saved carts</span>
+          <p class="eh-ev-p"><span class="eh-ready">Ready for review</span>Approach A, with its Proof Pack. B is kept with its evidence.</p>
+        </li>
       </ol>
-    </section>
+    </div>
 
-    <span class="eh-link" data-link="3" aria-hidden="true"></span>
-
-    <section class="eh-col is-wide" aria-label="Compete">
-      <p class="eh-k">Two approaches, same revision <code>a41c9e2</code></p>
-      <ul class="eh-lanes">
-        {lanes.map((l, i) => (
-          <li class:list={['eh-lane', l.ok ? 'is-ok' : 'is-no']} data-at="3" style={`--d:${i * 200}ms`}>
-            <div class="eh-lane-top">
-              <span class="eh-lane-id">{l.id}</span>
-              <span class="eh-lane-n">{l.name}</span>
-              <span class="eh-agent">{l.agent}</span>
-            </div>
-            <span class="eh-bar" aria-hidden="true"><span style={`--t:${2200 + i * 700}ms`}></span></span>
-            <p class="eh-res" data-at="4">{l.ok ? <Check class="h-3.5 w-3.5" aria-hidden="true" /> : <X class="h-3.5 w-3.5" aria-hidden="true" />}{l.result}</p>
-          </li>
-        ))}
+    <aside class="eh-insp" aria-label="Example inspector">
+      <p class="eh-side-k">Agents</p>
+      <p class="eh-row" data-at="3"><span>Builders</span><b>Codex · Grok Build</b></p>
+      <p class="eh-row" data-at="4"><span>Reviewer</span><b>Claude</b></p>
+      <p class="eh-row" data-at="3"><span>Worker</span><b><Server class="h-3.5 w-3.5" aria-hidden="true" />build-01, your VPS</b></p>
+      <p class="eh-side-k eh-gap"><ShieldCheck class="h-3.5 w-3.5" aria-hidden="true" />Proof Pack</p>
+      <ul class="eh-proof">
+        {evidence.map((e, i) => { const I = icon[e.s]; return <li class={`is-${e.s}`} data-at="4" style={`--d:${i * 140}ms`}><I class="h-3.5 w-3.5" aria-hidden="true" /><span>{e.k}</span><em>{e.v}</em></li>; })}
       </ul>
-    </section>
+      <p class="eh-pin" data-at="5">Pinned to 9c41a7e · 1 gap listed</p>
+    </aside>
+  </div>
 
-    <span class="eh-link" data-link="4" aria-hidden="true"></span>
-
-    <section class="eh-col" aria-label="Prove and deliver">
-      <p class="eh-k">Proof Pack</p>
-      <dl class="eh-proof">
-        {proof.map(([k, v], i) => <div data-at="4" style={`--d:${i * 180}ms`}><dt><Check class="h-3.5 w-3.5" aria-hidden="true" />{k}</dt><dd>{v}</dd></div>)}
-      </dl>
-      <div class="eh-pr" data-at="5">
-        <p class="eh-pr-t"><GitPullRequest class="h-4 w-4" aria-hidden="true" />#512 Saved carts</p>
-        <p class="eh-pr-s"><span class="eh-ready">Ready for review</span>Approach A · B kept with its evidence</p>
-      </div>
-    </section>
+  <div class="eh-cli" data-pane="cli" hidden>
+    <pre aria-label="Example headless run">{cli.map((l) => <span class="eh-cl" data-at={l.at} set:html={l.h} />)}</pre>
   </div>
 
   <div class="eh-foot">
@@ -103,96 +131,111 @@ const proof = [
 </figure>
 
 <style>
-  .eh { margin: 0; padding: 1rem; border: 1px solid var(--border); border-radius: calc(var(--radius-lg) + 4px); background: var(--surface); box-shadow: var(--shadow-md); }
-  @media (min-width: 48rem) { .eh { padding: 1.25rem 1.4rem; } }
+  .eh { margin: 0; overflow: hidden; border: 1px solid var(--border-strong); border-radius: calc(var(--radius-lg) + 2px); background: var(--surface); box-shadow: var(--shadow-lg, var(--shadow-md)); }
+  .eh-chrome { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0.9rem; border-bottom: 1px solid var(--border); background: var(--background); }
+  .eh-dots { display: inline-flex; gap: 0.35rem; }
+  .eh-dots i { width: 0.65rem; height: 0.65rem; border-radius: 999px; background: var(--border-strong); }
+  .eh-title { font-size: 0.82rem; font-weight: 600; color: var(--foreground); }
+  .eh-title span { font-weight: 500; color: var(--foreground-secondary); }
+  .eh-views { margin-left: auto; display: inline-flex; padding: 0.15rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); }
+  .eh-views button { padding: 0.2rem 0.65rem; border-radius: calc(var(--radius-sm) - 2px); font-size: 0.78rem; font-weight: 560; color: var(--foreground-secondary); transition: background-color 180ms var(--ease-out), color 180ms var(--ease-out); }
+  .eh-views button:hover { color: var(--foreground); }
+  .eh-views button[aria-pressed='true'] { background: var(--surface-elevated); color: var(--foreground); box-shadow: var(--shadow-sm); }
 
-  /* Phase rail */
-  .eh-rail { position: relative; margin: 0 0 1rem; padding: 0; list-style: none; display: none; }
-  @media (min-width: 64rem) { .eh-rail { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); } }
-  .eh-rail::before, .eh-rail::after { content: ''; position: absolute; left: 0.95rem; width: 80%; top: 0.9rem; height: 2px; border-radius: 2px; background: var(--border); }
-  .eh-rail::after { width: calc(80% * var(--p, 1)); background: var(--accent); transition: width 900ms var(--ease-out); }
-  .eh[data-phase='0'] .eh-rail, .eh[data-phase='1'] .eh-rail { --p: 0; }
-  .eh[data-phase='2'] .eh-rail { --p: 0.25; }
-  .eh[data-phase='3'] .eh-rail { --p: 0.5; }
-  .eh[data-phase='4'] .eh-rail { --p: 0.75; }
-  .eh[data-phase='5'] .eh-rail { --p: 1; }
-  .eh-ph { position: relative; z-index: 1; display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; font-weight: 560; color: var(--foreground-muted); transition: color var(--dur) var(--ease-out); }
-  .eh-ph-ic { display: inline-grid; place-items: center; width: 1.9rem; height: 1.9rem; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--foreground-muted); transition: background-color var(--dur), color var(--dur), border-color var(--dur), box-shadow var(--dur); }
-  .eh-ph-t { padding: 0 0.6rem 0 0.1rem; background: var(--surface); }
-  .eh-ph.is-on { color: var(--foreground); }
-  .eh-ph.is-on .eh-ph-ic { border-color: var(--accent); background: var(--accent); color: #12140f; }
-  .eh-ph.is-now .eh-ph-ic { box-shadow: 0 0 0 5px var(--accent-subtle); }
+  .eh-steps { margin: 0; padding: 0.55rem 0.9rem; list-style: none; display: flex; gap: 0.3rem; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--border); }
+  .eh-steps::-webkit-scrollbar { display: none; }
+  .eh-step { display: inline-flex; align-items: center; gap: 0.45rem; height: 2rem; padding: 0 0.7rem 0 0.35rem; border: 1px solid transparent; border-radius: var(--radius-sm); font-size: 0.82rem; font-weight: 560; white-space: nowrap; color: var(--foreground-muted); transition: color 180ms var(--ease-out), background-color 180ms var(--ease-out), border-color 180ms var(--ease-out); }
+  .eh-step:hover { color: var(--foreground); background: var(--surface-elevated); }
+  .eh-step-n { display: inline-grid; place-items: center; width: 1.35rem; height: 1.35rem; border-radius: 999px; border: 1px solid var(--border-strong); font-size: 0.72rem; transition: background-color 220ms var(--ease-out), color 220ms var(--ease-out), border-color 220ms var(--ease-out); }
+  .eh-step.is-done { color: var(--foreground-secondary); }
+  .eh-step.is-done .eh-step-n { border-color: var(--accent); background: var(--accent); color: #12140f; }
+  .eh-step[aria-pressed='true'] { border-color: var(--border); background: var(--surface-elevated); color: var(--foreground); }
+  .eh-views button:focus-visible, .eh-step:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 
-  /* Columns */
-  .eh-grid { display: grid; gap: 0.6rem; }
-  @media (min-width: 64rem) { .eh-grid { grid-template-columns: minmax(0, 1fr) 1.25rem minmax(0, 1fr) 1.25rem minmax(0, 1.35fr) 1.25rem minmax(0, 1.15fr); gap: 0; align-items: stretch; } }
-  .eh-col { min-width: 0; padding: 0.95rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); }
-  .eh-k { margin: 0; display: flex; align-items: center; gap: 0.45rem; font-size: 0.76rem; font-weight: 600; color: var(--foreground-secondary); }
-  .eh-k code { font-size: 0.72rem; font-weight: 500; color: var(--foreground-muted); }
-  .eh-av { display: inline-grid; place-items: center; width: 1.25rem; height: 1.25rem; border-radius: 999px; background: var(--accent-subtle); font-size: 0.66rem; font-weight: 700; color: var(--accent-text); }
+  .eh-body { display: grid; }
+  @media (min-width: 60rem) { .eh-body { grid-template-columns: 13.5rem minmax(0, 1fr) 17.5rem; min-height: 25rem; } }
+  .eh-side { display: none; padding: 1rem 0.75rem; border-right: 1px solid var(--border); background: var(--background); }
+  @media (min-width: 60rem) { .eh-side { display: block; } }
+  .eh-side ul { margin: 0.35rem 0 1rem; padding: 0; list-style: none; display: grid; gap: 0.1rem; }
+  .eh-side li { display: flex; align-items: center; gap: 0.5rem; min-width: 0; padding: 0.38rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.82rem; color: var(--foreground-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .eh-side li.is-on { background: var(--surface-elevated); color: var(--foreground); }
+  .eh-wi { flex-shrink: 0; font-family: var(--font-mono); font-size: 0.7rem; color: var(--foreground-muted); }
+  .eh-side-k { margin: 0; display: flex; align-items: center; gap: 0.35rem; padding: 0 0.5rem; font-size: 0.72rem; font-weight: 600; color: var(--foreground-muted); }
+  .eh-insp .eh-side-k { padding: 0; }
 
-  .eh-req { margin: 0.7rem 0 0; min-height: 5.6em; font-size: 0.98rem; line-height: 1.45; font-weight: 520; color: var(--foreground); }
+  .eh-main { min-width: 0; padding: 1.1rem 1.1rem 1.25rem; }
+  @media (min-width: 60rem) { .eh-main { padding: 1.4rem 1.6rem; } }
+  .eh-wtitle { margin: 0; font-size: 1.15rem; font-weight: 640; letter-spacing: -0.015em; color: var(--foreground); }
+  .eh-wmeta { margin: 0.35rem 0 0; display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; font-family: var(--font-mono); font-size: 0.74rem; color: var(--foreground-secondary); }
+  .eh-wmeta span { display: inline-flex; align-items: center; gap: 0.35rem; }
+  .eh-feed { position: relative; margin: 1.1rem 0 0; padding: 0 0 0 1.1rem; list-style: none; display: grid; gap: 0.9rem; }
+  .eh-feed::before { content: ''; position: absolute; left: 0.3rem; top: 0.4rem; bottom: 0.4rem; width: 1px; background: var(--border); }
+  .eh-ev { position: relative; }
+  .eh-ev::before { content: ''; position: absolute; left: -1.1rem; top: 0.35rem; width: 0.6rem; height: 0.6rem; border-radius: 999px; border: 2px solid var(--surface); background: var(--accent); }
+  .eh-ev-k { display: flex; align-items: center; gap: 0.45rem; font-size: 0.8rem; font-weight: 600; color: var(--foreground-secondary); }
+  .eh-ev-k :global(svg) { color: var(--accent-text); }
+  .eh-av { display: inline-grid; place-items: center; width: 1.2rem; height: 1.2rem; border-radius: 999px; background: var(--accent-subtle); font-size: 0.64rem; font-weight: 700; color: var(--accent-text); }
+  .eh-req { margin: 0.35rem 0 0; min-height: 2.9em; font-size: 0.98rem; line-height: 1.45; font-weight: 520; color: var(--foreground); }
   .eh-caret { display: inline-block; width: 2px; height: 1.05em; margin-left: 2px; vertical-align: -0.15em; background: var(--accent); opacity: 0; }
-  .eh[data-phase='1'] .eh-caret, .eh[data-phase='0'] .eh-caret { opacity: 1; animation: eh-blink 1s steps(1) infinite; }
+  .eh[data-phase='1'] .eh-caret { opacity: 1; animation: eh-blink 1s steps(1) infinite; }
   @keyframes eh-blink { 50% { opacity: 0; } }
-  .eh-ctx { margin: 0.8rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.35rem; }
-  .eh-ctx li { display: flex; align-items: center; gap: 0.4rem; font-size: 0.76rem; color: var(--foreground-secondary); }
-  .eh-ctx :global(svg) { color: var(--accent-text); flex-shrink: 0; }
+  .eh-ev-p { margin: 0.3rem 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.5rem; font-size: 0.88rem; line-height: 1.5; color: var(--foreground); }
+  .eh-approve { margin: 0.45rem 0 0; display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.15rem 0.55rem; border: 1px solid var(--border-interactive); border-radius: var(--radius-sm); font-size: 0.76rem; font-weight: 560; color: var(--accent-text); }
 
-  .eh-council { margin-top: 0.7rem; padding: 0.55rem 0.65rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); }
-  .eh-council p { margin: 0.35rem 0 0; font-size: 0.78rem; color: var(--foreground); }
-  .eh-chips { display: flex; gap: 0.3rem; }
-  .eh-chips span, .eh-agent { padding: 0.05rem 0.4rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.68rem; font-weight: 560; color: var(--foreground-secondary); }
-  .eh-items { margin: 0.6rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.35rem; }
-  .eh-items li { display: flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.55rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); font-size: 0.8rem; color: var(--foreground); }
-  .eh-dot { width: 0.45rem; height: 0.45rem; flex-shrink: 0; border-radius: 999px; background: var(--accent); }
-
-  .eh-lanes { margin: 0.7rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.5rem; }
-  .eh-lane { padding: 0.65rem 0.7rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); transition: border-color var(--dur) var(--ease-out), opacity 500ms var(--ease-out), transform 500ms var(--ease-out); transition-delay: var(--d, 0ms); }
-  .eh-lane-top { display: flex; align-items: center; gap: 0.5rem; min-width: 0; }
-  .eh-lane-id { display: inline-grid; place-items: center; flex-shrink: 0; width: 1.35rem; height: 1.35rem; border-radius: var(--radius-sm); background: var(--surface-elevated); font-size: 0.72rem; font-weight: 700; color: var(--foreground); }
-  .eh-lane-n { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.84rem; font-weight: 600; color: var(--foreground); }
-  .eh-agent { flex-shrink: 0; }
-  .eh-bar { display: block; height: 4px; margin-top: 0.6rem; overflow: hidden; border-radius: 4px; background: var(--border); }
-  .eh-bar span { display: block; height: 100%; width: 100%; border-radius: 4px; background: var(--accent); transition: width var(--t, 2.2s) cubic-bezier(0.35, 0.1, 0.25, 1); }
+  .eh-lanes { margin: 0.5rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.45rem; }
+  @media (min-width: 40rem) { .eh-lanes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .eh-lane { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.35rem 0.5rem; padding: 0.6rem 0.7rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); transition: border-color 300ms var(--ease-out); }
+  .eh-lane-id { display: inline-grid; place-items: center; width: 1.3rem; height: 1.3rem; border-radius: var(--radius-sm); background: var(--surface-elevated); font-size: 0.72rem; font-weight: 700; color: var(--foreground); }
+  .eh-lane-n { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.86rem; font-weight: 600; color: var(--foreground); }
+  .eh-agent { padding: 0.02rem 0.4rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.7rem; font-weight: 560; color: var(--foreground-secondary); }
+  .eh-bar { grid-column: 1 / -1; display: block; height: 3px; overflow: hidden; border-radius: 3px; background: var(--border); }
+  .eh-bar span { display: block; height: 100%; width: 100%; background: var(--accent); transition: width var(--t, 2s) cubic-bezier(0.35, 0.1, 0.25, 1); }
   .eh-lane.is-no .eh-bar span { background: var(--foreground-muted); }
-  .eh-lane.is-off .eh-bar span { width: 0; transition: none; }
-  .eh-res { margin: 0.5rem 0 0; display: flex; align-items: center; gap: 0.35rem; font-size: 0.78rem; font-weight: 560; }
+  .eh-ev.is-off .eh-bar span { width: 0; transition: none; }
+  .eh-res { grid-column: 1 / -1; display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.8rem; font-weight: 560; }
   .eh-lane.is-ok .eh-res { color: var(--accent-text); }
   .eh-lane.is-no .eh-res { color: var(--danger); }
   .eh-lane.is-ok:has(.eh-res:not(.is-off)) { border-color: var(--border-interactive); }
   .eh-lane.is-no:has(.eh-res:not(.is-off)) { border-style: dashed; }
 
-  .eh-proof { margin: 0.7rem 0 0; display: grid; gap: 0.3rem; }
-  .eh-proof div { display: flex; justify-content: space-between; gap: 0.5rem; padding: 0.38rem 0.5rem; border-radius: var(--radius-sm); background: var(--surface); font-size: 0.76rem; }
-  .eh-proof dt { display: flex; align-items: center; gap: 0.35rem; white-space: nowrap; color: var(--foreground); font-weight: 560; }
-  .eh-proof dt :global(svg) { color: var(--accent-text); }
-  .eh-proof dd { margin: 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: right; color: var(--foreground-secondary); }
-  .eh-pr { margin-top: 0.6rem; padding: 0.6rem 0.65rem; border: 1px solid var(--border-interactive); border-radius: var(--radius-sm); background: var(--accent-subtle); }
-  .eh-pr-t { margin: 0; display: flex; align-items: center; gap: 0.4rem; font-size: 0.86rem; font-weight: 620; color: var(--foreground); }
-  .eh-pr-t :global(svg) { color: var(--accent-text); }
-  .eh-pr-s { margin: 0.35rem 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.5rem; font-size: 0.74rem; color: var(--foreground-secondary); }
-  .eh-ready { padding: 0.05rem 0.4rem; border-radius: var(--radius-sm); background: var(--accent); font-weight: 620; color: #12140f; }
+  .eh-ev.is-pr { padding: 0.7rem 0.8rem; border: 1px solid var(--border-interactive); border-radius: var(--radius-md); background: var(--accent-subtle); }
+  .eh-ev.is-pr::before { top: 1rem; }
+  .eh-ev.is-pr .eh-ev-k { font-size: 0.92rem; color: var(--foreground); }
+  .eh-ready { padding: 0.05rem 0.45rem; border-radius: var(--radius-sm); background: var(--accent); font-size: 0.76rem; font-weight: 640; color: #12140f; }
 
-  /* Connectors between columns */
-  .eh-link { display: none; }
-  @media (min-width: 64rem) {
-    .eh-link { position: relative; display: block; }
-    .eh-link::before { content: ''; position: absolute; left: 0.15rem; right: 0.15rem; top: 50%; height: 2px; border-radius: 2px; background: var(--border); transition: background-color 600ms var(--ease-out); }
-    .eh-link.is-on::before { background: var(--accent); }
-  }
+  .eh-insp { min-width: 0; padding: 1rem 1.1rem 1.2rem; border-top: 1px solid var(--border); background: var(--background); }
+  @media (min-width: 60rem) { .eh-insp { border-top: 0; border-left: 1px solid var(--border); } }
+  .eh-row { margin: 0.45rem 0 0; display: flex; justify-content: space-between; gap: 0.5rem; font-size: 0.8rem; color: var(--foreground-secondary); }
+  .eh-row b { display: inline-flex; align-items: center; gap: 0.3rem; min-width: 0; font-weight: 560; text-align: right; color: var(--foreground); }
+  .eh-gap { margin-top: 1.2rem !important; }
+  .eh-gap :global(svg) { color: var(--accent-text); }
+  .eh-proof { margin: 0.5rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.3rem; }
+  .eh-proof li { display: grid; grid-template-columns: 1rem minmax(0, 1fr); column-gap: 0.4rem; padding: 0.4rem 0.5rem; border-radius: var(--radius-sm); background: var(--surface); font-size: 0.8rem; color: var(--foreground); }
+  .eh-proof li > :global(svg) { margin-top: 0.15rem; }
+  .eh-proof em { grid-column: 2; font-style: normal; font-size: 0.74rem; color: var(--foreground-secondary); }
+  .eh-proof .is-pass > :global(svg) { color: var(--accent-text); }
+  .eh-proof .is-fail > :global(svg) { color: var(--danger); }
+  .eh-proof .is-none > :global(svg) { color: var(--foreground-muted); }
+  .eh-proof .is-none { background: transparent; outline: 1px dashed var(--border-strong); outline-offset: -1px; }
+  .eh-pin { margin: 0.6rem 0 0; font-family: var(--font-mono); font-size: 0.72rem; color: var(--foreground-secondary); }
 
-  /* Appearing elements */
-  [data-at] { transition: opacity 520ms var(--ease-out), transform 520ms var(--ease-out); transition-delay: var(--d, 0ms); }
-  .is-off { opacity: 0; transform: translateY(6px); }
-  .eh-lane.is-off { opacity: 0; transform: translateY(6px); }
+  .eh-cli { padding: 1.1rem 1.2rem; background: #0e1013; min-height: 25rem; }
+  .eh-cli pre { margin: 0; display: grid; gap: 0.35rem; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; color: #c9d1cf; }
+  .eh-cl :global(b) { color: #c0f48a; font-weight: 600; }
+  .eh-cl :global(em) { font-style: normal; color: #c0f48a; }
+  .eh-cl :global(i) { font-style: normal; font-weight: 700; }
+  .eh-cl :global(.ok) { color: #c0f48a; } .eh-cl :global(.no) { color: #ff8a80; } .eh-cl :global(.un) { color: #8a969a; }
+  .eh[data-view='cli'] [data-pane='factory'] { display: none; }
 
-  .eh-foot { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+  [data-at] { transition: opacity 360ms var(--ease-out), transform 360ms var(--ease-out); transition-delay: var(--d, 0ms); }
+  .is-off { opacity: 0; transform: translateY(5px); }
+
+  .eh-foot { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; padding: 0 0.9rem 0.8rem; border-top: 1px solid var(--border); background: var(--background); }
   .eh-tag { margin-top: 1.25rem; padding: 0.05rem 0.45rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.7rem; color: var(--foreground-secondary); }
-  .eh-foot :global(.eh-ctl) { margin-top: 1rem; }
+  .eh-foot :global(.eh-ctl) { margin-top: 0.75rem; }
 
   @media (prefers-reduced-motion: reduce) {
-    [data-at], .eh-lane, .eh-bar span, .eh-rail::after, .eh-ph, .eh-ph-ic, .eh-link::before { transition: none !important; }
+    [data-at], .eh-lane, .eh-bar span, .eh-step, .eh-step-n, .eh-views button { transition: none !important; }
     .eh-caret { animation: none !important; opacity: 0 !important; }
   }
 </style>
@@ -203,24 +246,35 @@ const proof = [
     const req = root.querySelector<HTMLElement>('[data-req]')!;
     const text = req.textContent ?? '';
     const ats = Array.from(root.querySelectorAll<HTMLElement>('[data-at]'));
-    const phs = Array.from(root.querySelectorAll<HTMLElement>('[data-ph]'));
-    const links = Array.from(root.querySelectorAll<HTMLElement>('[data-link]'));
+    const stepBtns = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-goto]'));
+    const viewBtns = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-view-btn]'));
+    const cliPane = root.querySelector<HTMLElement>('[data-pane="cli"]')!;
     const phase = (n: number) => {
       root.dataset.phase = String(n);
       ats.forEach((el) => el.classList.toggle('is-off', Number(el.dataset.at) > n));
-      phs.forEach((el) => { const p = Number(el.dataset.ph); el.classList.toggle('is-on', p <= n); el.classList.toggle('is-now', p === n && n < 5); });
-      links.forEach((el) => el.classList.toggle('is-on', Number(el.dataset.link) <= n));
+      stepBtns.forEach((b) => {
+        const s = Number(b.dataset.goto);
+        b.classList.toggle('is-done', s <= n);
+        b.setAttribute('aria-pressed', String(s === n));
+      });
     };
-    const typed = typeSteps(() => req, text, 500, 34);
-    const t2 = typed.end + 500;
+    const typed = typeSteps(() => req, text, 450, 38);
+    const t2 = typed.end + 450;
     const steps: Step[] = [
-      { t: 200, run: () => phase(1) },
+      { t: 150, run: () => phase(1) },
       ...typed.steps,
       { t: t2, run: () => phase(2) },
-      { t: t2 + 1500, run: () => phase(3) },
-      { t: t2 + 1500 + 3300, run: () => phase(4) },
-      { t: t2 + 1500 + 3300 + 1700, run: () => phase(5) },
+      { t: t2 + 1700, run: () => phase(3) },
+      { t: t2 + 1700 + 3000, run: () => phase(4) },
+      { t: t2 + 1700 + 3000 + 1800, run: () => phase(5) },
     ];
-    createSequence(root, steps, { reset: () => { req.textContent = ''; phase(0); }, onFinish: () => { req.textContent = text; } });
+    const seq = createSequence(root, steps, { reset: () => { req.textContent = ''; phase(0); }, onFinish: () => { req.textContent = text; } });
+    stepBtns.forEach((b) => b.addEventListener('click', () => { seq.finish(); phase(Number(b.dataset.goto)); }));
+    viewBtns.forEach((b) => b.addEventListener('click', () => {
+      const v = b.dataset.viewBtn!;
+      root.dataset.view = v;
+      cliPane.hidden = v !== 'cli';
+      viewBtns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    }));
   }
 </script>

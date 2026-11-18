@@ -46,63 +46,182 @@ test.describe('accessibility', () => {
 });
 
 test.describe('homepage', () => {
-  test('renders the central message, trust signals, metadata and structured data', async ({ page }) => {
+  test('renders the central message, both calls to action, metadata and structured data', async ({ page }) => {
     await page.goto('/');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Your AI engineering team. On your machine.');
     await expect(page.getByText('From idea to verified software.', { exact: true })).toBeVisible();
     await expect(page).toHaveTitle('Vekrun · Your AI engineering team. On your machine.');
-    await expect(page.getByRole('list', { name: 'Why Vekrun' }).getByRole('listitem')).toHaveText(['Local-first', 'Download local AI models', 'Model-independent', 'Works with your stack', 'Free for individuals']);
-    await expect(page.getByRole('link', { name: 'Download local AI models' })).toHaveAttribute('href', '#models');
+    const hero = page.locator('main section').first();
+    await expect(hero.getByRole('link', { name: 'Request early access' })).toHaveAttribute('href', '/download/');
+    await expect(hero.getByRole('link', { name: 'See it in action' })).toHaveAttribute('href', '#demo');
+    await expect(page.locator('#demo')).toHaveCount(1);
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og\/default\.png$/);
     const types = await page.locator('script[type="application/ld+json"]').evaluateAll((els) => els.map((e) => JSON.parse(e.textContent ?? '{}')['@type']));
     expect(types).toEqual(expect.arrayContaining(['Organization', 'WebSite', 'SoftwareApplication']));
   });
 
-  test('tells the story in order: differentiation first, the stack and plans after', async ({ page }) => {
+  test('tells the story in exactly five acts, with nothing else between them', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('main h2')).toHaveText([
       'Don’t guess which approach is better. Build both. Prove it.',
-      'Understand your software before changing it.',
-      'Done means proven, not just claimed.',
-      'Vekrun remembers what your engineering team learns.',
-      'Your laptop isn’t your build server. Unless you want it to be.',
-      'One engineering workflow. Your choice of AI.',
-      'Let anyone experience what you’re building.',
-      'Your stack. Your repository. Your workflow.',
-      'Your team shares a codebase. Now it can share an engineering brain.',
-      'Stop managing AI agents. Start directing engineering.',
-      'Free for you. Teams on your infrastructure.',
-      'Hand Vekrun your next outcome.',
+      'From request to reviewed pull request.',
+      'The next task starts where the last one finished.',
+      'Your models. Your infrastructure. Your rules.',
     ]);
-    // Competitive Engineering comes before the stack marquee.
-    const y = async (sel: string) => (await page.locator(sel).first().boundingBox())!.y;
-    expect(await y('#competitive')).toBeLessThan(await y('[role=region][aria-label="Technologies Vekrun works with"]'));
-    await expect(page.locator('#architecture')).not.toContainText('Planned');
-    await expect(page.locator('#memory').getByRole('link', { name: 'Shared Engineering Memory' })).toHaveAttribute('href', '/teams/');
+    await expect(page.locator('main > section')).toHaveCount(5);
+    await expect(page.locator('#team-memory').getByRole('heading', { level: 3 })).toHaveText('Your team shares a codebase. Now it can share an engineering brain.');
     await expect(page.locator('#team-memory').getByRole('link', { name: 'Explore Vekrun Teams' })).toHaveAttribute('href', '/teams/');
-    await expect(page.locator('main')).not.toContainText('What’s next for Vekrun');
-    await expect(page.locator('#before-after .ba-row')).toHaveCount(3);
-    await expect(page.locator('#before-after').getByRole('link', { name: 'See all eight moments' })).toHaveAttribute('href', '/before-and-after/');
-    await expect(page.getByRole('list', { name: 'App types Live Share supports' }).getByRole('listitem')).toHaveText(['Web', 'iOS', 'Android', 'Expo', 'Flutter', 'Desktop']);
+    await expect(page.locator('main')).not.toContainText(/What’s next for Vekrun|coming to Vekrun Free|Work Anywhere is coming/i);
+    // Provider catalogues and marquees live on Integrations, not here.
+    await expect(page.getByRole('region', { name: 'Technologies Vekrun works with' })).toHaveCount(0);
+    await expect(page.locator('main .logo-glyph, main .vendor-glyph')).toHaveCount(0);
   });
 
-  test('makes model independence unmistakable: one workflow, many AI choices, Grok included', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
+  test('Act 5 states the control promise, names models and agents in one line and offers both plans', async ({ page }) => {
     await page.goto('/');
-    const sec = page.locator('#models');
-    const mo = sec.locator('[data-orchestra]');
-    await expect(mo).toHaveAttribute('data-demo', 'done');
-    await expect(mo.locator('.mo-q')).toHaveText(['Which design should we build?', 'Build it, two ways.', 'Does it do what was asked?', 'Vekrun runs the actual tests.']);
-    await expect(mo.locator('.mo-who').nth(0)).toHaveText(/Claude.*Grok/);
-    await expect(mo.locator('.mo-who').nth(1)).toHaveText(/Codex.*Grok Build/);
-    await expect(mo).toContainText('Models propose. Evidence decides.');
-    await expect(mo.getByRole('list', { name: 'Engineering record' }).getByRole('listitem')).toHaveCount(4);
-    await expect(sec).toContainText('No coding-agent subscription needed');
-    for (const n of ['OpenRouter', 'xAI', 'Ollama', 'LM Studio', 'Claude Code', 'Codex', 'Antigravity CLI', 'Grok Build']) await expect(sec.locator('.eco')).toContainText(n);
-    await expect(sec.getByRole('link', { name: 'Every model and agent Vekrun works with' })).toHaveAttribute('href', '/integrations/');
+    const sec = page.locator('#control');
+    await expect(sec.locator('#models')).toContainText(/OpenRouter, xAI.*Ollama and LM Studio.*Claude Code, Codex, Antigravity CLI and Grok Build are optional/);
+    await expect(sec.getByRole('link', { name: 'All integrations' })).toHaveAttribute('href', '/integrations/');
+    await expect(sec.getByRole('figure', { name: /Your Mac runs Vekrun/ })).toContainText('Your VPS');
+    await expect(sec.locator('.plan h3')).toHaveText(['Free', 'Teams']);
+    await expect(sec.locator('.plan').first()).toContainText('Work Anywhere on your own VPS');
+    await expect(sec.locator('.plan').first().getByRole('link', { name: 'Request early access' })).toHaveAttribute('href', '/download/');
+    await expect(sec.locator('.plan.is-teams').getByRole('link', { name: 'Explore Teams' })).toHaveAttribute('href', '/teams/');
+    await expect(sec.locator('.plan.is-teams').getByRole('link', { name: 'Register interest' })).toHaveAttribute('href', /^mailto:support@vekrunapp\.com\?subject=Vekrun%20Teams%20interest/);
+    await expect(sec).toContainText('$199 a month for up to 10 engineers, plus $10 for each one after that');
+    await expect(sec).toContainText('Works in the repositories you already have');
+    await expect(page.locator('[data-teams-calc]')).toHaveCount(0);
     await expect(page.locator('main')).not.toContainText(/partner(ed|ship)? with xAI|endorsed by xAI/i);
   });
 
+  test('the hero is a Vekrun window that goes from request to a reviewable pull request', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/');
+    const f = page.locator('[data-engine]');
+    await expect(f).toHaveAttribute('data-demo', 'done');
+    await expect(f).toHaveAttribute('data-phase', '5');
+    await expect(f.locator('[data-req]')).toContainText('keep their cart across web and mobile');
+    await expect(f.locator('.is-off')).toHaveCount(0);
+    await expect(f.getByRole('list', { name: 'Steps' }).getByRole('button')).toHaveText(['1Request', '2Plan', '3Approaches', '4Verify', '5Pull request']);
+    for (const t of ['Plan approved by you', 'Codex', 'Grok Build', 'from a41c9e2', '52 of 52', 'Loses carts on restart', 'Not checked', 'build-01, your VPS', 'Ready for review', 'B is kept with its evidence']) await expect(f).toContainText(t);
+    await expect(f.locator('.eh-proof .is-pass')).toHaveCount(3);
+    await expect(f.locator('.eh-proof .is-none')).toHaveCount(1);
+    await expect(f.locator('.eh-tag')).toHaveText('Example');
+    await f.getByRole('button', { name: 'Replay' }).click();
+    await expect(f).toHaveAttribute('data-demo', /playing|done/);
+    await noOverflow(page);
+  });
+
+  test('the hero steps can be chosen by hand, and the CLI view tells the same run', async ({ page }) => {
+    await page.goto('/');
+    const f = page.locator('[data-engine]');
+    await f.scrollIntoViewIfNeeded();
+    await expect(f).toHaveAttribute('data-demo', 'playing');
+    await f.getByRole('button', { name: /Plan$/ }).click();
+    await expect(f).toHaveAttribute('data-phase', '2');
+    await expect(f.getByRole('button', { name: /Plan$/ })).toHaveAttribute('aria-pressed', 'true');
+    await expect(f).not.toHaveAttribute('data-demo', 'playing');
+    await expect(f.locator('.eh-lane').first()).toHaveClass(/is-off|eh-lane/);
+    await expect(f.locator('.eh-ev.is-pr')).toHaveClass(/is-off/);
+    await f.getByRole('button', { name: 'CLI' }).click();
+    await expect(f.getByRole('button', { name: 'CLI' })).toHaveAttribute('aria-pressed', 'true');
+    await expect(f.locator('[data-pane="cli"]')).toBeVisible();
+    await expect(f.locator('[data-pane="factory"]')).toBeHidden();
+    await f.getByRole('button', { name: /Pull request$/ }).click();
+    await expect(f.locator('[data-pane="cli"]')).toContainText('PR #512 opened');
+    await f.getByRole('button', { name: 'Factory' }).click();
+    await expect(f.locator('[data-pane="factory"]')).toBeVisible();
+  });
+
+  test('the hero plays in phases without moving the page', async ({ page }) => {
+    await page.goto('/');
+    const f = page.locator('[data-engine]');
+    await f.scrollIntoViewIfNeeded();
+    const h = (await f.boundingBox())!.height;
+    await expect(f).toHaveAttribute('data-demo', 'playing');
+    await expect(f).toHaveAttribute('data-phase', '3', { timeout: 10_000 });
+    await expect(f).toHaveAttribute('data-phase', '5', { timeout: 15_000 });
+    await expect(f).toHaveAttribute('data-demo', 'done');
+    expect(Math.abs((await f.boundingBox())!.height - h)).toBeLessThan(2);
+  });
+
+  test('a demo pauses with the pause control and resumes', async ({ page }) => {
+    await page.goto('/');
+    const f = page.locator('[data-engine]');
+    await f.scrollIntoViewIfNeeded();
+    await expect(f).toHaveAttribute('data-demo', 'playing');
+    await f.locator('[data-demo-play]').click();
+    await expect(f).toHaveAttribute('data-demo', 'paused');
+    await f.locator('[data-demo-play]').click();
+    await expect(f).toHaveAttribute('data-demo', 'playing');
+  });
+
+  test('the journey walks six moments, can be driven by keyboard and never changes height', async ({ page }) => {
+    await page.goto('/');
+    const j = page.locator('[data-journey]');
+    await j.scrollIntoViewIfNeeded();
+    const tabs = j.getByRole('tab');
+    await expect(tabs).toHaveCount(6);
+    for (const [i, t] of ['Context', 'Plan', 'Build', 'Verify', 'Proof', 'Review'].entries()) await expect(tabs.nth(i)).toContainText(t);
+    const h = (await j.locator('.jd-stage').boundingBox())!.height;
+    await tabs.nth(3).click();
+    await expect(tabs.nth(3)).toHaveAttribute('aria-selected', 'true');
+    const verify = j.getByRole('tabpanel', { name: /Verify/ });
+    await expect(verify).toBeVisible();
+    await expect(verify).toContainText('Risk: high');
+    await expect(verify.locator('.is-pass')).toHaveCount(3);
+    await expect(verify.locator('.is-fail')).toHaveCount(1);
+    await expect(verify.locator('.is-none')).toHaveCount(1);
+    await page.keyboard.press('ArrowDown');
+    await expect(tabs.nth(4)).toHaveAttribute('aria-selected', 'true');
+    await expect(tabs.nth(4)).toBeFocused();
+    await expect(j.getByRole('tabpanel', { name: /Proof/ })).toContainText('listed rather than hidden');
+    for (const k of [0, 1, 2, 5]) { await tabs.nth(k).click(); expect(Math.abs((await j.locator('.jd-stage').boundingBox())!.height - h), `moment ${k}`).toBeLessThan(2); }
+    await expect(j.getByRole('tabpanel', { name: /Review/ })).toContainText('PR Guardian');
+    await expect(j.getByRole('tabpanel', { name: /Review/ })).toContainText('Waiting for your approval');
+  });
+
+  test('every homepage demo reads in full without JavaScript', async ({ browser }) => {
+    const ctx = await browser.newContext({ javaScriptEnabled: false });
+    const page = await ctx.newPage();
+    await page.goto('/');
+    await expect(page.locator('[data-engine]')).toContainText('Ready for review');
+    for (const t of ['Change impact at a41c9e2', 'Plan · 3 Work Items', 'Factory · 3 isolated worktrees', 'Risk: high', 'Proof Pack · pinned to 9c41a7e', 'Idempotent payment retries']) await expect(page.locator('[data-journey]')).toContainText(t);
+    await expect(page.locator('[data-membridge]')).toContainText('Add partial refunds');
+    await expect(page.locator('[data-compete]')).toContainText('Recommended: A');
+    await ctx.close();
+  });
+
+  test('the memory demo recalls a verified fix and a decision with their sources and freshness', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/');
+    const m = page.locator('[data-membridge]');
+    await expect(m).toHaveAttribute('data-demo', 'done');
+    await expect(m).toHaveAttribute('data-step', '3');
+    for (const t of ['Verified fix', 'Decision', 'Proof Pack · 9c41a7e', 'PR #412 · a41c9e2', 'Add partial refunds', 'still current']) await expect(m).toContainText(t);
+    await expect(page.locator('#memory')).toContainText('checked for freshness');
+  });
+
+  test('the homepage demos all play to their final state', async ({ page }) => {
+    test.setTimeout(120_000);
+    await page.goto('/');
+    for (const sel of ['[data-engine]', '[data-compete]', '[data-journey]', '[data-membridge]']) {
+      const d = page.locator(sel).first();
+      await d.scrollIntoViewIfNeeded();
+      await expect(d, sel).toHaveAttribute('data-demo', /playing|done/);
+    }
+  });
+
+  test('every call to action on the homepage resolves', async ({ page }) => {
+    await page.goto('/');
+    for (const href of await page.locator('main a.btn, main a.link-more, main a.link-slide').evaluateAll((els) => els.map((e) => e.getAttribute('href')!))) {
+      if (href.startsWith('#') || href.startsWith('mailto:')) continue;
+      expect((await page.request.get(href.replace(/[?#].*/, ''))).status(), href).toBe(200);
+    }
+  });
+});
+
+test.describe('product models and history', () => {
   test('the Product page explains models in full: native agent first, local models qualified', async ({ page }) => {
     await page.goto('/product/');
     const sec = page.locator('#models');
@@ -125,78 +244,13 @@ test.describe('homepage', () => {
     await expect(page.locator('main')).not.toContainText('Illustrative product concept');
   });
 
-  test('shows the stack in two seamless marquees that stand still under reduced motion', async ({ page }) => {
-    await page.goto('/');
-    const mq = page.getByRole('region', { name: 'Technologies Vekrun works with' });
-    for (const n of ['Ruby on Rails', 'Laravel', 'Expo', 'Flutter', 'PostgreSQL', 'Supabase']) await expect(mq.locator('.sr-only')).toContainText(n);
-    await expect(mq.locator('.mq-track').first()).toHaveCSS('animation-name', 'mq-slide');
-    await page.emulateMedia({ reducedMotion: 'reduce' });
-    await expect(mq.locator('.mq-track').first()).toHaveCSS('animation-name', 'none');
-    await noOverflow(page);
-  });
-
-  test('the hero shows an outcome becoming a verified pull request, and can replay', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto('/');
-    const f = page.locator('[data-engine]');
-    await expect(f).toHaveAttribute('data-demo', 'done');
-    await expect(f).toHaveAttribute('data-phase', '5');
-    await expect(f.locator('[data-req]')).toContainText('keep their cart across web and mobile');
-    await expect(f.locator('.is-off')).toHaveCount(0);
-    for (const t of ['Council agrees', 'Codex', 'Grok Build', '52 of 52 tests', 'Loses carts on restart', 'Independent review', 'Ready for review', 'B kept with its evidence']) await expect(f).toContainText(t);
-    await expect(f.locator('.eh-tag')).toHaveText('Example');
-    await f.getByRole('button', { name: 'Replay' }).click();
-    await expect(f).toHaveAttribute('data-demo', /playing|done/);
-    await noOverflow(page);
-  });
-
-  test('the hero plays in phases without moving the page', async ({ page }) => {
-    await page.goto('/');
-    const f = page.locator('[data-engine]');
-    await f.scrollIntoViewIfNeeded();
-    const h = (await f.boundingBox())!.height;
-    await expect(f).toHaveAttribute('data-demo', 'playing');
-    await expect(f).toHaveAttribute('data-phase', '3', { timeout: 10_000 });
-    await expect(f.locator('.eh-lane.is-off')).toHaveCount(0);
-    await expect(f).toHaveAttribute('data-phase', '5', { timeout: 15_000 });
-    await expect(f).toHaveAttribute('data-demo', 'done');
-    expect(Math.abs((await f.boundingBox())!.height - h)).toBeLessThan(2);
-  });
-
-  test('a demo pauses with the pause control and resumes', async ({ page }) => {
-    await page.goto('/');
-    const f = page.locator('[data-engine]');
-    await f.scrollIntoViewIfNeeded();
-    await expect(f).toHaveAttribute('data-demo', 'playing');
-    await f.locator('[data-demo-play]').click();
-    await expect(f).toHaveAttribute('data-demo', 'paused');
-    await f.locator('[data-demo-play]').click();
-    await expect(f).toHaveAttribute('data-demo', 'playing');
-  });
-
-  test('the workflow, Competitive Engineering, architecture, Live Share and Proof Pack demos play to their final state', async ({ page }) => {
-    test.setTimeout(120_000);
-    await page.goto('/');
-    for (const sel of ['[data-compete]', '[data-arch]', '[data-prooftrack]', '[data-memory]', '[data-anywhere]', '[data-orchestra]', '[data-liveshare]']) {
-      const d = page.locator(sel).first();
-      await d.scrollIntoViewIfNeeded();
-      await expect(d, sel).toHaveAttribute('data-demo', /playing|done/);
-    }
-    await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.reload();
-    await expect(page.locator('[data-liveshare] [data-ls-state="verified"]')).toHaveText('Verified on 9c41a7e');
-    await expect(page.locator('[data-arch] [data-impact]')).toContainText('1 inferred link to check');
-    await expect(page.locator('[data-liveshare]')).toContainText('served from your machine while Live Share is on');
-    await expect(page.locator('[data-prooftrack] .pt-s.is-done')).toHaveCount(6);
-    await expect(page.locator('[data-prooftrack] .pt-t')).toHaveText(['Code', 'Tests', 'Independent review', 'Proof Pack', 'PR review', 'Delivered']);
-  });
-
   test('the Git Time Machine steps back through revisions and only shows impact today', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto('/');
+    await page.goto('/product/');
     const ag = page.locator('#architecture [data-arch]');
     await expect(ag.locator('[data-rev-label]')).toHaveText('at a41c9e2');
     await expect(ag.locator('[data-impact]')).toBeVisible();
+    await expect(ag.locator('[data-impact]')).toContainText('1 inferred link to check');
     await ag.getByRole('button', { name: /March/ }).click();
     await expect(ag.getByRole('button', { name: /March/ })).toHaveAttribute('aria-pressed', 'true');
     await expect(ag.locator('[data-rev-label]')).toHaveText('at 2f07b1d');
@@ -208,18 +262,10 @@ test.describe('homepage', () => {
     await expect(ag.locator('.is-future')).toHaveCount(0);
     await expect(ag.locator('[data-impact]')).toHaveCSS('opacity', '1');
   });
-
-  test('every call to action on the homepage resolves', async ({ page }) => {
-    await page.goto('/');
-    for (const href of await page.locator('main a.btn, main a.link-more').evaluateAll((els) => els.map((e) => e.getAttribute('href')!))) {
-      if (href.startsWith('#') || href.startsWith('mailto:')) continue;
-      expect((await page.request.get(href.replace(/[?#].*/, ''))).status(), href).toBe(200);
-    }
-  });
 });
 
 test.describe('pricing', () => {
-  test('has two plans: Free for individuals and Teams, self-hosted and planned', async ({ page }) => {
+  test('has two plans: Free for individuals and Teams, self-hosted and not for sale yet', async ({ page }) => {
     await page.goto('/pricing/');
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og\/pricing\.png$/);
     await expect(page.locator('.plan h3')).toHaveText(['Free', 'Teams']);
@@ -237,7 +283,8 @@ test.describe('pricing', () => {
     await expect(page.locator('main')).toContainText('Vekrun charges no usage fees');
     await expect(teams.locator('li').first()).toHaveText(/Shared Engineering Memory/);
     await expect(teams.getByRole('link', { name: 'Explore Vekrun Teams' })).toHaveAttribute('href', '/teams/');
-    for (const k of ['Work Anywhere', 'headless workers']) await expect(free).toContainText(k);
+    await expect(free).toContainText('Work Anywhere: run the Factory on your own VPS');
+    await expect(page.locator('main')).not.toContainText(/coming to Vekrun Free|Coming to Free|\(coming soon\)/i);
     await expect(page.locator('main')).not.toContainText(/unlimited|SOC 2|end-to-end encrypt|compliance certif|SSO (add-on|is an extra)/i);
   });
 
@@ -293,7 +340,8 @@ test.describe('pricing', () => {
     await expect(table.locator('thead th')).toHaveText(['Compared', 'Free', 'Teams']);
     await expect(table.locator('tbody tr')).toHaveCount(12);
     await expect(table.locator('tbody tr').nth(1)).toContainText('Personal Engineering Memory');
-    await expect(table.getByRole('row', { name: /Remote execution/ })).toContainText('personal remote execution on your own VPS');
+    await expect(table.getByRole('row', { name: /Remote execution/ })).toContainText('Work Anywhere: run the Factory on your own VPS');
+    await expect(table.getByRole('row', { name: /Availability/ })).toContainText('Not available to buy yet');
     await expect(table.getByRole('row', { name: /Sign-in and access/ })).toContainText('SSO');
     await expect(table.getByRole('row', { name: /Where it runs/ })).toContainText('servers you control');
     await expect(table.getByRole('row', { name: /Price/ })).toContainText('$199 per month for up to 10 engineers, then $10 each');
@@ -302,14 +350,16 @@ test.describe('pricing', () => {
   test('the FAQ answers the agreed questions and matches its structured data', async ({ page }) => {
     await page.goto('/pricing/');
     await expect(page.locator('details.faq-i summary')).toHaveText([
-      'Is Vekrun Free really free?', 'What’s included in Teams?', 'Does Teams include 10 engineers?', 'How does pricing change when the team grows?',
-      'Does Teams include cloud infrastructure?', 'Who pays for AI model usage and remote workers?', 'Do I need Teams to run Vekrun on my own server?', 'Is SSO an extra cost?', 'Can Teams run on our own servers?',
-      'Can an individual use Vekrun without Teams?', 'Is Teams available yet?', 'Do we need a separate Enterprise plan?',
+      'Is Vekrun Free really free?', 'What’s included in Teams?', 'How does pricing change when the team grows?',
+      'Does Teams include cloud infrastructure?', 'Who pays for AI model usage and remote workers?', 'Do I need Teams to run Vekrun on my own server?', 'Is SSO an extra cost?',
+      'Can an individual use Vekrun without Teams?', 'Do we need a separate Enterprise plan?',
     ]);
-    const grow = page.locator('details.faq-i').nth(3);
+    const grow = page.locator('details.faq-i').nth(2);
     await grow.locator('summary').click();
     await expect(grow).toHaveAttribute('open', '');
+    await expect(grow).toContainText('a team of 5 pays the same as a team of 10');
     await expect(grow).toContainText('11 engineers is $209, 20 is $299 and 30 is $399');
+    await expect(page.locator('details.faq-i').nth(5)).toContainText('included in Vekrun Free');
     const ld = await page.locator('script[type="application/ld+json"]').evaluateAll((els) => els.map((e) => JSON.parse(e.textContent ?? '{}')));
     const faqLd = ld.find((d) => d['@type'] === 'FAQPage');
     expect(faqLd.mainEntity.length).toBe(await page.locator('details.faq-i').count());
@@ -321,7 +371,7 @@ test.describe('pricing', () => {
   test('the homepage summarizes both plans and links to Teams', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('#pricing .plan h3')).toHaveText(['Free', 'Teams']);
-    await expect(page.locator('#pricing')).toContainText('$199 per month for up to 10 engineers');
+    await expect(page.locator('#pricing')).toContainText('$199 a month for up to 10 engineers');
     for (const path of ['/', '/download/', '/product/', '/contact/', '/pricing/']) {
       await page.goto(path);
       await expect(page.locator('main a[href="/teams/"]').first(), path).toBeVisible();
@@ -332,7 +382,8 @@ test.describe('pricing', () => {
 test.describe('how it works', () => {
   test('walks the six stages and keeps the sections old URLs point at', async ({ page }) => {
     await page.goto('/how-it-works/');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('From idea to verified software, in six steps.');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('The workflow, step by step.');
+    await expect(page.locator('main section').first().getByRole('link', { name: 'See one change, start to finish' })).toHaveAttribute('href', '/#journey');
     await expect(page.getByRole('navigation', { name: 'On this page' }).getByRole('link')).toHaveText(['Describe', 'Plan and compare', 'Build', 'Verify', 'Deliver', 'Remember']);
     for (const id of ['describe', 'council', 'compare', 'factory', 'verification', 'git', 'inbox', 'remember']) await expect(page.locator(`#${id}`), id).toHaveCount(1);
     await expect(page.locator('#verification')).toContainText('what wasn’t checked');
@@ -378,6 +429,9 @@ test.describe('teams', () => {
     await expect(hero.getByRole('link', { name: 'Explore how Teams works' })).toHaveAttribute('href', '#how');
     await expect(page.locator('main h2').first()).toHaveText('The knowledge your team creates shouldn’t disappear when a conversation ends.');
     for (const h of ['Your engineering intelligence. Your infrastructure. Your rules.', 'Your engineers. Your identities. Your access rules.']) await expect(page.getByRole('heading', { name: h })).toBeVisible();
+    await expect(page.locator('#capabilities .caps > li')).toHaveCount(8);
+    await expect(page.locator('#shared-memory .better > li')).toHaveCount(4);
+    await expect(page.locator('main .scatter, main .bento')).toHaveCount(0);
     const caps = page.locator('#capabilities');
     for (const k of ['Shared Engineering Memory', 'Team coordination', 'Autonomous Factory workers', 'Organization policies', 'Shared Architecture Intelligence', 'PR intelligence', 'SSO and access control', 'Engineering insights']) await expect(caps).toContainText(k, { ignoreCase: true });
     await expect(page.locator('#sso')).toContainText('Microsoft Entra ID, Google Workspace, Okta');
@@ -387,9 +441,9 @@ test.describe('teams', () => {
     await expect(page.locator('#pricing').getByRole('link', { name: 'Compare plans and calculate your price' })).toHaveAttribute('href', '/pricing/#teams');
     await expect(page.locator('#pricing [data-teams-calc]')).toHaveCount(0);
     await expect(page.locator('main')).not.toContainText(/SOC 2|end-to-end encrypt|guarantee(d|s)? (security|correct)/i);
-    await expect(page.locator('details.faq-i')).toHaveCount(10);
+    await expect(page.locator('details.faq-i')).toHaveCount(8);
     const ld = await page.locator('script[type="application/ld+json"]').evaluateAll((els) => els.map((e) => JSON.parse(e.textContent ?? '{}')));
-    expect(ld.find((d) => d['@type'] === 'FAQPage').mainEntity.length).toBe(10);
+    expect(ld.find((d) => d['@type'] === 'FAQPage').mainEntity.length).toBe(8);
   });
 
   test('the shared memory story steps through three engineers and keeps restricted and superseded records out of context', async ({ page }) => {
@@ -431,26 +485,43 @@ test.describe('teams', () => {
 });
 
 test.describe('competitive engineering', () => {
-  test('compares approaches, lets you choose, and says when nothing qualifies', async ({ page }) => {
+  test('compares approaches from one commit, shows passed, failed and unchecked criteria, and says when nothing qualifies', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/');
     const cx = page.locator('[data-compete]');
     await cx.scrollIntoViewIfNeeded();
     await expect(cx).toHaveAttribute('data-demo', 'done');
-    await expect(cx).toContainText('Example');
-    await cx.getByRole('button', { name: 'Choose B' }).click();
-    await expect(cx.getByRole('button', { name: 'Choose B' })).toHaveAttribute('aria-pressed', 'true');
-    await expect(cx.getByRole('button', { name: 'Choose A' })).toHaveAttribute('aria-pressed', 'false');
+    await expect(cx).toContainText('Example data');
+    const panel = cx.getByRole('tabpanel').filter({ visible: true });
+    await expect(panel).toContainText('Make payment retries idempotent');
+    await expect(panel).toContainText('Both start from a41c9e2');
+    for (const t of ['Codex', 'Grok Build', 'No double charges', '3 double charges', 'Lock lost on restart', 'No load profile yet', 'Recommended: A']) await expect(panel).toContainText(t);
+    for (const st of ['Passed', 'Failed', 'Not checked']) await expect(panel.locator('.sr-only', { hasText: st }).first()).toBeAttached();
+    await expect(panel.getByRole('button', { name: 'Choose B' })).toHaveCount(0);
+    await panel.getByRole('button', { name: 'Choose A' }).click();
+    await expect(panel.getByRole('button', { name: 'Choose A' })).toHaveAttribute('aria-pressed', 'true');
+    await expect(panel.locator('[data-chosen]')).toContainText('You chose A');
+    await panel.getByRole('button', { name: 'Try a third approach' }).click();
+    await expect(panel.getByRole('button', { name: 'Choose A' })).toHaveAttribute('aria-pressed', 'false');
+    await expect(panel.locator('[data-chosen]')).toContainText('third approach from the same commit');
     await cx.getByRole('tab', { name: 'Neither qualifies' }).click();
     await expect(cx.getByRole('tab', { name: 'Neither qualifies' })).toHaveAttribute('aria-selected', 'true');
     await expect(cx.getByRole('tabpanel').filter({ visible: true })).toContainText('No recommendation');
     await cx.getByRole('tab', { name: 'Neither qualifies' }).press('ArrowLeft');
-    await expect(cx.getByRole('tab', { name: 'A clear winner' })).toBeFocused();
+    await expect(cx.getByRole('tab', { name: 'One approach qualifies' })).toBeFocused();
   });
 });
 
 test.describe('conversion paths', () => {
-  for (const path of ['/', '/product/', '/how-it-works/', '/before-and-after/', '/integrations/']) {
+  test('/ ends with the two plans instead of a separate closing band', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('section[aria-labelledby="next-title"]')).toHaveCount(0);
+    const last = page.locator('main > section').last();
+    await expect(last.getByRole('link', { name: 'Request early access' })).toHaveAttribute('href', '/download/');
+    await expect(last.getByRole('link', { name: 'Compare plans' })).toHaveAttribute('href', '/pricing/');
+    await expect(last).toContainText('there’s no public download yet');
+  });
+  for (const path of ['/product/', '/how-it-works/', '/before-and-after/', '/integrations/']) {
     test(`${path} ends with early access and pricing`, async ({ page }) => {
       await page.goto(path);
       const next = page.locator('section[aria-labelledby="next-title"]');
@@ -474,15 +545,55 @@ test.describe('live share and privacy', () => {
   test('integrations put the native agent first, mark coding agents optional and list nothing unfinished as shipped', async ({ page }) => {
     await page.goto('/integrations/');
     const h2s = page.locator('main h2');
-    await expect(h2s.nth(0)).toHaveText('Vekrun’s native agent');
+    await expect(h2s.nth(0)).toHaveText('Model providers');
     await expect(h2s.nth(1)).toHaveText('Optional coding agents');
+    const models = page.locator('section[aria-labelledby="g-models"]');
+    for (const [n, tag] of [['OpenRouter', 'Gateway'], ['xAI', 'Direct'], ['Ollama', 'Local'], ['LM Studio', 'Local']]) await expect(models.locator('li', { hasText: n })).toContainText(tag);
     await expect(page.locator('main')).toContainText('None of them is required');
     await expect(page.locator('main')).toContainText('Antigravity CLI');
     await expect(page.locator('main')).toContainText('Grok Build');
     await expect(page.locator('main')).toContainText('xAI');
     await expect(page.locator('main')).not.toContainText(/Gemini CLI|Kamal|Vercel|PagerDuty/);
-    await expect(page.getByRole('heading', { name: 'Native integrations.' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Work and delivery tools.' })).toBeVisible();
+    const hosting = page.locator('#hosting');
+    for (const n of ['Hetzner', 'DigitalOcean', 'Vultr', 'Akamai Linode', 'AWS', 'Any existing server']) await expect(hosting).toContainText(n);
+    await expect(hosting).toContainText('not services Vekrun reads from or reports to');
     await expect(page.locator('#mcp')).toContainText('Coming soon: Asana tools for agents');
+  });
+});
+
+test.describe('integrations search', () => {
+  test('filters the catalogue as you type, says how many match and offers a way forward when nothing does', async ({ page }) => {
+    await page.goto('/integrations/');
+    const q = page.getByRole('searchbox', { name: 'Search integrations' });
+    await expect(q).toBeVisible();
+    await q.fill('grok');
+    await expect(page.locator('[data-finder-n]')).toHaveText(/\d+ match/);
+    await expect(page.locator('#grok')).toBeVisible();
+    await expect(page.locator('section[aria-labelledby="g-agents"]')).toBeVisible();
+    await expect(page.locator('section[aria-labelledby="g-agents"] li', { hasText: 'Grok Build' })).toBeVisible();
+    await expect(page.locator('section[aria-labelledby="g-agents"] li', { hasText: 'Codex' })).toBeHidden();
+    await expect(page.locator('section[aria-labelledby="g-pm"]')).toBeHidden();
+    await q.fill('hetzner');
+    await expect(page.locator('#hosting li', { hasText: 'Hetzner' })).toBeVisible();
+    await expect(page.locator('#grok')).toBeHidden();
+    await expect(page.getByRole('heading', { name: 'Work and delivery tools.' })).toBeVisible();
+    await q.fill('zzzz');
+    await expect(page.locator('[data-finder-none]')).toBeVisible();
+    await expect(page.locator('[data-finder-n]')).toHaveText('0 matches');
+    await q.fill('');
+    await expect(page.locator('section[aria-labelledby="g-pm"]')).toBeVisible();
+    await expect(page.locator('[data-finder-none]')).toBeHidden();
+    await noOverflow(page);
+  });
+
+  test('lists everything without JavaScript and hides the search box', async ({ browser }) => {
+    const ctx = await browser.newContext({ javaScriptEnabled: false });
+    const page = await ctx.newPage();
+    await page.goto('/integrations/');
+    await expect(page.locator('[data-finder]')).toBeHidden();
+    for (const n of ['OpenRouter', 'Grok Build', 'Jira', 'Sentry', 'Hetzner']) await expect(page.locator('main')).toContainText(n);
+    await ctx.close();
   });
 });
 
@@ -525,18 +636,20 @@ test.describe('product', () => {
     }
   });
 
-  test('is organised as six chapters plus models, and keeps every section the old URLs point at', async ({ page }) => {
+  test('is organised as five chapters closed by models, and keeps every section the old URLs point at', async ({ page }) => {
     await page.goto('/product/');
-    await expect(page.getByRole('navigation', { name: 'On this page' }).getByRole('link')).toHaveText(['Think', 'Build', 'Prove', 'Deliver', 'Remember', 'Collaborate', 'Models']);
-    await expect(page.locator('.ch-k')).toHaveText(['Think', 'Build', 'Prove', 'Deliver', 'Remember', 'Collaborate']);
-    for (const id of ['models', 'council', 'competitive', 'experiments', 'improvement-lab', 'memory', 'architecture', 'production', 'live-share', 'browser', 'proof', 'high-assurance', 'delivery', 'guardian', 'templates', 'board', 'work-anywhere', 'environments', 'voice', 'apps', 'stack', 'mobile', 'tools']) await expect(page.locator(`#${id}`), id).toHaveCount(1);
+    await expect(page.getByRole('navigation', { name: 'On this page' }).getByRole('link')).toHaveText(['Think', 'Build', 'Prove', 'Deliver', 'Remember and collaborate']);
+    await expect(page.locator('.ch-k')).toHaveText(['Think', 'Build', 'Prove', 'Deliver', 'Remember']);
+    await expect(page.locator('main .ticks')).toHaveCount(0);
+    await expect(page.locator('#work-anywhere')).toContainText('Work Anywhere is included in Vekrun Free');
+    for (const id of ['collaborate', 'models', 'council', 'competitive', 'experiments', 'improvement-lab', 'memory', 'architecture', 'production', 'live-share', 'browser', 'proof', 'high-assurance', 'delivery', 'guardian', 'templates', 'board', 'work-anywhere', 'environments', 'voice', 'apps', 'stack', 'mobile', 'tools']) await expect(page.locator(`#${id}`), id).toHaveCount(1);
     await expect(page.locator('#next')).toHaveCount(0);
     await expect(page.locator('main')).not.toContainText('What’s next');
   });
 
   test('weaves the newer capabilities into the story, without status labels', async ({ page }) => {
     await page.goto('/product/');
-    for (const [id, t] of [['prove', 'Risk Intelligence'], ['prove', 'Adaptive Verification'], ['deliver', 'Autonomy Controller'], ['deliver', 'Advanced PR Intelligence'], ['remember', 'Verified Failure Learning'], ['remember', 'Context Engine'], ['build', 'Headless CLI and MCP'], ['collaborate', 'Vekrun-to-Vekrun collaboration']] as const) await expect(page.locator(`#${id}`), t).toContainText(t);
+    for (const [id, t] of [['prove', 'Risk Intelligence'], ['prove', 'Adaptive Verification'], ['deliver', 'Autonomy Controller'], ['deliver', 'Advanced PR Intelligence'], ['remember', 'Verified Failure Learning'], ['remember', 'Context Engine'], ['build', 'Headless CLI and MCP'], ['remember', 'Vekrun-to-Vekrun collaboration'], ['collaborate', 'Bring people, and other Vekruns, into the work.']] as const) await expect(page.locator(`#${id}`), t).toContainText(t);
     await expect(page.locator('main')).not.toContainText(/\b(Planned|In development|Not implemented|Building now)\b/);
   });
 
@@ -571,7 +684,7 @@ test.describe('product', () => {
     for (const k of ['Git Time Machine', 'tied to its revision', 'cites its source', 'inferred ones are marked']) await expect(page.locator('#architecture')).toContainText(k);
     await expect(page.locator('#architecture [data-arch] .ag-revb')).toHaveCount(3);
     await expect(page.locator('#remember').getByRole('link', { name: 'Vekrun Teams' })).toHaveAttribute('href', '/teams/');
-    await expect(page.locator('#work-anywhere')).toContainText('coming to Vekrun Free');
+    await expect(page.locator('#work-anywhere')).toContainText('included in Vekrun Free');
     await expect(page.locator('#council')).toContainText('Not every task convenes a Council');
     await expect(page.locator('#council')).not.toContainText('still being certified');
     await expect(page.locator('main')).not.toContainText(/every review is independent|fully offline/i);
@@ -639,11 +752,13 @@ test.describe('before and after', () => {
 });
 
 test.describe('navigation and theme', () => {
-  test('the desktop header has Product, How It Works, Teams and Pricing, and Get Vekrun', async ({ page, isMobile }) => {
+  test('the desktop header has Product, Teams, Pricing and Integrations, and Get Vekrun', async ({ page, isMobile }) => {
     test.skip(isMobile, 'desktop navigation only');
     await page.goto('/');
     const nav = page.getByRole('navigation', { name: 'Primary' });
-    await expect(nav.getByRole('link')).toHaveText(['Product', 'How It Works', 'Teams', 'Pricing']);
+    await expect(nav.getByRole('link')).toHaveText(['Product', 'Teams', 'Pricing', 'Integrations']);
+    const foot = page.locator('footer');
+    for (const l of ['How It Works', 'Before & After']) await expect(foot.getByRole('link', { name: l })).toBeVisible();
     await expect(page.locator('header').getByRole('link', { name: 'Get Vekrun' })).toHaveAttribute('href', '/download/');
     await expect(page.getByRole('button', { name: 'Open menu' })).toBeHidden();
     for (const l of await nav.getByRole('link').all()) {
@@ -660,7 +775,7 @@ test.describe('navigation and theme', () => {
     await page.getByRole('button', { name: 'Open menu' }).click();
     const mnav = page.getByRole('navigation', { name: 'Primary, mobile' });
     await expect(mnav).toBeVisible();
-    for (const label of ['Product', 'How It Works', 'Teams', 'Pricing', 'Get Vekrun']) await expect(mnav.getByRole('link', { name: label })).toBeVisible();
+    for (const label of ['Product', 'Teams', 'Pricing', 'Integrations', 'Get Vekrun']) await expect(mnav.getByRole('link', { name: label })).toBeVisible();
     await expect(mnav).not.toContainText(/Docs|Roadmap|Benefits/);
     await expect(page.getByRole('button', { name: 'Close menu' })).toHaveAttribute('aria-expanded', 'true');
     await page.keyboard.press('Escape');

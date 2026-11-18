@@ -17,15 +17,17 @@ interface Props {
   wide?: boolean;
   id?: string;
   class?: string;
+  /** Set each sentence of the title on its own line. */
+  breakTitle?: boolean;
 }
-const { eyebrow, title, subtitle, lede, cta, secondary, align = 'left', wide = false, id = 'page-title', class: className = '' } = Astro.props;
+const { eyebrow, title, subtitle, lede, cta, secondary, align = 'left', wide = false, id = 'page-title', class: className = '', breakTitle = false } = Astro.props;
 const hasStage = Astro.slots.has('default');
 ---
 <section class:list={['page-hero', hasStage ? 'has-stage' : 'no-stage', className]} aria-labelledby={id}>
   <div class="container-site relative">
     <div class:list={['page-hero-copy', align === 'center' ? 'is-center' : 'is-left']}>
       {eyebrow && <p class="eyebrow enter" style="--i: 0">{eyebrow}</p>}
-      <h1 id={id} class:list={['display enter text-text', eyebrow && 'mt-5']} style="--i: 1">{title}</h1>
+      <h1 id={id} class:list={['display enter text-text', eyebrow && 'mt-5']} style="--i: 1">{breakTitle ? title.split(/(?<=\.) /).map((t, i) => <>{i > 0 && ' '}<span class="block">{t}</span></>) : title}</h1>
       {subtitle && <p class="page-hero-sub enter" style="--i: 2">{subtitle}</p>}
       <p class:list={['lede enter max-w-2xl', subtitle ? 'mt-4' : 'mt-6']} style="--i: 2">{lede}</p>
       {(cta || secondary) && (
