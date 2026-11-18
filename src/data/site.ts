@@ -71,14 +71,12 @@ export type Plan = {
   priceAlt?: string;
   audience: string;
   summary: string;
-  /** Planned plans say so on the card. Free is the product as it exists. */
+  /** Plans that can't be bought yet say so on the card. Free is the product as it exists. */
   planned: boolean;
   status?: string;
   /** A short line above the features, such as "Everything in Free, plus". */
   lead?: string;
   features: string[];
-  /** Capabilities on the way to this plan, shown under their own Planned label. */
-  upcoming?: string[];
   cta: { label: string; href: string };
   /** An optional second link, such as the plan's own page. */
   more?: { label: string; href: string };
@@ -124,13 +122,9 @@ export const plans: Plan[] = [
       'Proof Packs and engineering verification',
       'Workflow Templates and PR automation',
       'Live Share',
+      'Work Anywhere: run the Factory on your own VPS',
       'Local and external model connections',
       'CLI and MCP',
-    ],
-    upcoming: [
-      'Work Anywhere: run the Factory on your own VPS',
-      'Secure server setup and headless workers',
-      'Remote engineering previews',
     ],
     cta: { label: 'Request early access', href: '/download/' },
   },
@@ -168,9 +162,9 @@ export type NavItem = { label: string; href: string };
 /** The primary destinations. "Get Vekrun" is the header's call to action. */
 export const primaryNav: NavItem[] = [
   { label: 'Product', href: '/product/' },
-  { label: 'How It Works', href: '/how-it-works/' },
   { label: 'Teams', href: '/teams/' },
   { label: 'Pricing', href: '/pricing/' },
+  { label: 'Integrations', href: '/integrations/' },
 ];
 
 /** The header call to action: the Get Vekrun page, with early access first. */
@@ -187,8 +181,11 @@ export const footerColumns: { title: string; items: NavItem[] }[] = [
   {
     title: 'Vekrun',
     items: [
-      ...primaryNav,
+      { label: 'Product', href: '/product/' },
+      { label: 'How It Works', href: '/how-it-works/' },
       { label: 'Before & After', href: '/before-and-after/' },
+      { label: 'Teams', href: '/teams/' },
+      { label: 'Pricing', href: '/pricing/' },
       { label: 'Integrations', href: '/integrations/' },
       { label: 'Get Vekrun', href: '/download/' },
     ],
@@ -210,12 +207,10 @@ export const productSections: { id: string; label: string }[] = [
   { id: 'build', label: 'Build' },
   { id: 'prove', label: 'Prove' },
   { id: 'deliver', label: 'Deliver' },
-  { id: 'remember', label: 'Remember' },
-  { id: 'collaborate', label: 'Collaborate' },
-  { id: 'models', label: 'Models' },
+  { id: 'remember', label: 'Remember and collaborate' },
 ];
 /** Anchors inside Product chapters. Older URLs point at these, so each must stay on the page. */
-export const productSubAnchors = ['competitive', 'experiments', 'improvement-lab', 'council', 'architecture', 'production', 'voice', 'board', 'work-anywhere', 'environments', 'templates', 'tools', 'apps', 'stack', 'mobile', 'proof', 'high-assurance', 'browser', 'delivery', 'guardian', 'memory', 'live-share'];
+export const productSubAnchors = ['competitive', 'experiments', 'improvement-lab', 'council', 'architecture', 'production', 'voice', 'board', 'work-anywhere', 'environments', 'templates', 'tools', 'apps', 'stack', 'mobile', 'proof', 'high-assurance', 'browser', 'delivery', 'guardian', 'memory', 'collaborate', 'live-share', 'models'];
 
 /** Sections of How It Works: the six stages, in order. */
 export const howSections: { id: string; label: string }[] = [

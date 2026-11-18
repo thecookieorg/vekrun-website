@@ -1,8 +1,10 @@
 ---
 /**
- * How It Works: the six stages of one engineering workflow, each with the
- * part of Vekrun that does it. Section ids are stable; old Product anchors and
- * docs URLs redirect here.
+ * How It Works: the reference behind the homepage journey. The homepage tells
+ * one change from request to pull request; this page answers, step by step,
+ * what happens, who decides and what evidence you get. Each step is a short
+ * list of facts rather than a grid of tiles. Section ids are stable; old
+ * Product anchors and docs URLs redirect here.
  */
 import Base from '@/layouts/Base.astro';
 import ClosingCta from '@/components/ClosingCta.astro';
@@ -12,7 +14,6 @@ import Screenshot from '@/components/visuals/Screenshot.astro';
 import Council from '@/components/visuals/Council.astro';
 import ApprovalsDemo from '@/components/org/ApprovalsDemo.astro';
 import ProofPack from '@/components/factory/ProofPack.astro';
-import HowFlow from '@/components/home/HowFlow.astro';
 import { howSections } from '@/data/site';
 import { ArrowRight, Brain, Swords, Target, Ticket, FileText, Layers, Network, Box, BadgeCheck, GitBranch, GitPullRequest, ShieldCheck, Workflow, FlaskConical, Eye, CircleDashed } from '@lucide/astro';
 
@@ -49,9 +50,7 @@ const remember = [
 ];
 ---
 <Base title="How It Works" fullTitle="How Vekrun works: describe, plan, build, verify, deliver, remember · Vekrun" description="How Vekrun turns an outcome into verified software: a Council and Competitive Engineering plan it, the Factory builds Work Items in isolated environments, Proof Packs record the evidence, PR Guardian follows your Git rules, and Engineering Memory remembers." image="/og/how-it-works.png">
-  <PageHero eyebrow="How It Works" title="From idea to verified software, in six steps." lede="You describe the outcome and review the result. Vekrun runs the engineering in between, and shows its work." cta={{ label: 'Request early access', href: '/download/' }} secondary={{ label: 'See pricing', href: '/pricing/' }}>
-    <HowFlow />
-  </PageHero>
+  <PageHero eyebrow="How It Works" title="The workflow, step by step." lede="You describe the outcome and review the result. Here is what Vekrun does in between, who decides at each step, and the evidence you get." cta={{ label: 'Request early access', href: '/download/' }} secondary={{ label: 'See one change, start to finish', href: '/#journey' }} />
 
   <nav class="pnav" aria-label="On this page">
     <div class="container-site"><ul>{howSections.map((s) => <li><a href={`#${s.id}`}>{s.label}</a></li>)}</ul></div>
@@ -144,10 +143,11 @@ const remember = [
   .cmpbox h3 { margin: 0; font-size: 1.1rem; font-weight: 620; color: var(--foreground); }
   .cmpbox p { margin: 0.4rem 0 0; font-size: 0.95rem; line-height: 1.55; color: var(--foreground-secondary); }
   .cmpbox a { display: inline-flex; }
-  .pts { margin: 3rem 0 0; padding: 0; list-style: none; display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-  @media (min-width: 40rem) { .pts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (min-width: 64rem) { .pts { grid-template-columns: repeat(4, minmax(0, 1fr)); } .pts-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-  .pts li { display: grid; gap: 0.5rem; align-content: start; padding: 1.5rem; background: var(--surface); }
-  .pts h3 { margin: 0.25rem 0 0; font-size: 1.05rem; font-weight: 600; color: var(--text); }
-  .pts p { margin: 0; font-size: 0.92rem; line-height: 1.5; color: var(--text-2); }
+  /* A reference list, not tiles: icon, fact and one line, separated by hairlines. */
+  .pts { margin: 3rem 0 0; padding: 0; list-style: none; display: grid; column-gap: 3rem; }
+  @media (min-width: 48rem) { .pts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .pts li { display: grid; grid-template-columns: 1.25rem minmax(0, 1fr); column-gap: 0.9rem; align-content: start; padding: 1.1rem 0; border-top: 1px solid var(--border); }
+  .pts li > :global(svg) { grid-row: span 2; margin-top: 0.15rem; }
+  .pts h3 { margin: 0; font-size: 1.02rem; font-weight: 600; color: var(--text); }
+  .pts p { margin: 0.3rem 0 0; font-size: 0.93rem; line-height: 1.55; color: var(--text-2); }
 </style>

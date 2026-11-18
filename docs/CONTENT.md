@@ -21,10 +21,11 @@ Show the product instead of describing it. Avoid "revolutionize", "seamlessly",
   controls must not be added before one exists. There is no Cloud or
   Enterprise tier.
 - `teamsInterestMailto`: the Teams interest email to the support inbox.
-- `primaryNav`, `footerColumns`: Product, How It Works, Teams, Pricing; the
-  footer adds Before & After and the utility pages.
-- `productSections`: the Product page's six chapters (Think, Build, Prove,
-  Deliver, Remember, Collaborate) plus Models. `productSubAnchors` lists the
+- `primaryNav`, `footerColumns`: Product, Teams, Pricing, Integrations; How It
+  Works and Before & After live in the footer and in contextual links, with
+  the utility pages.
+- `productSections`: the Product page's five chapters (Think, Build, Prove,
+  Deliver, Remember and collaborate), closed by Models. `productSubAnchors` lists the
   older section ids that now live inside a chapter; old URLs redirect to
   either list, and every id must stay on the page. There is no roadmap section.
 
@@ -36,7 +37,8 @@ examples and the eight Before & After comparisons.
 Describe what people can do, never how Vekrun does it internally. Never use
 the word "Planned" or status badges in demos. Present capabilities as
 experience and value; state commercial availability once, briefly, next to the
-relevant call to action ("coming to Vekrun Free", "not available to buy yet").
+relevant call to action ("not available to buy yet"). Work Anywhere is
+included in Vekrun Free today; never describe it as coming.
 Living Architecture Intelligence is
 available; show its sources and uncertainty rather than claiming it sees every
 relationship. SSO and RBAC are included in Teams: never present them as an
@@ -47,10 +49,26 @@ Example measurements (Competitive Engineering, experiments) carry a small
 independent, fully offline execution, or support for physical devices. See
 `docs/content-audit-2026-11-12.md` for claims still awaiting confirmation.
 
+## Homepage
+
+The homepage is exactly five acts, and stays that way: the promise with the
+app-window stage (`EngineHero`, Factory and CLI views, step navigation),
+Competitive Engineering (`CompeteDemo`), one journey from context to reviewed
+pull request (`JourneyDemo`), Engineering Memory with a short Teams bridge
+(`MemoryBridge`), and Your rules with the two plans. Capability detail,
+provider logos, Live Share and Before & After belong on their own pages. Every
+demo renders its final state without JavaScript, respects reduced motion and
+stops when the visitor takes control.
+
 ## Integrations
 
-`src/data/integrations.ts` lists the groups shown on `/integrations/`. Add a
-tool to the right group with an `id`, `name` and a two-letter `mono` fallback.
+`src/data/integrations.ts` lists the groups shown on `/integrations/`, in three
+bands: model providers (with a `tag` of Direct, Gateway or Local), optional
+coding agents, and work and delivery tools. Work Anywhere hosts live in
+`hostingProviders`, apart from the integrations, because they're where the
+customer's servers run rather than services Vekrun connects to. Add a tool to
+the right group with an `id`, `name` and a two-letter `mono` fallback; the page
+search picks it up automatically.
 Brand marks come from `simple-icons` in `src/components/brand/IntegrationLogo.astro`.
 Never add availability badges to integrations. Grok reaches Vekrun three
 ways, kept distinct everywhere: Grok Build (optional coding agent, `grok-build`),

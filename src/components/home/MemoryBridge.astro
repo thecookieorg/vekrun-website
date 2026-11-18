@@ -1,0 +1,68 @@
+---
+/**
+ * Engineering Memory in three moments on one project: a verified fix is
+ * recorded, a decision is recorded, and a later task starts with both, each
+ * cited, tied to its revision and checked for freshness. Personal memory, on
+ * one machine; the Teams page tells the shared version. The markup is the
+ * final state; the script brings the moments in once. Demonstration data.
+ */
+import DemoControls from '@/components/mock/DemoControls.astro';
+import { Check, FileCode2, GitCommitHorizontal, Clock, Bot } from '@lucide/astro';
+const saved = [
+  { when: 'Tuesday', kind: 'Verified fix', t: 'Duplicate webhooks need a database key, not a lock', src: 'Proof Pack · 9c41a7e' },
+  { when: 'Wednesday', kind: 'Decision', t: 'Retries live in CheckoutService, never in controllers', src: 'PR #412 · a41c9e2' },
+];
+---
+<figure class="mb" data-membridge data-step="3" aria-label="Example: a verified fix and a decision are remembered, and a later task starts with both">
+  <ol class="mb-row">
+    {saved.map((r, i) => (
+      <li class="mb-card" data-mb={i + 1}>
+        <p class="mb-when">{r.when} · remembered</p>
+        <p class="mb-kind">{r.kind}</p>
+        <p class="mb-t">{r.t}</p>
+        <p class="mb-src"><FileCode2 class="h-3.5 w-3.5" aria-hidden="true" />{r.src}</p>
+      </li>
+    ))}
+    <li class="mb-card is-next" data-mb="3">
+      <p class="mb-when">Friday · new task</p>
+      <p class="mb-t"><Bot class="h-4 w-4" aria-hidden="true" />Add partial refunds</p>
+      <p class="mb-kind">Starts with</p>
+      <ul class="mb-ctx">
+        <li><Check class="h-3.5 w-3.5" aria-hidden="true" /><span>Database key for duplicate webhooks<em><GitCommitHorizontal class="h-3 w-3" aria-hidden="true" />9c41a7e · <Clock class="h-3 w-3" aria-hidden="true" />still current</em></span></li>
+        <li><Check class="h-3.5 w-3.5" aria-hidden="true" /><span>Retries stay in CheckoutService<em><GitCommitHorizontal class="h-3 w-3" aria-hidden="true" />a41c9e2 · <Clock class="h-3 w-3" aria-hidden="true" />still current</em></span></li>
+      </ul>
+    </li>
+  </ol>
+  <div class="mb-foot"><span class="mb-tag">Example</span><DemoControls class="mb-ctl" /></div>
+</figure>
+
+<style>
+  .mb { margin: 0; }
+  .mb-row { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.75rem; }
+  @media (min-width: 56rem) { .mb-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.25fr); align-items: stretch; } }
+  .mb-card { position: relative; display: flex; flex-direction: column; padding: 1.1rem 1.15rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); transition: opacity 400ms var(--ease-out), transform 400ms var(--ease-out), border-color 300ms; }
+  .mb-card.is-next { border-color: var(--border-interactive); box-shadow: var(--glow-accent); }
+  .mb-when { margin: 0; font-family: var(--font-mono); font-size: 0.74rem; color: var(--foreground-secondary); }
+  .mb-kind { margin: 0.8rem 0 0; font-size: 0.78rem; font-weight: 600; color: var(--foreground-secondary); }
+  .mb-t { margin: 0.3rem 0 0; display: flex; align-items: center; gap: 0.45rem; font-size: 1rem; font-weight: 620; line-height: 1.35; color: var(--foreground); }
+  .mb-t :global(svg) { flex-shrink: 0; color: var(--accent-text); }
+  .is-next .mb-t { margin-top: 0.8rem; }
+  .mb-src { margin: auto 0 0; padding-top: 0.9rem; display: flex; align-items: center; gap: 0.35rem; font-family: var(--font-mono); font-size: 0.74rem; color: var(--foreground-secondary); }
+  .mb-ctx { margin: 0.45rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.45rem; }
+  .mb-ctx li { display: flex; gap: 0.5rem; align-items: flex-start; padding: 0.5rem 0.6rem; border-radius: var(--radius-sm); background: var(--background); font-size: 0.88rem; color: var(--foreground); }
+  .mb-ctx li > :global(svg) { margin-top: 0.2rem; flex-shrink: 0; color: var(--accent-text); }
+  .mb-ctx em { display: flex; align-items: center; gap: 0.25rem; margin-top: 0.15rem; font-style: normal; font-family: var(--font-mono); font-size: 0.72rem; color: var(--foreground-secondary); }
+  .mb[data-step='0'] [data-mb], .mb[data-step='1'] [data-mb='2'], .mb[data-step='1'] [data-mb='3'], .mb[data-step='2'] [data-mb='3'] { opacity: 0.25; transform: translateY(6px); }
+  .mb-foot { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+  .mb-tag { margin-top: 1.25rem; padding: 0.05rem 0.45rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.7rem; color: var(--foreground-secondary); }
+  .mb-foot :global(.mb-ctl) { margin-top: 1rem; }
+  @media (prefers-reduced-motion: reduce) { .mb-card { transition: none; } }
+</style>
+
+<script>
+  import { createSequence } from '@/scripts/sequence';
+  for (const root of document.querySelectorAll<HTMLElement>('[data-membridge]')) {
+    const set = (n: number) => { root.dataset.step = String(n); };
+    createSequence(root, [{ t: 300, run: () => set(1) }, { t: 1800, run: () => set(2) }, { t: 3400, run: () => set(3) }], { reset: () => set(0) });
+  }
+</script>

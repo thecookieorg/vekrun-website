@@ -1,0 +1,192 @@
+---
+/**
+ * One engineering journey in six moments: context, plan, build, verify, proof
+ * and review, all on the same fictional change (idempotent payment retries).
+ * The moment list on the left is the navigation; the stage on the right shows
+ * the selected moment. It advances on its own once when it comes into view;
+ * choosing a moment stops it there.
+ *
+ * Without the script every moment is shown, stacked, so the content stands on
+ * its own. The final state selects the last moment. Demonstration data.
+ */
+import DemoControls from '@/components/mock/DemoControls.astro';
+import { Network, ListChecks, Boxes, Gauge, FileCheck2, GitPullRequest, Check, X, CircleDashed, UserCheck, Terminal, Server, Bot } from '@lucide/astro';
+const moments = [
+  { i: Network, t: 'Context', d: 'What the change touches, before anyone writes code.' },
+  { i: ListChecks, t: 'Plan', d: 'Work Items, a second opinion, and how far Vekrun may go.' },
+  { i: Boxes, t: 'Build', d: 'Isolated work on your Mac or your own server.' },
+  { i: Gauge, t: 'Verify', d: 'Checking that matches the risk of the change.' },
+  { i: FileCheck2, t: 'Proof', d: 'Evidence on the exact revision, gaps included.' },
+  { i: GitPullRequest, t: 'Review', d: 'A pull request that looks after itself. You decide.' },
+];
+---
+<figure class="jd" data-journey data-m="5" aria-label="Example: one change moving through context, plan, build, verify, proof and review">
+  <ol class="jd-list" role="tablist" aria-label="Moments" aria-orientation="vertical">
+    {moments.map((m, n) => (
+      <li role="presentation">
+        <button type="button" role="tab" class="jd-tab" id={`jd-t-${n}`} aria-controls={`jd-p-${n}`} aria-selected={n === 5 ? 'true' : 'false'} tabindex={n === 5 ? 0 : -1} data-jd={n}>
+          <span class="jd-ic"><m.i class="h-4 w-4" aria-hidden="true" /></span>
+          <span class="jd-tx"><b>{m.t}</b><span>{m.d}</span></span>
+        </button>
+      </li>
+    ))}
+  </ol>
+
+  <div class="jd-stage">
+    <div class="jd-chrome"><span class="jd-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>WI-57 · Make payment retries idempotent</span><span class="jd-tag">Example</span></div>
+
+    <div class="jd-panels">
+    <section class="jd-p" role="tabpanel" id="jd-p-0" aria-labelledby="jd-t-0" data-jp="0">
+      <p class="jd-h">Change impact at a41c9e2</p>
+      <ul class="jd-tree">
+        <li class="is-hit">CheckoutService<span>retries charges</span></li>
+        <li class="is-hit">Payment webhooks<span>call CheckoutService</span></li>
+        <li class="is-hit">Orders database<span>stores the charge</span></li>
+        <li class="is-inf">Refund webhooks<span>inferred link, check before relying on it</span></li>
+      </ul>
+      <p class="jd-note">Decision on record: retries live in CheckoutService, never in controllers (a41c9e2). The Git Time Machine shows retries moved there in June.</p>
+    </section>
+
+    <section class="jd-p" role="tabpanel" id="jd-p-1" aria-labelledby="jd-t-1" data-jp="1">
+      <p class="jd-h">Plan · 3 Work Items</p>
+      <ol class="jd-items"><li><span>WI-57a</span>Idempotency key on charges</li><li><span>WI-57b</span>Deduplicate webhook deliveries<em>after 57a</em></li><li><span>WI-57c</span>Concurrency test for duplicate webhooks</li></ol>
+      <p class="jd-row"><Bot class="h-4 w-4" aria-hidden="true" />Council: Claude and Grok agree. One objection on record: “Redis locks won’t survive a restart.”</p>
+      <p class="jd-row is-ctl"><UserCheck class="h-4 w-4" aria-hidden="true" />Autonomy for payment code: open a pull request, never merge without you.</p>
+    </section>
+
+    <section class="jd-p" role="tabpanel" id="jd-p-2" aria-labelledby="jd-t-2" data-jp="2">
+      <p class="jd-h">Factory · 3 isolated worktrees</p>
+      <pre class="jd-term"><span><b>build-01</b> your VPS · private, inbound ports closed</span><span>WI-57a  fix/charge-key       tests running</span><span>WI-57b  fix/webhook-dedupe   waiting for 57a</span><span>WI-57c  test/dup-webhooks    written, 1 test</span></pre>
+      <p class="jd-row"><Terminal class="h-4 w-4" aria-hidden="true" />The same run from your terminal or another agent: <code>vekrun run</code>, or through MCP.</p>
+      <p class="jd-row"><Server class="h-4 w-4" aria-hidden="true" />Your laptop stays free. Results come back to your Mac.</p>
+    </section>
+
+    <section class="jd-p" role="tabpanel" id="jd-p-3" aria-labelledby="jd-t-3" data-jp="3">
+      <p class="jd-h">Risk: high · touches payments</p>
+      <p class="jd-sub">So Vekrun checks more deeply than it would for a copy change.</p>
+      <ul class="jd-ev">
+        <li class="is-pass"><Check class="h-4 w-4" aria-hidden="true" />Request and unit tests<em>148 passed</em></li>
+        <li class="is-pass"><Check class="h-4 w-4" aria-hidden="true" />200 duplicate webhooks at once<em>No double charges</em></li>
+        <li class="is-fail"><X class="h-4 w-4" aria-hidden="true" />Mutation challenge<em>1 of 12 mutations survived, test added</em></li>
+        <li class="is-pass"><Check class="h-4 w-4" aria-hidden="true" />Independent review by another model family<em>No objections</em></li>
+        <li class="is-none"><CircleDashed class="h-4 w-4" aria-hidden="true" />Peak-traffic load<em>Not checked: no load profile</em></li>
+      </ul>
+    </section>
+
+    <section class="jd-p" role="tabpanel" id="jd-p-4" aria-labelledby="jd-t-4" data-jp="4">
+      <p class="jd-h">Proof Pack · pinned to 9c41a7e</p>
+      <dl class="jd-dl">
+        <div><dt>Criteria</dt><dd>3 of 4 proven, 1 not checked</dd></div>
+        <div><dt>Tests</dt><dd>149 passed, including the new mutation test</dd></div>
+        <div><dt>Review</dt><dd>Claude, no objections</dd></div>
+        <div><dt>Known gap</dt><dd>Peak-traffic load, listed rather than hidden</dd></div>
+        <div><dt>Lesson kept</dt><dd>Duplicate webhooks need a database key, not a lock</dd></div>
+      </dl>
+    </section>
+
+    <section class="jd-p" role="tabpanel" id="jd-p-5" aria-labelledby="jd-t-5" data-jp="5">
+      <p class="jd-h"><GitPullRequest class="h-4 w-4" aria-hidden="true" />#518 Idempotent payment retries</p>
+      <ul class="jd-pr">
+        <li class="is-pass"><Check class="h-4 w-4" aria-hidden="true" />PR Guardian fixed a failing lint check and re-ran the evidence</li>
+        <li class="is-pass"><Check class="h-4 w-4" aria-hidden="true" />The description answers what reviewers asked last time: retry limits and refunds</li>
+        <li class="is-wait"><UserCheck class="h-4 w-4" aria-hidden="true" />Waiting for your approval, as your rule for payment code says</li>
+      </ul>
+    </section>
+    </div>
+
+    <DemoControls class="jd-ctl" />
+  </div>
+</figure>
+
+<style>
+  .jd { margin: 0; display: grid; gap: 1rem; }
+  @media (min-width: 64rem) { .jd { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: 2rem; align-items: start; } }
+  .jd-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.15rem; }
+  @media (max-width: 63.99rem) { .jd-list { display: flex; overflow-x: auto; scrollbar-width: none; gap: 0.35rem; } .jd-list::-webkit-scrollbar { display: none; } }
+  .jd-tab { display: flex; gap: 0.8rem; align-items: flex-start; width: 100%; padding: 0.8rem 0.9rem; border: 1px solid transparent; border-radius: var(--radius-md); text-align: left; transition: background-color 200ms var(--ease-out), border-color 200ms var(--ease-out); }
+  @media (max-width: 63.99rem) { .jd-tab { width: auto; padding: 0.45rem 0.75rem 0.45rem 0.45rem; align-items: center; white-space: nowrap; border-color: var(--border); } .jd-tx > span { display: none; } }
+  .jd-tab:hover { background: var(--surface); }
+  .jd-tab[aria-selected='true'] { border-color: var(--border); background: var(--surface); box-shadow: var(--shadow-sm); }
+  .jd-tab:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+  .jd-ic { display: inline-grid; place-items: center; flex-shrink: 0; width: 2rem; height: 2rem; border-radius: var(--radius-sm); background: var(--surface-elevated); color: var(--foreground-secondary); transition: background-color 200ms, color 200ms; }
+  .jd-tab[aria-selected='true'] .jd-ic { background: var(--accent); color: #12140f; }
+  .jd-tx { display: grid; gap: 0.15rem; }
+  .jd-tx b { font-size: 0.98rem; font-weight: 620; color: var(--foreground); }
+  .jd-tx > span { font-size: 0.86rem; line-height: 1.45; color: var(--foreground-secondary); }
+
+  .jd-stage { min-width: 0; overflow: hidden; border: 1px solid var(--border-strong); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-md); }
+  .jd-chrome { display: flex; align-items: center; gap: 0.7rem; padding: 0.6rem 0.9rem; border-bottom: 1px solid var(--border); background: var(--background); font-size: 0.8rem; font-weight: 560; color: var(--foreground); }
+  .jd-chrome > span:nth-child(2) { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .jd-dots { display: inline-flex; gap: 0.35rem; flex-shrink: 0; }
+  .jd-dots i { width: 0.6rem; height: 0.6rem; border-radius: 999px; background: var(--border-strong); }
+  .jd-tag { margin-left: auto; flex-shrink: 0; padding: 0.05rem 0.4rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.7rem; font-weight: 400; color: var(--foreground-secondary); }
+  .jd-p { padding: 1.3rem 1.3rem 0.5rem; }
+  @media (min-width: 48rem) { .jd-p { padding: 1.6rem 1.7rem 0.5rem; } }
+  .jd-p + .jd-p { border-top: 1px solid var(--border); }
+  /* With the script, panels share one grid cell so the stage keeps the tallest panel's height and never shifts the page. */
+  :global(.js) .jd-panels { display: grid; }
+  :global(.js) .jd-p { grid-area: 1 / 1; border-top: 0; transition: opacity 260ms var(--ease-out), transform 260ms var(--ease-out); }
+  :global(.js) .jd-p.is-off { visibility: hidden; opacity: 0; transform: translateY(6px); }
+  .jd-h { margin: 0; display: flex; align-items: center; gap: 0.45rem; font-size: 1.1rem; font-weight: 640; letter-spacing: -0.015em; color: var(--foreground); }
+  .jd-h :global(svg) { color: var(--accent-text); }
+  .jd-sub { margin: 0.3rem 0 0; font-size: 0.9rem; color: var(--foreground-secondary); }
+  .jd-note, .jd-row { margin: 1rem 0 0; font-size: 0.9rem; line-height: 1.55; color: var(--foreground-secondary); }
+  .jd-row { display: flex; gap: 0.55rem; align-items: flex-start; color: var(--foreground); }
+  .jd-row > :global(svg) { margin-top: 0.2rem; flex-shrink: 0; color: var(--accent-text); }
+  .jd-row.is-ctl { padding: 0.6rem 0.75rem; border: 1px solid var(--border-interactive); border-radius: var(--radius-md); }
+  .jd-row code { font-size: 0.82rem; }
+  .jd-tree { margin: 1rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.4rem; }
+  .jd-tree li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.6rem; padding: 0.55rem 0.75rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); font-size: 0.92rem; font-weight: 600; color: var(--foreground); }
+  .jd-tree li span { font-size: 0.82rem; font-weight: 400; color: var(--foreground-secondary); }
+  .jd-tree .is-hit { border-color: var(--border-interactive); }
+  .jd-tree .is-inf { border-style: dashed; border-color: var(--border-strong); }
+  .jd-items { margin: 1rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.4rem; }
+  .jd-items li { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.6rem; padding: 0.55rem 0.75rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); font-size: 0.92rem; color: var(--foreground); }
+  .jd-items span { font-family: var(--font-mono); font-size: 0.74rem; color: var(--foreground-muted); }
+  .jd-items em { margin-left: auto; font-style: normal; font-size: 0.78rem; color: var(--foreground-secondary); }
+  .jd-term { margin: 1rem 0 0; display: grid; gap: 0.3rem; padding: 0.9rem 1rem; border-radius: var(--radius-md); background: #0e1013; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; color: #c9d1cf; }
+  .jd-term b { color: #c0f48a; font-weight: 600; }
+  .jd-ev, .jd-pr { margin: 1rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.35rem; }
+  .jd-ev li, .jd-pr li { display: grid; grid-template-columns: 1.1rem minmax(0, 1fr); column-gap: 0.55rem; padding: 0.55rem 0.7rem; border-radius: var(--radius-md); background: var(--background); font-size: 0.92rem; color: var(--foreground); }
+  .jd-ev li > :global(svg), .jd-pr li > :global(svg) { margin-top: 0.15rem; }
+  .jd-ev em { grid-column: 2; font-style: normal; font-size: 0.82rem; color: var(--foreground-secondary); }
+  .is-pass > :global(svg) { color: var(--accent-text); }
+  .is-fail > :global(svg) { color: var(--danger); }
+  .is-none > :global(svg), .is-wait > :global(svg) { color: var(--foreground-secondary); }
+  .jd-ev .is-none { background: transparent; outline: 1px dashed var(--border-strong); outline-offset: -1px; }
+  .jd-pr .is-wait { outline: 1px solid var(--border-interactive); outline-offset: -1px; }
+  .jd-dl { margin: 1rem 0 0; display: grid; gap: 1px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--border); }
+  .jd-dl div { display: grid; gap: 0.15rem; padding: 0.6rem 0.8rem; background: var(--background); }
+  @media (min-width: 40rem) { .jd-dl div { grid-template-columns: 8rem minmax(0, 1fr); gap: 1rem; } }
+  .jd-dl dt { font-size: 0.82rem; font-weight: 600; color: var(--foreground-secondary); }
+  .jd-dl dd { margin: 0; font-size: 0.9rem; color: var(--foreground); }
+  .jd-stage :global(.jd-ctl) { margin: 0.75rem 1rem 1rem; }
+  @media (prefers-reduced-motion: reduce) { .jd-p, .jd-tab, .jd-ic { transition: none !important; } }
+</style>
+
+<script>
+  import { createSequence, type Step } from '@/scripts/sequence';
+  document.documentElement.classList.add('js');
+  for (const root of document.querySelectorAll<HTMLElement>('[data-journey]')) {
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-jd]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-jp]'));
+    const show = (n: number) => {
+      root.dataset.m = String(n);
+      tabs.forEach((t, i) => { t.setAttribute('aria-selected', String(i === n)); t.tabIndex = i === n ? 0 : -1; });
+      panels.forEach((p, i) => { p.classList.toggle('is-off', i !== n); p.toggleAttribute('inert', i !== n); });
+    };
+    show(panels.length - 1);
+    const steps: Step[] = panels.map((_, n) => ({ t: 300 + n * 3200, run: () => show(n) }));
+    const seq = createSequence(root, steps, { reset: () => show(0) });
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => { seq.finish(); show(i); });
+      t.addEventListener('keydown', (e) => {
+        const k = e.key;
+        if (!['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft'].includes(k)) return;
+        e.preventDefault();
+        const n = (i + (k === 'ArrowDown' || k === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length;
+        seq.finish(); show(n); tabs[n]!.focus();
+      });
+    });
+  }
+</script>
