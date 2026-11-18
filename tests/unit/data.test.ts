@@ -29,10 +29,19 @@ describe('plans and pricing', () => {
     const f = plans[0]!.features.join(' ');
     for (const k of ['Factory', 'Coordinator', 'Council', 'Competitive Engineering', 'Work Items', 'Git', 'Engineering Memory', 'Architecture Explorer', 'Time Machine', 'Change Impact Intelligence', 'Proof Packs', 'Workflow Templates', 'Live Share', 'CLI', 'MCP']) expect(f).toContain(k);
   });
-  it('describes Teams as self-hosted shared coordination', () => {
-    const t = [plans[1]!.summary, ...plans[1]!.features].join(' ');
+  it('leads Teams with Shared Engineering Memory, includes SSO and stays self-hosted', () => {
+    const teams = plans[1]!;
+    expect(teams.features[0]).toBe('Shared Engineering Memory across engineers and repositories');
+    expect(teams.lead).toBe('Everything in Free, plus:');
+    const t = [teams.summary, ...teams.features].join(' ');
     expect(t).toMatch(/self-hosted/);
-    for (const k of ['Shared Engineering Memory', 'Work Items', 'policies', 'your servers', 'your infrastructure', 'installations', 'verification', 'Git']) expect(t).toContain(k);
+    for (const k of ['SSO', 'role-based access', 'Work Items', 'policies', 'worker pools', 'your servers', 'installations', 'verification', 'Git']) expect(t).toContain(k);
+    expect(teams.more).toEqual({ label: 'Explore Vekrun Teams', href: '/teams/' });
+  });
+  it('plans Work Anywhere for Free, at no Vekrun cost', () => {
+    const up = (plans[0]!.upcoming ?? []).join(' ');
+    for (const k of ['Work Anywhere', 'own VPS', 'headless workers', 'Remote engineering previews']) expect(up).toContain(k);
+    expect(JSON.stringify(plans[0])).not.toMatch(/per minute|per worker|limit/i);
   });
   it('prices Teams at $199 for up to 10 engineers and $10 for each one after', () => {
     expect(teamsPricing).toEqual({ base: 199, included: 10, perExtra: 10, currency: 'USD' });
@@ -77,15 +86,15 @@ describe('availability', () => {
 });
 
 describe('navigation', () => {
-  it('has Product, How It Works, Before & After and Pricing, with Get Vekrun as the call to action', () => {
-    expect(primaryNav.map((n) => n.label)).toEqual(['Product', 'How It Works', 'Before & After', 'Pricing']);
+  it('has Product, How It Works, Teams and Pricing, with Get Vekrun as the call to action', () => {
+    expect(primaryNav.map((n) => n.label)).toEqual(['Product', 'How It Works', 'Teams', 'Pricing']);
     expect(primaryCta).toEqual({ label: 'Get Vekrun', href: '/download/' });
   });
   it('keeps Docs and Roadmap out of every navigation', () => {
     const all = [...primaryNav, primaryCta, ...footerColumns.flatMap((c) => c.items)];
     for (const n of all) {
-      expect(n.label, n.href).not.toMatch(/docs|documentation|roadmap|teams|benefits/i);
-      expect(n.href, n.label).not.toMatch(/^\/(docs|roadmap|features|cloud|teams|benefits|ai-teams|open-source)\//);
+      expect(n.label, n.href).not.toMatch(/docs|documentation|roadmap|benefits|cloud|enterprise/i);
+      expect(n.href, n.label).not.toMatch(/^\/(docs|roadmap|features|cloud|benefits|ai-teams|open-source)\//);
     }
   });
   it('links only to pages that exist, with trailing slashes', () => {
@@ -94,22 +103,21 @@ describe('navigation', () => {
       expect(pageExists(n.href), n.href).toBe(true);
     }
   });
-  it('puts Integrations, Get Vekrun, Security, Privacy, Licence and Contact in the footer', () => {
-    expect(footerColumns.flatMap((c) => c.items).map((n) => n.label)).toEqual(expect.arrayContaining(['Integrations', 'Get Vekrun', 'Security', 'Privacy', 'Licence', 'Contact']));
+  it('puts Teams, Before & After, Integrations, Get Vekrun, Security, Privacy, Licence and Contact in the footer', () => {
+    expect(footerColumns.flatMap((c) => c.items).map((n) => n.label)).toEqual(expect.arrayContaining(['Teams', 'Before & After', 'Integrations', 'Get Vekrun', 'Security', 'Privacy', 'Licence', 'Contact']));
   });
 });
 
 describe('redirects', () => {
   const entries = Object.entries(redirects) as [string, string][];
-  it('retires docs, roadmap, the feature pages, Benefits and the old Teams and Cloud pages', () => {
-    for (const r of ['/docs/', '/roadmap/', '/features/', '/features/factory/', '/benefits/', '/teams/', '/cloud/']) expect(redirects, r).toHaveProperty([r]);
-    for (const r of ['/docs/', '/roadmap/', '/teams/', '/benefits/']) expect(pageExists(r), r).toBe(false);
-    expect(redirects['/teams/']).toBe('/pricing/#teams');
-    expect(redirects['/cloud/']).toBe('/pricing/#teams');
+  it('retires docs, roadmap, the feature pages, Benefits and the old Cloud page', () => {
+    for (const r of ['/docs/', '/roadmap/', '/features/', '/features/factory/', '/benefits/', '/cloud/']) expect(redirects, r).toHaveProperty([r]);
+    for (const r of ['/docs/', '/roadmap/', '/benefits/', '/cloud/']) expect(pageExists(r), r).toBe(false);
+    expect(redirects['/cloud/']).toBe('/teams/');
     expect(redirects['/benefits/']).toBe('/before-and-after/');
   });
-  it('serves How It Works, Before & After and Pricing as real pages', () => {
-    for (const r of ['/how-it-works/', '/before-and-after/', '/pricing/']) {
+  it('serves How It Works, Teams, Before & After and Pricing as real pages', () => {
+    for (const r of ['/how-it-works/', '/teams/', '/before-and-after/', '/pricing/']) {
       expect(redirects, r).not.toHaveProperty([r]);
       expect(pageExists(r), r).toBe(true);
     }
@@ -117,7 +125,7 @@ describe('redirects', () => {
   it('sends every old URL straight to a live page and a real section, never through another redirect', () => {
     const anchors: Record<string, Set<string>> = {
       '/product/': new Set([...productSections.map((s) => s.id), ...productSubAnchors]),
-      '/how-it-works/': new Set([...howSections.map((s) => s.id), 'inbox']),
+      '/how-it-works/': new Set([...howSections.map((s) => s.id), 'inbox', 'compare']),
     };
     for (const [from, to] of entries) {
       const path = to.replace(/#.*$/, '');
@@ -160,8 +168,20 @@ describe('capabilities', () => {
     for (const c of comparisons) for (const k of ['before', 'after', 'beforeDetail', 'afterDetail'] as const) expect(c[k].length, `${c.id}.${k}`).toBeGreaterThan(10);
   });
   it('links every homepage highlight to a real Product section', () => {
-    const ids = new Set(productSections.map((s) => s.id));
-    for (const h of highlights) expect(ids.has(h.id), h.id).toBe(true);
+    const ids = new Set([...productSections.map((s) => s.id), ...productSubAnchors]);
+    for (const h of highlights) {
+      expect(h.href, h.id).toMatch(/^\/product\/#/);
+      expect(ids.has(h.href.split('#')[1]!), h.href).toBe(true);
+    }
+  });
+  it('lists the Product sections in story order, Competitive Engineering right after Council', () => {
+    const ids = productSections.map((s) => s.id);
+    expect(ids.indexOf('competitive')).toBe(ids.indexOf('council') + 1);
+    for (const id of ['memory', 'production', 'work-anywhere', 'next']) expect(ids, id).toContain(id);
+    for (const a of ['architecture', 'experiments', 'improvement-lab', 'high-assurance', 'guardian', 'templates']) expect(productSubAnchors, a).toContain(a);
+  });
+  it('walks How It Works in six stages', () => {
+    expect(howSections.map((s) => s.label)).toEqual(['Describe', 'Plan and compare', 'Build', 'Verify', 'Deliver', 'Remember']);
   });
   it('shows the agreed kinds of projects', () => {
     expect(projectExamples.map((e) => e.title).join(' ')).toMatch(/Rails.*Django.*Laravel.*Next\.js.*Expo.*Flutter.*Swift or Kotlin.*Tauri or Electron/);

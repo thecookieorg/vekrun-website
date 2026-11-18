@@ -1,0 +1,172 @@
+---
+/**
+ * Shared Engineering Memory as a three-part story on a fictional Rails shop:
+ * an architecture discovery, a verified production fix, then new work that
+ * reuses both. Each record shows where it came from (sources, revision), how
+ * far to trust it (verified, inferred, superseded) and who may see it.
+ *
+ * The markup holds the final state (all three steps). The script steps
+ * through the story; the step buttons jump to any point and pause playback.
+ * A planned Teams capability; the data is an example.
+ */
+import { Building2, Bug, Sparkles, Check, CircleDashed, History, Lock, FileCode2, GitCommitHorizontal, Bot } from '@lucide/astro';
+import DemoControls from '@/components/mock/DemoControls.astro';
+
+const steps = [
+  { n: 1, who: 'Alex', role: 'Architecture', i: Building2, t: 'Finds out why checkout works the way it does', d: 'Vekrun records the decision behind the payment service, with the code and pull request that prove it.' },
+  { n: 2, who: 'Priya', role: 'Debugging', i: Bug, t: 'Fixes a production regression and proves it', d: 'The verified fix, its Proof Pack and the incident it closed become knowledge the team can reuse.' },
+  { n: 3, who: 'Sam', role: 'New work', i: Sparkles, t: 'Starts related work without starting over', d: 'Vekrun gives Sam and Sam’s agents the decision and the fix that matter, and leaves out what’s outdated or private.' },
+];
+
+type Rec = { from: number; kind: string; title: string; trust: 'verified' | 'inferred' | 'superseded'; trustLabel: string; src: string[]; rev: string; scope: string; restricted?: boolean };
+const records: Rec[] = [
+  { from: 1, kind: 'Decision', title: 'Payments are retried idempotently inside CheckoutService, never in controllers', trust: 'verified', trustLabel: 'Verified', src: ['app/services/checkout_service.rb', 'PR #412'], rev: 'a41c9e2', scope: 'Checkout team' },
+  { from: 1, kind: 'Decision', title: 'Retry failed charges from OrdersController', trust: 'superseded', trustLabel: 'Superseded', src: ['PR #187'], rev: '2f07b1d', scope: 'Checkout team' },
+  { from: 2, kind: 'Verified fix', title: 'Duplicate charges when a payment webhook arrives twice', trust: 'verified', trustLabel: 'Verified · Proof Pack', src: ['app/jobs/payment_webhook_job.rb:58', 'Incident 3104'], rev: '7d0b3f1', scope: 'Checkout team' },
+  { from: 2, kind: 'Note', title: 'Refund webhooks probably share the same code path', trust: 'inferred', trustLabel: 'Inferred', src: ['app/jobs/refund_webhook_job.rb'], rev: '7d0b3f1', scope: 'Checkout team' },
+  { from: 2, kind: 'Note', title: 'Card processor contract terms', trust: 'verified', trustLabel: 'Verified', src: ['Finance wiki'], rev: '—', scope: 'Billing only', restricted: true },
+];
+const context = [
+  { trust: 'verified', t: 'Idempotent retries live in CheckoutService', m: 'Decision · a41c9e2' },
+  { trust: 'verified', t: 'Webhook duplicate-charge fix and its tests', m: 'Verified fix · 7d0b3f1' },
+  { trust: 'inferred', t: 'Refunds may share the webhook path: check before relying on it', m: 'Inferred · flagged for verification' },
+];
+const left = [
+  { i: History, t: 'Controller retries', m: 'Superseded by a41c9e2' },
+  { i: Lock, t: 'Card processor contract terms', m: 'Billing only. Sam isn’t in Billing' },
+];
+const trustIcon = { verified: Check, inferred: CircleDashed, superseded: History } as const;
+---
+<figure class="ms" data-mstory data-step="3" aria-label="Example: three engineers sharing engineering knowledge through Vekrun Teams">
+  <div class="ms-head">
+    <span class="ms-proj"><span class="ms-dot" aria-hidden="true"></span>shop-rails · Checkout team</span>
+    <span class="ms-tag">Planned for Teams · Example</span>
+  </div>
+
+  <ol class="ms-steps" aria-label="The story">
+    {steps.map((s) => (
+      <li class="ms-step" data-s={s.n}>
+        <button type="button" class="ms-step-b" data-goto={s.n} aria-label={`Show step ${s.n}: ${s.who}, ${s.role}`}>
+          <span class="ms-av" aria-hidden="true">{s.who[0]}</span>
+          <span class="ms-step-k"><b>{s.who}</b> · {s.role}</span>
+          <s.i class="ms-step-i h-4 w-4" aria-hidden="true" />
+        </button>
+        <p class="ms-step-t">{s.t}</p>
+        <p class="ms-step-d">{s.d}</p>
+      </li>
+    ))}
+  </ol>
+
+  <div class="ms-body">
+    <section class="ms-panel" aria-label="Shared Engineering Memory">
+      <h4 class="ms-h">Shared Engineering Memory</h4>
+      <ul class="ms-recs">
+        {records.map((r) => { const I = trustIcon[r.trust]; return (
+          <li class:list={['ms-rec', `is-${r.trust}`, r.restricted && 'is-restricted']} data-from={r.from}>
+            <div class="ms-rec-top">
+              <span class="ms-kind">{r.kind}</span>
+              <span class="ms-trust"><I class="h-3 w-3" aria-hidden="true" />{r.trustLabel}</span>
+            </div>
+            <p class="ms-rec-t">{r.title}</p>
+            <p class="ms-rec-m">
+              <span><FileCode2 class="h-3 w-3" aria-hidden="true" />{r.src.join(' · ')}</span>
+              {r.rev !== '—' && <span><GitCommitHorizontal class="h-3 w-3" aria-hidden="true" />{r.rev}</span>}
+              <span class:list={['ms-scope', r.restricted && 'is-locked']}>{r.restricted ? <Lock class="h-3 w-3" aria-hidden="true" /> : null}{r.scope}</span>
+            </p>
+          </li>
+        ); })}
+      </ul>
+    </section>
+
+    <section class="ms-panel ms-agent" aria-label="What Sam's agent receives" data-from="3">
+      <h4 class="ms-h"><Bot class="h-4 w-4" aria-hidden="true" />Sam’s new Work Item: partial refunds</h4>
+      <p class="ms-sub">Context the agent receives</p>
+      <ul class="ms-ctx">
+        {context.map((c) => { const I = trustIcon[c.trust as 'verified' | 'inferred']; return <li class={`is-${c.trust}`}><I class="h-3.5 w-3.5" aria-hidden="true" /><div><p>{c.t}</p><span>{c.m}</span></div></li>; })}
+      </ul>
+      <p class="ms-sub">Left out</p>
+      <ul class="ms-ctx is-left">
+        {left.map((c) => <li><c.i class="h-3.5 w-3.5" aria-hidden="true" /><div><p>{c.t}</p><span>{c.m}</span></div></li>)}
+      </ul>
+    </section>
+  </div>
+  <DemoControls class="ms-ctl" />
+</figure>
+
+<style>
+  .ms { margin: 0; padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-md); }
+  @media (min-width: 48rem) { .ms { padding: 1.25rem; } }
+  .ms-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; }
+  .ms-proj { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.78rem; color: var(--foreground-secondary); }
+  .ms-dot { width: 0.5rem; height: 0.5rem; border-radius: 999px; background: var(--accent); box-shadow: 0 0 0 4px var(--accent-subtle); }
+  .ms-tag { padding: 0.05rem 0.45rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.7rem; color: var(--foreground-secondary); }
+
+  .ms-steps { margin: 1rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.6rem; }
+  @media (min-width: 48rem) { .ms-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .ms-step { display: grid; align-content: start; gap: 0.35rem; padding: 0.85rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); transition: border-color var(--dur) var(--ease-out), opacity var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out); }
+  .ms-step-b { display: flex; align-items: center; gap: 0.5rem; width: 100%; text-align: left; border-radius: var(--radius-sm); }
+  .ms-step-b:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+  .ms-av { display: inline-grid; place-items: center; flex-shrink: 0; width: 1.6rem; height: 1.6rem; border-radius: 999px; background: var(--surface-elevated); font-size: 0.78rem; font-weight: 640; color: var(--foreground); }
+  .ms-step-k { flex: 1; font-size: 0.82rem; color: var(--foreground-secondary); }
+  .ms-step-k b { font-weight: 600; color: var(--foreground); }
+  .ms-step-i { color: var(--foreground-muted); }
+  .ms-step-t { margin: 0.2rem 0 0; font-size: 0.92rem; font-weight: 600; line-height: 1.35; color: var(--foreground); }
+  .ms-step-d { margin: 0; font-size: 0.82rem; line-height: 1.5; color: var(--foreground-secondary); }
+
+  .ms-body { margin-top: 0.75rem; display: grid; gap: 0.75rem; }
+  @media (min-width: 60rem) { .ms-body { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); } }
+  .ms-panel { padding: 0.9rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); }
+  .ms-h { margin: 0; display: flex; align-items: center; gap: 0.45rem; font-size: 0.88rem; font-weight: 620; color: var(--foreground); }
+  .ms-h :global(svg) { color: var(--accent-text); }
+  .ms-recs { margin: 0.7rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.5rem; }
+  .ms-rec { padding: 0.65rem 0.75rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out), border-color var(--dur); }
+  .ms-rec-top { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+  .ms-kind { font-size: 0.72rem; font-weight: 600; color: var(--foreground-secondary); }
+  .ms-trust { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.05rem 0.4rem; border-radius: var(--radius-sm); font-size: 0.7rem; font-weight: 560; }
+  .is-verified .ms-trust { background: var(--accent-subtle); color: var(--accent-text); }
+  .is-inferred .ms-trust { border: 1px dashed var(--border-strong); color: var(--foreground-secondary); }
+  .is-superseded .ms-trust { background: var(--surface-elevated); color: var(--foreground-muted); }
+  .ms-rec-t { margin: 0.35rem 0 0; font-size: 0.86rem; font-weight: 560; line-height: 1.4; color: var(--foreground); }
+  .ms-rec.is-superseded .ms-rec-t { text-decoration: line-through; text-decoration-color: var(--foreground-muted); color: var(--foreground-secondary); }
+  .ms-rec.is-inferred { border-style: dashed; }
+  .ms-rec-m { margin: 0.4rem 0 0; display: flex; flex-wrap: wrap; gap: 0.25rem 0.8rem; font-family: var(--font-mono); font-size: 0.68rem; color: var(--foreground-secondary); }
+  .ms-rec-m span { display: inline-flex; align-items: center; gap: 0.3rem; min-width: 0; overflow-wrap: anywhere; }
+  .ms-scope { font-family: var(--font-sans, inherit); font-weight: 560; }
+  .ms-scope.is-locked { color: var(--foreground); }
+
+  .ms-agent { transition: opacity 420ms var(--ease-out), border-color var(--dur); }
+  .ms-sub { margin: 0.8rem 0 0; font-size: 0.72rem; font-weight: 600; color: var(--foreground-secondary); }
+  .ms-ctx { margin: 0.4rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.45rem; }
+  .ms-ctx li { display: flex; gap: 0.5rem; align-items: flex-start; }
+  .ms-ctx li > :global(svg) { margin-top: 0.15rem; flex-shrink: 0; color: var(--accent-text); }
+  .ms-ctx li.is-inferred > :global(svg) { color: var(--foreground-secondary); }
+  .ms-ctx.is-left li > :global(svg) { color: var(--foreground-muted); }
+  .ms-ctx p { margin: 0; font-size: 0.82rem; line-height: 1.4; color: var(--foreground); }
+  .ms-ctx.is-left p { color: var(--foreground-secondary); }
+  .ms-ctx span { font-size: 0.7rem; color: var(--foreground-secondary); }
+
+  /* Story state: records and the agent panel join as the story reaches them. */
+  .ms[data-step='0'] [data-from], .ms[data-step='1'] [data-from='2'], .ms[data-step='1'] [data-from='3'], .ms[data-step='2'] [data-from='3'] { opacity: 0.12; transform: translateY(4px); }
+  .ms[data-step='0'] .ms-step, .ms[data-step='1'] .ms-step:not([data-s='1']), .ms[data-step='2'] .ms-step[data-s='3'] { opacity: 0.5; }
+  .ms[data-step='1'] .ms-step[data-s='1'], .ms[data-step='2'] .ms-step[data-s='2'], .ms[data-step='3'] .ms-step[data-s='3'] { border-color: var(--border-interactive); box-shadow: var(--glow-accent); }
+  .ms[data-step='1'] .ms-rec[data-from='1'], .ms[data-step='2'] .ms-rec[data-from='2'], .ms[data-step='3'] .ms-agent { border-color: var(--border-interactive); }
+  :global(.ms-ctl) { margin-top: 0.75rem; }
+  @media (prefers-reduced-motion: reduce) { .ms-step, .ms-rec, .ms-agent { transition: none; } }
+</style>
+
+<script>
+  import { createSequence, type Step } from '@/scripts/sequence';
+  for (const root of document.querySelectorAll<HTMLElement>('[data-mstory]')) {
+    const set = (n: number) => { root.dataset.step = String(n); };
+    const steps: Step[] = [
+      { t: 300, run: () => set(1) },
+      { t: 3600, run: () => set(2) },
+      { t: 6900, run: () => set(3) },
+    ];
+    const seq = createSequence(root, steps, { reset: () => set(0), loopAfter: 6000 });
+    root.querySelectorAll<HTMLButtonElement>('[data-goto]').forEach((b) => b.addEventListener('click', () => {
+      seq.pause();
+      set(Number(b.dataset.goto));
+    }));
+  }
+</script>

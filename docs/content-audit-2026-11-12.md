@@ -154,4 +154,22 @@ Owner decision: two offerings only.
 | No SSO, compliance, encryption or unlimited claims on Pricing | Tested |
 | Structured data offers only Free; FAQ structured data matches the visible FAQ | Tested |
 
-**Open inconsistency for the owner.** The Free plan now lists Architecture Explorer, Time Machine and Change Impact Intelligence, as requested. However, the Product page still marks Living Architecture Intelligence as Planned. One of the two needs to change, which is expected in the separate product-story update ("Prompt 1").
+**Resolved inconsistency.** The Free plan now lists Architecture Explorer, Time Machine and Change Impact Intelligence, as requested. However, the Product page still marks Living Architecture Intelligence as Planned. One of the two needs to change, which is expected in the separate product-story update ("Prompt 1"). Resolved: the owner confirmed Living Architecture Intelligence is implemented, and the Product page now presents it as available.
+
+## Product marketing update, Teams page and Work Anywhere (2026-11-17)
+
+- **Competitive Engineering:** homepage showcase after the workflow, a Product section (`#competitive`, with `#experiments` and `#improvement-lab`), How It Works (`#compare`) and Before & After. Example data only, labelled "not real customer results", including a case where no approach qualifies.
+- **Living Architecture Intelligence:** presented as available on the homepage and Product. The graph is tied to a revision and shows an inferred link; the copy says inferred or runtime-only relationships can be missed.
+- **New capabilities in plain English:** measured experiments, Factory Improvement Lab, mutation challenges (`#high-assurance`), Production-to-Code (`#production`), PR Guardian (`#guardian`) and Workflow Templates (`#templates`).
+- **Homepage narrative:** Describe, Plan and compare, Build, Verify, Deliver, Remember. How It Works now has six stages, ending with `#remember`.
+- **What's next:** a Product section in three themes. It says CLI/MCP and PR Guardian's authorized merge exist today and gives no dates or versions.
+- **Vekrun Teams page (`/teams/`):** Shared Engineering Memory leads, with an interactive three-engineer story, the self-hosted architecture, a shared worker pool, SSO with a revocation example, eight planned capabilities, pricing and a 10-question FAQ. The nav is now Product, How It Works, Teams, Pricing; Before & After moves to the footer. `/cloud/` redirects to `/teams/`.
+- **SSO and RBAC:** included in Teams at $199. Neither is an add-on.
+- **Work Anywhere:** planned for Free (own VPS, headless workers, secure setup, remote previews); Teams adds shared worker pools. Providers are listed as integration targets, the security list makes no guarantee, and Cloudflare Tunnel is not required. Neither plan includes hosting or model bills.
+
+| Check | Result |
+|---|---|
+| Unit tests | 31 passed |
+| Browser tests (desktop and phone, axe in both themes) | 178 passed, 2 skipped by design |
+| Overflow sweep: 12 pages, 2 themes, 5 widths | 0 overflow |
+| Internal links | No broken links |

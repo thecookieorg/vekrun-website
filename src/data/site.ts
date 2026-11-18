@@ -74,8 +74,14 @@ export type Plan = {
   /** Planned plans say so on the card. Free is the product as it exists. */
   planned: boolean;
   status?: string;
+  /** A short line above the features, such as "Everything in Free, plus". */
+  lead?: string;
   features: string[];
+  /** Capabilities on the way to this plan, shown under their own Planned label. */
+  upcoming?: string[];
   cta: { label: string; href: string };
+  /** An optional second link, such as the plan's own page. */
+  more?: { label: string; href: string };
 };
 
 /**
@@ -112,7 +118,7 @@ export const plans: Plan[] = [
       'Multi-model Council',
       'Competitive Engineering',
       'Work Items and Git workflows',
-      'Engineering Memory',
+      'Personal Engineering Memory',
       'Architecture Explorer and Time Machine',
       'Change Impact Intelligence',
       'Proof Packs and engineering verification',
@@ -120,6 +126,11 @@ export const plans: Plan[] = [
       'Live Share',
       'Local and external model connections',
       'CLI and MCP',
+    ],
+    upcoming: [
+      'Work Anywhere: run the Factory on your own VPS',
+      'Secure server setup and headless workers',
+      'Remote engineering previews',
     ],
     cta: { label: 'Request early access', href: '/download/' },
   },
@@ -130,20 +141,24 @@ export const plans: Plan[] = [
     priceNote: `per month, includes ${teamsPricing.included} engineers`,
     priceAlt: `USD. ${usd(teamsPricing.perExtra)} per month for each additional engineer.`,
     audience: 'For engineering teams',
-    summary: 'Shared engineering intelligence, coordination and governance, self-hosted on infrastructure you control.',
+    summary: 'Shared Engineering Memory for the whole team, with SSO, coordination and governance, self-hosted on infrastructure you control.',
     planned: true,
     status: 'Planned',
+    lead: 'Everything in Free, plus:',
     features: [
-      'Shared Engineering Memory and context',
+      'Shared Engineering Memory across engineers and repositories',
+      'SSO and role-based access control',
       'Team-wide coordination and Work Items',
-      'Organization policies, permissions and approvals',
-      'Coordinator and Factory workers on your servers',
-      'Remote execution on your infrastructure',
+      'Organization policies and approvals',
+      'Coordinator and shared worker pools on your servers',
+      'Organization policies for worker access',
+      'Shared Architecture Intelligence',
       'Collaboration across engineers’ installations',
-      'Visibility into delivery and verification',
+      'PR intelligence and engineering insights for delivery and verification',
       'Works with your Git and engineering workflows',
     ],
     cta: { label: 'Register Teams interest', href: teamsInterestMailto },
+    more: { label: 'Explore Vekrun Teams', href: '/teams/' },
   },
 ];
 
@@ -155,7 +170,7 @@ export type NavItem = { label: string; href: string };
 export const primaryNav: NavItem[] = [
   { label: 'Product', href: '/product/' },
   { label: 'How It Works', href: '/how-it-works/' },
-  { label: 'Before & After', href: '/before-and-after/' },
+  { label: 'Teams', href: '/teams/' },
   { label: 'Pricing', href: '/pricing/' },
 ];
 
@@ -174,6 +189,7 @@ export const footerColumns: { title: string; items: NavItem[] }[] = [
     title: 'Vekrun',
     items: [
       ...primaryNav,
+      { label: 'Before & After', href: '/before-and-after/' },
       { label: 'Integrations', href: '/integrations/' },
       { label: 'Get Vekrun', href: '/download/' },
     ],
@@ -193,26 +209,31 @@ export const footerColumns: { title: string; items: NavItem[] }[] = [
 export const productSections: { id: string; label: string }[] = [
   { id: 'models', label: 'Models' },
   { id: 'council', label: 'Council' },
-  { id: 'memory', label: 'Memory' },
+  { id: 'competitive', label: 'Competitive Engineering' },
+  { id: 'memory', label: 'Memory and architecture' },
   { id: 'live-share', label: 'Live Share' },
   { id: 'browser', label: 'Browser' },
   { id: 'proof', label: 'Proof Packs' },
+  { id: 'production', label: 'Production errors' },
   { id: 'delivery', label: 'Delivery' },
+  { id: 'work-anywhere', label: 'Work Anywhere' },
   { id: 'environments', label: 'Environments' },
   { id: 'voice', label: 'Voice' },
   { id: 'apps', label: 'Apps' },
   { id: 'stack', label: 'Stack' },
   { id: 'mobile', label: 'On your phone' },
   { id: 'tools', label: 'Tools' },
+  { id: 'next', label: 'What’s next' },
 ];
 /** Anchors inside Product sections that old URLs may also point at. */
-export const productSubAnchors = ['architecture', 'board'];
+export const productSubAnchors = ['architecture', 'board', 'experiments', 'improvement-lab', 'high-assurance', 'guardian', 'templates'];
 
-/** Sections of How It Works: the five stages, in order. */
+/** Sections of How It Works: the six stages, in order. */
 export const howSections: { id: string; label: string }[] = [
   { id: 'describe', label: 'Describe' },
-  { id: 'council', label: 'Plan' },
+  { id: 'council', label: 'Plan and compare' },
   { id: 'factory', label: 'Build' },
   { id: 'verification', label: 'Verify' },
-  { id: 'git', label: 'Review' },
+  { id: 'git', label: 'Deliver' },
+  { id: 'remember', label: 'Remember' },
 ];
