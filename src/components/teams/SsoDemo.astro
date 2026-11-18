@@ -11,8 +11,13 @@
  */
 import { Check, X, KeyRound, ShieldCheck, ScrollText } from '@lucide/astro';
 import DemoControls from '@/components/mock/DemoControls.astro';
+import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
 
-const idps = ['Microsoft Entra ID', 'Google Workspace', 'Okta'];
+const idps = [
+  { id: 'microsoft-entra-id', name: 'Microsoft Entra ID', mono: 'EN' },
+  { id: 'google-workspace', name: 'Google Workspace', mono: 'GW' },
+  { id: 'okta', name: 'Okta', mono: 'OK' },
+];
 const members = [
   { id: 'alex', name: 'Alex', role: 'Engineer · Checkout', access: [['shop-rails', true], ['Checkout memory', true], ['billing-service', false], ['Billing memory', false]] as [string, boolean][] },
   { id: 'priya', name: 'Priya', role: 'Lead · Checkout, Billing', access: [['shop-rails', true], ['Checkout memory', true], ['billing-service', true], ['Billing memory', true]] as [string, boolean][] },
@@ -27,7 +32,7 @@ const members = [
     <section class="sso-card sso-idp" data-st="1" aria-label="Sign in">
       <h4><KeyRound class="h-4 w-4" aria-hidden="true" />Sign in with your organization</h4>
       <ul class="sso-idps" aria-label="Identity providers">
-        {idps.map((p, i) => <li class:list={[i === 2 && 'is-on']}>{p}</li>)}
+        {idps.map((p, i) => <li class:list={[i === 2 && 'is-on']}><IntegrationLogo id={p.id} name={p.name} monogram={p.mono} size="sm" />{p.name}</li>)}
       </ul>
       <p class="sso-ok"><Check class="h-3.5 w-3.5" aria-hidden="true" />Alex signed in through Okta</p>
       <p class="sso-fine">Vekrun reads who you are and which groups you belong to. Your identity provider stays in charge.</p>
@@ -75,7 +80,7 @@ const members = [
   .sso-idp h4 { margin: 0; display: flex; align-items: center; gap: 0.45rem; font-size: 0.88rem; font-weight: 620; color: var(--foreground); }
   .sso-idp h4 :global(svg) { color: var(--accent-text); }
   .sso-idps { margin: 0.75rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.35rem; }
-  .sso-idps li { padding: 0.45rem 0.65rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.82rem; color: var(--foreground-secondary); }
+  .sso-idps li { display: flex; align-items: center; gap: 0.45rem; white-space: nowrap; padding: 0.35rem 0.5rem 0.35rem 0.35rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.78rem; color: var(--foreground-secondary); }
   .sso-idps li.is-on { border-color: var(--border-interactive); background: var(--accent-subtle); color: var(--foreground); font-weight: 560; }
   .sso-ok { margin: 0.7rem 0 0; display: flex; align-items: center; gap: 0.35rem; font-size: 0.8rem; font-weight: 560; color: var(--accent-text); }
   .sso-fine { margin: 0.5rem 0 0; font-size: 0.76rem; line-height: 1.45; color: var(--foreground-secondary); }
