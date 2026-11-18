@@ -22,6 +22,7 @@ test.describe('every page', () => {
       await expect(main).not.toContainText(statusWords);
       await expect(main, 'no Planned labels').not.toContainText(/\bPlanned\b/);
       // A marketing site: everything is presented as done. No "coming", "soon", "later" or "not available yet".
+      await expect(page.locator('span[title][aria-hidden="true"] > span.font-mono'), 'every brand tile shows its official logo').toHaveCount(0);
       await expect(page.locator('body'), 'no coming-soon copy').not.toContainText(/coming soon|coming later|coming to|not (yet )?available|isn’t available|aren’t available|can’t be bought|no public download|will follow|\byet\b/i);
       await expect(main).not.toContainText(/Vekrun is (free and )?open[- ]source|Apache License|AI-native terminal|Vekrun Personal/i);
       await expect(main, 'no old Cloud or Enterprise plans').not.toContainText(/Vekrun Cloud|Cloud wishlist|Vekrun Enterprise|Enterprise (tier|plan) is|\$99|per developer/i);

@@ -15,11 +15,14 @@ import {
   siElectron, siMysql, siRedis, siApple, siAndroid, siHetzner, siDigitalocean, siVultr, siAkamai, siOkta, siGoogle } from 'simple-icons';
 import awsLogo from '@/assets/brand/aws.svg?raw';
 import entraLogo from '@/assets/brand/microsoft-entra-id.svg?raw';
-import antigravityLogo from '@/assets/brand/antigravity-icon.svg?raw';
+import antigravityUrl from '@/assets/brand/antigravity-icon.svg?url';
+import slackUrl from '@/assets/brand/slack-icon.svg?url';
 import grokOnDark from '@/assets/brand/grok-logomark-light.svg?raw';
 import grokOnLight from '@/assets/brand/grok-logomark-dark.svg?raw';
 import spacexaiOnDark from '@/assets/brand/spacexai-symbol-white.svg?raw';
 import spacexaiOnLight from '@/assets/brand/spacexai-symbol-black.svg?raw';
+import openaiOnDark from '@/assets/brand/openai-blossom-white.svg?raw';
+import openaiOnLight from '@/assets/brand/openai-blossom-black.svg?raw';
 
 interface Props { id: string; name: string; monogram: string; size?: 'sm' | 'md' | 'lg'; class?: string }
 const { id, name, monogram, size = 'md', class: className = '' } = Astro.props;
@@ -41,18 +44,27 @@ const map: Record<string, Icon> = {
   okta: siOkta, 'google-workspace': siGoogle,
 };
 /** Vendor-supplied SVGs, inlined so `currentColor` parts follow the theme. */
-const raw: Record<string, string> = { aws: awsLogo, 'microsoft-entra-id': entraLogo, antigravity: antigravityLogo };
+const raw: Record<string, string> = { aws: awsLogo, 'microsoft-entra-id': entraLogo };
 const vendor = raw[id]?.replace(/<!--[\s\S]*?-->/g, '').trim();
 /**
- * Official marks whose owner forbids any alteration (x.ai brand guidelines):
- * each file is inlined exactly as provided, and the theme picks the white or
- * the black version rather than recolouring one.
+ * Official marks whose owner forbids any alteration (x.ai and OpenAI brand
+ * guidelines): each file is inlined exactly as provided, and the theme picks
+ * the white or the black version rather than recolouring one. Codex carries
+ * the OpenAI Blossom from OpenAI's logo pack, which has no separate Codex mark.
+ * `padded` marks files drawn with wide margins inside their canvas.
  */
-const themed: Record<string, { dark: string; light: string; wide?: boolean }> = {
+const themed: Record<string, { dark: string; light: string; wide?: boolean; padded?: boolean }> = {
   xai: { dark: spacexaiOnDark, light: spacexaiOnLight, wide: true },
   'grok-build': { dark: grokOnDark, light: grokOnLight },
+  codex: { dark: openaiOnDark, light: openaiOnLight, padded: true },
 };
 const pair = themed[id];
+/**
+ * Full-colour official files with their own styles and ids, served unaltered
+ * as images so nothing in them can collide with the page.
+ */
+const files: Record<string, string> = { antigravity: antigravityUrl, slack: slackUrl };
+const file = files[id];
 const icon = map[id];
 const luminance = (hex: string) => {
   const n = parseInt(hex, 16);
@@ -70,9 +82,11 @@ const glyph = size === 'lg' ? 'h-6 w-6' : size === 'sm' ? 'h-3.5 w-3.5' : 'h-5 w
 <span class:list={['inline-flex shrink-0 items-center justify-center rounded-lg border border-border', dims, className]} style={`background:${tint}`} aria-hidden="true" title={name}>
   {pair ? (
     <>
-      <span class:list={['vendor-glyph', 'on-dark', glyph, pair.wide && 'is-wide']} set:html={pair.dark} />
-      <span class:list={['vendor-glyph', 'on-light', glyph, pair.wide && 'is-wide']} set:html={pair.light} />
+      <span class:list={['vendor-glyph', 'on-dark', glyph, pair.wide && 'is-wide', pair.padded && 'is-padded']} set:html={pair.dark} />
+      <span class:list={['vendor-glyph', 'on-light', glyph, pair.wide && 'is-wide', pair.padded && 'is-padded']} set:html={pair.light} />
     </>
+  ) : file ? (
+    <img src={file} alt="" class:list={['vendor-img', glyph]} loading="lazy" decoding="async" />
   ) : vendor ? (
     <span class:list={['vendor-glyph', glyph, id === 'aws' && 'is-wide']} set:html={vendor} />
   ) : icon ? (
@@ -86,6 +100,8 @@ const glyph = size === 'lg' ? 'h-6 w-6' : size === 'sm' ? 'h-3.5 w-3.5' : 'h-5 w
   .logo-glyph { fill: var(--fill); opacity: 0.9; }
   .vendor-glyph { display: inline-flex; align-items: center; justify-content: center; color: var(--text); }
   .vendor-glyph.is-wide { width: 80%; }
+  .vendor-img { object-fit: contain; }
+  .vendor-glyph.is-padded :global(svg) { transform: scale(1.6); }
   .vendor-glyph :global(svg) { width: 100%; height: 100%; }
   .on-light { display: none; }
   :global(:root[data-theme='light']) .on-light { display: inline-flex; }

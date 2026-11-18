@@ -80,6 +80,12 @@ model only as an example, and never imply a partnership or endorsement. xAI and 
 alteration, so the files are inlined exactly as provided and the theme picks
 the white or black version; never recolour or crop them.
 
+Every brand tile shows an official logo; an e2e test fails on any monogram tile.
+Codex uses the OpenAI Blossom from OpenAI's logo pack (openai.com/brand, no
+separate Codex mark), white or black per theme. Slack (slack.com/media-kit) and
+Antigravity CLI (antigravity.google/press) use their full-colour icons, served
+unaltered as images because the files carry their own styles and ids.
+
 ## Product concepts and screenshots
 
 Concept visuals in `src/components/` use demonstration data. They carry no
