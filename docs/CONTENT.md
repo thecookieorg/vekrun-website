@@ -74,8 +74,10 @@ Never add availability badges to integrations. Grok reaches Vekrun three
 ways, kept distinct everywhere: Grok Build (optional coding agent, `grok-build`),
 Grok models directly through the xAI API (model provider, `xai`), and Grok
 models through OpenRouter. Each signs in and bills differently. Name a current
-model only as an example, and never imply a partnership or endorsement. xAI
-and Grok Build use monogram tiles until official marks are confirmed.
+model only as an example, and never imply a partnership or endorsement. xAI and Grok Build use the owner's official marks from the x.ai brand kit
+(`src/assets/brand/spacexai-*`, `grok-logomark-*`). Its terms forbid any
+alteration, so the files are inlined exactly as provided and the theme picks
+the white or black version; never recolour or crop them.
 
 ## Product concepts and screenshots
 

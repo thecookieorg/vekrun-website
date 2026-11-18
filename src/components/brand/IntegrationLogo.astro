@@ -15,6 +15,10 @@ import {
   siElectron, siMysql, siRedis, siApple, siAndroid, siHetzner, siDigitalocean, siVultr, siAkamai, siOkta, siGoogle } from 'simple-icons';
 import awsLogo from '@/assets/brand/aws.svg?raw';
 import entraLogo from '@/assets/brand/microsoft-entra-id.svg?raw';
+import grokOnDark from '@/assets/brand/grok-logomark-light.svg?raw';
+import grokOnLight from '@/assets/brand/grok-logomark-dark.svg?raw';
+import spacexaiOnDark from '@/assets/brand/spacexai-symbol-white.svg?raw';
+import spacexaiOnLight from '@/assets/brand/spacexai-symbol-black.svg?raw';
 
 interface Props { id: string; name: string; monogram: string; size?: 'sm' | 'md' | 'lg'; class?: string }
 const { id, name, monogram, size = 'md', class: className = '' } = Astro.props;
@@ -38,6 +42,16 @@ const map: Record<string, Icon> = {
 /** Vendor-supplied SVGs, inlined so `currentColor` parts follow the theme. */
 const raw: Record<string, string> = { aws: awsLogo, 'microsoft-entra-id': entraLogo };
 const vendor = raw[id]?.replace(/<!--[\s\S]*?-->/g, '').trim();
+/**
+ * Official marks whose owner forbids any alteration (x.ai brand guidelines):
+ * each file is inlined exactly as provided, and the theme picks the white or
+ * the black version rather than recolouring one.
+ */
+const themed: Record<string, { dark: string; light: string; wide?: boolean }> = {
+  xai: { dark: spacexaiOnDark, light: spacexaiOnLight, wide: true },
+  'grok-build': { dark: grokOnDark, light: grokOnLight },
+};
+const pair = themed[id];
 const icon = map[id];
 const luminance = (hex: string) => {
   const n = parseInt(hex, 16);
@@ -53,7 +67,12 @@ const dims = size === 'lg' ? 'h-12 w-12' : size === 'sm' ? 'h-6 w-6' : 'h-10 w-1
 const glyph = size === 'lg' ? 'h-6 w-6' : size === 'sm' ? 'h-3.5 w-3.5' : 'h-5 w-5';
 ---
 <span class:list={['inline-flex shrink-0 items-center justify-center rounded-lg border border-border', dims, className]} style={`background:${tint}`} aria-hidden="true" title={name}>
-  {vendor ? (
+  {pair ? (
+    <>
+      <span class:list={['vendor-glyph', 'on-dark', glyph, pair.wide && 'is-wide']} set:html={pair.dark} />
+      <span class:list={['vendor-glyph', 'on-light', glyph, pair.wide && 'is-wide']} set:html={pair.light} />
+    </>
+  ) : vendor ? (
     <span class:list={['vendor-glyph', glyph, id === 'aws' && 'is-wide']} set:html={vendor} />
   ) : icon ? (
     <svg viewBox="0 0 24 24" class:list={['logo-glyph', glyph]} style={`--fill:${fill};--fill-light:${fillLight}`} role="img"><path d={icon.path} /></svg>
@@ -67,5 +86,8 @@ const glyph = size === 'lg' ? 'h-6 w-6' : size === 'sm' ? 'h-3.5 w-3.5' : 'h-5 w
   .vendor-glyph { display: inline-flex; align-items: center; justify-content: center; color: var(--text); }
   .vendor-glyph.is-wide { width: 80%; }
   .vendor-glyph :global(svg) { width: 100%; height: 100%; }
+  .on-light { display: none; }
+  :global(:root[data-theme='light']) .on-light { display: inline-flex; }
+  :global(:root[data-theme='light']) .on-dark { display: none; }
   :global(:root[data-theme='light']) .logo-glyph { fill: var(--fill-light); opacity: 1; }
 </style>

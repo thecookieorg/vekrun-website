@@ -615,6 +615,11 @@ test.describe('product', () => {
     await expect(native.locator('.tiles')).toContainText('xAI');
     await expect(native.locator('.tiles')).not.toContainText('Grok Build');
     await expect(agents.locator('.tiles')).toContainText('Grok Build');
+    // Official marks, not monograms: one file per theme, exactly as the owner provides them.
+    for (const tile of [native.locator('.tiles li', { hasText: 'xAI' }), agents.locator('.tiles li', { hasText: 'Grok Build' })]) {
+      await expect(tile.locator('.vendor-glyph svg').filter({ visible: true })).toHaveCount(1);
+      await expect(tile.locator('.font-mono')).toHaveCount(0);
+    }
     await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /xAI.*Grok Build/);
   });
 
