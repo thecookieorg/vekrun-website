@@ -910,7 +910,8 @@ test.describe('live share stacks', () => {
     const strip = page.getByLabel('Stacks Live Share previews');
     await expect(strip).toBeVisible();
     const names = strip.locator('ul:not([aria-hidden]) li');
-    for (const t of ['React Native', 'Expo', 'Ruby on Rails', 'Python and Django', 'PHP and Laravel', 'Elixir', 'Android native', 'iOS native', 'Flutter', 'Electron', 'Tauri']) await expect(names.filter({ hasText: t })).toHaveCount(1);
+    await expect(names).toHaveCount(24);
+    for (const t of ['Rails', 'Django', 'FastAPI', 'Flask', 'Laravel', 'Symfony', 'React', 'Next.js', 'Vue', 'Nuxt', 'SvelteKit', 'Angular', 'NestJS', 'Express', 'Node', 'Python', 'Go', 'Flutter', 'Expo', 'React Native', 'Xcode iOS', 'Android Gradle', 'Tauri', 'Electron']) await expect(names.filter({ has: page.getByText(t, { exact: true }) })).toHaveCount(1);
     await expect(strip.locator('ul:not([aria-hidden]) li svg, ul:not([aria-hidden]) li img')).toHaveCount(await names.count());
   });
 });
