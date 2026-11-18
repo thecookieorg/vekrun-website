@@ -12,9 +12,9 @@ const site = 'https://vekrunapp.com';
  *
  * The public documentation portal, the public roadmap and the per-feature
  * pages were retired on 2026-11-01. Their sources are kept in git under the tag
- * archive/docs-and-roadmap-2026-11-01. Benefits and Teams were retired on
- * 2026-11-12, when pricing became Free, Cloud and Enterprise; Benefits now
- * points at Before & After, which was restored as a page.
+ * archive/docs-and-roadmap-2026-11-01. Benefits now points at Before & After,
+ * which was restored as a page. Since 2026-11-17 pricing is Free and Teams:
+ * the old /teams/ and /cloud/ pages both point at the Teams section.
  *
  * The workflow sections (council, factory, verification, inbox, git) moved
  * from Product to How It Works; `product()` sends those anchors there.
@@ -139,8 +139,8 @@ export const redirects = {
   '/features/ai-teams/': product('factory'),
   '/roadmap/': product(),
   // Earlier repositioning.
-  '/cloud/': '/pricing/#cloud-wishlist',
-  '/teams/': '/pricing/',
+  '/cloud/': '/pricing/#teams',
+  '/teams/': '/pricing/#teams',
   '/benefits/': '/before-and-after/',
   '/ai-teams/': product('factory'),
   '/factory/': product('factory'),

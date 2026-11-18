@@ -18,7 +18,7 @@ export const site = {
   trust: ['Local-first', 'Download local AI models', 'Model-independent', 'Works with your stack', 'Free for individuals'],
   licence: {
     model: 'Proprietary',
-    summary: 'Vekrun is proprietary software. Vekrun Free costs nothing for individual developers. Cloud and Enterprise are planned.',
+    summary: 'Vekrun is proprietary software. Vekrun Free costs nothing for individual developers. Vekrun Teams, a self-hosted plan for engineering teams, is planned.',
   },
   /**
    * Release facts. These must stay true: flip `downloadAvailable` only when a
@@ -33,7 +33,7 @@ export const site = {
     generalEmail: 'support@vekrunapp.com' as string | null,
   },
   /**
-   * Early access and the Cloud wishlist go to a real inbox by email: plain
+   * Early access and Teams interest go to a real inbox by email: plain
    * mailto links, no forms and no third-party form service.
    */
   earlyAccess: {
@@ -48,24 +48,22 @@ const mailto = (subject: string, body?: string) =>
 export const earlyAccessMailto = mailto('Vekrun early access');
 
 /**
- * The Cloud wishlist email. Every field is optional except the address the
+ * The Teams interest email. Every field is optional except the address the
  * visitor sends from; replying "unsubscribe" removes them.
  */
-export const cloudWishlistMailto = mailto(
-  'Vekrun Cloud wishlist',
+export const teamsInterestMailto = mailto(
+  'Vekrun Teams interest',
   [
-    'Add me to the Vekrun Cloud wishlist and email me about Vekrun Cloud. I can unsubscribe by replying "unsubscribe".',
+    'I’m interested in Vekrun Teams. Email me about Teams availability. I can unsubscribe by replying "unsubscribe".',
     '',
-    'Intended use (Individual / Team / Enterprise):',
-    'Would $99 per developer per month work for you? (Yes / Maybe / No):',
-    'The Cloud capability I want most:',
+    'Number of engineers:',
+    'Where we would run Teams (our own servers, private cloud, other):',
+    'What we want Teams for most:',
   ].join('\n'),
 );
 
-export const enterpriseMailto = mailto('Vekrun Enterprise interest');
-
 export type Plan = {
-  key: 'free' | 'cloud' | 'enterprise';
+  key: 'free' | 'teams';
   name: string;
   price: string;
   priceNote: string;
@@ -81,75 +79,71 @@ export type Plan = {
 };
 
 /**
- * Three plans. Free is the product. Cloud and Enterprise are planned: Cloud
- * has a proposed price to test demand against, but nothing is on sale and
- * there is no checkout. Custom model connections are in every plan;
- * Enterprise differs by deployment, governance and operational control.
+ * Teams pricing. Flat monthly price for up to `included` engineers, then a
+ * fixed amount per engineer beyond that. No usage fees of any kind: customers
+ * run and pay for their own infrastructure and model usage.
  */
-export const cloudPrice = { monthly: 99, currency: 'USD' } as const;
-const usd = (n: number) => `$${n.toLocaleString('en-US')}`;
+export const teamsPricing = { base: 199, included: 10, perExtra: 10, currency: 'USD' } as const;
 
+/** Monthly Teams price in USD for a team of `engineers` (at least 1). */
+export const teamsMonthly = (engineers: number): number => {
+  const n = Math.max(1, Math.floor(engineers));
+  return teamsPricing.base + Math.max(0, n - teamsPricing.included) * teamsPricing.perExtra;
+};
+
+export const usd = (n: number) => `$${n.toLocaleString('en-US')}`;
+
+/**
+ * Two plans. Free is the individual engineering platform, as it exists today.
+ * Teams adds shared coordination on infrastructure the customer controls; it
+ * is planned, with a fixed price, and there is no checkout.
+ */
 export const plans: Plan[] = [
   {
     key: 'free',
     name: 'Free',
     price: '$0',
     priceNote: 'forever',
-    audience: 'For individual developers',
-    summary: 'The whole engineering workflow on your own machine, with the models you choose.',
+    audience: 'For individual engineers',
+    summary: 'Your own AI engineering team. Free on your machine, with the full local-first engineering experience.',
     planned: false,
     features: [
-      'Local-first engineering workspace',
-      'Vekrun’s native agent, with your own model connections',
-      'Council and Factory',
+      'AI Factory and Coordinator',
+      'Multi-model Council',
+      'Competitive Engineering',
       'Work Items and Git workflows',
       'Engineering Memory',
-      'Proof Packs',
+      'Architecture Explorer and Time Machine',
+      'Change Impact Intelligence',
+      'Proof Packs and engineering verification',
+      'Workflow Templates and PR automation',
       'Live Share',
-      'Bring your own models and local compute',
+      'Local and external model connections',
+      'CLI and MCP',
     ],
     cta: { label: 'Request early access', href: '/download/' },
   },
   {
-    key: 'cloud',
-    name: 'Cloud',
-    price: usd(cloudPrice.monthly),
-    priceNote: 'per developer / month',
-    priceAlt: 'USD, billed monthly. Proposed price, subject to change.',
-    audience: 'For developers and teams who want Vekrun anywhere',
-    summary: 'Hosted workspaces and Factory execution, so work continues when your laptop doesn’t.',
-    planned: true,
-    status: 'Coming soon',
-    features: [
-      'Browser-accessible engineering workspaces',
-      'Continue Anywhere, on any device',
-      'Persistent cloud development environments',
-      'Hosted Factory execution options',
-      'Shared engineering state',
-      'Team collaboration',
-      'Managed infrastructure',
-    ],
-    cta: { label: 'Join the wishlist', href: '/pricing/#cloud-wishlist' },
-  },
-  {
-    key: 'enterprise',
-    name: 'Enterprise',
-    price: 'Custom',
-    priceNote: '',
-    audience: 'For organizations with infrastructure and compliance requirements',
-    summary: 'Vekrun on your infrastructure, under your policies.',
+    key: 'teams',
+    name: 'Teams',
+    price: usd(teamsPricing.base),
+    priceNote: `per month, includes ${teamsPricing.included} engineers`,
+    priceAlt: `USD. ${usd(teamsPricing.perExtra)} per month for each additional engineer.`,
+    audience: 'For engineering teams',
+    summary: 'Shared engineering intelligence, coordination and governance, self-hosted on infrastructure you control.',
     planned: true,
     status: 'Planned',
     features: [
-      'Self-hosted and private deployments',
-      'Organization governance',
-      'SSO and access controls',
-      'Private execution infrastructure',
-      'Private model infrastructure',
-      'Organization-wide engineering intelligence',
-      'Support and deployment options',
+      'Shared Engineering Memory and context',
+      'Team-wide coordination and Work Items',
+      'Organization policies, permissions and approvals',
+      'Coordinator and Factory workers on your servers',
+      'Remote execution on your infrastructure',
+      'Collaboration across engineers’ installations',
+      'Visibility into delivery and verification',
+      'Works with your Git and engineering workflows',
     ],
-    cta: { label: 'Register interest', href: enterpriseMailto },
+    cta: { label: 'Register Teams interest', href: teamsInterestMailto },
   },
 ];
 

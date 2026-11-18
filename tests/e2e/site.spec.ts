@@ -20,11 +20,12 @@ test.describe('every page', () => {
       await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /^https:\/\/vekrunapp\.com\/og\/.+\.png$/);
       const main = page.locator('main');
       await expect(main).not.toContainText(statusWords);
-      await expect(main).not.toContainText(/Vekrun is (free and )?open[- ]source|Apache License|AI-native terminal|Vekrun Teams|\$199|Vekrun Personal/i);
+      await expect(main).not.toContainText(/Vekrun is (free and )?open[- ]source|Apache License|AI-native terminal|Vekrun Personal/i);
+      await expect(main, 'no old Cloud or Enterprise plans').not.toContainText(/Vekrun Cloud|Cloud wishlist|Vekrun Enterprise|Enterprise (tier|plan) is|\$99|per developer/i);
       await expect(main).not.toContainText(/requires? (Claude Code|Codex)|(Claude Code|Codex) (is|are) required/i);
       await expect(page.getByRole('link', { name: purchase })).toHaveCount(0);
       await expect(page.getByRole('button', { name: purchase })).toHaveCount(0);
-      await expect(page.locator('a[href*="/docs/"], a[href*="/roadmap/"], a[href*="/features/"], a[href*="/teams/"], a[href*="/benefits/"]')).toHaveCount(0);
+      await expect(page.locator('a[href*="/docs/"], a[href*="/roadmap/"], a[href*="/features/"], a[href*="/teams/"], a[href*="/cloud/"], a[href*="/benefits/"], a[href*="#cloud-wishlist"]')).toHaveCount(0);
       await noOverflow(page);
     });
   }
@@ -67,7 +68,7 @@ test.describe('homepage', () => {
       'Done means proven, not just claimed.',
       'More than an AI coding agent.',
       'Stop managing AI agents. Start directing engineering.',
-      'Free for individuals. Cloud and Enterprise planned.',
+      'Free for you. Teams on your infrastructure.',
       'Hand Vekrun your next outcome.',
     ]);
     for (const a of await page.locator('#more .hl a').evaluateAll((els) => els.map((e) => e.getAttribute('href')!))) expect(a).toMatch(/^\/product\/#/);
@@ -156,60 +157,105 @@ test.describe('homepage', () => {
 });
 
 test.describe('pricing', () => {
-  test('has Free, Cloud and Enterprise and no Teams pricing', async ({ page }) => {
+  test('has two plans: Free for individuals and Teams, self-hosted and planned', async ({ page }) => {
     await page.goto('/pricing/');
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og\/pricing\.png$/);
-    await expect(page.locator('.plan h3')).toHaveText(['Free', 'Cloud', 'Enterprise']);
-    const [free, cloud, ent] = [page.locator('.plan.is-free'), page.locator('.plan.is-cloud'), page.locator('.plan.is-enterprise')];
-    await expect(free).toContainText('$0');
-    await expect(free).toContainText('forever');
+    await expect(page.locator('.plan h3')).toHaveText(['Free', 'Teams']);
+    const [free, teams] = [page.locator('.plan.is-free'), page.locator('.plan.is-teams')];
+    await expect(free.locator('.plan-price')).toHaveText(/\$0\s*forever/);
+    await expect(free).toContainText('For individual engineers');
+    await expect(free).toContainText('Free on your machine');
+    for (const k of ['Competitive Engineering', 'Change Impact Intelligence', 'CLI and MCP']) await expect(free).toContainText(k);
     await expect(free.getByRole('link', { name: 'Request early access' })).toHaveAttribute('href', '/download/');
-    await expect(cloud).toContainText('Coming soon');
-    await expect(cloud.locator('.plan-price')).toHaveText(/\$99\s*per developer \/ month/);
-    await expect(cloud).toContainText('USD, billed monthly. Proposed price, subject to change.');
-    await expect(page.locator('main')).not.toContainText(/1,188|per year|annual/i);
-    await expect(cloud.getByRole('link', { name: 'Join the wishlist' })).toHaveAttribute('href', '/pricing/#cloud-wishlist');
-    await expect(ent).toContainText('Custom');
-    await expect(ent.getByRole('link', { name: 'Register interest' })).toHaveAttribute('href', /^mailto:support@vekrunapp\.com\?subject=Vekrun%20Enterprise%20interest/);
-    for (const p of [cloud, ent]) await expect(p).toContainText('Planned. Not available yet.');
-    await expect(page.locator('main')).not.toContainText(/\$199|per engineer|calculator|unlimited compute|unlimited usage/i);
-    await expect(page.locator('main')).toContainText('Custom model connections are in every plan, not only Enterprise');
-    await expect(page.locator('main')).toContainText('Every plan uses the models you choose');
-    await expect(page.locator('[data-teams-calc]')).toHaveCount(0);
+    await expect(teams.locator('.plan-price')).toHaveText(/\$199\s*per month, includes 10 engineers/);
+    await expect(teams).toContainText('USD. $10 per month for each additional engineer.');
+    await expect(teams).toContainText('self-hosted');
+    await expect(teams).toContainText('Planned. Not available yet.');
+    await expect(teams.getByRole('link', { name: 'Register Teams interest' })).toHaveAttribute('href', /^mailto:support@vekrunapp\.com\?subject=Vekrun%20Teams%20interest&body=/);
+    await expect(page.locator('main')).toContainText('Vekrun charges no usage fees');
+    await expect(page.locator('main')).not.toContainText(/unlimited|SSO|SOC 2|end-to-end encrypt|compliance certif/i);
   });
 
-  test('only the Cloud card says Coming soon', async ({ page }) => {
-    for (const path of ['/', '/pricing/']) {
-      await page.goto(path);
-      await expect(page.getByText('Coming soon', { exact: true })).toHaveCount(1);
-      await expect(page.locator('.plan.is-cloud')).toContainText('Coming soon');
+  test('the Teams calculator charges $199 up to 10 engineers and $10 for each one after', async ({ page }) => {
+    await page.goto('/pricing/#teams');
+    const calc = page.locator('[data-teams-calc]');
+    const input = calc.getByLabel('Engineers on your team');
+    const total = calc.locator('[data-total]');
+    await expect(input).toHaveValue('10');
+    await expect(total).toHaveText('$199');
+    await calc.getByRole('button', { name: 'One more engineer' }).click();
+    await expect(input).toHaveValue('11');
+    await expect(total).toHaveText('$209');
+    await expect(calc).toContainText('$199 for the first 10 engineers, plus 1 × $10.');
+    for (const [n, price] of [['5', '$199'], ['10', '$199'], ['20', '$299'], ['30', '$399'], ['1', '$199']] as const) {
+      await input.fill(n);
+      await expect(total, `${n} engineers`).toHaveText(price);
     }
+    await calc.getByRole('button', { name: 'One fewer engineer' }).click();
+    await expect(input).toHaveValue('1');
+    await expect(calc.getByRole('list', { name: 'Example monthly prices' }).getByRole('listitem')).toHaveText([/5 engineers\s*\$199/, /10 engineers\s*\$199/, /11 engineers\s*\$209/, /20 engineers\s*\$299/, /30 engineers\s*\$399/]);
   });
 
-  test('the Cloud wishlist is a real email with consent and an unsubscribe path', async ({ page }) => {
+  test('the calculator reads correctly without JavaScript', async ({ browser }) => {
+    const ctx = await browser.newContext({ javaScriptEnabled: false });
+    const page = await ctx.newPage();
     await page.goto('/pricing/');
-    const wl = page.locator('#cloud-wishlist');
-    const href = (await wl.locator('[data-wishlist]').getAttribute('href'))!;
-    expect(href).toMatch(/^mailto:support@vekrunapp\.com\?subject=Vekrun%20Cloud%20wishlist&body=/);
+    await expect(page.locator('[data-teams-calc] [data-total]')).toHaveText('$199');
+    await expect(page.locator('[data-teams-calc]')).toContainText('11 engineers');
+    await ctx.close();
+  });
+
+  test('Teams interest is a real email with consent and an unsubscribe path', async ({ page }) => {
+    await page.goto('/pricing/');
+    const sec = page.locator('#teams');
+    await expect(sec.getByRole('heading', { level: 2 })).toHaveText('Vekrun Teams, on infrastructure you control.');
+    await expect(sec).toContainText('not a Vekrun-hosted compute subscription');
+    const href = (await sec.locator('[data-teams-interest]').getAttribute('href'))!;
+    expect(href).toMatch(/^mailto:support@vekrunapp\.com\?subject=Vekrun%20Teams%20interest&body=/);
     const body = decodeURIComponent(href.split('body=')[1]!);
-    expect(body).toContain('email me about Vekrun Cloud');
-    expect(body).toContain('Individual / Team / Enterprise');
-    expect(body).toContain('Would $99 per developer per month work for you?');
-    await expect(wl).toContainText('reply “unsubscribe” to be removed');
-    await expect(wl.getByRole('link', { name: 'Privacy' })).toHaveAttribute('href', '/privacy/');
+    expect(body).toContain('Email me about Teams availability');
+    expect(body).toContain('Number of engineers:');
+    await expect(sec).toContainText('reply “unsubscribe” to be removed');
+    await expect(sec.getByRole('link', { name: 'Privacy' })).toHaveAttribute('href', '/privacy/');
     await expect(page.locator('form')).toHaveCount(0);
   });
 
-  test('the FAQ opens and matches its structured data', async ({ page }) => {
+  test('compares personal engineering with team coordination', async ({ page }) => {
     await page.goto('/pricing/');
-    const faq = page.locator('details.faq-i').nth(2);
-    await faq.locator('summary').click();
-    await expect(faq).toHaveAttribute('open', '');
-    await expect(faq).toContainText('optional integrations');
-    await expect(page.locator('details.faq-i').filter({ hasText: 'Are cloud compute and AI usage included' })).toHaveCount(1);
+    const table = page.getByRole('table');
+    await expect(table.locator('thead th')).toHaveText(['Compared', 'Free', /Teams\s*Planned/]);
+    await expect(table.locator('tbody tr')).toHaveCount(10);
+    await expect(table.getByRole('row', { name: /Where it runs/ })).toContainText('servers you control');
+    await expect(table.getByRole('row', { name: /Price/ })).toContainText('$199 per month for up to 10 engineers, then $10 each');
+  });
+
+  test('the FAQ answers the agreed questions and matches its structured data', async ({ page }) => {
+    await page.goto('/pricing/');
+    await expect(page.locator('details.faq-i summary')).toHaveText([
+      'Is Vekrun Free really free?', 'What’s included in Teams?', 'Does Teams include 10 engineers?', 'How does pricing change when the team grows?',
+      'Does Teams include cloud infrastructure?', 'Who pays for AI model usage and remote workers?', 'Can Teams run on our own servers?',
+      'Can an individual use Vekrun without Teams?', 'Is Teams available yet?', 'Do we need a separate Enterprise plan?',
+    ]);
+    const grow = page.locator('details.faq-i').nth(3);
+    await grow.locator('summary').click();
+    await expect(grow).toHaveAttribute('open', '');
+    await expect(grow).toContainText('11 engineers is $209, 20 is $299 and 30 is $399');
     const ld = await page.locator('script[type="application/ld+json"]').evaluateAll((els) => els.map((e) => JSON.parse(e.textContent ?? '{}')));
     const faqLd = ld.find((d) => d['@type'] === 'FAQPage');
     expect(faqLd.mainEntity.length).toBe(await page.locator('details.faq-i').count());
+    const app = ld.find((d) => d['@type'] === 'SoftwareApplication');
+    expect(app.offers).toEqual([{ '@type': 'Offer', name: 'Vekrun Free', price: '0', priceCurrency: 'USD' }]);
+    expect(await page.locator('meta[name="description"]').getAttribute('content')).toMatch(/Vekrun Teams is planned and self-hosted: \$199 USD per month for up to 10 engineers, plus \$10 per additional engineer\./);
+  });
+
+  test('the homepage summarizes both plans and links to Teams', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('#pricing .plan h3')).toHaveText(['Free', 'Teams']);
+    await expect(page.locator('#pricing')).toContainText('$199 per month for up to 10 engineers');
+    for (const path of ['/download/', '/product/', '/contact/']) {
+      await page.goto(path);
+      await expect(page.locator('main a[href="/pricing/#teams"]').first(), path).toBeVisible();
+    }
   });
 });
 
@@ -263,11 +309,11 @@ test.describe('conversion paths', () => {
 });
 
 test.describe('live share and privacy', () => {
-  test('privacy says what Live Share relays and how wishlist emails are handled', async ({ page }) => {
+  test('privacy says what Live Share relays and how interest emails are handled', async ({ page }) => {
     await page.goto('/privacy/');
     await expect(page.locator('main')).not.toContainText('passes through no Vekrun server');
     await expect(page.locator('#live-share')).toHaveText('Live Share');
-    for (const t of ['What stays local.', 'What the gateway relays.', 'What the gateway keeps.', 'Cloud wishlist', 'unsubscribe', 'No cookies, analytics']) await expect(page.locator('main')).toContainText(t);
+    for (const t of ['What stays local.', 'What the gateway relays.', 'What the gateway keeps.', 'Teams interest', 'unsubscribe', 'No cookies, analytics', 'not on Vekrun servers']) await expect(page.locator('main')).toContainText(t);
     await page.goto('/security/');
     await expect(page.locator('#live-share')).toHaveText('Live Share goes through our gateway');
   });
@@ -517,8 +563,8 @@ test.describe('retired routes and SEO', () => {
       ['/features/planning/', /\/how-it-works\/#council$/],
       ['/features/insights/', /\/product\/#board$/],
       ['/features/engineering-memory/', /\/product\/#memory$/],
-      ['/cloud/', /\/pricing\/#cloud-wishlist$/],
-      ['/teams/', /\/pricing\/$/],
+      ['/cloud/', /\/pricing\/#teams$/],
+      ['/teams/', /\/pricing\/#teams$/],
       ['/benefits/', /\/before-and-after\/$/],
       ['/open-source/', /\/license\/$/],
     ] as const) {

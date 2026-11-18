@@ -15,10 +15,12 @@ Show the product instead of describing it. Avoid "revolutionize", "seamlessly",
   published, then add the release to the Download page.
 - `site.contact`: set the general and security addresses when they exist; the
   Contact and Security pages render them automatically.
-- `plans`: Free, Cloud and Enterprise. Cloud's price comes from `cloudPrice`
-  (a proposal, not on sale); the yearly figure is derived, never discounted.
-  There is no checkout; purchase controls must not be added before one exists.
-- `cloudWishlistMailto`, `enterpriseMailto`: email paths to the support inbox.
+- `plans`: Free and Teams, nothing else. Teams pricing comes from
+  `teamsPricing` and `teamsMonthly` ($199 per month for up to 10 engineers,
+  $10 per month for each engineer beyond 10). There is no checkout; purchase
+  controls must not be added before one exists. There is no Cloud or
+  Enterprise tier.
+- `teamsInterestMailto`: the Teams interest email to the support inbox.
 - `primaryNav`, `footerColumns`: Product, How It Works, Before & After, Pricing,
   and the footer.
 - `productSections`: the Product page index; old URLs redirect to these ids.
@@ -30,7 +32,7 @@ examples, the homepage highlights and the eight Before & After comparisons.
 
 Describe what people can do, never how Vekrun does it internally. Mark planned
 capabilities as planned where they appear (Living Architecture Intelligence,
-Cloud, Enterprise). Don't claim every task convenes a Council, every review is
+Teams). Don't claim every task convenes a Council, every review is
 independent, fully offline execution, or support for physical devices. See
 `docs/content-audit-2026-11-12.md` for claims still awaiting confirmation.
 

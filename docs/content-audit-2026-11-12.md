@@ -135,3 +135,23 @@ Follow-up to an external review of the merged site.
 - LM Studio is described as connecting models it serves; Vekrun downloads only through its Ollama integration.
 - Owner confirmed that cross-family Council certification is complete. The certification note is replaced by "A second opinion that actually challenges the first", with one anonymised real example: a reviewer found that passing tests didn't properly test the ranking they were meant to prove.
 - Download explains what early access means: a macOS alpha on Apple Silicon and Intel Macs, rough edges, Free, and bring your own models. Batching isn't mentioned because invitations aren't batched.
+
+## Pricing change to Free and Teams (2026-11-17)
+
+Owner decision: two offerings only.
+
+- **Vekrun Free:** $0 forever, for individual engineers.
+- **Vekrun Teams:** planned and self-hosted. $199 USD per month includes up to 10 engineers, plus $10 per month for each engineer beyond 10. There are no usage fees, and customers pay for their own infrastructure and model usage.
+- **Cloud and Enterprise:** removed everywhere: plans, homepage, Pricing, Product, Download, Contact, Privacy, Security, Licence, metadata, the OG image and the content guide.
+- **Redirects:** `/cloud/` and `/teams/` both go to `/pricing/#teams`, with no chains.
+
+| Check | Result |
+|---|---|
+| Pricing math in one place (`teamsMonthly`); calculator mirrors it; FAQ, table and examples computed from it | Yes |
+| 10 engineers $199, 11 engineers $209, 20 $299, 30 $399 | Tested (unit and browser) |
+| No Cloud, Enterprise, $99 or "per developer" text on any page | Tested on every page |
+| Teams marked Planned on the card, comparison and FAQ; no checkout | Yes |
+| No SSO, compliance, encryption or unlimited claims on Pricing | Tested |
+| Structured data offers only Free; FAQ structured data matches the visible FAQ | Tested |
+
+**Open inconsistency for the owner.** The Free plan now lists Architecture Explorer, Time Machine and Change Impact Intelligence, as requested. However, the Product page still marks Living Architecture Intelligence as Planned. One of the two needs to change, which is expected in the separate product-story update ("Prompt 1").

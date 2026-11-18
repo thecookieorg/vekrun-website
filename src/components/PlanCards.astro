@@ -1,9 +1,9 @@
 ---
 /**
- * The three plans side by side: Free (the product as it exists), Cloud
- * (planned, with a proposed price) and Enterprise (planned, custom). Nothing
- * here can be bought: there is no checkout. `compact` shows a short list
- * for the homepage; the Pricing page shows everything.
+ * The two plans side by side: Free (the individual platform, as it exists)
+ * and Teams (planned, self-hosted, fixed price). Nothing here can be bought:
+ * there is no checkout. `compact` shows a short list for the homepage; the
+ * Pricing page shows everything.
  */
 import { Check } from '@lucide/astro';
 import Button from '@/components/Button.astro';
@@ -33,19 +33,19 @@ const { compact = false, class: className = '' } = Astro.props;
 
 <style>
   .plans { display: grid; gap: 1rem; }
-  @media (min-width: 60rem) { .plans { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (min-width: 52rem) { .plans { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .plan { display: flex; flex-direction: column; padding: 1.6rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
   .plan.is-free { border-color: var(--border-interactive); box-shadow: var(--glow-accent); }
   .plan-top { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
   .plan-n { margin: 0; font-size: 1.35rem; font-weight: 620; letter-spacing: -0.02em; color: var(--foreground); }
   .plan-status { padding: 0.2rem 0.5rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.75rem; font-weight: 540; color: var(--foreground-secondary); }
   .plan-k { margin: 0.4rem 0 0; font-size: 0.875rem; color: var(--foreground-secondary); }
-  .plan-price { margin: 1.1rem 0 0; display: flex; align-items: baseline; gap: 0.5rem; min-height: 2.6rem; }
+  .plan-price { margin: 1.1rem 0 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.5rem; min-height: 2.6rem; }
   .plan-price b { font-size: 2.25rem; font-weight: 640; letter-spacing: -0.04em; line-height: 1; color: var(--foreground); }
-  .is-enterprise .plan-price b { font-size: 1.6rem; letter-spacing: -0.03em; }
   .plan-alt { margin: 0.4rem 0 0; font-size: 0.8125rem; color: var(--foreground-secondary); }
   .plan-price span { font-size: 0.95rem; color: var(--foreground-secondary); }
   .plan-p { margin: 0.9rem 0 0; font-size: 0.95rem; line-height: 1.55; color: var(--foreground-secondary); }
+  @media (min-width: 72rem) { .plans:not(.is-compact) .plan-list { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1.25rem; } }
   .plan-list { margin: 1.2rem 0 0; padding: 1.2rem 0 0; border-top: 1px solid var(--border); list-style: none; display: grid; gap: 0.5rem; font-size: 0.92rem; color: var(--foreground); }
   .plan-list li { display: flex; gap: 0.55rem; align-items: flex-start; }
   .plan-list :global(svg) { margin-top: 0.2rem; flex-shrink: 0; color: var(--accent-text); }
