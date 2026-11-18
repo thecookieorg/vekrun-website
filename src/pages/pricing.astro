@@ -1,7 +1,7 @@
 ---
 /**
  * Pricing: two plans. Free is the individual engineering platform as it exists;
- * Teams is self-hosted, has a fixed price (see `teamsPricing`) and can't be bought yet.
+ * Teams is self-hosted and has a fixed price (see `teamsPricing`).
  * There is no checkout. Teams interest is an email to the team
  * (`teamsInterestMailto`), not a form.
  */
@@ -30,12 +30,12 @@ const compare: [string, string, string][] = [
   ['Visibility', 'Your delivery and evidence', 'Delivery and verification across the team'],
   ['Models and compute', 'Yours, billed by your providers', 'Yours, billed by your providers'],
   ['Price', '$0, forever', `${base} per month for up to ${n} engineers, then ${extra} each`],
-  ['Availability', 'Early access', 'Not available to buy yet'],
+  ['How to start', 'Request early access', 'Register Teams interest'],
 ];
 
 const faq: [string, string][] = [
   ['Is Vekrun Free really free?', 'Yes. Free is the full local-first engineering experience for an individual, at $0 forever: the Factory and Coordinator, Council, Competitive Engineering, Work Items, Engineering Memory, Proof Packs, Live Share and more. No trial, no usage limits set by Vekrun and no paid feature gates. You bring your own model accounts and computer.'],
-  ['What’s included in Teams?', 'Everything in Free for every engineer, plus Shared Engineering Memory: the decisions, verified fixes and architecture knowledge your team creates, reusable by every authorized teammate and their agents. Teams also includes SSO and role-based access, team-wide Work Items, organization policies, shared worker pools on your own servers, and visibility into delivery and verification. Teams can’t be bought yet; there’s no checkout. Register your interest and we’ll email you when it’s ready.'],
+  ['What’s included in Teams?', 'Everything in Free for every engineer, plus Shared Engineering Memory: the decisions, verified fixes and architecture knowledge your team creates, reusable by every authorized teammate and their agents. Teams also includes SSO and role-based access, team-wide Work Items, organization policies, shared worker pools on your own servers, and visibility into delivery and verification. Register your interest and we’ll set Teams up with your organization.'],
   ['How does pricing change when the team grows?', `${base} per month covers up to ${n} engineers, so a team of 5 pays the same as a team of ${n}. Each engineer beyond ${n} adds ${extra} per month: ${n + 1} engineers is ${usd(teamsMonthly(n + 1))}, 20 is ${usd(teamsMonthly(20))} and 30 is ${usd(teamsMonthly(30))}. There are no per-agent, per-task, per-pull-request or per-Work-Item fees.`],
   ['Does Teams include cloud infrastructure?', 'No. Teams is self-hosted: the Coordinator and Factory workers run on servers or a cloud account your organization controls, and engineers keep working from their own installations. Vekrun doesn’t host your code or run your workloads.'],
   ['Who pays for AI model usage and remote workers?', 'You do, directly. Model usage is billed by the providers you choose, under your accounts, and remote workers run on servers you rent or own, billed by your hosting provider. Neither plan includes those bills, and Vekrun adds no markup or per-worker fees.'],
@@ -59,7 +59,7 @@ const structuredData = [
   <section class="rule pb-20 pt-14" aria-label="Plans">
     <div class="container-site">
       <PlanCards />
-      <p class="mt-8 max-w-3xl text-[0.92rem] text-text-2">Both plans use the models and servers you choose: OpenRouter, xAI, local models or optional coding agents, under your own accounts. Vekrun charges no usage fees: none per agent, task, pull request or Work Item. External models and your infrastructure are billed by their providers. Teams isn’t available to buy yet.</p>
+      <p class="mt-8 max-w-3xl text-[0.92rem] text-text-2">Both plans use the models and servers you choose: OpenRouter, xAI, local models or optional coding agents, under your own accounts. Vekrun charges no usage fees: none per agent, task, pull request or Work Item. External models and your infrastructure are billed by their providers.</p>
     </div>
   </section>
 
@@ -79,7 +79,7 @@ const structuredData = [
           <li><Server class="h-4 w-4" aria-hidden="true" />Shared worker pools on your own servers</li>
           <li><Scale class="h-4 w-4" aria-hidden="true" />Organization policies, coordination and insights</li>
         </ul>
-        <p class="mt-6 max-w-xl text-[0.92rem] leading-relaxed text-text-2">Teams isn’t available to buy yet. It keeps Vekrun local-first: engineers work from their own installations, with no requirement to route your work through a Vekrun-hosted service.</p>
+        <p class="mt-6 max-w-xl text-[0.92rem] leading-relaxed text-text-2">Teams keeps Vekrun local-first: engineers work from their own installations, with no requirement to route your work through a Vekrun-hosted service.</p>
         <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
           <Button href={teamsInterestMailto} size="lg" data-teams-interest><Mail class="h-4 w-4" aria-hidden="true" />Register Teams interest</Button>
           <a href="/teams/" class="link-more group">Explore Vekrun Teams<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a>

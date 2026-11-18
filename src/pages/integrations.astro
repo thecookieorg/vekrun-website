@@ -14,7 +14,7 @@ import ClosingCta from '@/components/ClosingCta.astro';
 import PageHero from '@/components/PageHero.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
-import { toolGroups, platforms, plannedConnections, hostingProviders } from '@/data/integrations';
+import { toolGroups, platforms, hostingProviders } from '@/data/integrations';
 import { Bot, KeyRound, Route, Search } from '@lucide/astro';
 
 const agentGroups = toolGroups.filter((g) => g.kind !== 'native');
@@ -115,10 +115,9 @@ const facts = [
       <dl class="facts facts-grid facts-lg mt-10">
         {mcp.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
       </dl>
-      <p class="mt-10 text-[0.95rem] text-text-2">Coming soon: {plannedConnections.join('; ')}.</p>
     </div>
   </section>
-  <p class="container-site finder-none" data-finder-none hidden>Nothing matches that yet. If a service has an MCP server, Vekrun’s agents can still use it. <a href="mailto:support@vekrunapp.com?subject=Vekrun%20integration%20request" class="text-accent link-slide">Ask us about an integration</a></p>
+  <p class="container-site finder-none" data-finder-none hidden>Nothing matches that. If a service has an MCP server, Vekrun’s agents can still use it. <a href="mailto:support@vekrunapp.com?subject=Vekrun%20integration%20request" class="text-accent link-slide">Ask us about an integration</a></p>
   </div>
 
   <section class="section-pad rule" aria-labelledby="platforms-title">

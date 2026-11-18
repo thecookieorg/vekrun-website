@@ -11,24 +11,22 @@ import Button from '@/components/Button.astro';
 import { site, earlyAccessMailto } from '@/data/site';
 const email = site.earlyAccess.email;
 const platforms = [
-  ['macOS', 'Alpha, by early access, on Apple Silicon and Intel Macs. No public installer yet'],
-  ['Windows', 'Coming later'],
-  ['Linux', 'Coming later'],
+  ['macOS', 'Apple Silicon and Intel Macs, by early access invitation'],
 ];
 const expect = [
-  ['The current alpha runs on macOS', 'On Macs with Apple Silicon or Intel processors. Windows and Linux will follow.'],
-  ['It’s an alpha', 'Expect rough edges and changes between builds. Your feedback shapes what comes next.'],
+  ['Vekrun runs on macOS', 'On Macs with Apple Silicon or Intel processors.'],
+  ['You’re early', 'Early access members get every new build first, and your feedback shapes the product.'],
   ['It’s free', 'Vekrun Free costs nothing for individual developers, now and after release.'],
   ['You bring the models', 'An OpenRouter or xAI key, or a local model. No coding-agent subscription is required.'],
 ];
 const facts = [
   ['What you need', 'A model connection (an OpenRouter or xAI key, or a local model) and Git access to your projects. Coding-agent CLIs are optional.'],
-  ['System requirements', 'Published with each release, per platform.'],
-  ['Every release', 'A signed installer, a SHA-256 checksum and release notes, listed on this page.'],
+  ['System requirements', 'macOS on Apple Silicon or Intel, with Git and your project’s own toolchain.'],
+  ['Every release', 'A signed installer, a SHA-256 checksum and release notes, sent to early access members.'],
 ];
 ---
 <Base title="Get Vekrun" fullTitle="Get Vekrun: request early access · Vekrun" description={`${site.release.line} Request early access to Vekrun Free, the local-first AI engineering workspace for individual developers.`}>
-  <PageHero eyebrow="Get Vekrun" title="Request early access." lede="Vekrun is in alpha on macOS, for Apple Silicon and Intel Macs. There’s no public download yet: tell us what you build and we’ll be in touch. Vekrun Free costs nothing for individual developers." />
+  <PageHero eyebrow="Get Vekrun" title="Request early access." lede="Vekrun runs on macOS, for Apple Silicon and Intel Macs, and is in early access. Tell us what you build and we’ll send your invitation. Vekrun Free costs nothing for individual developers." />
 
   <section id="early-access" class="rule pb-16 pt-14 scroll-mt-16" aria-label="Request early access">
     <div class="container-site ea-wrap">

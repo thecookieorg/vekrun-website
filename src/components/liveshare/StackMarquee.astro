@@ -1,0 +1,51 @@
+---
+/**
+ * The stacks Live Share previews, as a slow right-to-left strip of official
+ * logos with faded edges. The list is rendered twice so the loop is seamless;
+ * the copy is hidden from assistive technology. Hover pauses it, and with
+ * reduced motion it becomes a static, wrapped list.
+ */
+import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
+const stacks: [string, string][] = [
+  ['rails', 'Rails'], ['django', 'Django'], ['fastapi', 'FastAPI'], ['flask', 'Flask'], ['laravel', 'Laravel'],
+  ['symfony', 'Symfony'], ['react', 'React'], ['nextjs', 'Next.js'], ['vue', 'Vue'], ['nuxt', 'Nuxt'],
+  ['svelte', 'SvelteKit'], ['angular', 'Angular'], ['nestjs', 'NestJS'], ['express', 'Express'], ['nodejs', 'Node'],
+  ['python', 'Python'], ['go', 'Go'], ['flutter', 'Flutter'], ['expo', 'Expo'], ['react-native', 'React Native'],
+  ['xcode', 'Xcode iOS'], ['android', 'Android Gradle'], ['tauri', 'Tauri'], ['electron', 'Electron'],
+];
+---
+<div class="sm" aria-label="Stacks Live Share previews">
+  <div class="sm-track">
+    {[0, 1].map((copy) => (
+      <ul class="sm-set" aria-hidden={copy === 1 ? 'true' : undefined}>
+        {stacks.map(([id, name]) => (
+          <li class="sm-item"><IntegrationLogo id={id} name={name} monogram="" size="sm" /><span>{name}</span></li>
+        ))}
+      </ul>
+    ))}
+  </div>
+</div>
+
+<style>
+  .sm {
+    margin-top: 1.25rem; overflow: hidden;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+  }
+  .sm-track { display: flex; width: max-content; animation: sm-scroll 70s linear infinite; }
+  .sm:hover .sm-track { animation-play-state: paused; }
+  .sm-set { display: flex; gap: 0.6rem; margin: 0; padding: 0 0.6rem 0 0; list-style: none; }
+  .sm-item {
+    display: inline-flex; align-items: center; gap: 0.5rem; white-space: nowrap;
+    padding: 0.35rem 0.8rem 0.35rem 0.4rem; border: 1px solid var(--border); border-radius: 999px;
+    background: var(--surface); font-size: 0.85rem; color: var(--foreground);
+  }
+  .sm-item :global(> span:first-child) { border-radius: 999px; }
+  @keyframes sm-scroll { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) {
+    .sm { -webkit-mask-image: none; mask-image: none; }
+    .sm-track { width: auto; animation: none; }
+    .sm-set { flex-wrap: wrap; padding: 0; }
+    .sm-set[aria-hidden] { display: none; }
+  }
+</style>

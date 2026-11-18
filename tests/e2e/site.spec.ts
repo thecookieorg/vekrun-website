@@ -21,6 +21,9 @@ test.describe('every page', () => {
       const main = page.locator('main');
       await expect(main).not.toContainText(statusWords);
       await expect(main, 'no Planned labels').not.toContainText(/\bPlanned\b/);
+      // A marketing site: everything is presented as done. No "coming", "soon", "later" or "not available yet".
+      await expect(page.locator('span[title][aria-hidden="true"] > span.font-mono'), 'every brand tile shows its official logo').toHaveCount(0);
+      await expect(page.locator('body'), 'no coming-soon copy').not.toContainText(/coming soon|coming later|coming to|not (yet )?available|isn’t available|aren’t available|can’t be bought|no public download|will follow|\byet\b/i);
       await expect(main).not.toContainText(/Vekrun is (free and )?open[- ]source|Apache License|AI-native terminal|Vekrun Personal/i);
       await expect(main, 'no old Cloud or Enterprise plans').not.toContainText(/Vekrun Cloud|Cloud wishlist|Vekrun Enterprise|Enterprise (tier|plan) is|\$99|per developer/i);
       await expect(main).not.toContainText(/requires? (Claude Code|Codex)|(Claude Code|Codex) (is|are) required/i);
@@ -265,7 +268,7 @@ test.describe('product models and history', () => {
 });
 
 test.describe('pricing', () => {
-  test('has two plans: Free for individuals and Teams, self-hosted and not for sale yet', async ({ page }) => {
+  test('has two plans: Free for individuals and Teams, self-hosted, with no checkout', async ({ page }) => {
     await page.goto('/pricing/');
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og\/pricing\.png$/);
     await expect(page.locator('.plan h3')).toHaveText(['Free', 'Teams']);
@@ -278,7 +281,6 @@ test.describe('pricing', () => {
     await expect(teams.locator('.plan-price')).toHaveText(/\$199\s*per month, includes 10 engineers/);
     await expect(teams).toContainText('USD. $10 per month for each additional engineer.');
     await expect(teams).toContainText('self-hosted');
-    await expect(teams).toContainText('Not available yet.');
     await expect(teams.getByRole('link', { name: 'Register Teams interest' })).toHaveAttribute('href', /^mailto:support@vekrunapp\.com\?subject=Vekrun%20Teams%20interest&body=/);
     await expect(page.locator('main')).toContainText('Vekrun charges no usage fees');
     await expect(teams.locator('li').first()).toHaveText(/Shared Engineering Memory/);
@@ -341,7 +343,7 @@ test.describe('pricing', () => {
     await expect(table.locator('tbody tr')).toHaveCount(12);
     await expect(table.locator('tbody tr').nth(1)).toContainText('Personal Engineering Memory');
     await expect(table.getByRole('row', { name: /Remote execution/ })).toContainText('Work Anywhere: run the Factory on your own VPS');
-    await expect(table.getByRole('row', { name: /Availability/ })).toContainText('Not available to buy yet');
+    await expect(table.getByRole('row', { name: /How to start/ })).toContainText('Register Teams interest');
     await expect(table.getByRole('row', { name: /Sign-in and access/ })).toContainText('SSO');
     await expect(table.getByRole('row', { name: /Where it runs/ })).toContainText('servers you control');
     await expect(table.getByRole('row', { name: /Price/ })).toContainText('$199 per month for up to 10 engineers, then $10 each');
@@ -495,7 +497,7 @@ test.describe('competitive engineering', () => {
     const panel = cx.getByRole('tabpanel').filter({ visible: true });
     await expect(panel).toContainText('Make payment retries idempotent');
     await expect(panel).toContainText('Both start from a41c9e2');
-    for (const t of ['Codex', 'Grok Build', 'No double charges', '3 double charges', 'Lock lost on restart', 'No load profile yet', 'Recommended: A']) await expect(panel).toContainText(t);
+    for (const t of ['Codex', 'Grok Build', 'No double charges', '3 double charges', 'Lock lost on restart', 'No load profile', 'Recommended: A']) await expect(panel).toContainText(t);
     for (const st of ['Passed', 'Failed', 'Not checked']) await expect(panel.locator('.sr-only', { hasText: st }).first()).toBeAttached();
     await expect(panel.getByRole('button', { name: 'Choose B' })).toHaveCount(0);
     await panel.getByRole('button', { name: 'Choose A' }).click();
@@ -519,7 +521,7 @@ test.describe('conversion paths', () => {
     const last = page.locator('main > section').last();
     await expect(last.getByRole('link', { name: 'Request early access' })).toHaveAttribute('href', '/download/');
     await expect(last.getByRole('link', { name: 'Compare plans' })).toHaveAttribute('href', '/pricing/');
-    await expect(last).toContainText('there’s no public download yet');
+    await expect(last).toContainText('Early access is by email');
   });
   for (const path of ['/product/', '/how-it-works/', '/before-and-after/', '/integrations/']) {
     test(`${path} ends with early access and pricing`, async ({ page }) => {
@@ -527,7 +529,7 @@ test.describe('conversion paths', () => {
       const next = page.locator('section[aria-labelledby="next-title"]');
       await expect(next.getByRole('link', { name: 'Request early access' })).toHaveAttribute('href', '/download/');
       await expect(next.getByRole('link', { name: 'See pricing' })).toHaveAttribute('href', '/pricing/');
-      await expect(next).toContainText('No public download yet');
+      await expect(next).toContainText('Early access is by email');
     });
   }
 });
@@ -558,7 +560,7 @@ test.describe('live share and privacy', () => {
     const hosting = page.locator('#hosting');
     for (const n of ['Hetzner', 'DigitalOcean', 'Vultr', 'Akamai Linode', 'AWS', 'Any existing server']) await expect(hosting).toContainText(n);
     await expect(hosting).toContainText('not services Vekrun reads from or reports to');
-    await expect(page.locator('#mcp')).toContainText('Coming soon: Asana tools for agents');
+    await expect(page.locator('section[aria-labelledby="g-pm"]')).toContainText('tools your agents can use in Asana');
   });
 });
 
@@ -615,6 +617,11 @@ test.describe('product', () => {
     await expect(native.locator('.tiles')).toContainText('xAI');
     await expect(native.locator('.tiles')).not.toContainText('Grok Build');
     await expect(agents.locator('.tiles')).toContainText('Grok Build');
+    // Official marks, not monograms: one file per theme, exactly as the owner provides them.
+    for (const tile of [native.locator('.tiles li', { hasText: 'xAI' }), agents.locator('.tiles li', { hasText: 'Grok Build' })]) {
+      await expect(tile.locator('.vendor-glyph svg').filter({ visible: true })).toHaveCount(1);
+      await expect(tile.locator('.font-mono')).toHaveCount(0);
+    }
     await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /xAI.*Grok Build/);
   });
 
@@ -683,7 +690,7 @@ test.describe('product', () => {
     await expect(page.locator('#architecture')).toContainText('Understand your software before changing it.');
     for (const k of ['Git Time Machine', 'tied to its revision', 'cites its source', 'inferred ones are marked']) await expect(page.locator('#architecture')).toContainText(k);
     await expect(page.locator('#architecture [data-arch] .ag-revb')).toHaveCount(3);
-    await expect(page.locator('#remember').getByRole('link', { name: 'Vekrun Teams' })).toHaveAttribute('href', '/teams/');
+    await expect(page.locator('#remember').getByRole('link', { name: 'Vekrun Teams' }).first()).toHaveAttribute('href', '/teams/');
     await expect(page.locator('#work-anywhere')).toContainText('included in Vekrun Free');
     await expect(page.locator('#council')).toContainText('Not every task convenes a Council');
     await expect(page.locator('#council')).not.toContainText('still being certified');
@@ -713,16 +720,16 @@ test.describe('product', () => {
 });
 
 test.describe('platforms', () => {
-  test('lists macOS as the alpha platform and Windows and Linux as planned', async ({ page }) => {
+  test('lists macOS as the platform, with no other platforms promised', async ({ page }) => {
     await page.goto('/');
     const ld = (await page.locator('script[type="application/ld+json"]').allTextContents()).join(' ');
     expect(ld).toContain('"operatingSystem":"macOS"');
     expect(ld).not.toMatch(/Windows|Linux/);
     await page.goto('/download/');
-    await expect(page.locator('main')).toContainText('Alpha, by early access');
+    await expect(page.locator('main')).toContainText('Apple Silicon and Intel Macs, by early access invitation');
     await expect(page.getByRole('list', { name: 'What to expect from early access' })).toContainText('Apple Silicon or Intel');
     await expect(page.locator('main')).not.toContainText(/batch|waitlist position|within \d+ days/i);
-    await expect(page.locator('main')).toContainText('Coming later');
+    await expect(page.locator('main')).not.toContainText(/Windows|Linux/);
   });
 });
 
@@ -835,10 +842,10 @@ test.describe('get vekrun', () => {
     await expect(page.locator('form')).toHaveCount(0);
   });
 
-  test('states plainly that there is no download yet and offers no installer', async ({ page }) => {
+  test('offers early access by invitation and links no installer', async ({ page }) => {
     await page.goto('/download/');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Request early access.');
-    await expect(page.getByRole('list', { name: 'Availability by platform' }).getByRole('listitem')).toHaveCount(3);
+    await expect(page.getByRole('list', { name: 'Availability by platform' }).getByRole('listitem')).toHaveCount(1);
     await expect(page.locator('a[href$=".dmg"], a[href$=".exe"], a[href$=".msi"], a[href$=".AppImage"], a[href$=".deb"]')).toHaveCount(0);
     await expect(page.getByRole('link', { name: /build from source/i })).toHaveCount(0);
   });
@@ -894,5 +901,30 @@ test.describe('retired routes and SEO', () => {
     expect(sm).not.toMatch(/\/(docs|roadmap|features|cloud|benefits)\//);
     const robots = await (await page.request.get('/robots.txt')).text();
     expect(robots).toContain('Sitemap: https://vekrunapp.com/sitemap-index.xml');
+  });
+});
+
+test.describe('live share stacks', () => {
+  test('shows the previewable stacks as a strip of official logos under the Live Share copy', async ({ page }) => {
+    await page.goto('/product/');
+    const strip = page.getByLabel('Stacks Live Share previews');
+    await expect(strip).toBeVisible();
+    const names = strip.locator('ul:not([aria-hidden]) li');
+    await expect(names).toHaveCount(24);
+    for (const t of ['Rails', 'Django', 'FastAPI', 'Flask', 'Laravel', 'Symfony', 'React', 'Next.js', 'Vue', 'Nuxt', 'SvelteKit', 'Angular', 'NestJS', 'Express', 'Node', 'Python', 'Go', 'Flutter', 'Expo', 'React Native', 'Xcode iOS', 'Android Gradle', 'Tauri', 'Electron']) await expect(names.filter({ has: page.getByText(t, { exact: true }) })).toHaveCount(1);
+    await expect(strip.locator('ul:not([aria-hidden]) li svg, ul:not([aria-hidden]) li img')).toHaveCount(await names.count());
+  });
+});
+
+test.describe('vekrun to vekrun', () => {
+  test('shows seven Macs working in one shared workspace, each move narrated', async ({ page }) => {
+    await page.goto('/product/#vekrun-to-vekrun');
+    const mesh = page.locator('#vekrun-to-vekrun [data-vmesh]');
+    await expect(page.locator('#vekrun-to-vekrun')).toContainText('Seven engineers. Seven Macs. One workspace.');
+    await expect(mesh.locator('[data-mac]')).toHaveCount(7);
+    await expect(mesh.getByRole('list', { name: 'Workspace activity' }).getByRole('listitem')).toHaveCount(6);
+    await page.getByRole('button', { name: 'Pause or play the demonstration' }).first().waitFor();
+    await expect(mesh.locator('[data-vm-count]')).toHaveText('7', { timeout: 15000 });
+    await expect(mesh.locator('[data-ev="5"]')).toHaveClass(/is-on/, { timeout: 20000 });
   });
 });

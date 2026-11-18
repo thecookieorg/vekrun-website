@@ -36,9 +36,10 @@ examples and the eight Before & After comparisons.
 
 Describe what people can do, never how Vekrun does it internally. Never use
 the word "Planned" or status badges in demos. Present capabilities as
-experience and value; state commercial availability once, briefly, next to the
-relevant call to action ("not available to buy yet"). Work Anywhere is
-included in Vekrun Free today; never describe it as coming.
+experience and value, and present everything as done: never write "coming
+soon", "coming later", "not available yet", "yet" or similar anywhere, including
+for Teams, platforms, downloads and integrations. Calls to action are "Request
+early access" and "Register Teams interest"; an e2e test bans the wording site-wide.
 Living Architecture Intelligence is
 available; show its sources and uncertainty rather than claiming it sees every
 relationship. SSO and RBAC are included in Teams: never present them as an
@@ -74,8 +75,16 @@ Never add availability badges to integrations. Grok reaches Vekrun three
 ways, kept distinct everywhere: Grok Build (optional coding agent, `grok-build`),
 Grok models directly through the xAI API (model provider, `xai`), and Grok
 models through OpenRouter. Each signs in and bills differently. Name a current
-model only as an example, and never imply a partnership or endorsement. xAI
-and Grok Build use monogram tiles until official marks are confirmed.
+model only as an example, and never imply a partnership or endorsement. xAI and Grok Build use the owner's official marks from the x.ai brand kit
+(`src/assets/brand/spacexai-*`, `grok-logomark-*`). Its terms forbid any
+alteration, so the files are inlined exactly as provided and the theme picks
+the white or black version; never recolour or crop them.
+
+Every brand tile shows an official logo; an e2e test fails on any monogram tile.
+Codex uses the OpenAI Blossom from OpenAI's logo pack (openai.com/brand, no
+separate Codex mark), white or black per theme. Slack (slack.com/media-kit) and
+Antigravity CLI (antigravity.google/press) use their full-colour icons, served
+unaltered as images because the files carry their own styles and ids.
 
 ## Product concepts and screenshots
 

@@ -1,0 +1,162 @@
+---
+/**
+ * Vekrun-to-Vekrun: seven engineers, each running Vekrun on their own Mac,
+ * join one shared workspace and work in it at the same time. The Macs join
+ * one by one, then work moves between them: a handover with its context, a
+ * review request, a change split across three machines, an approval. Pulses
+ * travel through the workspace along the spokes; the feed narrates each move.
+ * The markup is the final state; the script replays it. Demonstration data.
+ */
+import DemoControls from '@/components/mock/DemoControls.astro';
+import { Laptop, Users } from '@lucide/astro';
+
+type Mac = { id: string; who: string; init: string; start: string; end: string };
+const macs: Mac[] = [
+  { id: 'ana', who: 'Ana', init: 'AR', start: 'Planning WI-12', end: 'Planning WI-15' },
+  { id: 'marco', who: 'Marco', init: 'MB', start: 'Idle', end: 'Building WI-12' },
+  { id: 'priya', who: 'Priya', init: 'PS', start: 'Writing PR #418', end: 'Merging PR #418' },
+  { id: 'jonas', who: 'Jonas', init: 'JW', start: 'Council: retries', end: 'Reviewed PR #418' },
+  { id: 'lena', who: 'Lena', init: 'LK', start: 'Planning migration', end: 'Migrating, 1 of 3' },
+  { id: 'kenji', who: 'Kenji', init: 'KT', start: 'Idle', end: 'Migrating, 2 of 3' },
+  { id: 'sam', who: 'Sam', init: 'SO', start: 'Fixing flaky test', end: 'Migrating, 3 of 3' },
+];
+// Positions on an ellipse around the workspace, in a 1000 × 640 stage.
+const W = 1000, H = 640, cx = W / 2, cy = H / 2;
+const pts = macs.map((_, i) => {
+  const a = -Math.PI / 2 + (i * 2 * Math.PI) / macs.length;
+  return { x: Math.round(cx + 330 * Math.cos(a)), y: Math.round(cy + 238 * Math.sin(a)) };
+});
+const feed = [
+  { k: 'join', t: 'Seven Vekruns, on seven Macs, joined checkout-v2.' },
+  { k: 'hand', t: 'Ana’s Vekrun handed WI-12 to Marco’s, with its plan, decisions and evidence.' },
+  { k: 'review', t: 'Priya’s Vekrun asked Jonas’s for a review of PR #418.' },
+  { k: 'split', t: 'Lena split the payments migration across three Macs: hers, Kenji’s and Sam’s.' },
+  { k: 'ok', t: 'Jonas’s Vekrun approved PR #418, verified on 9c41a7e.' },
+  { k: 'perm', t: 'Every Vekrun kept its own permissions, models and files throughout.' },
+];
+---
+<figure class="vm" data-vmesh aria-label="Example: seven engineers, each running Vekrun on their own Mac, working in one shared workspace at the same time">
+  <div class="vm-grid">
+    <div class="vm-stage" style={`--w:${W};--h:${H}`}>
+      <svg class="vm-lines" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true">
+        {pts.map((p, i) => <line data-spoke={macs[i]!.id} x1={cx} y1={cy} x2={p.x} y2={p.y} />)}
+        <g data-pulses></g>
+      </svg>
+      <div class="vm-hub">
+        <p class="vm-hub-k"><Users class="h-3.5 w-3.5" aria-hidden="true" />Shared workspace</p>
+        <p class="vm-hub-t">checkout-v2</p>
+        <p class="vm-hub-n"><b data-vm-count>7</b> Vekruns working now</p>
+      </div>
+      <ul class="vm-macs">
+        {macs.map((m, i) => (
+          <li class="vm-mac is-on" data-mac={m.id} style={`--x:${(pts[i]!.x / W) * 100}%;--y:${(pts[i]!.y / H) * 100}%`}>
+            <span class="vm-av" aria-hidden="true">{m.init}</span>
+            <span class="vm-txt">
+              <span class="vm-who"><Laptop class="h-3 w-3" aria-hidden="true" />{m.who}’s Mac</span>
+              <span class="vm-doing" data-start={m.start} data-end={m.end}>{m.end}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <ol class="vm-feed" aria-label="Workspace activity">
+      {feed.map((f, i) => <li class="vm-ev is-on" data-ev={i}>{f.t}</li>)}
+    </ol>
+  </div>
+  <div class="vm-foot"><span class="vm-tag">Example</span><DemoControls class="vm-ctl" /></div>
+</figure>
+
+<style>
+  .vm { margin: 2.5rem 0 0; }
+  .vm-grid { display: grid; gap: 1.25rem; }
+  @media (min-width: 64rem) { .vm-grid { grid-template-columns: minmax(0, 8fr) minmax(0, 3.4fr); align-items: center; } }
+  .vm-stage { position: relative; border: 1px solid var(--border); border-radius: var(--radius-lg); background: radial-gradient(ellipse at center, color-mix(in srgb, var(--accent) 7%, var(--surface)) 0%, var(--surface) 62%); padding: 1rem; }
+  .vm-lines { display: none; }
+  .vm-hub { margin: 0 auto 1rem; max-width: 15rem; padding: 0.9rem 1rem; text-align: center; border: 1px solid var(--border-interactive); border-radius: var(--radius-lg); background: var(--background); box-shadow: var(--glow-accent); }
+  .vm-hub-k { margin: 0; display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.74rem; font-weight: 600; color: var(--accent-text); }
+  .vm-hub-t { margin: 0.25rem 0 0; font-family: var(--font-mono); font-size: 1rem; font-weight: 600; color: var(--foreground); }
+  .vm-hub-n { margin: 0.3rem 0 0; font-size: 0.8rem; color: var(--foreground-secondary); }
+  .vm-hub-n b { color: var(--foreground); font-variant-numeric: tabular-nums; }
+  .vm-macs { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; }
+  .vm-mac { display: flex; align-items: center; gap: 0.55rem; min-width: 0; padding: 0.5rem 0.6rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); opacity: 0.3; transition: opacity 350ms var(--ease-out), border-color 300ms, box-shadow 300ms, transform 350ms var(--ease-out); }
+  .vm-mac.is-on { opacity: 1; }
+  .vm-mac.is-hot { border-color: var(--border-interactive); box-shadow: var(--glow-accent); }
+  .vm-av { display: inline-grid; place-items: center; flex-shrink: 0; width: 1.9rem; height: 1.9rem; border-radius: 999px; background: var(--accent-subtle); color: var(--accent-text); font-size: 0.7rem; font-weight: 650; }
+  .vm-txt { display: flex; flex-direction: column; min-width: 0; }
+  .vm-who { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.8rem; font-weight: 600; color: var(--foreground); white-space: nowrap; }
+  .vm-who :global(svg) { color: var(--foreground-secondary); }
+  .vm-doing { font-family: var(--font-mono); font-size: 0.7rem; line-height: 1.35; color: var(--foreground-secondary); }
+  @media (min-width: 48rem) { .vm-doing { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } }
+  @media (min-width: 48rem) {
+    .vm-stage { aspect-ratio: calc(var(--w) / var(--h)); padding: 0; }
+    .vm-lines { display: block; position: absolute; inset: 0; width: 100%; height: 100%; }
+    .vm-lines line { stroke: var(--border-strong); stroke-width: 1.5; stroke-dasharray: 4 6; vector-effect: non-scaling-stroke; transition: stroke 300ms, opacity 300ms; opacity: 0.25; }
+    .vm-lines line.is-on { opacity: 1; }
+    .vm-lines line.is-hot { stroke: var(--accent); stroke-dasharray: none; }
+    .vm-hub { position: absolute; left: 50%; top: 50%; margin: 0; width: 13.5rem; transform: translate(-50%, -50%); }
+    .vm-macs { display: block; }
+    .vm-mac { position: absolute; left: var(--x); top: var(--y); width: 11.5rem; transform: translate(-50%, -50%); }
+    .vm-mac.is-hot { transform: translate(-50%, -50%) scale(1.04); }
+  }
+  :global(.vm-pulse) { fill: var(--accent); filter: drop-shadow(0 0 6px var(--accent)); }
+  .vm-feed { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.5rem; counter-reset: ev; }
+  .vm-ev { position: relative; padding: 0.6rem 0.75rem 0.6rem 2.1rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); font-size: 0.85rem; line-height: 1.45; color: var(--foreground); opacity: 0; transform: translateY(6px); transition: opacity 400ms var(--ease-out), transform 400ms var(--ease-out); counter-increment: ev; }
+  .vm-ev::before { content: counter(ev); position: absolute; left: 0.7rem; top: 0.62rem; display: inline-grid; place-items: center; width: 1rem; height: 1rem; border-radius: 999px; background: var(--accent-subtle); color: var(--accent-text); font-size: 0.62rem; font-weight: 650; }
+  .vm-ev.is-on { opacity: 1; transform: none; }
+  .vm-foot { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+  .vm-tag { margin-top: 1.25rem; padding: 0.05rem 0.45rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.7rem; color: var(--foreground-secondary); }
+  .vm-foot :global(.vm-ctl) { margin-top: 1rem; }
+  @media (prefers-reduced-motion: reduce) { .vm-mac, .vm-ev, .vm-lines line { transition: none; } }
+</style>
+
+<script>
+  import { createSequence, reducedMotion } from '@/scripts/sequence';
+  const NS = 'http://www.w3.org/2000/svg';
+  for (const root of document.querySelectorAll<HTMLElement>('[data-vmesh]')) {
+    const mac = (id: string) => root.querySelector<HTMLElement>(`[data-mac="${id}"]`)!;
+    const spoke = (id: string) => root.querySelector<SVGLineElement>(`[data-spoke="${id}"]`)!;
+    const doing = (id: string, which: 'start' | 'end') => { const d = mac(id).querySelector<HTMLElement>('.vm-doing')!; d.textContent = d.dataset[which] ?? ''; };
+    const count = root.querySelector<HTMLElement>('[data-vm-count]')!;
+    const layer = root.querySelector<SVGGElement>('[data-pulses]')!;
+    const ids = [...root.querySelectorAll<HTMLElement>('[data-mac]')].map((m) => m.dataset.mac!);
+    const evs = [...root.querySelectorAll<HTMLElement>('[data-ev]')];
+    const timers: number[] = [];
+    const later = (ms: number, fn: () => void) => { timers.push(window.setTimeout(fn, ms)); };
+
+    const join = (i: number) => { mac(ids[i]!).classList.add('is-on'); spoke(ids[i]!).classList.add('is-on'); count.textContent = String(i + 1); };
+    const ev = (i: number) => evs[i]!.classList.add('is-on');
+    const hot = (id: string, ms = 1600) => { const m = mac(id), s = spoke(id); m.classList.add('is-hot'); s.classList.add('is-hot'); later(ms, () => { m.classList.remove('is-hot'); s.classList.remove('is-hot'); }); };
+
+    /** A pulse from one Mac, through the workspace, to another. */
+    const pulse = (from: string, to: string, onArrive?: () => void) => {
+      hot(from, 1500);
+      const a = spoke(from), b = spoke(to);
+      const p = [[+a.getAttribute('x2')!, +a.getAttribute('y2')!], [+a.getAttribute('x1')!, +a.getAttribute('y1')!], [+b.getAttribute('x2')!, +b.getAttribute('y2')!]] as const;
+      if (reducedMotion() || !a.getBoundingClientRect().width) { hot(to); onArrive?.(); return; }
+      const c = document.createElementNS(NS, 'circle'); c.setAttribute('r', '6'); c.setAttribute('class', 'vm-pulse'); layer.appendChild(c);
+      const dur = 1300, t0 = performance.now();
+      const frame = (now: number) => {
+        const k = Math.min(1, (now - t0) / dur), e = k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2;
+        const [s, f, u] = e < 0.5 ? [p[0], p[1], e * 2] : [p[1], p[2], e * 2 - 1];
+        c.setAttribute('cx', String(s[0] + (f[0] - s[0]) * u)); c.setAttribute('cy', String(s[1] + (f[1] - s[1]) * u));
+        if (k < 1 && c.isConnected) requestAnimationFrame(frame); else { c.remove(); if (k >= 1) { hot(to); onArrive?.(); } }
+      };
+      requestAnimationFrame(frame);
+    };
+
+    const reset = () => {
+      timers.splice(0).forEach(clearTimeout); layer.replaceChildren();
+      ids.forEach((id) => { mac(id).classList.remove('is-on', 'is-hot'); spoke(id).classList.remove('is-on', 'is-hot'); doing(id, 'start'); });
+      evs.forEach((e) => e.classList.remove('is-on')); count.textContent = '0';
+    };
+    createSequence(root, [
+      ...ids.map((_, i) => ({ t: 300 + i * 260, run: () => join(i) })),
+      { t: 2300, run: () => ev(0) },
+      { t: 3300, run: () => { ev(1); pulse('ana', 'marco', () => doing('marco', 'end')); doing('ana', 'end'); } },
+      { t: 5400, run: () => { ev(2); pulse('priya', 'jonas', () => doing('jonas', 'start')); } },
+      { t: 7500, run: () => { ev(3); doing('lena', 'end'); pulse('lena', 'kenji', () => doing('kenji', 'end')); later(350, () => pulse('lena', 'sam', () => doing('sam', 'end'))); } },
+      { t: 9800, run: () => { ev(4); pulse('jonas', 'priya', () => doing('priya', 'end')); doing('jonas', 'end'); } },
+      { t: 11800, run: () => { ev(5); ids.forEach((id) => hot(id, 1200)); } },
+    ], { reset, loopAfter: 6000 });
+  }
+</script>

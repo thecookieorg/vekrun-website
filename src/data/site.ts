@@ -18,7 +18,7 @@ export const site = {
   trust: ['Local-first', 'Download local AI models', 'Model-independent', 'Works with your stack', 'Free for individuals'],
   licence: {
     model: 'Proprietary',
-    summary: 'Vekrun is proprietary software. Vekrun Free costs nothing for individual developers. Vekrun Teams, a self-hosted plan for engineering teams, is coming soon.',
+    summary: 'Vekrun is proprietary software. Vekrun Free costs nothing for individual developers. Vekrun Teams is the self-hosted plan for engineering teams.',
   },
   /**
    * Release facts. These must stay true: flip `downloadAvailable` only when a
@@ -26,7 +26,7 @@ export const site = {
    */
   release: {
     downloadAvailable: false,
-    line: 'Vekrun isn’t available to download yet.',
+    line: 'Vekrun is in early access on macOS.',
   },
   contact: {
     securityEmail: null as string | null,
@@ -71,7 +71,7 @@ export type Plan = {
   priceAlt?: string;
   audience: string;
   summary: string;
-  /** Plans that can't be bought yet say so on the card. Free is the product as it exists. */
+  /** Internal flag for plans without a checkout; never shown as a status. */
   planned: boolean;
   status?: string;
   /** A short line above the features, such as "Everything in Free, plus". */
@@ -172,7 +172,7 @@ export const primaryCta: NavItem = { label: 'Get Vekrun', href: '/download/' };
 
 /**
  * The two conversion paths, used wherever a page ends. Early access is a real
- * email to the team (see `site.earlyAccess`); there is no public download yet.
+ * email to the team (see `site.earlyAccess`).
  */
 export const personalCta: NavItem = { label: 'Request early access', href: '/download/' };
 export const pricingCta: NavItem = { label: 'See pricing', href: '/pricing/' };
@@ -210,7 +210,7 @@ export const productSections: { id: string; label: string }[] = [
   { id: 'remember', label: 'Remember and collaborate' },
 ];
 /** Anchors inside Product chapters. Older URLs point at these, so each must stay on the page. */
-export const productSubAnchors = ['competitive', 'experiments', 'improvement-lab', 'council', 'architecture', 'production', 'voice', 'board', 'work-anywhere', 'environments', 'templates', 'tools', 'apps', 'stack', 'mobile', 'proof', 'high-assurance', 'browser', 'delivery', 'guardian', 'memory', 'collaborate', 'live-share', 'models'];
+export const productSubAnchors = ['competitive', 'experiments', 'improvement-lab', 'council', 'architecture', 'production', 'voice', 'board', 'work-anywhere', 'environments', 'templates', 'tools', 'apps', 'stack', 'mobile', 'proof', 'high-assurance', 'browser', 'delivery', 'guardian', 'memory', 'collaborate', 'live-share', 'vekrun-to-vekrun', 'models'];
 
 /** Sections of How It Works: the six stages, in order. */
 export const howSections: { id: string; label: string }[] = [
