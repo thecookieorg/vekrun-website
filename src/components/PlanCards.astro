@@ -23,16 +23,16 @@ const { compact = false, class: className = '' } = Astro.props;
       {p.priceAlt && <p class="plan-alt">{p.priceAlt}</p>}
       <p class="plan-p">{p.summary}</p>
       {p.lead && <p class="plan-lead">{p.lead}</p>}
-      <ul class:list={['plan-list', p.lead && 'has-lead']} aria-label={p.planned ? `${p.name}, planned` : `${p.name} includes`}>
+      <ul class:list={['plan-list', p.lead && 'has-lead']} aria-label={`${p.name} includes`}>
         {(compact ? p.features.slice(0, 4) : p.features).map((i) => <li><Check class="h-4 w-4" aria-hidden="true" />{i}</li>)}
       </ul>
       {!compact && p.upcoming && (
         <div class="plan-up">
-          <p class="plan-up-k"><span>Planned</span>Coming to {p.name}</p>
+          <p class="plan-up-k">Coming to {p.name}</p>
           <ul class="plan-list is-up" aria-label={`Coming to ${p.name}`}>{p.upcoming.map((i) => <li><Clock class="h-4 w-4" aria-hidden="true" />{i}</li>)}</ul>
         </div>
       )}
-      {p.planned && <p class="plan-note">Planned. Not available yet.</p>}
+      {p.planned && <p class="plan-note">Not available yet.</p>}
       <div class="plan-go"><Button href={p.cta.href} variant={p.key === 'free' ? 'primary' : 'secondary'}>{p.cta.label}</Button>{p.more && <a href={p.more.href} class="plan-more link-slide text-accent">{p.more.label}</a>}</div>
     </article>
   ))}

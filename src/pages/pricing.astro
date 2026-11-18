@@ -23,28 +23,28 @@ const compare: [string, string, string][] = [
   ['Engineering Memory', 'Personal Engineering Memory', 'Shared Engineering Memory across engineers, repositories and team workflows'],
   ['Sign-in and access', 'No Vekrun account needed', 'SSO, role-based access and repository permissions'],
   ['Where it runs', 'Your machine', 'Your machines, plus Coordinator and Factory workers on servers you control'],
-  ['Remote execution', 'Work Anywhere: personal remote execution on your own VPS (planned)', 'Shared remote worker pools and team-level management'],
+  ['Remote execution', 'Work Anywhere: personal remote execution on your own VPS (coming soon)', 'Shared remote worker pools and team-level management'],
   ['Work Items', 'Your work, planned and tracked', 'Team-wide coordination of Work Items'],
   ['Policies and approvals', 'Your rules for your repositories', 'Organization policies, permissions and approvals'],
   ['Collaboration', 'Live Share reviews with anyone', 'Engineers’ installations working together'],
   ['Visibility', 'Your delivery and evidence', 'Delivery and verification across the team'],
   ['Models and compute', 'Yours, billed by your providers', 'Yours, billed by your providers'],
   ['Price', '$0, forever', `${base} per month for up to ${n} engineers, then ${extra} each`],
-  ['Availability', 'Early access', 'Planned'],
+  ['Availability', 'Early access', 'Coming soon'],
 ];
 
 const faq: [string, string][] = [
   ['Is Vekrun Free really free?', 'Yes. Free is the full local-first engineering experience for an individual, at $0 forever: the Factory and Coordinator, Council, Competitive Engineering, Work Items, Engineering Memory, Proof Packs, Live Share and more. No trial, no usage limits set by Vekrun and no paid feature gates. You bring your own model accounts and computer.'],
-  ['What’s included in Teams?', 'Everything in Free for every engineer, plus Shared Engineering Memory: the decisions, verified fixes and architecture knowledge your team creates, reusable by every authorized teammate and their agents. Teams also includes SSO and role-based access, team-wide Work Items, organization policies, shared worker pools on your own servers, and visibility into delivery and verification. Teams is planned, so these are what we’re building toward, not features available today.'],
+  ['What’s included in Teams?', 'Everything in Free for every engineer, plus Shared Engineering Memory: the decisions, verified fixes and architecture knowledge your team creates, reusable by every authorized teammate and their agents. Teams also includes SSO and role-based access, team-wide Work Items, organization policies, shared worker pools on your own servers, and visibility into delivery and verification. Teams isn’t available yet, so these are what we’re building toward, not features available today.'],
   [`Does Teams include ${n} engineers?`, `Yes. ${base} per month covers up to ${n} engineers. A team of 5 pays ${usd(teamsMonthly(5))}, and so does a team of ${n}.`],
   ['How does pricing change when the team grows?', `Each engineer beyond ${n} adds ${extra} per month: ${n + 1} engineers is ${usd(teamsMonthly(n + 1))}, 20 is ${usd(teamsMonthly(20))} and 30 is ${usd(teamsMonthly(30))}. There are no per-agent, per-task, per-pull-request or per-Work-Item fees.`],
   ['Does Teams include cloud infrastructure?', 'No. Teams is self-hosted. You run it on servers or a cloud account you already control; Vekrun doesn’t host your code or run your workloads.'],
   ['Who pays for AI model usage and remote workers?', 'You do, directly. Model usage is billed by the providers you choose, under your accounts, and remote workers run on servers you rent or own, billed by your hosting provider. Neither plan includes those bills, and Vekrun adds no markup or per-worker fees.'],
-  ['Do I need Teams to run Vekrun on my own server?', 'No. Work Anywhere, planned for Vekrun Free, lets an individual connect their own VPS and run the Factory there at no Vekrun cost. Teams adds shared worker pools and team-level management.'],
-  ['Is SSO an extra cost?', 'No. SSO and role-based access control are planned as part of Teams at the same price, with no add-on and no Enterprise upsell.'],
+  ['Do I need Teams to run Vekrun on my own server?', 'No. Work Anywhere, coming to Vekrun Free, lets an individual connect their own VPS and run the Factory there at no Vekrun cost. Teams adds shared worker pools and team-level management.'],
+  ['Is SSO an extra cost?', 'No. SSO and role-based access control are part of Teams at the same price, with no add-on and no Enterprise upsell.'],
   ['Can Teams run on our own servers?', 'Yes, that’s the design. The Coordinator and Factory workers run on infrastructure your organization controls, and engineers keep working from their own installations.'],
   ['Can an individual use Vekrun without Teams?', 'Yes. Vekrun Free is complete for individual work and needs no Vekrun-hosted account. Teams is only for organizations that want to coordinate several engineers.'],
-  ['Is Teams available yet?', 'Not yet. Teams is planned and can’t be bought today; there’s no checkout. Register your interest and we’ll email you when it’s ready.'],
+  ['Is Teams available yet?', 'Not yet. Teams can’t be bought today; there’s no checkout. Register your interest and we’ll email you when it’s ready.'],
   ['Do we need a separate Enterprise plan?', `No. There is no Enterprise tier. Teams, including SSO, is self-hosted for organizations of any size, at ${base} per month for up to ${n} engineers and ${extra} per month for each engineer after that.`],
 ];
 
@@ -56,13 +56,13 @@ const structuredData = [
   { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) },
 ];
 ---
-<Base title="Pricing" fullTitle="Pricing: Vekrun Free and Vekrun Teams · Vekrun" description={`Vekrun Free is $0 forever for individual engineers. Vekrun Teams is planned and self-hosted: ${base} USD per month for up to ${n} engineers, plus ${extra} per additional engineer.`} image="/og/pricing.png" structuredData={structuredData}>
+<Base title="Pricing" fullTitle="Pricing: Vekrun Free and Vekrun Teams · Vekrun" description={`Vekrun Free is $0 forever for individual engineers. Vekrun Teams is self-hosted: ${base} USD per month for up to ${n} engineers, plus ${extra} per additional engineer.`} image="/og/pricing.png" structuredData={structuredData}>
   <PageHero eyebrow="Pricing" title="Free for you. Teams on your infrastructure." lede={`Your own AI engineering team, free on your machine. When your team wants to share what it learns, Vekrun Teams adds Shared Engineering Memory and SSO on infrastructure you control, at ${base} per month for up to ${n} engineers.`} />
 
   <section class="rule pb-20 pt-14" aria-label="Plans">
     <div class="container-site">
       <PlanCards />
-      <p class="mt-8 max-w-3xl text-[0.92rem] text-text-2">Both plans use the models and servers you choose: OpenRouter, local models or optional coding agents, under your own accounts. Vekrun charges no usage fees: none per agent, task, pull request or Work Item. External models and your infrastructure are billed by their providers. Items marked Planned, and Teams as a whole, aren’t available yet.</p>
+      <p class="mt-8 max-w-3xl text-[0.92rem] text-text-2">Both plans use the models and servers you choose: OpenRouter, local models or optional coding agents, under your own accounts. Vekrun charges no usage fees: none per agent, task, pull request or Work Item. External models and your infrastructure are billed by their providers. Teams and the items marked coming soon aren’t available yet.</p>
     </div>
   </section>
 
@@ -82,7 +82,7 @@ const structuredData = [
           <li><Server class="h-4 w-4" aria-hidden="true" />Shared worker pools on your own servers</li>
           <li><Scale class="h-4 w-4" aria-hidden="true" />Organization policies, coordination and insights</li>
         </ul>
-        <p class="mt-6 max-w-xl text-[0.92rem] leading-relaxed text-text-2">Teams is planned. It keeps Vekrun local-first: engineers work from their own installations, with no requirement to route your work through a Vekrun-hosted service.</p>
+        <p class="mt-6 max-w-xl text-[0.92rem] leading-relaxed text-text-2">Teams isn’t available yet. It keeps Vekrun local-first: engineers work from their own installations, with no requirement to route your work through a Vekrun-hosted service.</p>
         <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
           <Button href={teamsInterestMailto} size="lg" data-teams-interest><Mail class="h-4 w-4" aria-hidden="true" />Register Teams interest</Button>
           <a href="/teams/" class="link-more group">Explore Vekrun Teams<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a>
@@ -98,7 +98,7 @@ const structuredData = [
       <SectionHeading id="compare-title" title="Personal engineering, or a team working as one." lede="Free is the individual engineering platform. Teams adds Shared Engineering Memory, organizational identity and coordination on infrastructure you control. Neither plan includes hosting or model provider bills." />
       <div class="cmp-wrap mt-10" tabindex="0" role="region" aria-labelledby="compare-title">
         <table class="cmp">
-          <thead><tr><th scope="col"><span class="sr-only">Compared</span></th><th scope="col">Free</th><th scope="col">Teams <span class="cmp-tag">Planned</span></th></tr></thead>
+          <thead><tr><th scope="col"><span class="sr-only">Compared</span></th><th scope="col">Free</th><th scope="col">Teams</th></tr></thead>
           <tbody>
             {compare.map(([k, a, b]) => <tr><th scope="row">{k}</th><td>{a}</td><td>{b}</td></tr>)}
           </tbody>

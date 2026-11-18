@@ -18,7 +18,7 @@ export const site = {
   trust: ['Local-first', 'Download local AI models', 'Model-independent', 'Works with your stack', 'Free for individuals'],
   licence: {
     model: 'Proprietary',
-    summary: 'Vekrun is proprietary software. Vekrun Free costs nothing for individual developers. Vekrun Teams, a self-hosted plan for engineering teams, is planned.',
+    summary: 'Vekrun is proprietary software. Vekrun Free costs nothing for individual developers. Vekrun Teams, a self-hosted plan for engineering teams, is coming soon.',
   },
   /**
    * Release facts. These must stay true: flip `downloadAvailable` only when a
@@ -143,7 +143,6 @@ export const plans: Plan[] = [
     audience: 'For engineering teams',
     summary: 'Shared Engineering Memory for the whole team, with SSO, coordination and governance, self-hosted on infrastructure you control.',
     planned: true,
-    status: 'Planned',
     lead: 'Everything in Free, plus:',
     features: [
       'Shared Engineering Memory across engineers and repositories',

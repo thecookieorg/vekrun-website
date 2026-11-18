@@ -257,7 +257,7 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
           <ul class="ticks mt-0">{memoryNow.map((c) => <li><Check class="h-4 w-4" aria-hidden="true" />{c}</li>)}</ul>
           <div class="min-w-0"><MemoryDemo /></div>
         </div>
-        <p class="tier-line"><Brain class="h-4 w-4" aria-hidden="true" />Vekrun Free includes personal Engineering Memory. Shared Engineering Memory across a team is planned for <a href="/teams/" class="text-accent link-slide">Vekrun Teams</a>.</p>
+        <p class="tier-line"><Brain class="h-4 w-4" aria-hidden="true" />Vekrun Free includes personal Engineering Memory. Shared Engineering Memory across a team is coming to <a href="/teams/" class="text-accent link-slide">Vekrun Teams</a>.</p>
         <div class="mt-10"><Screenshot name="memory-understand" width={1440} height={437} alt="Engineering Memory in the Vekrun desktop app: Understand this project lists what was read (files and languages, manifests and CI, entry points, code map, docs and tests, Git history, interpretations), above Knowledge sources with an Add Obsidian vault button." caption="Engineering Memory in the Vekrun desktop app: project understanding and knowledge sources." /></div>
       </div>
       <div id="architecture" class="sub anchor">
@@ -367,7 +367,7 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
 
   <section id="work-anywhere" class="section-pad rule bg-bg-elevated anchor" aria-labelledby="anywhere-title">
     <div class="container-site">
-      <div class="sub-head"><span class="state">Planned · Free and Teams</span></div>
+      <div class="sub-head"><span class="state">Free and Teams</span></div>
       <SectionHeading id="anywhere-title" class="mt-4" title="Your laptop isn’t your build server. Unless you want it to be." lede="Work Anywhere runs your engineering Factory locally or on infrastructure you control. Use your own VPS for builds, tests and autonomous work, without buying Vekrun-hosted compute. It will be included in Vekrun Free." />
       <div class="mt-12"><WorkAnywhere /></div>
       <div class="split mt-14">
@@ -385,7 +385,7 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
       <h3 class="h3 h3-gap"><Lock class="inline h-5 w-5 align-[-3px] text-accent" aria-hidden="true" /> Private from the first boot.</h3>
       <p class="sub-lede">Vekrun is designed to set up remote workers with public management ports closed, authenticated private connectivity and isolated engineering environments.</p>
       <ul class="sec">{secure.map((c) => <li><h4>{c.t}</h4><p>{c.d}</p></li>)}</ul>
-      <p class="fine">Planned. Security depends on your provider and server too; Vekrun aims for safe defaults, not a guarantee. A Tailscale-style private network and outbound tunnels are the design; neither Tailscale nor any provider integration is finished, and Cloudflare Tunnel won’t be required. Teams adds shared worker pools; see <a href="/teams/#workers" class="text-accent link-slide">Vekrun Teams</a>.</p>
+      <p class="fine">Security depends on your provider and server too; Vekrun aims for safe defaults, not a guarantee. A Tailscale-style private network and outbound tunnels are the design; neither Tailscale nor any provider integration is finished, and Cloudflare Tunnel won’t be required. Teams adds shared worker pools; see <a href="/teams/#workers" class="text-accent link-slide">Vekrun Teams</a>.</p>
     </div>
   </section>
 
@@ -465,8 +465,7 @@ const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : 
 
   <section id="next" class="section-pad rule anchor" aria-labelledby="whats-next-title">
     <div class="container-site">
-      <div class="sub-head"><span class="state">Planned</span></div>
-      <SectionHeading id="whats-next-title" class="mt-4" title="What’s next for Vekrun." lede="What we’re building now, grouped by what it will mean for you. These are planned, not available yet, and we don’t publish dates." />
+      <SectionHeading id="whats-next-title" title="What’s next for Vekrun." lede="What we’re building now, grouped by what it will mean for you. None of it is available yet, and we don’t publish dates." />
       <div class="nx">
         {next.map((g) => (
           <section class="nx-g" aria-label={g.theme}>
