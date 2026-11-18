@@ -942,3 +942,15 @@ test.describe('home stacks', () => {
     expect(stripTop).toBeLessThan(await page.locator('#competitive').evaluate((el) => el.getBoundingClientRect().top + window.scrollY));
   });
 });
+
+test.describe('integrations stacks', () => {
+  test('shows every stack and platform in the moving strip, with no static chips', async ({ page }) => {
+    await page.goto('/integrations/');
+    const strip = page.getByLabel('Stacks Vekrun coordinates');
+    await expect(strip).toBeVisible();
+    const items = strip.locator('ul:not([aria-hidden]) li');
+    await expect(items).toHaveCount(29);
+    for (const t of ['Shopify', 'Supabase', 'Firebase', 'Swift', 'Kotlin', 'Rails', 'Expo', 'Tauri']) await expect(items.filter({ has: page.getByText(t, { exact: true }) })).toHaveCount(1);
+    await expect(page.getByRole('list', { name: 'Platforms' })).toHaveCount(0);
+  });
+});
