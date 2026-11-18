@@ -1,0 +1,91 @@
+---
+/**
+ * Teams' shared worker pool, as an example: authorized engineers send
+ * approved Work Items to servers the organization runs; an engineer outside
+ * the pool's policy can't. Planned capability. The markup is the final state;
+ * the script assigns the jobs one by one.
+ */
+import { Server, Check, X, ShieldCheck } from '@lucide/astro';
+import DemoControls from '@/components/mock/DemoControls.astro';
+const people = [
+  { n: 'Alex', team: 'Checkout', ok: true },
+  { n: 'Priya', team: 'Checkout', ok: true },
+  { n: 'Sam', team: 'Checkout', ok: true },
+  { n: 'Jordan', team: 'Billing', ok: false },
+];
+const workers = [
+  { id: 'worker-1', job: 'Search index · Alex', st: 'Verifying' },
+  { id: 'worker-2', job: 'Partial refunds · Sam', st: 'Building' },
+  { id: 'worker-3', job: 'Webhook fix · Priya', st: 'Verified' },
+];
+---
+<figure class="wp" data-pool data-step="3" aria-label="Example: engineers sharing a pool of workers on the organization's own servers">
+  <div class="wp-head">
+    <span class="wp-k"><ShieldCheck class="h-4 w-4" aria-hidden="true" />Checkout worker pool · your servers</span>
+    <span class="wp-tag">Planned for Teams · Example</span>
+  </div>
+  <div class="wp-grid">
+    <ul class="wp-people" aria-label="Engineers">
+      {people.map((p) => (
+        <li class:list={[p.ok ? 'is-ok' : 'is-no']}>
+          <span class="wp-av" aria-hidden="true">{p.n[0]}</span>
+          <div><p>{p.n}</p><span>{p.team}</span></div>
+          <span class="wp-v">{p.ok ? <><Check class="h-3.5 w-3.5" aria-hidden="true" />Allowed</> : <><X class="h-3.5 w-3.5" aria-hidden="true" />Not in this pool</>}</span>
+        </li>
+      ))}
+    </ul>
+    <div class="wp-policy">
+      <p class="wp-pk">Pool policy</p>
+      <p>Checkout repositories · approved Work Items only · results verified before review</p>
+    </div>
+    <ul class="wp-workers" aria-label="Workers">
+      {workers.map((w, i) => (
+        <li data-w={i}>
+          <span class="wp-ic"><Server class="h-4 w-4" aria-hidden="true" /></span>
+          <div><p>{w.id}</p><span>{w.job}</span></div>
+          <span class:list={['wp-st', w.st === 'Verified' && 'is-done']}>{w.st}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+  <DemoControls />
+</figure>
+
+<style>
+  .wp { margin: 0; padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
+  @media (min-width: 48rem) { .wp { padding: 1.25rem; } }
+  .wp-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; }
+  .wp-k { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.85rem; font-weight: 600; color: var(--foreground); }
+  .wp-k :global(svg) { color: var(--accent-text); }
+  .wp-tag { padding: 0.05rem 0.45rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.7rem; color: var(--foreground-secondary); }
+  .wp-grid { margin-top: 0.9rem; display: grid; gap: 0.65rem; }
+  @media (min-width: 56rem) { .wp-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr) minmax(0, 1.1fr); align-items: center; } }
+  .wp-people, .wp-workers { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.4rem; }
+  .wp-people li, .wp-workers li { display: flex; align-items: center; gap: 0.6rem; padding: 0.55rem 0.7rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); }
+  .wp-people li > div, .wp-workers li > div { flex: 1; min-width: 0; }
+  .wp-people p, .wp-workers p { margin: 0; font-size: 0.84rem; font-weight: 600; color: var(--foreground); }
+  .wp-people li > div span, .wp-workers li > div span { font-size: 0.74rem; color: var(--foreground-secondary); }
+  .wp-av { display: inline-grid; place-items: center; flex-shrink: 0; width: 1.7rem; height: 1.7rem; border-radius: 999px; background: var(--surface-elevated); font-size: 0.78rem; font-weight: 640; color: var(--foreground); }
+  .wp-v { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.72rem; font-weight: 560; color: var(--accent-text); }
+  .wp-people .is-no { border-style: dashed; background: transparent; }
+  .is-no .wp-v { color: var(--foreground-secondary); }
+  .wp-policy { padding: 0.8rem; border: 1.5px dashed var(--border-interactive); border-radius: var(--radius-md); background: var(--accent-subtle); }
+  .wp-pk { margin: 0; font-size: 0.72rem; font-weight: 600; color: var(--accent-text); }
+  .wp-policy p:last-child { margin: 0.3rem 0 0; font-size: 0.8rem; line-height: 1.45; color: var(--foreground); }
+  .wp-ic { display: inline-grid; place-items: center; flex-shrink: 0; width: 1.8rem; height: 1.8rem; border-radius: var(--radius-sm); background: var(--accent-subtle); color: var(--accent-text); }
+  .wp-st { flex-shrink: 0; padding: 0.05rem 0.4rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.7rem; font-weight: 560; color: var(--foreground-secondary); }
+  .wp-st.is-done { border-color: var(--border-interactive); color: var(--accent-text); }
+  .wp-workers li { transition: opacity 450ms var(--ease-out), transform 450ms var(--ease-out), border-color var(--dur); }
+  .wp[data-step='0'] [data-w], .wp[data-step='1'] [data-w='1'], .wp[data-step='1'] [data-w='2'], .wp[data-step='2'] [data-w='2'] { opacity: 0.2; transform: translateX(-6px); }
+  .wp[data-step='1'] [data-w='0'], .wp[data-step='2'] [data-w='1'], .wp[data-step='3'] [data-w='2'] { border-color: var(--border-interactive); }
+  @media (prefers-reduced-motion: reduce) { .wp-workers li { transition: none; } }
+</style>
+
+<script>
+  import { createSequence, type Step } from '@/scripts/sequence';
+  for (const root of document.querySelectorAll<HTMLElement>('[data-pool]')) {
+    const set = (n: number) => { root.dataset.step = String(n); };
+    const steps: Step[] = [1, 2, 3].map((n) => ({ t: 300 + (n - 1) * 1400, run: () => set(n) }));
+    createSequence(root, steps, { reset: () => set(0), loopAfter: 5000 });
+  }
+</script>

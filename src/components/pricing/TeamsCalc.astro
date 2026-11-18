@@ -1,0 +1,71 @@
+---
+/**
+ * Teams price for a chosen number of engineers. The markup holds the result
+ * for 10 engineers, so it reads correctly without JavaScript; the script only
+ * recalculates. The arithmetic mirrors `teamsMonthly` in `src/data/site.ts`.
+ */
+import { Minus, Plus } from '@lucide/astro';
+import { teamsPricing, teamsMonthly, usd } from '@/data/site';
+const start = teamsPricing.included;
+const examples = [5, 10, 11, 20, 30];
+---
+<div class="tc" data-teams-calc data-base={teamsPricing.base} data-included={teamsPricing.included} data-extra={teamsPricing.perExtra}>
+  <div class="tc-in">
+    <label for="tc-n" class="tc-l">Engineers on your team</label>
+    <div class="tc-step">
+      <button type="button" class="tc-b" data-step="-1" aria-label="One fewer engineer"><Minus class="h-4 w-4" aria-hidden="true" /></button>
+      <input id="tc-n" type="number" inputmode="numeric" min="1" max="999" step="1" value={start} data-n />
+      <button type="button" class="tc-b" data-step="1" aria-label="One more engineer"><Plus class="h-4 w-4" aria-hidden="true" /></button>
+    </div>
+  </div>
+  <div class="tc-out" aria-live="polite">
+    <p class="tc-price"><b data-total>{usd(teamsMonthly(start))}</b><span>USD per month</span></p>
+    <p class="tc-why" data-why>Includes up to {teamsPricing.included} engineers.</p>
+  </div>
+  <ul class="tc-ex" aria-label="Example monthly prices">
+    {examples.map((n) => <li><span>{n} engineers</span><b>{usd(teamsMonthly(n))}</b></li>)}
+  </ul>
+</div>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>('[data-teams-calc]')) {
+    const base = Number(root.dataset.base), included = Number(root.dataset.included), extra = Number(root.dataset.extra);
+    const input = root.querySelector<HTMLInputElement>('[data-n]')!;
+    const total = root.querySelector<HTMLElement>('[data-total]')!;
+    const why = root.querySelector<HTMLElement>('[data-why]')!;
+    const fmt = (n: number) => `$${n.toLocaleString('en-US')}`;
+    const clamp = (n: number) => Math.min(999, Math.max(1, Math.floor(Number.isFinite(n) ? n : included)));
+    const render = () => {
+      const n = clamp(input.valueAsNumber);
+      const over = Math.max(0, n - included);
+      total.textContent = fmt(base + over * extra);
+      why.textContent = over
+        ? `${fmt(base)} for the first ${included} engineers, plus ${over} × ${fmt(extra)}.`
+        : `Includes up to ${included} engineers.`;
+    };
+    input.addEventListener('input', render);
+    input.addEventListener('change', () => { input.value = String(clamp(input.valueAsNumber)); render(); });
+    for (const b of root.querySelectorAll<HTMLButtonElement>('[data-step]')) {
+      b.addEventListener('click', () => { input.value = String(clamp(input.valueAsNumber + Number(b.dataset.step))); render(); });
+    }
+  }
+</script>
+
+<style>
+  .tc { display: grid; gap: 1.25rem; padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
+  @media (min-width: 40rem) { .tc { grid-template-columns: auto minmax(0, 1fr); align-items: end; gap: 1.25rem 2rem; } }
+  .tc-l { display: block; font-size: 0.875rem; font-weight: 560; color: var(--foreground-secondary); }
+  .tc-step { margin-top: 0.6rem; display: inline-flex; align-items: center; border: 1px solid var(--border-strong); border-radius: var(--radius-md); background: var(--background); }
+  .tc-b { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; color: var(--foreground); border-radius: var(--radius-md); transition: background var(--dur-fast) var(--ease-out); }
+  .tc-b:hover { background: var(--surface-hover); }
+  .tc-b:focus-visible, .tc-step input:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+  .tc-step input { width: 4.5rem; height: 2.75rem; border: 0; border-inline: 1px solid var(--border); background: transparent; text-align: center; font-size: 1.1rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--foreground); -moz-appearance: textfield; appearance: textfield; }
+  .tc-step input::-webkit-inner-spin-button, .tc-step input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  .tc-price { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.5rem; }
+  .tc-price b { font-size: 2.25rem; font-weight: 640; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; color: var(--foreground); }
+  .tc-price span { font-size: 0.95rem; color: var(--foreground-secondary); }
+  .tc-why { margin: 0.45rem 0 0; font-size: 0.9rem; color: var(--foreground-secondary); }
+  .tc-ex { grid-column: 1 / -1; margin: 0; padding: 1rem 0 0; border-top: 1px solid var(--border); list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr)); gap: 0.6rem; }
+  .tc-ex li { display: grid; gap: 0.1rem; font-size: 0.85rem; color: var(--foreground-secondary); }
+  .tc-ex b { font-size: 1rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--foreground); }
+</style>

@@ -15,17 +15,18 @@ import ProofPack from '@/components/factory/ProofPack.astro';
 import StackMarquee from '@/components/home/StackMarquee.astro';
 import HowFlow from '@/components/home/HowFlow.astro';
 import ModelChoice from '@/components/home/ModelChoice.astro';
-import MemoryDemo from '@/components/home/MemoryDemo.astro';
+import ArchGraph from '@/components/memory/ArchGraph.astro';
+import CompeteDemo from '@/components/compete/CompeteDemo.astro';
 import LiveShareDemo from '@/components/home/LiveShareDemo.astro';
 import PlanCards from '@/components/PlanCards.astro';
 import CompareRows from '@/components/compare/CompareRows.astro';
 import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
-import { site, personalCta } from '@/data/site';
+import { site, personalCta, teamsInterestMailto } from '@/data/site';
 import { toolById } from '@/data/integrations';
 import { highlights } from '@/data/capabilities';
-import { ArrowRight, Check, Download, Globe, Monitor, Users, MousePointerClick, GitPullRequest, Wrench, Mic, Smartphone } from '@lucide/astro';
+import { ArrowRight, Check, Download, Globe, Monitor, Gauge, ShieldAlert, ShieldCheck, Workflow, MousePointerClick, Server } from '@lucide/astro';
 
-const hlIcons = { council: Users, browser: MousePointerClick, delivery: GitPullRequest, environments: Wrench, voice: Mic, apps: Smartphone } as const;
+const hlIcons = { experiments: Gauge, production: ShieldAlert, guardian: ShieldCheck, templates: Workflow, live: MousePointerClick, anywhere: Server } as const;
 const logo = (id: string) => toolById(id) ?? { id, name: id === 'ios' ? 'iOS' : id === 'android' ? 'Android' : id, mono: id.slice(0, 2) };
 const shareTargets = [
   { id: 'web', name: 'Web' }, { id: 'ios', name: 'iOS' }, { id: 'android', name: 'Android' },
@@ -34,10 +35,10 @@ const shareTargets = [
 
 const showcases = [
   {
-    id: 'memory', title: 'Software that understands your software.',
-    lede: 'Vekrun builds an evolving understanding of your project, connecting decisions, changes, requirements and evidence, so you work with context instead of starting over every session. Ask a question and the answer comes with its sources.',
-    points: ['Your repository’s structure and conventions', 'Decisions with their reasoning and dissent', 'Work Items linked to their verification evidence', 'Your docs and Obsidian vaults, read-only'],
-    href: '/product/#memory', link: 'Engineering Memory, and what’s next',
+    id: 'architecture', title: 'Understand your codebase, not just its files.',
+    lede: 'Living Architecture Intelligence maps how your system fits together: what depends on what, how the architecture evolved, and what a proposed change might affect. It’s part of Engineering Memory, so decisions and evidence stay connected to the code.',
+    points: ['Architecture Explorer for components and dependencies', 'Git Time Machine to see how it evolved', 'Change Impact Intelligence before you commit', 'Every connection cites its source, and inferred ones say so'],
+    href: '/product/#architecture', link: 'Explore Living Architecture Intelligence',
   },
   {
     id: 'live-share', title: 'Let anyone experience what you’re building.',
@@ -47,8 +48,8 @@ const showcases = [
   },
   {
     id: 'proof', title: 'Done means proven, not just claimed.',
-    lede: 'Every result arrives as a pull request with a Proof Pack: the tests that ran, browser checks, what failed and was fixed, and what wasn’t checked. All tied to the exact revision, inside your Git rules.',
-    points: ['Tests and browser runs in isolated environments', 'Evidence pinned to the revision it was taken on', 'Unverified criteria stay marked as unverified', 'Merges follow your branch protection and approvals'],
+    lede: 'The Factory implements, tests, repairs and shows exactly what it verified. Every result arrives as a pull request with a Proof Pack: the tests that ran, browser checks, what failed and was fixed, and what wasn’t checked.',
+    points: ['Tests and browser runs in isolated environments', 'Optional mutation challenges test your tests', 'Unverified criteria stay marked as unverified', 'PR Guardian handles CI failures and requested changes, within your rules'],
     href: '/how-it-works/#verification', link: 'See how verification works',
   },
 ];
@@ -82,13 +83,38 @@ const structuredData = [
 
   <section class="section-pad rule bg-bg-elevated" aria-labelledby="how-title">
     <div class="container-site">
-      <SectionHeading id="how-title" title="One engineering workflow, from request to pull request." lede="Council, Factory, Work Items, Git and Proof Packs work as one system. You describe the outcome and review the result." />
+      <SectionHeading id="how-title" title="One engineering workflow, from idea to verified software." lede="Describe the outcome. Vekrun plans and compares approaches, builds, verifies, delivers and remembers. You make the decisions that matter." />
       <div class="mt-12"><HowFlow /></div>
       <p class="mt-10"><a href="/how-it-works/" class="link-more group">See every step<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
     </div>
   </section>
 
-  <section id="models" class="section-pad rule scroll-mt-16" aria-labelledby="models-title">
+  <section id="competitive" class="section-pad rule scroll-mt-16" aria-labelledby="competitive-title">
+    <div class="container-site">
+      <SectionHeading id="competitive-title" title="Don’t guess which approach is better. Build both. Prove it." lede="Most AI coding tools give you one implementation. Vekrun can build competing approaches from the same starting point, test each against the same requirements, compare the evidence and help you choose. If none of them qualifies, it tells you." />
+      <div class="mt-12"><CompeteDemo /></div>
+      <p class="mt-8"><a href="/product/#competitive" class="link-more group">How Competitive Engineering works<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
+    </div>
+  </section>
+
+  {showcases.filter((s) => s.id !== 'live-share').map((s, i) => (
+    <section id={s.id} class:list={['section-pad rule scroll-mt-16', i % 2 === 0 && 'bg-bg-elevated']} aria-labelledby={`${s.id}-title`}>
+      <div class="container-site show">
+        <div class="show-copy">
+          <h2 id={`${s.id}-title`} class="heading-2 text-text">{s.title}</h2>
+          <p class="lede mt-4">{s.lede}</p>
+          <ul class="show-pts">{s.points.map((p) => <li><Check class="h-4 w-4" aria-hidden="true" />{p}</li>)}</ul>
+          <p class="mt-8"><a href={s.href} class="link-more group">{s.link}<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
+        </div>
+        <div class="min-w-0">
+          {s.id === 'architecture' && <ArchGraph />}
+          {s.id === 'proof' && <ProofPack />}
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <section id="models" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="models-title">
     <div class="container-site">
       <SectionHeading id="models-title" title="Your AI. Your hardware. Your choice." lede="Connect OpenRouter, or discover and download compatible local models through Vekrun. Run AI on your own hardware, with no paid cloud model subscription needed for supported workflows. Claude Code, Codex and Antigravity are optional." />
       <p class="callout mt-8"><Check class="h-4 w-4" aria-hidden="true" />You don’t need Claude Code, Codex or any other coding-agent subscription to use Vekrun. Local models can stand in for a paid AI API in supported workflows.</p>
@@ -97,8 +123,8 @@ const structuredData = [
     </div>
   </section>
 
-  {showcases.map((s, i) => (
-    <section id={s.id} class:list={['section-pad rule scroll-mt-16', i % 2 === 0 && 'bg-bg-elevated']} aria-labelledby={`${s.id}-title`}>
+  {showcases.filter((s) => s.id === 'live-share').map((s) => (
+    <section id={s.id} class="section-pad rule scroll-mt-16" aria-labelledby={`${s.id}-title`}>
       <div class="container-site show">
         <div class="show-copy">
           <h2 id={`${s.id}-title`} class="heading-2 text-text">{s.title}</h2>
@@ -109,27 +135,43 @@ const structuredData = [
               {shareTargets.map((t) => <li>{t.id === 'web' ? <Globe class="h-4 w-4" aria-hidden="true" /> : t.id === 'desktop' ? <Monitor class="h-4 w-4" aria-hidden="true" /> : <IntegrationLogo id={t.id} name={t.name} monogram={t.name.slice(0, 2)} size="sm" />}{t.name}</li>)}
             </ul>
           )}
-          {s.id === 'memory' && <p class="next"><span class="next-k">Planned</span>Living Architecture Intelligence: a map of how your system fits together and what a change will touch.</p>}
           <p class="mt-8"><a href={s.href} class="link-more group">{s.link}<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
         </div>
         <div class="min-w-0">
-          {s.id === 'memory' && <MemoryDemo />}
-          {s.id === 'live-share' && <LiveShareDemo />}
-          {s.id === 'proof' && <ProofPack />}
+          <LiveShareDemo />
         </div>
       </div>
     </section>
   ))}
 
-  <section id="more" class="section-pad rule scroll-mt-16" aria-labelledby="more-title">
+  <section id="more" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="more-title">
     <div class="container-site">
       <SectionHeading id="more-title" title="More than an AI coding agent." lede="A whole engineering team’s worth of capabilities, working together." />
       <ul class="hl">
         {highlights.map((h) => { const I = hlIcons[h.id as keyof typeof hlIcons]; return (
-          <li><a href={`/product/#${h.id}`}><span class="hl-ic"><I class="h-4 w-4" aria-hidden="true" /></span><h3>{h.title}</h3><p>{h.line}</p></a></li>
+          <li><a href={h.href}><span class="hl-ic"><I class="h-4 w-4" aria-hidden="true" /></span><h3>{h.title}</h3><p>{h.line}</p></a></li>
         ); })}
       </ul>
       <p class="mt-10"><a href="/product/" class="link-more group">Explore every capability<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
+    </div>
+  </section>
+
+  <section id="team-memory" class="section-pad rule scroll-mt-16" aria-labelledby="tm-title">
+    <div class="container-site show">
+      <div class="show-copy">
+        <p class="tm-k">Vekrun Teams · Planned</p>
+        <h2 id="tm-title" class="heading-2 text-text mt-3">Stop losing engineering knowledge between developers and AI sessions.</h2>
+        <p class="lede mt-4">Your team shares a codebase. With Vekrun Teams it can share an engineering brain: decisions, verified fixes and architecture discoveries, reusable by every authorized teammate and their agents, on infrastructure you control.</p>
+        <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <a href="/teams/" class="link-more group">Explore Vekrun Teams<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a>
+          <a href={teamsInterestMailto} class="text-accent link-slide text-[0.95rem]">Register Teams interest</a>
+        </div>
+      </div>
+      <ul class="tm-recs" aria-label="Example shared knowledge">
+        <li><span class="tm-who">A</span><div><p>Why payments retry inside CheckoutService</p><span><b class="is-v">Verified</b> Decision · a41c9e2 · PR #412</span></div></li>
+        <li><span class="tm-who">P</span><div><p>Fix for duplicate charges on repeated webhooks</p><span><b class="is-v">Verified</b> Proof Pack · 7d0b3f1</span></div></li>
+        <li><span class="tm-who">S</span><div><p>Sam’s agent starts “partial refunds” with both</p><span><b class="is-i">Context</b> Shared by permission · Checkout team</span></div></li>
+      </ul>
     </div>
   </section>
 
@@ -143,9 +185,9 @@ const structuredData = [
 
   <section id="pricing" class="section-pad rule scroll-mt-16" aria-labelledby="plans-title">
     <div class="container-site">
-      <SectionHeading id="plans-title" title="Free for individuals. Cloud and Enterprise planned." lede="The full engineering workflow is free on your own machine. Cloud is planned at a proposed $99 per developer per month; Enterprise will be priced to fit." />
+      <SectionHeading id="plans-title" title="Free for you. Teams on your infrastructure." lede="Your own AI engineering team, free on your machine. Vekrun Teams, planned and self-hosted, adds Shared Engineering Memory and SSO for $199 per month for up to 10 engineers, plus $10 for each engineer after that." />
       <div class="mt-12"><PlanCards compact /></div>
-      <p class="mt-10"><a href="/pricing/" class="link-more group">Compare plans<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
+      <div class="mt-10 flex flex-wrap gap-x-8 gap-y-3"><a href="/pricing/" class="link-more group">Compare plans<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a><a href="/teams/" class="link-more group">Explore Vekrun Teams<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></div>
     </div>
   </section>
 
@@ -168,6 +210,16 @@ const structuredData = [
   .targets { margin: 1.5rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; }
   .targets li { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.65rem 0.25rem 0.3rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); font-size: 0.86rem; font-weight: 540; color: var(--foreground); }
   .targets li > :global(svg) { margin-left: 0.3rem; color: var(--foreground); }
+  .tm-k { margin: 0; font-size: 0.85rem; font-weight: 560; color: var(--accent-text); }
+  .tm-recs { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.6rem; }
+  .tm-recs li { display: flex; gap: 0.8rem; align-items: flex-start; padding: 1rem 1.1rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
+  .tm-recs li:last-child { border-color: var(--border-interactive); box-shadow: var(--glow-accent); }
+  .tm-who { display: inline-grid; place-items: center; flex-shrink: 0; width: 2rem; height: 2rem; border-radius: 999px; background: var(--surface-elevated); font-size: 0.85rem; font-weight: 640; color: var(--foreground); }
+  .tm-recs p { margin: 0; font-size: 0.98rem; font-weight: 600; color: var(--foreground); }
+  .tm-recs span { font-size: 0.82rem; color: var(--foreground-secondary); }
+  .tm-recs b { margin-right: 0.35rem; padding: 0.05rem 0.4rem; border-radius: var(--radius-sm); font-size: 0.7rem; font-weight: 560; }
+  .tm-recs .is-v { background: var(--accent-subtle); color: var(--accent-text); }
+  .tm-recs .is-i { border: 1px solid var(--border-interactive); color: var(--accent-text); }
   .next { margin: 1.5rem 0 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem; font-size: 0.92rem; line-height: 1.5; color: var(--foreground-secondary); }
   .next-k { padding: 0.05rem 0.45rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.72rem; font-weight: 560; }
   .hl { margin: 2.5rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.75rem; }

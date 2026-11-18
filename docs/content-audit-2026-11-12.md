@@ -135,3 +135,41 @@ Follow-up to an external review of the merged site.
 - LM Studio is described as connecting models it serves; Vekrun downloads only through its Ollama integration.
 - Owner confirmed that cross-family Council certification is complete. The certification note is replaced by "A second opinion that actually challenges the first", with one anonymised real example: a reviewer found that passing tests didn't properly test the ranking they were meant to prove.
 - Download explains what early access means: a macOS alpha on Apple Silicon and Intel Macs, rough edges, Free, and bring your own models. Batching isn't mentioned because invitations aren't batched.
+
+## Pricing change to Free and Teams (2026-11-17)
+
+Owner decision: two offerings only.
+
+- **Vekrun Free:** $0 forever, for individual engineers.
+- **Vekrun Teams:** planned and self-hosted. $199 USD per month includes up to 10 engineers, plus $10 per month for each engineer beyond 10. There are no usage fees, and customers pay for their own infrastructure and model usage.
+- **Cloud and Enterprise:** removed everywhere: plans, homepage, Pricing, Product, Download, Contact, Privacy, Security, Licence, metadata, the OG image and the content guide.
+- **Redirects:** `/cloud/` and `/teams/` both go to `/pricing/#teams`, with no chains.
+
+| Check | Result |
+|---|---|
+| Pricing math in one place (`teamsMonthly`); calculator mirrors it; FAQ, table and examples computed from it | Yes |
+| 10 engineers $199, 11 engineers $209, 20 $299, 30 $399 | Tested (unit and browser) |
+| No Cloud, Enterprise, $99 or "per developer" text on any page | Tested on every page |
+| Teams marked Planned on the card, comparison and FAQ; no checkout | Yes |
+| No SSO, compliance, encryption or unlimited claims on Pricing | Tested |
+| Structured data offers only Free; FAQ structured data matches the visible FAQ | Tested |
+
+**Resolved inconsistency.** The Free plan now lists Architecture Explorer, Time Machine and Change Impact Intelligence, as requested. However, the Product page still marks Living Architecture Intelligence as Planned. One of the two needs to change, which is expected in the separate product-story update ("Prompt 1"). Resolved: the owner confirmed Living Architecture Intelligence is implemented, and the Product page now presents it as available.
+
+## Product marketing update, Teams page and Work Anywhere (2026-11-17)
+
+- **Competitive Engineering:** homepage showcase after the workflow, a Product section (`#competitive`, with `#experiments` and `#improvement-lab`), How It Works (`#compare`) and Before & After. Example data only, labelled "not real customer results", including a case where no approach qualifies.
+- **Living Architecture Intelligence:** presented as available on the homepage and Product. The graph is tied to a revision and shows an inferred link; the copy says inferred or runtime-only relationships can be missed.
+- **New capabilities in plain English:** measured experiments, Factory Improvement Lab, mutation challenges (`#high-assurance`), Production-to-Code (`#production`), PR Guardian (`#guardian`) and Workflow Templates (`#templates`).
+- **Homepage narrative:** Describe, Plan and compare, Build, Verify, Deliver, Remember. How It Works now has six stages, ending with `#remember`.
+- **What's next:** a Product section in three themes. It says CLI/MCP and PR Guardian's authorized merge exist today and gives no dates or versions.
+- **Vekrun Teams page (`/teams/`):** Shared Engineering Memory leads, with an interactive three-engineer story, the self-hosted architecture, a shared worker pool, SSO with a revocation example, eight planned capabilities, pricing and a 10-question FAQ. The nav is now Product, How It Works, Teams, Pricing; Before & After moves to the footer. `/cloud/` redirects to `/teams/`.
+- **SSO and RBAC:** included in Teams at $199. Neither is an add-on.
+- **Work Anywhere:** planned for Free (own VPS, headless workers, secure setup, remote previews); Teams adds shared worker pools. Providers are listed as integration targets, the security list makes no guarantee, and Cloudflare Tunnel is not required. Neither plan includes hosting or model bills.
+
+| Check | Result |
+|---|---|
+| Unit tests | 31 passed |
+| Browser tests (desktop and phone, axe in both themes) | 178 passed, 2 skipped by design |
+| Overflow sweep: 12 pages, 2 themes, 5 widths | 0 overflow |
+| Internal links | No broken links |

@@ -16,14 +16,14 @@ export const projectExamples: { logos: string[]; title: string; line: string }[]
   { logos: ['tauri', 'electron'], title: 'A Tauri or Electron desktop app', line: 'Desktop clients built on web technology.' },
 ];
 
-/** The homepage's short tour of capabilities beyond the three showcases. */
-export const highlights: { id: string; title: string; line: string }[] = [
-  { id: 'council', title: 'Council', line: 'Different models weigh in on important decisions, and objections stay on record.' },
-  { id: 'browser', title: 'Interactive Browser', line: 'Point at the problem in your running app instead of describing it.' },
-  { id: 'delivery', title: 'Git and delivery', line: 'Work Items, dependencies and pull requests, inside your branch policies.' },
-  { id: 'environments', title: 'Environment setup', line: 'Supported toolchains and services prepared for your project.' },
-  { id: 'voice', title: 'Voice and Brainstorm', line: 'Talk a problem through, then turn the decision into work.' },
-  { id: 'apps', title: 'Mobile and desktop apps', line: 'Build for iOS, Android, Expo, Flutter and desktop, not only the web.' },
+/** The homepage's short tour of capabilities beyond its showcases. `href` is a Product anchor. */
+export const highlights: { id: string; href: string; title: string; line: string }[] = [
+  { id: 'experiments', href: '/product/#experiments', title: 'Measured experiments', line: 'Before-and-after performance, with invariants and a rehearsed rollback.' },
+  { id: 'production', href: '/product/#production', title: 'Production to code', line: 'Errors and stack traces connected to the code and its context.' },
+  { id: 'guardian', href: '/product/#guardian', title: 'PR Guardian', line: 'Fixes failing CI and requested changes when you’ve authorized it.' },
+  { id: 'templates', href: '/product/#templates', title: 'Workflow Templates', line: 'Start from proven workflows, or take over work on an existing branch.' },
+  { id: 'live', href: '/product/#browser', title: 'Interactive Browser', line: 'Point at the problem in your running app instead of describing it.' },
+  { id: 'anywhere', href: '/product/#work-anywhere', title: 'Work Anywhere', line: 'Coming to Free: run the Factory on your own VPS, private from the first boot.' },
 ];
 
 export type Comparison = { id: string; title: string; before: string; after: string; beforeDetail: string; afterDetail: string };
@@ -36,9 +36,9 @@ export const comparisons: Comparison[] = [
     after: 'Vekrun already knows the project.', afterDetail: 'Engineering Memory supplies the structure, conventions and past decisions that matter to this task.',
   },
   {
-    id: 'planning', title: 'Planning',
-    before: 'You reconcile several AI sessions yourself.', beforeDetail: 'Two chats suggest two designs, and you decide which one to trust.',
-    after: 'Vekrun organizes the plan.', afterDetail: 'Planning is part of the workflow, with a Council weighing in where a decision deserves more than one view.',
+    id: 'planning', title: 'Choosing an approach',
+    before: 'You pick one design and hope.', beforeDetail: 'Two chats suggest two designs. You trust one, and only find out later whether it was right.',
+    after: 'Vekrun builds both and compares the evidence.', afterDetail: 'A Council challenges the plan, and Competitive Engineering can build each approach and verify it against the same requirements.',
   },
   {
     id: 'implementation', title: 'Implementation',
@@ -48,7 +48,7 @@ export const comparisons: Comparison[] = [
   {
     id: 'verification', title: 'Verification',
     before: 'You check whether “done” is true.', beforeDetail: 'The agent says it works. You run the tests and click through the app to find out.',
-    after: 'You review a Proof Pack.', afterDetail: 'Test results and checks for the exact revision, with anything unchecked listed as a gap.',
+    after: 'You review a Proof Pack.', afterDetail: 'Test results and checks for the exact revision, optional mutation challenges, and anything unchecked listed as a gap.',
   },
   {
     id: 'git', title: 'Git collaboration',
@@ -63,7 +63,7 @@ export const comparisons: Comparison[] = [
   {
     id: 'knowledge', title: 'Project knowledge',
     before: 'Reasoning disappears into chats.', beforeDetail: 'Why a choice was made lives in a closed tab or someone’s memory.',
-    after: 'Decisions keep their reasons.', afterDetail: 'Engineering Memory links each decision to the work and the evidence behind it.',
+    after: 'Decisions keep their reasons.', afterDetail: 'Engineering Memory links each decision to its evidence, and the architecture map shows what it touches and how it changed.',
   },
   {
     id: 'models', title: 'AI provider flexibility',

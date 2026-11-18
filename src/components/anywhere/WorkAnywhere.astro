@@ -1,0 +1,77 @@
+---
+/**
+ * Work Anywhere as a process: a Work Item leaves the local app, travels over a
+ * private connection to the user's own server, runs in an isolated
+ * environment, and comes back verified. A planned capability; the server and
+ * Work Item are examples.
+ *
+ * The markup is the final state (every stage done). The script moves the
+ * Work Item through the stages one at a time.
+ */
+import { Laptop, Lock, Server, Box, ShieldCheck, Check } from '@lucide/astro';
+import DemoControls from '@/components/mock/DemoControls.astro';
+const stages = [
+  { i: Laptop, t: 'Vekrun on your laptop', now: 'Sending “Rebuild search index” to your server', done: 'Work Item sent' },
+  { i: Lock, t: 'Private connection', now: 'Connecting over your private network', done: 'Authenticated, not public' },
+  { i: Server, t: 'Your VPS', now: 'Checking the server’s security settings', done: 'Inbound closed · SSH private only' },
+  { i: Box, t: 'Isolated Factory run', now: 'Building and testing in its own environment', done: '412 tests pass · build 6 min' },
+  { i: ShieldCheck, t: 'Verified result', now: 'Returning the Proof Pack to your laptop', done: 'Proof Pack ready for review' },
+];
+---
+<figure class="wa" data-anywhere data-stage="5" aria-label="Example: a Work Item runs on your own server and returns verified">
+  <div class="wa-head">
+    <span class="wa-k"><span class="wa-dot" aria-hidden="true"></span>build-01 · your server</span>
+    <span class="wa-tag">Planned · Example</span>
+  </div>
+  <ol class="wa-flow">
+    {stages.map((s, n) => (
+      <li class="wa-s" data-wa={n}>
+        <span class="wa-ic"><s.i class="h-4 w-4" aria-hidden="true" /></span>
+        <p class="wa-t">{s.t}</p>
+        <p class="wa-st"><span class="wa-now">{s.now}</span><span class="wa-done"><Check class="h-3 w-3" aria-hidden="true" />{s.done}</span></p>
+      </li>
+    ))}
+  </ol>
+  <DemoControls />
+</figure>
+
+<style>
+  .wa { margin: 0; padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
+  @media (min-width: 48rem) { .wa { padding: 1.25rem; } }
+  .wa-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; }
+  .wa-k { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.78rem; color: var(--foreground-secondary); }
+  .wa-dot { width: 0.5rem; height: 0.5rem; border-radius: 999px; background: var(--accent); box-shadow: 0 0 0 4px var(--accent-subtle); }
+  .wa-tag { padding: 0.05rem 0.45rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.7rem; color: var(--foreground-secondary); }
+  .wa-flow { position: relative; margin: 1rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.6rem; }
+  @media (min-width: 60rem) { .wa-flow { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+  .wa-s { position: relative; display: grid; align-content: start; gap: 0.35rem; padding: 0.85rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); transition: border-color var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out), opacity var(--dur) var(--ease-out); }
+  .wa-s:not(:last-child)::after { content: ''; position: absolute; left: 1.8rem; bottom: -0.65rem; width: 2px; height: 0.6rem; background: var(--border-strong); transition: background-color var(--dur); }
+  @media (min-width: 60rem) { .wa-s:not(:last-child)::after { left: auto; right: -0.62rem; bottom: auto; top: 1.8rem; width: 0.6rem; height: 2px; } }
+  .wa-ic { display: inline-grid; place-items: center; width: 2rem; height: 2rem; border-radius: var(--radius-sm); background: var(--surface-elevated); color: var(--foreground-secondary); transition: background-color var(--dur), color var(--dur); }
+  .wa-t { margin: 0.2rem 0 0; font-size: 0.9rem; font-weight: 600; color: var(--foreground); }
+  .wa-st { margin: 0; font-size: 0.78rem; line-height: 1.45; }
+  .wa-now { display: none; color: var(--foreground-secondary); }
+  .wa-done { display: inline-flex; align-items: flex-start; gap: 0.3rem; color: var(--accent-text); }
+  .wa-done :global(svg) { margin-top: 0.2rem; flex-shrink: 0; }
+  .wa-s.is-todo { opacity: 0.45; }
+  .wa-s.is-todo .wa-done { visibility: hidden; }
+  .wa-s.is-now { border-color: var(--border-interactive); box-shadow: var(--glow-accent); }
+  .wa-s.is-now .wa-now { display: inline; }
+  .wa-s.is-now .wa-done { display: none; }
+  .wa-s.is-now .wa-ic, .wa-s:not(.is-todo) .wa-ic { background: var(--accent-subtle); color: var(--accent-text); }
+  .wa-s:not(.is-todo):not(.is-now)::after { background: var(--accent-text); }
+  @media (prefers-reduced-motion: reduce) { .wa-s, .wa-ic { transition: none; } }
+</style>
+
+<script>
+  import { createSequence, type Step } from '@/scripts/sequence';
+  for (const root of document.querySelectorAll<HTMLElement>('[data-anywhere]')) {
+    const items = Array.from(root.querySelectorAll<HTMLElement>('[data-wa]'));
+    const show = (n: number) => items.forEach((el, i) => {
+      el.classList.toggle('is-now', i === n);
+      el.classList.toggle('is-todo', i > n);
+    });
+    const steps: Step[] = [...items.map((_, n) => ({ t: 200 + n * 1500, run: () => show(n) })), { t: 200 + items.length * 1500, run: () => show(items.length) }];
+    createSequence(root, steps, { reset: () => show(-1), loopAfter: 4000 });
+  }
+</script>

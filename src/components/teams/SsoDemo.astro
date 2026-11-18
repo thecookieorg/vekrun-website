@@ -1,0 +1,131 @@
+---
+/**
+ * Organizational identity in Vekrun Teams, as a concept: an engineer signs in
+ * through the organization's identity provider, two engineers see different
+ * projects and memory, and revoking access cuts off shared resources, with
+ * the action recorded. Nothing here authenticates anyone; it's an example of
+ * a planned capability.
+ *
+ * The markup holds the final state (access revoked). The script plays sign-in,
+ * access and revocation; the button lets visitors revoke or restore by hand.
+ */
+import { Check, X, KeyRound, ShieldCheck, ScrollText } from '@lucide/astro';
+import DemoControls from '@/components/mock/DemoControls.astro';
+
+const idps = ['Microsoft Entra ID', 'Google Workspace', 'Okta'];
+const members = [
+  { id: 'alex', name: 'Alex', role: 'Engineer · Checkout', access: [['shop-rails', true], ['Checkout memory', true], ['billing-service', false], ['Billing memory', false]] as [string, boolean][] },
+  { id: 'priya', name: 'Priya', role: 'Lead · Checkout, Billing', access: [['shop-rails', true], ['Checkout memory', true], ['billing-service', true], ['Billing memory', true]] as [string, boolean][] },
+];
+---
+<figure class="sso" data-sso data-stage="3" data-revoked aria-label="Example: signing in with an organization's identity provider, per-person access, and revoking access">
+  <div class="sso-head">
+    <span class="sso-k"><ShieldCheck class="h-4 w-4" aria-hidden="true" />shop.example organization</span>
+    <span class="sso-tag">Planned for Teams · Example</span>
+  </div>
+
+  <div class="sso-grid">
+    <section class="sso-card sso-idp" data-st="1" aria-label="Sign in">
+      <h4><KeyRound class="h-4 w-4" aria-hidden="true" />Sign in with your organization</h4>
+      <ul class="sso-idps" aria-label="Identity providers">
+        {idps.map((p, i) => <li class:list={[i === 2 && 'is-on']}>{p}</li>)}
+      </ul>
+      <p class="sso-ok"><Check class="h-3.5 w-3.5" aria-hidden="true" />Alex signed in through Okta</p>
+      <p class="sso-fine">Vekrun reads who you are and which groups you belong to. Your identity provider stays in charge.</p>
+    </section>
+
+    {members.map((m) => (
+      <section class:list={['sso-card sso-m', m.id === 'priya' && 'is-revocable']} data-st="2" aria-label={`${m.name}'s access`}>
+        <div class="sso-m-head">
+          <span class="sso-av" aria-hidden="true">{m.name[0]}</span>
+          <div><p class="sso-n">{m.name}</p><p class="sso-r">{m.role}</p></div>
+        </div>
+        <ul class="sso-acc">
+          {m.access.map(([t, ok]) => (
+            <li class:list={[ok ? 'is-ok' : 'is-no']}>
+              <span>{t}</span>
+              <span class="sso-v">
+                {ok ? <span class="sso-yes"><Check class="h-3.5 w-3.5" aria-hidden="true" />Access</span> : <span class="sso-nope"><X class="h-3.5 w-3.5" aria-hidden="true" />Not permitted</span>}
+                {ok && m.id === 'priya' && <span class="sso-denied"><X class="h-3.5 w-3.5" aria-hidden="true" />Denied</span>}
+              </span>
+            </li>
+          ))}
+        </ul>
+        {m.id === 'priya' && <p class="sso-revoked-note">Organization access revoked. Shared projects and memory are closed to Priya.</p>}
+      </section>
+    ))}
+  </div>
+
+  <div class="sso-foot" data-st="3">
+    <button type="button" class="sso-btn" data-revoke aria-pressed="true"><span class="sso-btn-on">Restore Priya’s access</span><span class="sso-btn-off">Revoke Priya’s access</span></button>
+    <p class="sso-audit" aria-live="polite"><ScrollText class="h-3.5 w-3.5" aria-hidden="true" /><span data-audit>Audit log: an admin revoked Priya’s organization access.</span></p>
+  </div>
+  <DemoControls />
+</figure>
+
+<style>
+  .sso { margin: 0; padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-md); }
+  @media (min-width: 48rem) { .sso { padding: 1.25rem; } }
+  .sso-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; }
+  .sso-k { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.85rem; font-weight: 600; color: var(--foreground); }
+  .sso-k :global(svg) { color: var(--accent-text); }
+  .sso-tag { padding: 0.05rem 0.45rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.7rem; color: var(--foreground-secondary); }
+  .sso-grid { margin-top: 0.9rem; display: grid; gap: 0.65rem; }
+  @media (min-width: 56rem) { .sso-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .sso-card { padding: 0.9rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); transition: opacity 450ms var(--ease-out), transform 450ms var(--ease-out), border-color var(--dur); }
+  .sso-idp h4 { margin: 0; display: flex; align-items: center; gap: 0.45rem; font-size: 0.88rem; font-weight: 620; color: var(--foreground); }
+  .sso-idp h4 :global(svg) { color: var(--accent-text); }
+  .sso-idps { margin: 0.75rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.35rem; }
+  .sso-idps li { padding: 0.45rem 0.65rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.82rem; color: var(--foreground-secondary); }
+  .sso-idps li.is-on { border-color: var(--border-interactive); background: var(--accent-subtle); color: var(--foreground); font-weight: 560; }
+  .sso-ok { margin: 0.7rem 0 0; display: flex; align-items: center; gap: 0.35rem; font-size: 0.8rem; font-weight: 560; color: var(--accent-text); }
+  .sso-fine { margin: 0.5rem 0 0; font-size: 0.76rem; line-height: 1.45; color: var(--foreground-secondary); }
+  .sso-m-head { display: flex; align-items: center; gap: 0.6rem; }
+  .sso-av { display: inline-grid; place-items: center; width: 2rem; height: 2rem; border-radius: 999px; background: var(--surface-elevated); font-size: 0.85rem; font-weight: 640; color: var(--foreground); }
+  .sso-n { margin: 0; font-size: 0.9rem; font-weight: 600; color: var(--foreground); }
+  .sso-r { margin: 0; font-size: 0.75rem; color: var(--foreground-secondary); }
+  .sso-acc { margin: 0.75rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.3rem; }
+  .sso-acc li { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.35rem 0; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--foreground); }
+  .sso-acc li > span:first-child { font-family: var(--font-mono); font-size: 0.74rem; }
+  .sso-v > span { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.74rem; font-weight: 560; }
+  .sso-yes { color: var(--accent-text); }
+  .sso-nope { color: var(--foreground-muted); }
+  .sso-denied { display: none !important; color: var(--danger, #e5484d); }
+  .sso-revoked-note { display: none; margin: 0.6rem 0 0; font-size: 0.76rem; line-height: 1.45; color: var(--danger, #e5484d); }
+  .sso[data-revoked] .is-revocable { border-color: color-mix(in srgb, var(--danger, #e5484d) 45%, var(--border)); }
+  .sso[data-revoked] .is-revocable .sso-yes { display: none; }
+  .sso[data-revoked] .is-revocable .sso-denied { display: inline-flex !important; }
+  .sso[data-revoked] .is-revocable .sso-revoked-note { display: block; }
+  .sso-foot { margin-top: 0.75rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1rem; transition: opacity 450ms var(--ease-out); }
+  .sso-btn { padding: 0.45rem 0.85rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface); font-size: 0.82rem; font-weight: 560; color: var(--foreground); transition: background-color var(--dur-fast); }
+  .sso-btn:hover { background: var(--surface-hover); }
+  .sso-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+  .sso-btn-off { display: none; }
+  .sso:not([data-revoked]) .sso-btn-on { display: none; }
+  .sso:not([data-revoked]) .sso-btn-off { display: inline; }
+  .sso-audit { margin: 0; display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: var(--foreground-secondary); }
+  .sso[data-stage='0'] [data-st], .sso[data-stage='1'] [data-st='2'], .sso[data-stage='1'] [data-st='3'], .sso[data-stage='2'] [data-st='3'] { opacity: 0.15; transform: translateY(4px); }
+  @media (prefers-reduced-motion: reduce) { .sso-card, .sso-foot { transition: none; } }
+</style>
+
+<script>
+  import { createSequence, type Step } from '@/scripts/sequence';
+  for (const root of document.querySelectorAll<HTMLElement>('[data-sso]')) {
+    const btn = root.querySelector<HTMLButtonElement>('[data-revoke]')!;
+    const audit = root.querySelector<HTMLElement>('[data-audit]')!;
+    const revoke = (on: boolean) => {
+      if (on) root.dataset.revoked = ''; else delete root.dataset.revoked;
+      btn.setAttribute('aria-pressed', String(on));
+      audit.textContent = on ? 'Audit log: an admin revoked Priya’s organization access.' : 'Audit log: Priya’s access follows her groups in the identity provider.';
+    };
+    const stage = (n: number) => { root.dataset.stage = String(n); };
+    const steps: Step[] = [
+      { t: 200, run: () => stage(1) },
+      { t: 1800, run: () => stage(2) },
+      { t: 3600, run: () => stage(3) },
+      { t: 5200, run: () => revoke(true) },
+    ];
+    const seq = createSequence(root, steps, { reset: () => { stage(0); revoke(false); }, loopAfter: 6000 });
+    btn.addEventListener('click', () => { seq.pause(); stage(3); revoke(!('revoked' in root.dataset)); });
+  }
+</script>

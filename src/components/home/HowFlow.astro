@@ -1,16 +1,17 @@
 ---
 /**
- * Describe → Plan → Build → Verify → Review, with the part of Vekrun that does
+ * Describe → Plan and compare → Build → Verify → Deliver → Remember, with the part of Vekrun that does
  * each step. The script walks a highlight through the stages and fills the
  * rail; the markup's final state shows every stage complete.
  */
-import { MessageSquareText, Users, Hammer, ShieldCheck, GitPullRequest } from '@lucide/astro';
+import { MessageSquareText, Users, Hammer, ShieldCheck, GitPullRequest, Brain } from '@lucide/astro';
 const steps = [
-  { i: MessageSquareText, t: 'Describe', d: 'Say what should be true when it’s done.', c: 'Your outcome' },
-  { i: Users, t: 'Plan', d: 'Vekrun plans the work into Work Items, with a Council challenging the important decisions.', c: 'Council · Work Items' },
-  { i: Hammer, t: 'Build', d: 'Agents build each Work Item in an isolated environment, in dependency order.', c: 'Factory · Git branches' },
-  { i: ShieldCheck, t: 'Verify', d: 'Tests and browser checks run on the exact revision, and the evidence is kept.', c: 'Proof Pack' },
-  { i: GitPullRequest, t: 'Review', d: 'You get a pull request with the evidence attached. Your rules decide what merges.', c: 'Pull request · Inbox' },
+  { i: MessageSquareText, t: 'Describe', d: 'Say what should be true when it’s done. Vekrun already understands the project.', c: 'Your outcome' },
+  { i: Users, t: 'Plan and compare', d: 'A Council challenges the plan, and competing approaches can be built and compared.', c: 'Council · Competitive' },
+  { i: Hammer, t: 'Build', d: 'The Factory builds coordinated Work Items in isolated environments.', c: 'Factory · Work Items' },
+  { i: ShieldCheck, t: 'Verify', d: 'Tests, browser checks and optional mutation challenges, with the evidence kept.', c: 'Proof Pack' },
+  { i: GitPullRequest, t: 'Deliver', d: 'Pull requests inside your Git rules. PR Guardian handles CI failures and review changes.', c: 'Git · PR Guardian' },
+  { i: Brain, t: 'Remember', d: 'Engineering Memory and architecture intelligence grow with every task.', c: 'Memory · Architecture' },
 ];
 ---
 <ol class="hf" data-howflow aria-label="How Vekrun works">
@@ -26,7 +27,9 @@ const steps = [
 
 <style>
   .hf { position: relative; margin: 0; padding: 0; list-style: none; display: grid; gap: 0.75rem; }
-  @media (min-width: 56rem) { .hf { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.75rem; } }
+  @media (min-width: 40rem) { .hf { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 60rem) { .hf { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (min-width: 80rem) { .hf { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
   .hf-step { position: relative; display: grid; align-content: start; gap: 0.45rem; padding: 1.25rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); transition: border-color var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out), opacity var(--dur) var(--ease-out); }
   .hf-step.is-todo { opacity: 0.55; }
   .hf-step.is-now { border-color: var(--border-interactive); box-shadow: var(--glow-accent); opacity: 1; }

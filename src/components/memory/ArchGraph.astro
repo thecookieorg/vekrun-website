@@ -1,8 +1,9 @@
 ---
 /**
- * Living Architecture Intelligence, as a concept: the parts of a project and
- * how they relate, then the likely impact of one change. A planned capability,
- * drawn as an illustration; nothing here reflects how the graph is built.
+ * Living Architecture Intelligence, as an example: the parts of a project and
+ * how they relate at one revision, then the likely impact of one change. One
+ * relationship is inferred rather than confirmed, and is drawn as such. The
+ * data is illustrative; nothing here reflects how the graph is built.
  * The markup carries the final state; the script draws the edges in, then
  * highlights what a change would touch.
  */
@@ -17,6 +18,8 @@ const nodes: N[] = [
   { id: 'dec', x: 320, y: 40, t: 'Decision: idempotent retries', k: 'decision' },
 ];
 const edges: [string, string][] = [['web', 'api'], ['mobile', 'api'], ['api', 'db'], ['hook', 'api'], ['hook', 'db'], ['tests', 'api'], ['dec', 'hook'], ['dec', 'api']];
+/** Found by reading the code but not confirmed, such as a call resolved at runtime. */
+const inferred: [string, string][] = [['mobile', 'hook']];
 const impacted = new Set(['hook', 'api', 'db', 'tests', 'dec']);
 const at = (id: string) => nodes.find((n) => n.id === id)!;
 const W = 200, H = 40;
@@ -25,15 +28,19 @@ const kind = { service: 'Service', endpoint: 'Endpoint', data: 'Data', test: 'Te
 <figure class="ag" data-arch data-impact-on aria-label="Example: a project's architecture as connected parts, with the likely impact of a change highlighted">
   <div class="ag-head">
     <span class="ag-change"><span class="ag-dot" aria-hidden="true"></span>Change under review: retry payment webhooks</span>
-    <span class="ag-tag">Concept</span>
+    <span class="ag-meta"><span class="ag-rev">at a41c9e2</span><span class="ag-tag">Example</span></span>
   </div>
   <div class="ag-scroll" tabindex="0" role="region" aria-label="Architecture graph. Scroll sideways on small screens.">
-    <svg viewBox="-20 0 700 370" class="ag-svg" role="img" aria-label="Checkout web app and mobile app call the Orders API. Payment webhooks write to the Orders API and database. Checkout tests cover the Orders API. A recorded decision about idempotent retries applies to the webhooks and the API. The webhook change may affect the webhooks, Orders API, Orders database, the decision and the checkout tests.">
+    <svg viewBox="-20 0 700 370" class="ag-svg" role="img" aria-label="At revision a41c9e2: Checkout web app and mobile app call the Orders API. The mobile app may also reach Payment webhooks, an inferred link that isn't confirmed. Payment webhooks write to the Orders API and database. Checkout tests cover the Orders API. A recorded decision about idempotent retries applies to the webhooks and the API. The webhook change may affect the webhooks, Orders API, Orders database, the decision and the checkout tests.">
       <g class="ag-edges">
         {edges.map(([a, b], i) => {
           const A = at(a), B = at(b);
           const hit = impacted.has(a) && impacted.has(b);
           return <path d={`M${A.x},${A.y} C${(A.x + B.x) / 2},${A.y} ${(A.x + B.x) / 2},${B.y} ${B.x},${B.y}`} class:list={['ag-e', hit && 'is-hit']} pathLength="1" data-e={i} />;
+        })}
+        {inferred.map(([a, b]) => {
+          const A = at(a), B = at(b);
+          return <path d={`M${A.x},${A.y} C${(A.x + B.x) / 2},${A.y} ${(A.x + B.x) / 2},${B.y} ${B.x},${B.y}`} class="ag-e ag-inf" data-inf />;
         })}
       </g>
       <g class="ag-nodes">
@@ -50,8 +57,9 @@ const kind = { service: 'Service', endpoint: 'Endpoint', data: 'Data', test: 'Te
   <div class="ag-foot">
     <ul class="ag-legend" aria-label="Legend">
       {Object.entries(kind).map(([k, l]) => <li class={`is-${k}`}><span aria-hidden="true"></span>{l}</li>)}
+      <li class="is-inf"><span aria-hidden="true"></span>Inferred</li>
     </ul>
-    <p class="ag-impact" data-impact>May affect 3 components and 1 decision. Re-verify Checkout tests.</p>
+    <p class="ag-impact" data-impact>May affect 3 components and 1 decision. 1 inferred link to check. Re-verify Checkout tests.</p>
   </div>
 </figure>
 
@@ -60,6 +68,11 @@ const kind = { service: 'Service', endpoint: 'Endpoint', data: 'Data', test: 'Te
   .ag-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.8rem 1.1rem; border-bottom: 1px solid var(--border); }
   .ag-change { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 560; color: var(--foreground); }
   .ag-dot { width: 0.5rem; height: 0.5rem; border-radius: 999px; background: var(--accent); box-shadow: 0 0 0 4px var(--accent-subtle); }
+  .ag-meta { display: inline-flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+  .ag-rev { font-family: var(--font-mono); font-size: 0.72rem; color: var(--foreground-secondary); }
+  .ag-inf { stroke-dasharray: 5 5 !important; stroke-dashoffset: 0 !important; stroke: var(--foreground-muted); transition: opacity 600ms var(--ease-out); }
+  .ag-inf.is-off { opacity: 0; }
+  .ag-legend .is-inf span { width: 1rem; height: 0; border-radius: 0; border-top: 2px dashed var(--foreground-muted); background: none; }
   .ag-tag { flex-shrink: 0; padding: 0.05rem 0.4rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.7rem; color: var(--foreground-secondary); }
   .ag-scroll { overflow-x: auto; padding: 0.75rem 0.5rem; }
   .ag-scroll:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: -2px; }
@@ -91,7 +104,7 @@ const kind = { service: 'Service', endpoint: 'Endpoint', data: 'Data', test: 'Te
   import { createSequence, type Step } from '@/scripts/sequence';
   for (const root of document.querySelectorAll<HTMLElement>('[data-arch]')) {
     const ns = Array.from(root.querySelectorAll<SVGElement>('[data-n]'));
-    const es = Array.from(root.querySelectorAll<SVGElement>('[data-e]'));
+    const es = Array.from(root.querySelectorAll<SVGElement>('[data-e], [data-inf]'));
     const reset = () => { ns.forEach((n) => n.classList.add('is-off')); es.forEach((e) => e.classList.add('is-off')); delete root.dataset.impactOn; };
     const steps: Step[] = [
       ...ns.map((n, i) => ({ t: 200 + i * 220, run: () => n.classList.remove('is-off') })),
