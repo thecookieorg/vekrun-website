@@ -58,44 +58,65 @@ test.describe('homepage', () => {
     expect(types).toEqual(expect.arrayContaining(['Organization', 'WebSite', 'SoftwareApplication']));
   });
 
-  test('tells the story in order, from stack to plans', async ({ page }) => {
+  test('tells the story in order: differentiation first, the stack and plans after', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('main h2')).toHaveText([
-      'Your stack. Your repository. Your workflow.',
-      'One engineering workflow, from idea to verified software.',
       'Don’t guess which approach is better. Build both. Prove it.',
-      'Understand your codebase, not just its files.',
+      'Understand your software before changing it.',
       'Done means proven, not just claimed.',
-      'Your AI. Your hardware. Your choice.',
+      'Vekrun remembers what your engineering team learns.',
+      'Your laptop isn’t your build server. Unless you want it to be.',
+      'One engineering workflow. Your choice of AI.',
       'Let anyone experience what you’re building.',
-      'More than an AI coding agent.',
-      'Stop losing engineering knowledge between developers and AI sessions.',
+      'Your stack. Your repository. Your workflow.',
+      'Your team shares a codebase. Now it can share an engineering brain.',
       'Stop managing AI agents. Start directing engineering.',
       'Free for you. Teams on your infrastructure.',
       'Hand Vekrun your next outcome.',
     ]);
-    for (const a of await page.locator('#more .hl a').evaluateAll((els) => els.map((e) => e.getAttribute('href')!))) expect(a).toMatch(/^\/product\/#/);
-    await expect(page.locator('#more')).toContainText('Work Anywhere');
+    // Competitive Engineering comes before the stack marquee.
+    const y = async (sel: string) => (await page.locator(sel).first().boundingBox())!.y;
+    expect(await y('#competitive')).toBeLessThan(await y('[role=region][aria-label="Technologies Vekrun works with"]'));
     await expect(page.locator('#architecture')).not.toContainText('Planned');
+    await expect(page.locator('#memory').getByRole('link', { name: 'Shared Engineering Memory' })).toHaveAttribute('href', '/teams/');
     await expect(page.locator('#team-memory').getByRole('link', { name: 'Explore Vekrun Teams' })).toHaveAttribute('href', '/teams/');
-    await expect(page.locator('[data-howflow] li')).toHaveCount(6);
+    await expect(page.locator('main')).not.toContainText('What’s next for Vekrun');
     await expect(page.locator('#before-after .ba-row')).toHaveCount(3);
     await expect(page.locator('#before-after').getByRole('link', { name: 'See all eight moments' })).toHaveAttribute('href', '/before-and-after/');
     await expect(page.getByRole('list', { name: 'App types Live Share supports' }).getByRole('listitem')).toHaveText(['Web', 'iOS', 'Android', 'Expo', 'Flutter', 'Desktop']);
   });
 
-  test('makes model independence unmistakable, native agent first', async ({ page }) => {
+  test('makes model independence unmistakable: one workflow, many AI choices, Grok included', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/');
     const sec = page.locator('#models');
-    await expect(sec).toContainText('You don’t need Claude Code, Codex or any other coding-agent subscription to use Vekrun.');
+    const mo = sec.locator('[data-orchestra]');
+    await expect(mo).toHaveAttribute('data-demo', 'done');
+    await expect(mo.locator('.mo-q')).toHaveText(['Which design should we build?', 'Build it, two ways.', 'Does it do what was asked?', 'Vekrun runs the actual tests.']);
+    await expect(mo.locator('.mo-who').nth(0)).toHaveText(/Claude.*Grok/);
+    await expect(mo.locator('.mo-who').nth(1)).toHaveText(/Codex.*Grok Build/);
+    await expect(mo).toContainText('Models propose. Evidence decides.');
+    await expect(mo.getByRole('list', { name: 'Engineering record' }).getByRole('listitem')).toHaveCount(4);
+    await expect(sec).toContainText('No coding-agent subscription needed');
+    for (const n of ['OpenRouter', 'xAI', 'Ollama', 'LM Studio', 'Claude Code', 'Codex', 'Antigravity CLI', 'Grok Build']) await expect(sec.locator('.eco')).toContainText(n);
+    await expect(sec.getByRole('link', { name: 'Every model and agent Vekrun works with' })).toHaveAttribute('href', '/integrations/');
+    await expect(page.locator('main')).not.toContainText(/partner(ed|ship)? with xAI|endorsed by xAI/i);
+  });
+
+  test('the Product page explains models in full: native agent first, local models qualified', async ({ page }) => {
+    await page.goto('/product/');
+    const sec = page.locator('#models');
     const cards = sec.locator('article');
     await expect(cards.first()).toContainText('Vekrun’s native agent');
     await expect(cards.first()).toContainText('OpenRouter');
+    await expect(cards.first()).toContainText('xAI');
     await expect(cards.nth(1)).toContainText('Optional');
+    await expect(cards.nth(1)).toContainText('Grok Build');
     await expect(cards.nth(1)).toContainText('None of them is required');
     await expect(sec).toContainText('billed by the provider you choose');
     await expect(cards.first().getByText('Download local AI models')).toBeVisible();
     await expect(sec).toContainText('running the entire autonomous Factory on a local model alone is still being certified');
+    await expect(sec.getByRole('link', { name: 'Three ways to bring Grok into Vekrun' })).toHaveAttribute('href', '/integrations/#grok');
     const lib = sec.locator('[data-mdl]');
     await expect(lib).toContainText('Example');
     for (const t of ['9.0 GB', 'Runs well on this machine', 'Needs 64 GB of memory', 'Too large', 'Installed', 'Downloads through Ollama']) await expect(lib).toContainText(t);
@@ -114,20 +135,37 @@ test.describe('homepage', () => {
     await noOverflow(page);
   });
 
-  test('the Factory hero reaches its final state and can replay', async ({ page }) => {
+  test('the hero shows an outcome becoming a verified pull request, and can replay', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/');
-    const f = page.locator('[data-factory]');
+    const f = page.locator('[data-engine]');
     await expect(f).toHaveAttribute('data-demo', 'done');
-    await expect(f.locator('[data-job="j1"]')).toHaveAttribute('data-stage', '5');
-    await expect(f.locator('[data-f-inbox]')).toBeVisible();
+    await expect(f).toHaveAttribute('data-phase', '5');
+    await expect(f.locator('[data-req]')).toContainText('keep their cart across web and mobile');
+    await expect(f.locator('.is-off')).toHaveCount(0);
+    for (const t of ['Council agrees', 'Codex', 'Grok Build', '52 of 52 tests', 'Loses carts on restart', 'Independent review', 'Ready for review', 'B kept with its evidence']) await expect(f).toContainText(t);
+    await expect(f.locator('.eh-tag')).toHaveText('Example');
     await f.getByRole('button', { name: 'Replay' }).click();
     await expect(f).toHaveAttribute('data-demo', /playing|done/);
+    await noOverflow(page);
+  });
+
+  test('the hero plays in phases without moving the page', async ({ page }) => {
+    await page.goto('/');
+    const f = page.locator('[data-engine]');
+    await f.scrollIntoViewIfNeeded();
+    const h = (await f.boundingBox())!.height;
+    await expect(f).toHaveAttribute('data-demo', 'playing');
+    await expect(f).toHaveAttribute('data-phase', '3', { timeout: 10_000 });
+    await expect(f.locator('.eh-lane.is-off')).toHaveCount(0);
+    await expect(f).toHaveAttribute('data-phase', '5', { timeout: 15_000 });
+    await expect(f).toHaveAttribute('data-demo', 'done');
+    expect(Math.abs((await f.boundingBox())!.height - h)).toBeLessThan(2);
   });
 
   test('a demo pauses with the pause control and resumes', async ({ page }) => {
     await page.goto('/');
-    const f = page.locator('[data-factory]');
+    const f = page.locator('[data-engine]');
     await f.scrollIntoViewIfNeeded();
     await expect(f).toHaveAttribute('data-demo', 'playing');
     await f.locator('[data-demo-play]').click();
@@ -139,7 +177,7 @@ test.describe('homepage', () => {
   test('the workflow, Competitive Engineering, architecture, Live Share and Proof Pack demos play to their final state', async ({ page }) => {
     test.setTimeout(120_000);
     await page.goto('/');
-    for (const sel of ['[data-howflow]', '[data-compete]', '[data-arch]', '[data-liveshare]', '[data-proofpack]']) {
+    for (const sel of ['[data-compete]', '[data-arch]', '[data-prooftrack]', '[data-memory]', '[data-anywhere]', '[data-orchestra]', '[data-liveshare]']) {
       const d = page.locator(sel).first();
       await d.scrollIntoViewIfNeeded();
       await expect(d, sel).toHaveAttribute('data-demo', /playing|done/);
@@ -149,8 +187,26 @@ test.describe('homepage', () => {
     await expect(page.locator('[data-liveshare] [data-ls-state="verified"]')).toHaveText('Verified on 9c41a7e');
     await expect(page.locator('[data-arch] [data-impact]')).toContainText('1 inferred link to check');
     await expect(page.locator('[data-liveshare]')).toContainText('served from your machine while Live Share is on');
-    await expect(page.locator('[data-mdl] [data-state-btn]')).toHaveText('In use');
-    await expect(page.locator('[data-mdl] [data-pct]')).toHaveText('Selected for coding');
+    await expect(page.locator('[data-prooftrack] .pt-s.is-done')).toHaveCount(6);
+    await expect(page.locator('[data-prooftrack] .pt-t')).toHaveText(['Code', 'Tests', 'Independent review', 'Proof Pack', 'PR review', 'Delivered']);
+  });
+
+  test('the Git Time Machine steps back through revisions and only shows impact today', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/');
+    const ag = page.locator('#architecture [data-arch]');
+    await expect(ag.locator('[data-rev-label]')).toHaveText('at a41c9e2');
+    await expect(ag.locator('[data-impact]')).toBeVisible();
+    await ag.getByRole('button', { name: /March/ }).click();
+    await expect(ag.getByRole('button', { name: /March/ })).toHaveAttribute('aria-pressed', 'true');
+    await expect(ag.locator('[data-rev-label]')).toHaveText('at 2f07b1d');
+    await expect(ag.locator('[data-n="hook"]')).toHaveClass(/is-future/);
+    await expect(ag.locator('[data-n="api"]')).not.toHaveClass(/is-future/);
+    await expect(ag.locator('[data-impact]')).toHaveCSS('opacity', '0');
+    await expect(ag.locator('[data-rev-note]')).toContainText('checkout web app');
+    await ag.getByRole('button', { name: /Today/ }).click();
+    await expect(ag.locator('.is-future')).toHaveCount(0);
+    await expect(ag.locator('[data-impact]')).toHaveCSS('opacity', '1');
   });
 
   test('every call to action on the homepage resolves', async ({ page }) => {
@@ -324,7 +380,8 @@ test.describe('teams', () => {
     for (const h of ['Your engineering intelligence. Your infrastructure. Your rules.', 'Your engineers. Your identities. Your access rules.']) await expect(page.getByRole('heading', { name: h })).toBeVisible();
     const caps = page.locator('#capabilities');
     for (const k of ['Shared Engineering Memory', 'Team coordination', 'Autonomous Factory workers', 'Organization policies', 'Shared Architecture Intelligence', 'PR intelligence', 'SSO and access control', 'Engineering insights']) await expect(caps).toContainText(k, { ignoreCase: true });
-    await expect(page.locator('#sso')).toContainText('SAML');
+    await expect(page.locator('#sso')).toContainText('Microsoft Entra ID, Google Workspace, Okta');
+    await expect(page.locator('main')).not.toContainText(/design target|future requirement|part of the direction|Coming to Vekrun Teams/);
     await expect(page.locator('#sso')).toContainText('SSO is part of Teams, not an add-on.');
     await expect(page.locator('#pricing')).toContainText('$199');
     await expect(page.locator('#pricing').getByRole('link', { name: 'Compare plans and calculate your price' })).toHaveAttribute('href', '/pricing/#teams');
@@ -338,6 +395,11 @@ test.describe('teams', () => {
   test('the shared memory story steps through three engineers and keeps restricted and superseded records out of context', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/teams/');
+    await expect(page.locator('[data-mstory]')).toHaveAttribute('data-demo', 'done');
+    if ((page.viewportSize()?.width ?? 0) >= 896) {
+      await expect(page.locator('[data-mstory] .ms-fl-hub')).toContainText('Shared Engineering Memory');
+      await expect(page.locator('[data-mstory] [data-fl-line="3"]')).toHaveCSS('background-color', /rgb/);
+    }
     const ms = page.locator('[data-mstory]');
     await ms.scrollIntoViewIfNeeded();
     await expect(ms).toHaveAttribute('data-demo', 'done');
@@ -375,7 +437,7 @@ test.describe('competitive engineering', () => {
     const cx = page.locator('[data-compete]');
     await cx.scrollIntoViewIfNeeded();
     await expect(cx).toHaveAttribute('data-demo', 'done');
-    await expect(cx).toContainText('not real customer results');
+    await expect(cx).toContainText('Example');
     await cx.getByRole('button', { name: 'Choose B' }).click();
     await expect(cx.getByRole('button', { name: 'Choose B' })).toHaveAttribute('aria-pressed', 'true');
     await expect(cx.getByRole('button', { name: 'Choose A' })).toHaveAttribute('aria-pressed', 'false');
@@ -416,6 +478,8 @@ test.describe('live share and privacy', () => {
     await expect(h2s.nth(1)).toHaveText('Optional coding agents');
     await expect(page.locator('main')).toContainText('None of them is required');
     await expect(page.locator('main')).toContainText('Antigravity CLI');
+    await expect(page.locator('main')).toContainText('Grok Build');
+    await expect(page.locator('main')).toContainText('xAI');
     await expect(page.locator('main')).not.toContainText(/Gemini CLI|Kamal|Vercel|PagerDuty/);
     await expect(page.getByRole('heading', { name: 'Native integrations.' })).toBeVisible();
     await expect(page.locator('#mcp')).toContainText('Coming soon: Asana tools for agents');
@@ -423,6 +487,26 @@ test.describe('live share and privacy', () => {
 });
 
 test.describe('product', () => {
+  test('explains three separate routes to Grok, each with its own sign-in and billing, and claims no endorsement', async ({ page }) => {
+    await page.goto('/integrations/');
+    const g = page.locator('#grok');
+    await expect(g.getByRole('heading', { level: 2 })).toHaveText('Three ways to bring Grok into Vekrun.');
+    await expect(g.getByRole('heading', { level: 3 })).toHaveText(['Grok Build, as a coding agent', 'Grok models, directly through xAI', 'Grok models, through OpenRouter']);
+    const cards = g.locator('.grok li');
+    await expect(cards.nth(0)).toContainText('Vekrun keeps the plan, the permissions, the verification and the delivery');
+    await expect(cards.nth(1)).toContainText('native agent, the Council and the Factory');
+    await expect(cards.nth(1)).toContainText('never tied to one version');
+    await expect(cards.nth(1)).toContainText('Billed by xAI');
+    await expect(cards.nth(2)).toContainText('Billed by OpenRouter');
+    await expect(g).toContainText('isn’t affiliated with or endorsed by xAI');
+    const native = page.locator('section[aria-labelledby="g-models"]');
+    const agents = page.locator('section[aria-labelledby="g-agents"]');
+    await expect(native.locator('.tiles')).toContainText('xAI');
+    await expect(native.locator('.tiles')).not.toContainText('Grok Build');
+    await expect(agents.locator('.tiles')).toContainText('Grok Build');
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /xAI.*Grok Build/);
+  });
+
   test('explains local models in full, qualified', async ({ page }) => {
     await page.goto('/product/');
     const sec = page.locator('#models');
@@ -441,15 +525,24 @@ test.describe('product', () => {
     }
   });
 
-  test('has every section the old URLs point at, models first', async ({ page }) => {
+  test('is organised as six chapters plus models, and keeps every section the old URLs point at', async ({ page }) => {
     await page.goto('/product/');
-    await expect(page.getByRole('navigation', { name: 'On this page' }).getByRole('link').first()).toHaveText('Models');
-    for (const id of ['models', 'council', 'memory', 'architecture', 'live-share', 'browser', 'proof', 'delivery', 'board', 'environments', 'voice', 'apps', 'stack', 'mobile', 'tools']) await expect(page.locator(`#${id}`), id).toHaveCount(1);
+    await expect(page.getByRole('navigation', { name: 'On this page' }).getByRole('link')).toHaveText(['Think', 'Build', 'Prove', 'Deliver', 'Remember', 'Collaborate', 'Models']);
+    await expect(page.locator('.ch-k')).toHaveText(['Think', 'Build', 'Prove', 'Deliver', 'Remember', 'Collaborate']);
+    for (const id of ['models', 'council', 'competitive', 'experiments', 'improvement-lab', 'memory', 'architecture', 'production', 'live-share', 'browser', 'proof', 'high-assurance', 'delivery', 'guardian', 'templates', 'board', 'work-anywhere', 'environments', 'voice', 'apps', 'stack', 'mobile', 'tools']) await expect(page.locator(`#${id}`), id).toHaveCount(1);
+    await expect(page.locator('#next')).toHaveCount(0);
+    await expect(page.locator('main')).not.toContainText('What’s next');
   });
 
-  test('real screenshots load: Memory, Live Share and the Interactive Browser', async ({ page }) => {
+  test('weaves the newer capabilities into the story, without status labels', async ({ page }) => {
     await page.goto('/product/');
-    for (const [id, shot] of [['live-share', 'liveshare-review'], ['memory', 'memory-understand'], ['browser', 'browser-annotate']] as const) {
+    for (const [id, t] of [['prove', 'Risk Intelligence'], ['prove', 'Adaptive Verification'], ['deliver', 'Autonomy Controller'], ['deliver', 'Advanced PR Intelligence'], ['remember', 'Verified Failure Learning'], ['remember', 'Context Engine'], ['build', 'Headless CLI and MCP'], ['collaborate', 'Vekrun-to-Vekrun collaboration']] as const) await expect(page.locator(`#${id}`), t).toContainText(t);
+    await expect(page.locator('main')).not.toContainText(/\b(Planned|In development|Not implemented|Building now)\b/);
+  });
+
+  test('real screenshots load: the Interactive Browser', async ({ page }) => {
+    await page.goto('/product/');
+    for (const [id, shot] of [['browser', 'browser-annotate']] as const) {
       const img = page.locator(`#${id} img[src="/shots/${shot}-1440.webp"]`);
       await img.scrollIntoViewIfNeeded();
       await expect(img, shot).toHaveJSProperty('complete', true);
@@ -463,30 +556,23 @@ test.describe('product', () => {
   test('Live Share covers web, mobile and desktop, and states its limits', async ({ page }) => {
     await page.goto('/product/');
     const sec = page.locator('#live-share');
-    await expect(sec.getByRole('heading', { level: 2 })).toHaveText('Let anyone experience what you’re building.');
     await expect(sec).toContainText('Don’t send screenshots. Send the app.');
     await expect(sec.getByRole('list', { name: 'How a Live Share review works' }).getByRole('listitem')).toHaveCount(7);
-    const targets = sec.getByRole('list', { name: 'Apps you can share with Live Share' });
-    for (const t of ['Web apps', 'iOS', 'Android', 'Expo and React Native', 'Flutter', 'Swift and Kotlin', 'Desktop apps']) await expect(targets.getByRole('heading', { name: t, exact: true })).toBeVisible();
-    await expect(sec).toContainText('doesn’t replace device testing');
+    for (const t of ['Web', 'iOS', 'Android', 'Expo', 'Flutter', 'desktop']) await expect(sec).toContainText(t);
     await expect(sec).toContainText('it isn’t hosting');
+    await expect(sec.locator('a[href="/privacy/#live-share"]')).toBeVisible();
   });
 
-  test('presents Living Architecture as available, honest about uncertainty, and marks what is planned', async ({ page }) => {
+  test('presents Living Architecture as available and honest about uncertainty', async ({ page }) => {
     await page.goto('/product/');
-    await expect(page.locator('#memory .state')).toHaveCount(0);
+    await expect(page.locator('.state')).toHaveCount(0);
     await expect(page.locator('#architecture')).not.toContainText('Planned');
-    await expect(page.locator('#architecture')).toContainText('Understand your codebase, not just its files.');
-    for (const k of ['Architecture Explorer', 'Git Time Machine', 'Change Impact Intelligence', 'Revision-bound graphs']) await expect(page.locator('#architecture')).toContainText(k);
-    await expect(page.locator('#architecture')).toContainText('marked as inferred');
-    await expect(page.locator('#memory').getByRole('link', { name: 'Vekrun Teams' })).toHaveAttribute('href', '/teams/');
-    await expect(page.locator('#work-anywhere .state')).toHaveText('Free and Teams');
-    await expect(page.locator('#next h3')).toHaveText(['Safer autonomous delivery', 'Learning from engineering evidence', 'Connected developer workspaces']);
-    await expect(page.locator('#next')).toContainText('CLI and MCP work today');
-    await expect(page.locator('#next')).toContainText('PR Guardian already merges when you authorize it');
-    await expect(page.locator('#next')).not.toContainText(/\b20\d\d\b|\bQ[1-4]\b|\bv\d/);
+    await expect(page.locator('#architecture')).toContainText('Understand your software before changing it.');
+    for (const k of ['Git Time Machine', 'tied to its revision', 'cites its source', 'inferred ones are marked']) await expect(page.locator('#architecture')).toContainText(k);
+    await expect(page.locator('#architecture [data-arch] .ag-revb')).toHaveCount(3);
+    await expect(page.locator('#remember').getByRole('link', { name: 'Vekrun Teams' })).toHaveAttribute('href', '/teams/');
+    await expect(page.locator('#work-anywhere')).toContainText('coming to Vekrun Free');
     await expect(page.locator('#council')).toContainText('Not every task convenes a Council');
-    await expect(page.locator('#council').getByRole('heading', { name: 'A second opinion that actually challenges the first.' })).toBeVisible();
     await expect(page.locator('#council')).not.toContainText('still being certified');
     await expect(page.locator('main')).not.toContainText(/every review is independent|fully offline/i);
   });
@@ -494,12 +580,12 @@ test.describe('product', () => {
   test('the architecture graph, voice and environment examples reach their final state', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/product/');
-    for (const sel of ['[data-arch]', '[data-voice]', '[data-env]', '[data-lsflow]', '[data-memory]', '[data-compete]', '[data-anywhere]']) await expect(page.locator(sel).first(), sel).toHaveAttribute('data-demo', 'done');
+    for (const sel of ['[data-arch]', '[data-env]', '[data-lsflow]', '[data-memory]', '[data-compete]', '[data-anywhere]']) await expect(page.locator(sel).first(), sel).toHaveAttribute('data-demo', 'done');
     await expect(page.locator('[data-memory] [data-m-q]')).toHaveText('Why do payment webhooks use an idempotency key?');
     await expect(page.locator('[data-anywhere] .wa-s.is-todo')).toHaveCount(0);
     await expect(page.locator('[data-anywhere]')).toContainText('Proof Pack ready for review');
     await expect(page.locator('[data-arch] [data-impact]')).toBeVisible();
-    await expect(page.locator('[data-voice]')).toContainText('Proposed Work Item');
+    await expect(page.locator('#voice')).toContainText('becomes work you approve');
     await expect(page.locator('[data-env]')).toContainText('Install once yourself');
   });
 

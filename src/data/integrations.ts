@@ -17,9 +17,10 @@ export const toolGroups: ToolGroup[] = [
     key: 'models',
     kind: 'models',
     title: 'Vekrun’s native agent',
-    line: 'Vekrun’s own agent does the work. Connect hosted models through OpenRouter, discover and download compatible models through Vekrun’s Ollama integration, or connect models served by LM Studio. Local models run on your own hardware.',
+    line: 'Vekrun’s own agent does the work. Connect hosted models through OpenRouter, connect Grok models directly through the xAI API, discover and download compatible models through Vekrun’s Ollama integration, or connect models served by LM Studio. Local models run on your own hardware.',
     tools: [
       { id: 'openrouter', name: 'OpenRouter', mono: 'Or' },
+      { id: 'xai', name: 'xAI', mono: 'xA' },
       { id: 'ollama', name: 'Ollama', mono: 'Ol' },
       { id: 'lm-studio', name: 'LM Studio', mono: 'Lm' },
     ],
@@ -28,11 +29,12 @@ export const toolGroups: ToolGroup[] = [
     key: 'agents',
     kind: 'agents',
     title: 'Optional coding agents',
-    line: 'Prefer a coding-agent CLI? Bring it, signed in with your own account. Each Factory task runs in its own isolated environment. None of them is required.',
+    line: 'Prefer a coding-agent CLI? Bring it, signed in with your own account. Vekrun can hand it implementation, review or one side of a Competitive Engineering comparison, while Vekrun keeps planning, permissions, verification and delivery. Each Factory task runs in its own isolated environment. None of them is required.',
     tools: [
       { id: 'claude-code', name: 'Claude Code', mono: 'Cc' },
       { id: 'codex', name: 'Codex', mono: 'Cx' },
       { id: 'antigravity', name: 'Antigravity CLI', mono: 'Ag' },
+      { id: 'grok-build', name: 'Grok Build', mono: 'Gb' },
     ],
   },
   {
@@ -85,7 +87,7 @@ export const toolGroups: ToolGroup[] = [
   },
 ];
 
-/** Connections that exist in the product's design but haven't shipped. Shown only as planned. */
+/** Connections that exist in the product's design but haven't shipped. Shown only as coming soon. */
 export const plannedConnections: string[] = ['Asana tools for agents, alongside the Asana Board integration'];
 
 /**
@@ -143,7 +145,7 @@ export const platforms: Tool[] = [
 ];
 
 /** Model connections for the native agent, and the optional coding-agent CLIs. */
-export const modelIds = ['openrouter', 'ollama', 'lm-studio'] as const;
-export const agentIds = ['claude-code', 'codex', 'antigravity'] as const;
+export const modelIds = ['openrouter', 'xai', 'ollama', 'lm-studio'] as const;
+export const agentIds = ['claude-code', 'codex', 'antigravity', 'grok-build'] as const;
 export const allTools = toolGroups.flatMap((g) => g.tools);
 export const toolById = (id: string) => [...allTools, ...platforms, ...stackRows.flat()].find((t) => t.id === id);

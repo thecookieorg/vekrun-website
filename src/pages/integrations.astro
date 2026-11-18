@@ -3,8 +3,9 @@
  * Integrations, split the way the product splits them: the models Vekrun's
  * native agent runs on (first, because no coding-agent CLI is required), the
  * optional coding agents, the services Vekrun connects to natively, and
- * anything else through MCP servers the customer adds. Only what ships is
- * listed as a tool; anything planned says so. Logos mean compatibility,
+ * anything else through MCP servers the customer adds. Grok gets its own
+ * explainer because it reaches Vekrun three different ways, each with its own
+ * sign-in and billing. Logos mean compatibility,
  * never endorsement.
  */
 import Base from '@/layouts/Base.astro';
@@ -13,6 +14,7 @@ import PageHero from '@/components/PageHero.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import IntegrationLogo from '@/components/brand/IntegrationLogo.astro';
 import { toolGroups, platforms, plannedConnections } from '@/data/integrations';
+import { Bot, KeyRound, Route } from '@lucide/astro';
 
 const agentGroups = toolGroups.filter((g) => g.kind !== 'native');
 const nativeGroups = toolGroups.filter((g) => g.kind === 'native');
@@ -21,13 +23,18 @@ const mcp = [
   ['Approval per call', 'Every tool call an agent makes asks for your approval first.'],
   ['Untrusted by default', 'What a server returns is treated as data, never as instructions.'],
 ];
+const grok = [
+  { i: Bot, t: 'Grok Build, as a coding agent', who: 'Optional coding agent', d: 'xAI’s coding CLI. Vekrun runs it headlessly in an isolated environment for implementation, review or one side of a Competitive Engineering comparison. Vekrun keeps the plan, the permissions, the verification and the delivery.', how: 'Signs in through Grok Build’s own flow. Usage follows your xAI account.' },
+  { i: KeyRound, t: 'Grok models, directly through xAI', who: 'Model provider', d: 'Connect the xAI API and use Grok models with Vekrun’s native agent, the Council and the Factory, wherever your model choices and policies allow. Choose current models such as Grok 4.7; you’re never tied to one version.', how: 'An xAI API key, kept in your system keychain. Billed by xAI per use.' },
+  { i: Route, t: 'Grok models, through OpenRouter', who: 'Model provider', d: 'Already route models through OpenRouter? Pick a Grok model there and use it in Vekrun like any other OpenRouter model.', how: 'Your OpenRouter key. Billed by OpenRouter, under its pricing.' },
+];
 const facts = [
   ['Your accounts, your bills', 'Model providers bill you directly, under your own account. Local models cost nothing to run beyond your hardware. Vekrun adds no markup.'],
   ['Logins stay yours', 'Optional coding agents sign in through their own official flow. Vekrun never reads or stores their credentials.'],
   ['You choose what agents can touch', 'Each connection says what it can do, and you decide what agents may use.'],
 ];
 ---
-<Base title="Integrations" fullTitle="Integrations: models, coding agents and tools · Vekrun" description="Vekrun's native agent runs on OpenRouter, Ollama or LM Studio. Claude Code, Codex and Antigravity CLI are optional. Native integrations with GitHub, GitLab, Jira, Linear, Sentry, Notion, Figma, Slack and Obsidian, plus any MCP server you add.">
+<Base title="Integrations" fullTitle="Integrations: models, coding agents and tools · Vekrun" description="Vekrun's native agent runs on OpenRouter, xAI, Ollama or LM Studio. Claude Code, Codex, Antigravity CLI and Grok Build are optional coding agents. Native integrations with GitHub, GitLab, Jira, Linear, Sentry, Notion, Figma, Slack and Obsidian, plus any MCP server you add.">
   <PageHero eyebrow="Integrations" title="Your models, your tools. Vekrun coordinates them." lede="Vekrun’s native agent does the work with the models you connect; coding-agent CLIs are optional. Vekrun connects to your trackers, Git hosts, monitoring and docs, and to any MCP server you add." />
 
   {agentGroups.map((g, i) => (
@@ -43,6 +50,23 @@ const facts = [
       </div>
     </section>
   ))}
+
+  <section id="grok" class="section-pad rule scroll-mt-16" aria-labelledby="grok-title">
+    <div class="container-site">
+      <SectionHeading id="grok-title" title="Three ways to bring Grok into Vekrun." lede="Grok can join your engineering workflow as a coding agent, as models connected directly through xAI, or as models routed through OpenRouter. They sign in and bill differently, so here’s the difference." />
+      <ul class="grok">
+        {grok.map((g) => (
+          <li>
+            <div class="grok-top"><span class="grok-ic"><g.i class="h-4 w-4" aria-hidden="true" /></span><span class="grok-k">{g.who}</span></div>
+            <h3>{g.t}</h3>
+            <p>{g.d}</p>
+            <p class="grok-how">{g.how}</p>
+          </li>
+        ))}
+      </ul>
+      <p class="mt-6 text-[0.8125rem] text-text-3">Grok, Grok Build and xAI are trademarks of their owner. Vekrun works with them; it isn’t affiliated with or endorsed by xAI.</p>
+    </div>
+  </section>
 
   <section class="section-pad rule pb-0" aria-labelledby="native-title">
     <div class="container-site">
@@ -110,6 +134,16 @@ const facts = [
   @media (min-width: 40rem) { .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   .tiles li { display: flex; align-items: center; gap: 0.75rem; min-width: 0; padding: 0.7rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); font-size: 0.95rem; font-weight: 520; color: var(--text); }
   .tiles li span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .grok { margin: 2.5rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.75rem; }
+  @media (min-width: 60rem) { .grok { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .grok li { display: flex; flex-direction: column; padding: 1.35rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
+  .grok-top { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+  .grok-ic { display: inline-grid; place-items: center; width: 2rem; height: 2rem; border-radius: var(--radius-sm); background: var(--accent-subtle); color: var(--accent-text); }
+  .grok-k { font-size: 0.78rem; font-weight: 560; color: var(--foreground-secondary); }
+  .grok h3 { margin: 1rem 0 0; font-size: 1.1rem; font-weight: 620; letter-spacing: -0.015em; color: var(--foreground); }
+  .grok li > p { margin: 0.45rem 0 0; font-size: 0.93rem; line-height: 1.55; color: var(--foreground-secondary); }
+  .grok .grok-how { margin-top: auto !important; padding-top: 1rem; font-size: 0.85rem !important; color: var(--foreground) !important; }
+  .grok li > p:nth-of-type(1) { margin-bottom: 1rem; }
   .plat { margin: 2.5rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; }
   .plat li { display: inline-flex; align-items: center; gap: 0.55rem; padding: 0.4rem 0.85rem 0.4rem 0.45rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); font-size: 0.95rem; color: var(--text); }
 </style>
