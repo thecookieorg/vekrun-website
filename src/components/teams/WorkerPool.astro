@@ -1,7 +1,7 @@
 ---
 /**
- * Teams' shared worker pool, as an example: authorized engineers send
- * approved Work Items to servers the organization runs; an engineer outside
+ * Teams' shared worker pool, as an example: authorized developers send
+ * approved Work Items to servers the organization runs; a developer outside
  * the pool's policy can't. The markup is the final state;
  * the script assigns the jobs one by one.
  */
@@ -19,12 +19,12 @@ const workers = [
   { id: 'worker-3', job: 'Webhook fix · Priya', st: 'Verified' },
 ];
 ---
-<figure class="wp" data-pool data-step="3" aria-label="Example: engineers sharing a pool of workers on the organization's own servers">
+<figure class="wp" data-pool data-step="3" aria-label="Example: developers sharing a pool of workers on the organization's own servers">
   <div class="wp-head">
     <span class="wp-k"><ShieldCheck class="h-4 w-4" aria-hidden="true" />Checkout worker pool · your servers</span>
   </div>
   <div class="wp-grid">
-    <ul class="wp-people" aria-label="Engineers">
+    <ul class="wp-people" aria-label="Developers">
       {people.map((p) => (
         <li class:list={[p.ok ? 'is-ok' : 'is-no']}>
           <span class="wp-av" aria-hidden="true">{p.n[0]}</span>

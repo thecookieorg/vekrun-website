@@ -23,7 +23,7 @@ const compare: [string, string, string][] = [
   ['Who it’s for', 'You, on your own projects', 'An engineering organization working as one'],
   ['AI Factories', 'Your own Factory', 'Every developer’s Factory, connected and coordinated'],
   ['Proof Packs', 'Verified evidence for your changes', 'Shared, verified Proof Packs across the team'],
-  ['Engineering Memory', 'Personal Engineering Memory', 'Shared Engineering Memory across engineers, repositories and team workflows'],
+  ['Engineering Memory', 'Personal Engineering Memory', 'Shared Engineering Memory across developers, repositories and team workflows'],
   ['Sign-in and access', 'No Vekrun account needed', 'SSO, role-based access and repository permissions'],
   ['Where it runs', 'Your machine', 'Connected Desktops, or a Dedicated Coordinator on your server: both included'],
   ['Remote execution', 'Work Anywhere: run the Factory on your own VPS', 'Shared remote worker pools and team-level management'],
@@ -57,7 +57,7 @@ const structuredData = [
   { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) },
 ];
 ---
-<Base title="Pricing" fullTitle="Pricing: Vekrun Free and Vekrun Teams · Vekrun" description={`Vekrun Free is $0 forever for individual engineers. Vekrun Teams is ${base} USD per month including ${n} developers, plus ${extra} per additional developer, with both deployment options included.`} image="/og/pricing.png" structuredData={structuredData}>
+<Base title="Pricing" fullTitle="Pricing: Vekrun Free and Vekrun Teams · Vekrun" description={`Vekrun Free is $0 forever for individual developers. Vekrun Teams is ${base} USD per month including ${n} developers, plus ${extra} per additional developer, with both deployment options included.`} image="/og/pricing.png" structuredData={structuredData}>
   <PageHero eyebrow="Pricing" title="Free for you. Teams for your whole organization." lede={`Your own AI engineering team, free on your machine. When your organization wants to work as one, Vekrun Teams is ${base} per month including ${n} developers, plus ${extra} for each additional developer.`} />
 
   <section class="rule pb-20 pt-14" aria-label="Plans">

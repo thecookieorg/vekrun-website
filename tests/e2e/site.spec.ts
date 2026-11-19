@@ -275,7 +275,7 @@ test.describe('pricing', () => {
     await expect(page.locator('.plan h3')).toHaveText(['Free', 'Teams']);
     const [free, teams] = [page.locator('.plan.is-free'), page.locator('.plan.is-teams')];
     await expect(free.locator('.plan-price')).toHaveText(/\$0\s*forever/);
-    await expect(free).toContainText('For individual engineers');
+    await expect(free).toContainText('For individual developers');
     await expect(free).toContainText('Free on your machine');
     for (const k of ['Competitive Engineering', 'Change Impact Intelligence', 'CLI and MCP']) await expect(free).toContainText(k);
     await expect(free.getByRole('link', { name: 'Request early access' })).toHaveAttribute('href', '/download/');
@@ -440,7 +440,7 @@ test.describe('teams', () => {
     await expect(deploy).toContainText('No server required.');
     await expect(deploy).toContainText('A Rust and PostgreSQL service you host');
     await expect(deploy).toContainText('Both are included in every Teams subscription, at the same price.');
-    for (const h of ['Every lesson becomes organizational intelligence.', 'Your engineers. Your identities. Your access rules.', 'One pool of workers. Many developers.']) await expect(page.getByRole('heading', { name: h })).toBeVisible();
+    for (const h of ['Every lesson becomes organizational intelligence.', 'Your developers. Your identities. Your access rules.', 'One pool of workers. Many developers.']) await expect(page.getByRole('heading', { name: h })).toBeVisible();
     await expect(page.locator('#shared-memory .better > li')).toHaveCount(4);
     await expect(page.locator('#sso')).toContainText('Microsoft Entra ID, Google Workspace, Okta');
     await expect(page.locator('#sso')).toContainText('SSO is part of Teams, not an add-on.');
@@ -481,7 +481,7 @@ test.describe('teams', () => {
     if ((page.viewportSize()?.width ?? 0) >= 960) await expect(net.locator('.on-mesh line.is-hl')).toHaveCount(5);
   });
 
-  test('the shared memory story steps through three engineers and keeps restricted and superseded records out of context', async ({ page }) => {
+  test('the shared memory story steps through three developers and keeps restricted and superseded records out of context', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/teams/');
     await expect(page.locator('[data-mstory]')).toHaveAttribute('data-demo', 'done');
@@ -951,7 +951,7 @@ test.describe('vekrun to vekrun', () => {
   test('shows seven Macs working in one shared workspace, each move narrated', async ({ page }) => {
     await page.goto('/product/#vekrun-to-vekrun');
     const mesh = page.locator('#vekrun-to-vekrun [data-vmesh]');
-    await expect(page.locator('#vekrun-to-vekrun')).toContainText('Seven engineers. Seven Macs. One workspace.');
+    await expect(page.locator('#vekrun-to-vekrun')).toContainText('Seven developers. Seven Macs. One workspace.');
     await expect(mesh.locator('[data-mac]')).toHaveCount(7);
     await expect(mesh.getByRole('list', { name: 'Workspace activity' }).getByRole('listitem')).toHaveCount(6);
     await page.getByRole('button', { name: 'Pause or play the demonstration' }).first().waitFor();

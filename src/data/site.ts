@@ -125,7 +125,7 @@ export const plans: Plan[] = [
     name: 'Free',
     price: '$0',
     priceNote: 'forever',
-    audience: 'For individual engineers',
+    audience: 'For individual developers',
     summary: 'Your own AI engineering team. Free on your machine, with the full local-first engineering experience.',
     planned: false,
     features: [

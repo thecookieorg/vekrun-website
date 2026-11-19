@@ -1,7 +1,7 @@
 ---
 /**
- * Organizational identity in Vekrun Teams, as a concept: an engineer signs in
- * through the organization's identity provider, two engineers see different
+ * Organizational identity in Vekrun Teams, as a concept: a developer signs in
+ * through the organization's identity provider, two developers see different
  * projects and memory, and revoking access cuts off shared resources, with
  * the action recorded. Nothing here authenticates anyone; it's an example of
  * a Teams capability.
@@ -19,7 +19,7 @@ const idps = [
   { id: 'okta', name: 'Okta', mono: 'OK' },
 ];
 const members = [
-  { id: 'alex', name: 'Alex', role: 'Engineer · Checkout', access: [['shop-rails', true], ['Checkout memory', true], ['billing-service', false], ['Billing memory', false]] as [string, boolean][] },
+  { id: 'alex', name: 'Alex', role: 'Developer · Checkout', access: [['shop-rails', true], ['Checkout memory', true], ['billing-service', false], ['Billing memory', false]] as [string, boolean][] },
   { id: 'priya', name: 'Priya', role: 'Lead · Checkout, Billing', access: [['shop-rails', true], ['Checkout memory', true], ['billing-service', true], ['Billing memory', true]] as [string, boolean][] },
 ];
 ---
