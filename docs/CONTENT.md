@@ -20,7 +20,8 @@ Show the product instead of describing it. Avoid "revolutionize", "seamlessly",
   $29 per month for each additional developer). One Teams subscription
   includes both deployment options in `teamsDeployments`: Connected Desktops
   (no server, a peer network of the developers' Vekrun apps) and a Dedicated
-  Coordinator (a customer-hosted Rust and PostgreSQL service). Never price them
+  Coordinator (a coordination service the customer hosts). Never name the
+  Coordinator's implementation stack anywhere on the site. Never price them
   separately or call Teams "self-hosted" only. Teams is positioned as "Your
   engineering organization, working as one", far more than shared memory.
   Never write "per developer" (an e2e test bans it); say "for each additional

@@ -438,7 +438,8 @@ test.describe('teams', () => {
     await expect(deploy.getByRole('heading', { level: 2 })).toHaveText('Two ways to connect. One subscription.');
     await expect(deploy.getByRole('heading', { level: 3 })).toHaveText(['Connected Desktops', 'Dedicated Coordinator']);
     await expect(deploy).toContainText('No server required.');
-    await expect(deploy).toContainText('A Rust and PostgreSQL service you host');
+    await expect(deploy).toContainText('A coordination service you host on your own server');
+    await expect(page.locator('body'), 'no Coordinator internals').not.toContainText(/Rust|PostgreSQL/);
     await expect(deploy).toContainText('Both are included in every Teams subscription, at the same price.');
     for (const h of ['Every lesson becomes organizational intelligence.', 'Your developers. Your identities. Your access rules.', 'One pool of workers. Many developers.']) await expect(page.getByRole('heading', { name: h })).toBeVisible();
     await expect(page.locator('#shared-memory .better > li')).toHaveCount(4);

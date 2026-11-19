@@ -71,7 +71,6 @@ const pairs = devs.flatMap((a, i) => devs.slice(i + 1).map((b, j) => [i, i + 1 +
         <div class="on-hub-v is-coordinator">
           <p class="on-hub-k"><Server class="h-3.5 w-3.5" aria-hidden="true" />Dedicated Coordinator</p>
           <p class="on-hub-t">Your server</p>
-          <p class="on-hub-s">Rust and PostgreSQL, always on</p>
         </div>
         <p class="on-hub-n">Verified records shared: <b data-pk-count>{events.filter((e) => e.k === 'proof' || e.k === 'memory').length}</b></p>
       </div>
@@ -117,7 +116,9 @@ const pairs = devs.flatMap((a, i) => devs.slice(i + 1).map((b, j) => [i, i + 1 +
   [data-mode='desktops'] .on-hub { border-style: dashed; box-shadow: none; }
   [data-mode='coordinator'] .on-hub { box-shadow: var(--glow-accent), 0 0 42px color-mix(in srgb, var(--accent) 16%, transparent); }
   .on-hub-v { transition: opacity 350ms var(--ease-out); }
-  .on-hub-v.is-coordinator { position: absolute; inset: 0.9rem 1rem auto; }
+  .on-hub { display: grid; grid-template-areas: 'v' 'n'; }
+  .on-hub-v { grid-area: v; align-self: center; }
+  .on-hub-n { grid-area: n; }
   [data-mode='desktops'] .on-hub-v.is-coordinator, [data-mode='coordinator'] .on-hub-v.is-desktops { opacity: 0; visibility: hidden; }
   .on-hub-k { margin: 0; display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.74rem; font-weight: 600; color: var(--accent-text); }
   .on-hub-t { margin: 0.25rem 0 0; font-size: 1.05rem; font-weight: 640; letter-spacing: -0.01em; color: var(--foreground); }
