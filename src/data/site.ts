@@ -111,7 +111,7 @@ export const teamsDeployments = [
   {
     key: 'coordinator',
     name: 'Dedicated Coordinator',
-    line: 'A Rust and PostgreSQL service you host, for persistent synchronization, centralized governance and always-on availability.',
+    line: 'A coordination service you host on your own server, for persistent synchronization, centralized governance and always-on availability.',
   },
 ] as const;
 

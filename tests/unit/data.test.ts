@@ -52,10 +52,11 @@ describe('plans and pricing', () => {
     expect(teamsMonthly(0)).toBe(199);
     expect(teamsMonthly(5.9)).toBe(199);
   });
-  it('includes both deployment options in one Teams subscription', () => {
+  it('includes both deployment options in one Teams subscription, without naming the Coordinator’s stack', () => {
+    expect(JSON.stringify(teamsDeployments)).not.toMatch(/Rust|PostgreSQL/);
     expect(teamsDeployments.map((d) => d.name)).toEqual(['Connected Desktops', 'Dedicated Coordinator']);
     expect(teamsDeployments[0]!.line).toMatch(/No server required.*peer network/);
-    expect(teamsDeployments[1]!.line).toMatch(/Rust and PostgreSQL.*persistent synchronization, centralized governance and always-on availability/);
+    expect(teamsDeployments[1]!.line).toMatch(/service you host on your own server.*persistent synchronization, centralized governance and always-on availability/);
   });
   it('publishes no Cloud or Enterprise tier, usage fees or purchase paths', () => {
     const all = JSON.stringify(plans);
