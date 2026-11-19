@@ -54,8 +54,9 @@ pnpm test:e2e     # playwright + axe: pages, nav, pricing, demos, a11y, SEO (des
 
 ## Rules
 
-- Pricing comes only from `site.ts`: $199 a month for up to 10 engineers, then
-  $10 a month per additional engineer. Planned launch pricing; no checkout.
+- Pricing comes only from `site.ts`: $199 a month including 5 developers, then
+  $29 a month for each additional developer, with Connected Desktops and a
+  Dedicated Coordinator both included. No checkout.
 - No status labels, no "coming soon", no fabricated testimonials, screenshots,
   downloads or certifications. Download availability lives in `site.release`.
 - Concept visuals carry an "Illustrative product concept" notice.

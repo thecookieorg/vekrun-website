@@ -21,7 +21,7 @@ import { site, personalCta, teamsInterestMailto, teamsPricing, usd } from '@/dat
 import { ArrowRight, Check, Laptop, Server, Lock } from '@lucide/astro';
 
 const free = ['Your own AI engineering team, on your Mac', 'Competitive Engineering and Proof Packs', 'Personal Engineering Memory', 'Work Anywhere on your own VPS'];
-const teams = ['Shared Engineering Memory', 'SSO and role-based access', 'Shared workers and team coordination', 'Self-hosted, on infrastructure you control'];
+const teams = ['Connected AI Factories and coordination', 'Shared verified Proof Packs and memory', 'SSO, safeguards and organization policies', 'Connected Desktops or your own Coordinator'];
 
 const structuredData = [
   { '@context': 'https://schema.org', '@type': 'Organization', name: site.name, url: site.url, logo: `${site.url}/brand/vekrun-mark-dark-512.png`, email: site.earlyAccess.email },
@@ -76,8 +76,8 @@ const structuredData = [
     <div class="container-site act-stage"><MemoryBridge /></div>
     <div id="team-memory" class="container-site"><div class="bridge">
       <div>
-        <h3 class="bridge-h">Your team shares a codebase. Now it can share an engineering brain.</h3>
-        <p class="bridge-l">Vekrun Teams shares that memory across authorized engineers and their agents, with permissions, on infrastructure you control.</p>
+        <h3 class="bridge-h">Your engineering organization, working as one.</h3>
+        <p class="bridge-l">Vekrun Teams shares that memory, and much more: every developer’s Factory, Proof Packs, handoffs and safeguards, connected on their own Macs or a server you control.</p>
       </div>
       <a href="/teams/" class="link-more group">Explore Vekrun Teams<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a>
     </div></div>
@@ -108,7 +108,7 @@ const structuredData = [
       </article>
       <article class="plan is-teams">
         <h3>Teams</h3>
-        <p class="plan-p"><b>{usd(teamsPricing.base)}</b> a month for up to {teamsPricing.included} engineers, plus {usd(teamsPricing.perExtra)} for each one after that</p>
+        <p class="plan-p"><b>{usd(teamsPricing.base)}</b> a month includes {teamsPricing.included} developers, plus {usd(teamsPricing.perExtra)} for each additional developer</p>
         <ul>{teams.map((f) => <li><Check class="h-4 w-4" aria-hidden="true" />{f}</li>)}</ul>
         <div class="plan-a"><Button href="/teams/" variant="secondary">Explore Teams</Button><a href={teamsInterestMailto} class="text-accent link-slide text-[0.9rem]">Register interest</a></div>
       </article>

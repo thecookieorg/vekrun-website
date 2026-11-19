@@ -1,26 +1,37 @@
 ---
 /**
- * Vekrun Teams: the self-hosted plan for engineering teams. The page sells
- * Shared Engineering Memory first; self-hosting, shared workers, SSO and the
- * rest support it. Availability is stated once, next to the interest CTA.
- * Pricing comes from `teamsPricing`; the calculator lives on /pricing/.
+ * Vekrun Teams: an engineering organization working as one. The page leads
+ * with the connected network (Factories, Proof Packs, handoffs, safeguards),
+ * then what Teams adds beyond shared memory, the two deployment options (both
+ * in one subscription), and a price that can't be misread.
+ * Pricing comes from `teamsPricing`; the calculator is shared with /pricing/.
  */
 import Base from '@/layouts/Base.astro';
 import PageHero from '@/components/PageHero.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import Button from '@/components/Button.astro';
-import TeamNetwork from '@/components/teams/TeamNetwork.astro';
+import OrgNetwork from '@/components/teams/OrgNetwork.astro';
+import DeployCompare from '@/components/teams/DeployCompare.astro';
 import MemoryStory from '@/components/teams/MemoryStory.astro';
-import SelfHostArch from '@/components/teams/SelfHostArch.astro';
 import WorkerPool from '@/components/teams/WorkerPool.astro';
 import SsoDemo from '@/components/teams/SsoDemo.astro';
+import TeamsCalc from '@/components/pricing/TeamsCalc.astro';
 import { site, teamsInterestMailto, teamsPricing, teamsMonthly, usd } from '@/data/site';
-import { ArrowRight, Check, ChevronDown, Brain, Users, Cpu, Scale, Network, GitMerge, KeyRound, BarChart3, FileCode2, CircleDashed, GitCommitHorizontal, Lock } from '@lucide/astro';
+import { ArrowRight, Check, ChevronDown, Brain, Users, Cpu, ShieldCheck, ShieldAlert, Workflow, FileCode2, CircleDashed, GitCommitHorizontal, Lock } from '@lucide/astro';
 
 const base = usd(teamsPricing.base);
 const extra = usd(teamsPricing.perExtra);
 const n = teamsPricing.included;
+const priceLine = `${base} a month includes ${n} developers. ${extra} a month for each additional developer.`;
 
+const pillars = [
+  { i: Cpu, t: 'Connected AI Factories', d: 'Every developer’s Factory knows what the others are building, so work is split instead of duplicated.' },
+  { i: Users, t: 'Cross-developer coordination', d: 'Shared Work Items, reviews across machines and large changes split between developers.' },
+  { i: ShieldCheck, t: 'Shared verified Proof Packs', d: 'Evidence travels with the work. A teammate’s verified result is reused, not re-proved from scratch.' },
+  { i: ShieldAlert, t: 'Engineering safeguards', d: 'Organization policies, required approvals and risk checks apply on every developer’s machine.' },
+  { i: Workflow, t: 'Dependencies and handoffs', d: 'Vekrun sees what blocks what, and hands work over with its plan, decisions and evidence.' },
+  { i: Brain, t: 'Organizational intelligence', d: 'Shared Engineering Memory, architecture knowledge and engineering insights that grow with every task.' },
+];
 const better = [
   { i: FileCode2, t: 'Cites its sources', d: 'Every record links to the code, pull request or incident it came from.' },
   { i: GitCommitHorizontal, t: 'Knows its revision', d: 'Knowledge is tied to the revision it was true at, so outdated facts can be spotted.' },
@@ -35,77 +46,77 @@ const sso = [
   'Revoking someone closes shared projects, memory and workers to them',
   'Organizational actions recorded in an audit trail',
 ];
-const caps = [
-  { i: Brain, t: 'Shared Engineering Memory', d: 'Your code, decisions, verified fixes and reusable knowledge, shared by permission.' },
-  { i: Users, t: 'Team coordination', d: 'Shared Work Items, project visibility, handoffs and cross-developer workflows.' },
-  { i: Cpu, t: 'Autonomous Factory workers', d: 'Approved work runs on shared workers your organization hosts.' },
-  { i: Scale, t: 'Organization policies', d: 'Shared approval rules, verification requirements, risk policies and governance.' },
-  { i: Network, t: 'Shared Architecture Intelligence', d: 'Team visibility into architecture, dependencies, impact and history.' },
-  { i: GitMerge, t: 'PR intelligence', d: 'Pull requests, verified changes and review evidence across the team.' },
-  { i: KeyRound, t: 'SSO and access control', d: 'One organizational identity and permission-aware collaboration.' },
-  { i: BarChart3, t: 'Engineering insights', d: 'Progress, verification evidence and where engineering could improve.' },
-];
 const price = [
-  `Includes up to ${n} engineers`,
-  `${extra} per month for each additional engineer`,
-  'Shared Engineering Memory, SSO and access control included',
-  'Self-hosted on infrastructure you control',
+  'Connected Desktops and Dedicated Coordinator, both included',
+  'Every Teams capability, with SSO and access control',
   'No per-agent, per-task, per-PR or per-Work-Item fees',
-  'You bring your own servers and model connections',
+  'Your servers and model usage are billed by their providers',
 ];
 const faq: [string, string][] = [
-  ['Why would a team pay when individuals use Vekrun for free?', 'Free gives each engineer a complete AI engineering team for their own work. Teams adds what no individual can do alone: share what the team learns, so decisions, verified fixes and architecture discoveries become reusable by every authorized teammate and their agents.'],
-  ['What exactly is Shared Engineering Memory?', 'Engineering knowledge that’s tied to your code: decisions and their reasons, verified fixes and their evidence, architecture and dependencies. Each record cites its sources and revision, says whether it’s verified or inferred, and is visible only to the people allowed to see it.'],
-  ['Why is that better than shared docs or AI chat history?', 'Docs drift from the code and chat history is unstructured and unverified. Shared Engineering Memory links knowledge to the code and evidence behind it, marks what’s outdated, and gives agents only what’s relevant and permitted.'],
-  ['How does a new teammate benefit?', 'When they start work, Vekrun can surface the decisions, constraints and verified fixes that apply to it, so they and their agents don’t rediscover them from scratch.'],
-  ['Can we control who sees what?', 'Yes. Access follows roles and repository or project permissions, and revoking a member closes shared projects, memory and workers to them.'],
-  ['Where does our shared data live?', 'On infrastructure your organization controls. The Coordinator, Shared Engineering Memory and Factory workers run on your servers, private cloud or VPS; there’s no Vekrun-operated cloud to buy. Each engineer’s own work stays on their machine.'],
-  ['What does it cost?', `${base} USD per month for up to ${n} engineers, plus ${extra} per month for each engineer after that: ${n + 1} engineers is ${usd(teamsMonthly(n + 1))}, 20 is ${usd(teamsMonthly(20))}. Your servers and model usage are billed by their providers.`],
-  ['How do we get started?', 'Register your interest by email. We’ll talk through your team size and infrastructure, and set Teams up with you.'],
+  ['What does Vekrun Teams cost?', `${base} USD per month, including ${n} developers. Each additional developer is ${extra} per month: ${n + 1} developers is ${usd(teamsMonthly(n + 1))}, 10 is ${usd(teamsMonthly(10))} and 20 is ${usd(teamsMonthly(20))}. One subscription includes both deployment options.`],
+  ['Is Teams just shared memory?', 'No. Shared Engineering Memory is one part. Teams connects every developer’s AI Factory, coordinates work across machines, shares verified Proof Packs, enforces engineering safeguards, tracks dependencies and handoffs, and builds organizational intelligence.'],
+  ['What’s the difference between Connected Desktops and a Dedicated Coordinator?', 'Connected Desktops needs no server: the authorized Vekrun apps on your developers’ Macs form a peer network and synchronize directly. A Dedicated Coordinator is a Rust and PostgreSQL service you host, for persistent synchronization, centralized governance and always-on availability.'],
+  ['Do we pay more for the Dedicated Coordinator?', 'No. Both deployment options are part of the same Teams subscription, at the same price. You run the Coordinator on your own server, billed by your hosting provider.'],
+  ['Where does our shared data live?', 'On machines your organization controls: the developers’ own Macs with Connected Desktops, plus your server with a Dedicated Coordinator. There’s no Vekrun-operated cloud, and each developer’s private work stays on their machine.'],
+  ['Can we control who sees what?', 'Yes. Access follows SSO identities, roles and repository or project permissions, and revoking a member closes shared projects, memory and workers to them.'],
+  ['Why would a team pay when individuals use Vekrun for free?', 'Free gives each developer a complete AI engineering team for their own work. Teams makes those teams work together, so the organization coordinates, proves and learns as one.'],
+  ['How do we get started?', 'Register your interest by email. We’ll talk through your team size and which deployment option suits you, and set Teams up with you.'],
 ];
 
 const structuredData = [
   { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) },
 ];
 ---
-<Base title="Teams" fullTitle="Vekrun Teams: Shared Engineering Memory for your whole team · Vekrun" image="/og/teams.png" description={`Vekrun Teams, self-hosted, gives your team Shared Engineering Memory, SSO and access control, shared workers and coordination on infrastructure you control. ${base} USD per month for up to ${n} engineers.`} structuredData={structuredData}>
-  <PageHero eyebrow="Vekrun Teams" title="Your team shares a codebase. Now it can share an engineering brain." lede="Vekrun Teams connects engineers, engineering knowledge and autonomous workflows across an organization. Decisions, verified fixes and architectural discoveries become reusable knowledge for the entire team, on infrastructure the organization controls." cta={{ label: 'Register Teams interest', href: teamsInterestMailto }} secondary={{ label: 'Explore how Teams works', href: '#how' }}>
-    <p slot="after" class="hero-note enter" style="--i: 4">Self-hosted, on infrastructure you control. Individuals can use <a href="/pricing/" class="text-accent link-slide">Vekrun Free</a> today.</p>
-    <TeamNetwork />
+<Base title="Teams" fullTitle="Vekrun Teams: your engineering organization, working as one · Vekrun" image="/og/teams.png" description={`Vekrun Teams connects every developer’s AI Factory: coordination, shared verified Proof Packs, safeguards, dependencies, handoffs and organizational intelligence. ${priceLine}`} structuredData={structuredData}>
+  <script is:inline>if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('tm-motion');</script>
+  <PageHero eyebrow="Vekrun Teams" title="Your engineering organization, working as one." lede="Teams connects every developer’s Vekrun: AI Factories that coordinate, verified Proof Packs the whole team can trust, safeguards, dependencies, handoffs and the intelligence your organization builds with every task." cta={{ label: 'Register Teams interest', href: teamsInterestMailto }} secondary={{ label: 'See Teams pricing', href: '#pricing' }} wide>
+    <p slot="after" class="hero-price enter" style="--i: 4"><b>{base}</b> a month includes {n} developers, then {extra} for each additional developer. Connected Desktops and Dedicated Coordinator, both included.</p>
+    <div id="network" class="scroll-mt-24"><OrgNetwork /></div>
   </PageHero>
+
+  <section id="platform" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="pl-title">
+    <div class="container-site">
+      <SectionHeading id="pl-title" title="Much more than shared memory." lede="Free gives each developer their own AI engineering team. Teams makes all of those teams work together." />
+      <ul class="pillars">
+        {pillars.map((p, i) => <li class="reveal" style={`--d:${i}`}><span class="pillar-ic"><p.i class="h-5 w-5" aria-hidden="true" /></span><h3>{p.t}</h3><p>{p.d}</p></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section id="deploy" class="section-pad rule scroll-mt-16" aria-labelledby="dp-title">
+    <div class="container-site">
+      <SectionHeading id="dp-title" title="Two ways to connect. One subscription." lede="Connect the developers’ Macs directly, or run a Coordinator on your own server. Either way there’s no Vekrun-operated cloud, and your code stays on machines you control." />
+      <div class="mt-12 reveal"><DeployCompare /></div>
+    </div>
+  </section>
 
   <section id="shared-memory" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="sm-title">
     <div class="container-site">
-      <SectionHeading id="sm-title" title="The knowledge your team creates shouldn’t disappear when a conversation ends." lede="Today it’s scattered: closed AI sessions, review threads, incident notes nobody finds and docs that drift from the code. So teams solve the same problems again and again. Shared Engineering Memory changes that." />
+      <SectionHeading id="sm-title" title="Every lesson becomes organizational intelligence." lede="Decisions, verified fixes and architecture discoveries stop disappearing into closed sessions and review threads. They become knowledge every authorized teammate and their agents can use." />
     </div>
     <div class="container-wide mt-12"><MemoryStory /></div>
     <div class="container-site">
       <h3 class="h3 mt-16">More than shared docs or chat history.</h3>
       <ul class="better">
-        {better.map((b) => <li><span class="better-ic"><b.i class="h-4 w-4" aria-hidden="true" /></span><h4>{b.t}</h4><p>{b.d}</p></li>)}
+        {better.map((b, i) => <li class="reveal" style={`--d:${i}`}><span class="better-ic"><b.i class="h-4 w-4" aria-hidden="true" /></span><h4>{b.t}</h4><p>{b.d}</p></li>)}
       </ul>
-      <div class="tiers" aria-label="Engineering Memory in each plan">
-        <div><p class="tiers-k">Vekrun Free</p><p class="tiers-v">Personal Engineering Memory, on your machine. Available in early access.</p></div>
-        <div class="is-teams"><p class="tiers-k">Vekrun Teams</p><p class="tiers-v">Shared Engineering Memory across engineers, repositories and authorized team workflows.</p></div>
-      </div>
     </div>
   </section>
 
-  <section id="how" class="section-pad rule scroll-mt-16" aria-labelledby="how-title">
-    <div class="container-site">
-      <SectionHeading id="how-title" title="Your engineering intelligence. Your infrastructure. Your rules." lede="Each engineer keeps Vekrun on their own computer. The shared parts, the Coordinator, Shared Engineering Memory and Factory workers, run on your servers, private cloud or VPS. There’s no Vekrun-operated cloud to buy." />
-      <div class="mt-12"><SelfHostArch /></div>
-      <div class="facts2">
-        <div><h4>Where shared data lives</h4><p>On infrastructure you control. Knowledge is shared according to your permissions and repository scope, and an engineer’s private work stays on their machine.</p></div>
-        <div><h4>Vekrun-to-Vekrun</h4><p>Every engineer’s Vekrun can join the same workspace at the same time, seven Macs or seventy: hand over Work Items with their context, ask each other for reviews and split big changes across machines. <a href="/product/#vekrun-to-vekrun" class="text-accent link-slide">See it working</a></p></div>
+  <section id="sso" class="section-pad rule scroll-mt-16" aria-labelledby="sso-title">
+    <div class="container-site split">
+      <div>
+        <SectionHeading id="sso-title" title="Your engineers. Your identities. Your access rules." lede="Developers sign in with the identity your organization already manages, and see only the projects and memory they’re allowed to. SSO is part of Teams, not an add-on." />
+        <ul class="ticks">{sso.map((s) => <li><Check class="h-4 w-4" aria-hidden="true" />{s}</li>)}</ul>
       </div>
+      <div class="min-w-0"><SsoDemo /></div>
     </div>
   </section>
 
   <section id="workers" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="workers-title">
     <div class="container-site split">
       <div>
-        <SectionHeading id="workers-title" title="One pool of workers. Many engineers." lede="Work Anywhere, in Vekrun Free, lets one engineer run the Factory on their own VPS. Teams turns that into shared infrastructure: a pool of workers your organization hosts, used by the people your policies allow." />
+        <SectionHeading id="workers-title" title="One pool of workers. Many developers." lede="Work Anywhere, in Vekrun Free, lets one developer run the Factory on their own VPS. Teams turns that into shared infrastructure: a pool of workers your organization hosts, used by the people your policies allow." />
         <ul class="ticks">
           <li><Check class="h-4 w-4" aria-hidden="true" />Shared remote worker pools on your own servers</li>
           <li><Check class="h-4 w-4" aria-hidden="true" />Policies decide who can use which workers, for which repositories</li>
@@ -118,37 +129,23 @@ const structuredData = [
     </div>
   </section>
 
-  <section id="sso" class="section-pad rule scroll-mt-16" aria-labelledby="sso-title">
-    <div class="container-site split">
-      <div>
-        <SectionHeading id="sso-title" title="Your engineers. Your identities. Your access rules." lede="Engineers sign in with the identity your organization already manages, and see only the projects and memory they’re allowed to. SSO is part of Teams, not an add-on." />
-        <ul class="ticks">{sso.map((s) => <li><Check class="h-4 w-4" aria-hidden="true" />{s}</li>)}</ul>
-      </div>
-      <div class="min-w-0"><SsoDemo /></div>
-    </div>
-  </section>
-
-  <section id="capabilities" class="section-pad rule bg-bg-elevated scroll-mt-16" aria-labelledby="caps-title">
-    <div class="container-site">
-      <SectionHeading id="caps-title" title="Everything a team needs to work as one." lede="Everything in Vekrun Free, plus what only a team can do together." />
-      <ul class="caps">
-        {caps.map((c) => <li><c.i class="h-4 w-4" aria-hidden="true" /><h3>{c.t}</h3><p>{c.d}</p></li>)}
-      </ul>
-    </div>
-  </section>
-
   <section id="pricing" class="section-pad rule scroll-mt-16" aria-labelledby="tp-title">
-    <div class="container-site tp">
-      <div>
-        <SectionHeading id="tp-title" title="One price for the whole team." lede="Shared Engineering Memory, SSO and every Teams capability, with no usage fees. Your servers and model usage are billed by their providers." />
-        <p class="mt-8"><a href="/pricing/#teams" class="link-more group">Compare plans and calculate your price<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
-      </div>
-      <div class="tp-card">
-        <div class="tp-top"><h3>Vekrun Teams</h3></div>
-        <p class="tp-price"><b>{base}</b><span>USD per month</span></p>
-        <ul>{price.map((p) => <li><Check class="h-4 w-4" aria-hidden="true" />{p}</li>)}</ul>
-        <Button href={teamsInterestMailto} size="lg" class="mt-6" data-teams-interest>Register Teams interest</Button>
-        <p class="tp-fine">Opens an email to {site.earlyAccess.email}; nothing is sent until you send it.</p>
+    <div class="container-site">
+      <SectionHeading id="tp-title" title="One price for the whole organization." lede="No tiers to choose between and no usage fees. Every Teams capability and both deployment options are in one subscription." />
+      <div class="tp">
+        <div class="tp-card">
+          <h3>Vekrun Teams</h3>
+          <p class="tp-price"><b>{base}</b><span>USD per month</span></p>
+          <p class="tp-inc">Includes {n} developers</p>
+          <p class="tp-extra"><b>+{extra}</b> per month for each additional developer</p>
+          <ul>{price.map((p) => <li><Check class="h-4 w-4" aria-hidden="true" />{p}</li>)}</ul>
+          <Button href={teamsInterestMailto} size="lg" class="mt-6 w-full justify-center" data-teams-interest>Register Teams interest</Button>
+          <p class="tp-fine">Opens an email to {site.earlyAccess.email}; nothing is sent until you send it.</p>
+        </div>
+        <div class="min-w-0">
+          <TeamsCalc />
+          <p class="mt-6"><a href="/pricing/#teams" class="link-more group">Compare Teams with Vekrun Free<ArrowRight class="icon-nudge h-4 w-4" aria-hidden="true" /></a></p>
+        </div>
       </div>
     </div>
   </section>
@@ -166,52 +163,64 @@ const structuredData = [
       </div>
     </div>
   </section>
+
+  <section class="section-pad rule" aria-labelledby="go-title">
+    <div class="container-site text-center">
+      <h2 id="go-title" class="heading-2 text-text">Bring your whole engineering organization.</h2>
+      <p class="lede mx-auto mt-4 max-w-2xl">{priceLine} Connected Desktops and Dedicated Coordinator included.</p>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <Button href={teamsInterestMailto} size="lg">Register Teams interest</Button>
+        <Button href="/pricing/" size="lg" variant="secondary">Compare plans</Button>
+      </div>
+    </div>
+  </section>
 </Base>
 
 <style>
-  .hero-note { margin: 1.25rem 0 0; font-size: 0.9rem; color: var(--foreground-secondary); }
+  .hero-price { margin: 1.25rem 0 0; font-size: 0.95rem; line-height: 1.5; color: var(--foreground-secondary); }
+  .hero-price b { font-weight: 640; color: var(--foreground); }
   .split { display: grid; gap: 2.5rem; }
   @media (min-width: 64rem) { .split { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 4rem; align-items: start; } }
   .h3 { font-size: 1.35rem; font-weight: 620; letter-spacing: -0.02em; color: var(--foreground); }
+
+  /* Scroll reveals, only with motion allowed (see the inline script) and only once. */
+  :global(html.tm-motion) .reveal { transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out); transition-delay: calc(var(--d, 0) * 80ms); }
+  :global(html.tm-motion) .reveal:not(:global(.is-visible)) { opacity: 0; transform: translateY(18px); }
+
+  .pillars { margin: 3rem 0 0; padding: 0; list-style: none; display: grid; gap: 0 2.5rem; }
+  @media (min-width: 40rem) { .pillars { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 64rem) { .pillars { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .pillars li { position: relative; padding: 1.6rem 0 1.8rem; border-top: 1px solid var(--border); }
+  .pillars li::after { content: ''; position: absolute; left: 0; top: -1px; width: 100%; height: 1px; background: var(--accent-text); transform: scaleX(0); transform-origin: left; transition: transform 500ms var(--ease-out); }
+  .pillars li:hover::after { transform: scaleX(1); }
+  .pillar-ic { display: inline-grid; place-items: center; width: 2.6rem; height: 2.6rem; border-radius: var(--radius-md); background: var(--accent-subtle); color: var(--accent-text); transition: background-color 300ms var(--ease-out), color 300ms var(--ease-out), box-shadow 300ms var(--ease-out); }
+  .pillars li:hover .pillar-ic { background: var(--accent); color: var(--accent-foreground); box-shadow: 0 0 22px color-mix(in srgb, var(--accent) 35%, transparent); }
+  .pillars h3 { margin: 1rem 0 0; font-size: 1.12rem; font-weight: 620; letter-spacing: -0.015em; color: var(--foreground); }
+  .pillars p { margin: 0.4rem 0 0; font-size: 0.95rem; line-height: 1.55; color: var(--foreground-secondary); }
+
   .better { margin: 1.5rem 0 0; padding: 0; list-style: none; display: grid; column-gap: 3rem; }
   @media (min-width: 48rem) { .better { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .better li { display: grid; grid-template-columns: 2rem minmax(0, 1fr); column-gap: 0.9rem; padding: 1.1rem 0; border-top: 1px solid var(--border); }
   .better-ic { grid-row: span 2; display: inline-grid; place-items: center; width: 2rem; height: 2rem; border-radius: var(--radius-sm); background: var(--accent-subtle); color: var(--accent-text); }
   .better h4 { margin: 0; font-size: 1rem; font-weight: 600; color: var(--foreground); }
   .better p { margin: 0.3rem 0 0; font-size: 0.92rem; line-height: 1.5; color: var(--foreground-secondary); }
-  .tiers { margin-top: 3rem; display: grid; gap: 1px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--border); }
-  @media (min-width: 48rem) { .tiers { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  .tiers > div { padding: 1.2rem 1.3rem; background: var(--surface); }
-  .tiers > .is-teams { background: var(--accent-subtle); }
-  .tiers-k { margin: 0; display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; font-weight: 620; color: var(--foreground); }
-  .tiers-k span { padding: 0.05rem 0.4rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.7rem; font-weight: 540; color: var(--foreground-secondary); }
-  .tiers-v { margin: 0.35rem 0 0; font-size: 0.92rem; line-height: 1.5; color: var(--foreground-secondary); }
-  .facts2 { margin-top: 2.5rem; display: grid; gap: 1.5rem 3rem; max-width: 60rem; }
-  @media (min-width: 48rem) { .facts2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  .facts2 h4 { margin: 0; font-size: 1rem; font-weight: 600; color: var(--foreground); }
-  .facts2 p { margin: 0.35rem 0 0; font-size: 0.92rem; line-height: 1.55; color: var(--foreground-secondary); }
   .ticks { margin: 1.75rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.6rem; }
   .ticks li { display: flex; gap: 0.55rem; align-items: flex-start; font-size: 0.98rem; line-height: 1.5; color: var(--foreground); }
   .ticks :global(svg) { margin-top: 0.25rem; flex-shrink: 0; color: var(--accent-text); }
-  .fine { margin: 1.5rem 0 0; font-size: 0.88rem; line-height: 1.55; color: var(--foreground-secondary); }
-  .caps { margin: 2.5rem 0 0; padding: 0; list-style: none; display: grid; column-gap: 2.5rem; }
-  @media (min-width: 40rem) { .caps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (min-width: 64rem) { .caps { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-  .caps li { padding: 1.1rem 0; border-top: 1px solid var(--border); }
-  .caps li > :global(svg) { color: var(--accent-text); }
-  .caps h3 { margin: 0.6rem 0 0; font-size: 1rem; font-weight: 620; color: var(--foreground); }
-  .caps p { margin: 0.3rem 0 0; font-size: 0.9rem; line-height: 1.5; color: var(--foreground-secondary); }
-  .tp { display: grid; gap: 2.5rem; }
-  @media (min-width: 64rem) { .tp { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 4rem; align-items: center; } }
-  .tp-card { padding: 1.6rem; border: 1px solid var(--border-interactive); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--glow-accent); }
-  .tp-top { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
-  .tp-top h3 { margin: 0; font-size: 1.35rem; font-weight: 620; color: var(--foreground); }
-  .tp-top span { padding: 0.2rem 0.5rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.75rem; color: var(--foreground-secondary); }
-  .tp-price { margin: 1rem 0 0; display: flex; align-items: baseline; gap: 0.5rem; }
-  .tp-price b { font-size: 2.5rem; font-weight: 640; letter-spacing: -0.04em; color: var(--foreground); }
+
+  .tp { margin-top: 3rem; display: grid; gap: 2rem; }
+  @media (min-width: 64rem) { .tp { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 3rem; align-items: start; } }
+  .tp-card { padding: 1.8rem; border: 1px solid var(--border-interactive); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--glow-accent), 0 24px 60px -32px color-mix(in srgb, var(--accent) 40%, transparent); }
+  .tp-card h3 { margin: 0; font-size: 1.2rem; font-weight: 620; color: var(--foreground); }
+  .tp-price { margin: 1rem 0 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.6rem; }
+  .tp-price b { font-size: clamp(3rem, 2.4rem + 2vw, 4rem); font-weight: 660; letter-spacing: -0.05em; line-height: 1; color: var(--foreground); }
   .tp-price span { color: var(--foreground-secondary); }
-  .tp-card ul { margin: 1.2rem 0 0; padding: 1.2rem 0 0; border-top: 1px solid var(--border); list-style: none; display: grid; gap: 0.5rem; }
+  .tp-inc { margin: 0.6rem 0 0; font-size: 1.1rem; font-weight: 600; color: var(--accent-text); }
+  .tp-extra { margin: 0.3rem 0 0; font-size: 0.98rem; color: var(--foreground-secondary); }
+  .tp-extra b { font-weight: 640; color: var(--foreground); }
+  .tp-card ul { margin: 1.3rem 0 0; padding: 1.3rem 0 0; border-top: 1px solid var(--border); list-style: none; display: grid; gap: 0.55rem; }
   .tp-card li { display: flex; gap: 0.55rem; align-items: flex-start; font-size: 0.93rem; color: var(--foreground); }
   .tp-card li :global(svg) { margin-top: 0.2rem; flex-shrink: 0; color: var(--accent-text); }
   .tp-fine { margin: 0.9rem 0 0; font-size: 0.8rem; color: var(--foreground-muted); }
+  @media (prefers-reduced-motion: reduce) { .pillars li::after, .pillar-ic { transition: none; } }
 </style>

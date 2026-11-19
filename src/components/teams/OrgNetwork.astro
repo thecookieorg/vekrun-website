@@ -1,0 +1,296 @@
+---
+/**
+ * The Teams hero: six developers, each running Vekrun and its AI Factory on
+ * their own Mac, connected as one engineering organization. Proof Packs,
+ * handoffs, safeguards and dependencies travel between machines, either
+ * directly between the Macs (Connected Desktops) or through a Dedicated
+ * Coordinator the customer hosts. Visitors switch between the two, and
+ * hovering, focusing or pressing a developer highlights their connections.
+ *
+ * The markup is the final state; the script replays the events while the
+ * figure is on screen. Under reduced motion nothing travels and the final
+ * state is shown at once. On narrow screens the Macs form a grid without
+ * lines. Demonstration data.
+ */
+import DemoControls from '@/components/mock/DemoControls.astro';
+import { Laptop, Network, Server } from '@lucide/astro';
+
+type Dev = { id: string; who: string; init: string; start: string };
+const devs: Dev[] = [
+  { id: 'ana', who: 'Ana', init: 'AR', start: 'Building checkout-v2' },
+  { id: 'marco', who: 'Marco', init: 'MB', start: 'Building payments-sdk' },
+  { id: 'priya', who: 'Priya', init: 'PS', start: 'Verifying refunds' },
+  { id: 'jonas', who: 'Jonas', init: 'JW', start: 'Reviewing PR #418' },
+  { id: 'lena', who: 'Lena', init: 'LK', start: 'Planning a migration' },
+  { id: 'kenji', who: 'Kenji', init: 'KT', start: 'Fixing webhooks' },
+];
+
+type Kind = 'proof' | 'handoff' | 'safeguard' | 'dependency' | 'memory' | 'sequence';
+type Ev = { k: Kind; from: string; to: string[]; label: string; t: string; send?: Record<string, string>; arrive?: Record<string, string> };
+const kinds: Record<Kind, string> = { proof: 'Proof Pack', handoff: 'Handoff', safeguard: 'Safeguard', dependency: 'Dependency', memory: 'Intelligence', sequence: 'Coordination' };
+const events: Ev[] = [
+  { k: 'proof', from: 'priya', to: ['marco', 'jonas'], label: 'Proof Pack 9c41a7e', t: 'Priya’s Factory verified the refund flow and shared Proof Pack 9c41a7e.', send: { priya: 'Verified refunds' }, arrive: { marco: 'Reusing Proof Pack', jonas: 'Reviewing with proof' } },
+  { k: 'handoff', from: 'ana', to: ['kenji'], label: 'WI-214', t: 'Ana handed WI-214 to Kenji, with its plan, decisions and evidence.', send: { ana: 'Planning WI-215' }, arrive: { kenji: 'Building WI-214' } },
+  { k: 'safeguard', from: 'lena', to: ['jonas'], label: 'Approval', t: 'A safeguard held Lena’s billing migration until Jonas approved it.', send: { lena: 'Waiting for approval' }, arrive: { jonas: 'Approved migration', lena: 'Migrating billing' } },
+  { k: 'dependency', from: 'marco', to: ['ana'], label: 'payments-sdk 4.2', t: 'Marco merged payments-sdk 4.2, which unblocked Ana’s checkout work.', send: { marco: 'Merged payments-sdk 4.2' }, arrive: { ana: 'Checkout unblocked' } },
+  { k: 'memory', from: 'kenji', to: ['ana', 'marco', 'priya', 'jonas', 'lena'], label: 'Verified fix', t: 'Kenji’s fix for duplicate webhooks became organization knowledge, cited and verified.', send: { kenji: 'Shared a verified fix' } },
+  { k: 'sequence', from: 'jonas', to: ['priya'], label: 'Sequenced', t: 'Two Factories changed CheckoutService, so Vekrun sequenced the changes before they conflicted.', send: { jonas: 'Rebased after Priya' }, arrive: { priya: 'Merging PR #421' } },
+];
+// The final status of each Mac, after every event: what the markup shows.
+const final: Record<string, string> = Object.fromEntries(devs.map((d) => [d.id, d.start]));
+for (const e of events) Object.assign(final, e.send ?? {}, e.arrive ?? {});
+
+// Positions on an ellipse around the centre, in a 1000 × 600 stage.
+const W = 1000, H = 600, cx = W / 2, cy = H / 2;
+const pts = devs.map((_, i) => {
+  const a = -Math.PI / 2 + (i * 2 * Math.PI) / devs.length;
+  return { x: Math.round(cx + 372 * Math.cos(a)), y: Math.round(cy + 218 * Math.sin(a)) };
+});
+const pairs = devs.flatMap((a, i) => devs.slice(i + 1).map((b, j) => [i, i + 1 + j] as const));
+---
+<figure class="on" data-orgnet data-mode="desktops" aria-label="Example: six developers, each running Vekrun on their own Mac, working as one engineering organization">
+  <div class="on-bar">
+    <div class="on-mode" role="group" aria-label="How the team connects">
+      <button type="button" class="on-mode-b" data-set-mode="desktops" aria-pressed="true"><Network class="h-3.5 w-3.5" aria-hidden="true" />Connected Desktops</button>
+      <button type="button" class="on-mode-b" data-set-mode="coordinator" aria-pressed="false"><Server class="h-3.5 w-3.5" aria-hidden="true" />Dedicated Coordinator</button>
+    </div>
+    <p class="on-mode-say" data-mode-say aria-live="polite">Peer to peer, between the developers’ Macs. No server required.</p>
+  </div>
+  <div class="on-grid">
+    <div class="on-stage" data-stage style={`--w:${W};--h:${H}`}>
+      <svg class="on-lines" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true">
+        <g class="on-mesh">{pairs.map(([a, b]) => <line data-a={devs[a]!.id} data-b={devs[b]!.id} x1={pts[a]!.x} y1={pts[a]!.y} x2={pts[b]!.x} y2={pts[b]!.y} />)}</g>
+        <g class="on-spokes">{pts.map((p, i) => <line data-a={devs[i]!.id} data-b="hub" x1={cx} y1={cy} x2={p.x} y2={p.y} />)}</g>
+      </svg>
+      <div class="on-hub" data-hub>
+        <div class="on-hub-v is-desktops">
+          <p class="on-hub-k"><Network class="h-3.5 w-3.5" aria-hidden="true" />Connected Desktops</p>
+          <p class="on-hub-t">Peer network</p>
+          <p class="on-hub-s">Synchronized directly between Macs</p>
+        </div>
+        <div class="on-hub-v is-coordinator">
+          <p class="on-hub-k"><Server class="h-3.5 w-3.5" aria-hidden="true" />Dedicated Coordinator</p>
+          <p class="on-hub-t">Your server</p>
+          <p class="on-hub-s">Rust and PostgreSQL, always on</p>
+        </div>
+        <p class="on-hub-n">Verified records shared: <b data-pk-count>{events.filter((e) => e.k === 'proof' || e.k === 'memory').length}</b></p>
+      </div>
+      <ul class="on-devs">
+        {devs.map((d, i) => (
+          <li style={`--x:${(pts[i]!.x / W) * 100}%;--y:${(pts[i]!.y / H) * 100}%`}>
+            <button type="button" class="on-dev" data-dev={d.id} aria-pressed="false" aria-label={`Highlight ${d.who}’s connections`}>
+              <span class="on-av" aria-hidden="true">{d.init}</span>
+              <span class="on-txt">
+                <span class="on-who"><Laptop class="h-3 w-3" aria-hidden="true" />{d.who}’s Vekrun</span>
+                <span class="on-doing" data-start={d.start}><i aria-hidden="true"></i>{final[d.id]}</span>
+              </span>
+            </button>
+          </li>
+        ))}
+      </ul>
+      <div class="on-pks" data-pks aria-hidden="true"></div>
+    </div>
+    <ol class="on-feed" aria-label="Team activity">
+      {events.map((e, i) => <li class="on-ev is-on" data-ev={i} data-kind={e.k}><span class="on-ev-k">{kinds[e.k]}</span>{e.t}</li>)}
+    </ol>
+  </div>
+  <div class="on-foot"><span class="on-tag">Example</span><DemoControls class="on-ctl" /></div>
+  <script type="application/json" data-events set:html={JSON.stringify(events.map(({ k, from, to, label, send, arrive }) => ({ k, from, to, label, send, arrive })))} />
+</figure>
+
+<style>
+  .on { margin: 0; }
+  .on-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; margin-bottom: 1rem; }
+  .on-mode { display: inline-flex; padding: 0.25rem; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); }
+  .on-mode-b { display: inline-flex; align-items: center; gap: 0.4rem; min-height: 2.25rem; padding: 0 0.95rem; border-radius: 999px; font-size: 0.86rem; font-weight: 560; color: var(--foreground-secondary); transition: background-color 250ms var(--ease-out), color 250ms var(--ease-out), box-shadow 250ms var(--ease-out); }
+  .on-mode-b:hover { color: var(--foreground); }
+  .on-mode-b[aria-pressed='true'] { background: var(--accent); color: var(--accent-foreground); box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 50%, transparent), 0 4px 18px color-mix(in srgb, var(--accent) 22%, transparent); }
+  .on-mode-b:focus-visible, .on-dev:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+  .on-mode-say { margin: 0; font-size: 0.86rem; color: var(--foreground-secondary); }
+
+  .on-grid { display: grid; gap: 1.25rem; }
+  @media (min-width: 80rem) { .on-grid { grid-template-columns: minmax(0, 8fr) minmax(0, 3fr); align-items: center; } }
+  .on-stage { position: relative; padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: radial-gradient(ellipse 60% 60% at 50% 50%, color-mix(in srgb, var(--accent) 8%, var(--surface)) 0%, var(--surface) 70%); overflow: hidden; }
+  .on-lines, .on-pks { display: none; }
+
+  .on-hub { position: relative; margin: 0 auto 1rem; max-width: 16rem; padding: 0.9rem 1rem; text-align: center; border: 1px solid var(--border-interactive); border-radius: var(--radius-lg); background: var(--background); box-shadow: var(--glow-accent); transition: border-color 400ms var(--ease-out), box-shadow 400ms var(--ease-out), transform 500ms var(--ease-out); }
+  [data-mode='desktops'] .on-hub { border-style: dashed; box-shadow: none; }
+  [data-mode='coordinator'] .on-hub { box-shadow: var(--glow-accent), 0 0 42px color-mix(in srgb, var(--accent) 16%, transparent); }
+  .on-hub-v { transition: opacity 350ms var(--ease-out); }
+  .on-hub-v.is-coordinator { position: absolute; inset: 0.9rem 1rem auto; }
+  [data-mode='desktops'] .on-hub-v.is-coordinator, [data-mode='coordinator'] .on-hub-v.is-desktops { opacity: 0; visibility: hidden; }
+  .on-hub-k { margin: 0; display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.74rem; font-weight: 600; color: var(--accent-text); }
+  .on-hub-t { margin: 0.25rem 0 0; font-size: 1.05rem; font-weight: 640; letter-spacing: -0.01em; color: var(--foreground); }
+  .on-hub-s { margin: 0.15rem 0 0; font-size: 0.8rem; color: var(--foreground-secondary); }
+  .on-hub-n { margin: 0.55rem 0 0; padding-top: 0.5rem; border-top: 1px solid var(--border); font-size: 0.76rem; color: var(--foreground-secondary); }
+  .on-hub-n b { color: var(--foreground); font-variant-numeric: tabular-nums; }
+
+  .on-devs { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; }
+  .on-dev { display: flex; width: 100%; align-items: center; gap: 0.6rem; min-width: 0; padding: 0.55rem 0.65rem; text-align: left; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); transition: border-color 250ms var(--ease-out), box-shadow 250ms var(--ease-out), transform 300ms var(--ease-out), opacity 300ms var(--ease-out); }
+  .on-dev:hover, .on-dev[aria-pressed='true'], .on-dev.is-hot { border-color: var(--border-interactive); box-shadow: var(--glow-accent); }
+  .on-av { display: inline-grid; place-items: center; flex-shrink: 0; width: 2rem; height: 2rem; border-radius: 999px; background: var(--accent-subtle); color: var(--accent-text); font-size: 0.7rem; font-weight: 650; transition: background-color 250ms, color 250ms; }
+  .on-dev.is-hot .on-av, .on-dev[aria-pressed='true'] .on-av { background: var(--accent); color: var(--accent-foreground); }
+  .on-txt { display: flex; flex-direction: column; min-width: 0; }
+  .on-who { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.82rem; font-weight: 600; color: var(--foreground); white-space: nowrap; }
+  .on-who :global(svg) { flex-shrink: 0; color: var(--foreground-secondary); }
+  .on-doing { display: inline-flex; align-items: center; gap: 0.35rem; margin-top: 0.1rem; font-family: var(--font-mono); font-size: 0.7rem; line-height: 1.35; color: var(--foreground-secondary); }
+  .on-doing i { flex-shrink: 0; width: 0.4rem; height: 0.4rem; border-radius: 999px; background: var(--accent-text); }
+  .on-has-focus .on-dev:not(.is-lit) { opacity: 0.45; }
+
+  @media (min-width: 60rem) {
+    .on-stage { aspect-ratio: calc(var(--w) / var(--h)); padding: 0; }
+    .on-lines { display: block; position: absolute; inset: 0; width: 100%; height: 100%; }
+    .on-lines g { transition: opacity 600ms var(--ease-out); }
+    [data-mode='desktops'] .on-spokes, [data-mode='coordinator'] .on-mesh { opacity: 0; }
+    .on-lines line { stroke: var(--border-strong); stroke-width: 1.25; stroke-dasharray: 2 7; vector-effect: non-scaling-stroke; transition: stroke 250ms, opacity 250ms, stroke-width 250ms; }
+    .on-spokes line { stroke: var(--border-interactive); stroke-width: 1.5; }
+    .on.is-live .on-lines line { animation: on-flow 1.6s linear infinite; }
+    .on-spokes line:nth-child(even) { animation-direction: reverse !important; }
+    .on-lines line.is-hl { stroke: var(--accent-text); stroke-width: 2; stroke-dasharray: none; }
+    .on-has-focus .on-lines line:not(.is-hl) { opacity: 0.25; }
+    .on-hub { position: absolute; left: 50%; top: 50%; margin: 0; width: 15rem; transform: translate(-50%, -50%); }
+    .on-devs { display: block; }
+    .on-devs li { position: absolute; left: var(--x); top: var(--y); width: 13.25rem; transform: translate(-50%, -50%); }
+    .on-dev:hover, .on-dev.is-hot { transform: translateY(-2px); }
+    .on-doing { white-space: nowrap; }
+    .on-pks { display: block; position: absolute; inset: 0; pointer-events: none; }
+  }
+  @keyframes on-flow { to { stroke-dashoffset: -18; } }
+  :global(.on-pk) { position: absolute; left: 0; top: 0; display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.18rem 0.5rem; border: 1px solid var(--border-interactive); border-radius: 999px; background: var(--background); color: var(--foreground); font-family: var(--font-mono); font-size: 0.66rem; font-weight: 560; white-space: nowrap; box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 30%, transparent); will-change: transform; }
+  :global(.on-pk::before) { content: ''; width: 0.4rem; height: 0.4rem; border-radius: 999px; background: var(--accent-text); }
+  :global(.on-pk.is-proof), :global(.on-pk.is-memory) { background: var(--accent); border-color: var(--accent); color: var(--accent-foreground); }
+  :global(.on-pk.is-proof::before), :global(.on-pk.is-memory::before) { background: var(--accent-foreground); }
+
+  .on-feed { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.5rem; }
+  @media (min-width: 40rem) and (max-width: 79.99rem) { .on-feed { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .on-ev { padding: 0.6rem 0.75rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); font-size: 0.84rem; line-height: 1.45; color: var(--foreground); opacity: 0; transform: translateY(6px); transition: opacity 400ms var(--ease-out), transform 400ms var(--ease-out), border-color 400ms; }
+  .on-ev.is-on { opacity: 1; transform: none; }
+  .on-ev.is-new { border-color: var(--border-interactive); }
+  .on-ev-k { display: block; margin-bottom: 0.15rem; font-size: 0.72rem; font-weight: 600; color: var(--accent-text); }
+  .on-foot { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+  .on-tag { margin-top: 1.25rem; padding: 0.05rem 0.45rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.7rem; color: var(--foreground-secondary); }
+  .on-foot :global(.on-ctl) { margin-top: 1rem; }
+  @media (prefers-reduced-motion: reduce) {
+    .on-mode-b, .on-hub, .on-hub-v, .on-dev, .on-ev, .on-lines g, .on-lines line { transition: none !important; }
+    .on .on-lines line { animation: none !important; }
+    .on-pks { display: none !important; }
+  }
+</style>
+
+<script>
+  import { createSequence, reducedMotion } from '@/scripts/sequence';
+  type Ev = { k: string; from: string; to: string[]; label: string; send?: Record<string, string>; arrive?: Record<string, string> };
+  const say = {
+    desktops: 'Peer to peer, between the developers’ Macs. No server required.',
+    coordinator: 'Through a Coordinator on your server: persistent, governed and always on.',
+  };
+  for (const root of document.querySelectorAll<HTMLElement>('[data-orgnet]')) {
+    const events: Ev[] = JSON.parse(root.querySelector('[data-events]')!.textContent || '[]');
+    const stage = root.querySelector<HTMLElement>('[data-stage]')!;
+    const layer = root.querySelector<HTMLElement>('[data-pks]')!;
+    const lines = [...root.querySelectorAll<SVGLineElement>('.on-lines line')];
+    const devEls = [...root.querySelectorAll<HTMLButtonElement>('[data-dev]')];
+    const dev = (id: string) => devEls.find((d) => d.dataset.dev === id)!;
+    const evs = [...root.querySelectorAll<HTMLElement>('[data-ev]')];
+    const pkCount = root.querySelector<HTMLElement>('[data-pk-count]')!;
+    const sayEl = root.querySelector<HTMLElement>('[data-mode-say]')!;
+    const timers: number[] = [];
+    const later = (ms: number, fn: () => void) => { timers.push(window.setTimeout(fn, ms)); };
+
+    // Positions, as fractions of the stage, from each Mac's custom properties.
+    const pos = (id: string): [number, number] => {
+      if (id === 'hub') return [0.5, 0.5];
+      const li = dev(id).parentElement!;
+      return [parseFloat(li.style.getPropertyValue('--x')) / 100, parseFloat(li.style.getPropertyValue('--y')) / 100];
+    };
+    const status = (id: string, text: string) => { const d = dev(id).querySelector<HTMLElement>('.on-doing')!; d.lastChild!.textContent = text; };
+    const hot = (id: string, ms = 1400) => { const d = dev(id); d.classList.add('is-hot'); later(ms, () => d.classList.remove('is-hot')); };
+
+    // Switching the deployment option.
+    const setMode = (m: 'desktops' | 'coordinator') => {
+      root.dataset.mode = m;
+      sayEl.textContent = say[m];
+      root.querySelectorAll<HTMLButtonElement>('[data-set-mode]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.setMode === m)));
+      if (focused) light(focused);
+    };
+    root.querySelectorAll<HTMLButtonElement>('[data-set-mode]').forEach((b) => b.addEventListener('click', () => setMode(b.dataset.setMode as 'desktops' | 'coordinator')));
+    // Other parts of the page can switch it too, such as the deployment comparison.
+    document.addEventListener('orgnet:mode', (e) => setMode((e as CustomEvent).detail));
+
+    // Highlighting one developer's connections.
+    let focused: string | null = null;
+    let pinned: string | null = null;
+    const light = (id: string | null) => {
+      focused = id;
+      root.classList.toggle('on-has-focus', !!id);
+      const mesh = root.dataset.mode === 'desktops';
+      lines.forEach((l) => {
+        const inMesh = l.dataset.b !== 'hub';
+        l.classList.toggle('is-hl', !!id && inMesh === mesh && (l.dataset.a === id || l.dataset.b === id));
+      });
+      devEls.forEach((d) => d.classList.toggle('is-lit', !!id && (d.dataset.dev === id || mesh)));
+    };
+    devEls.forEach((d) => {
+      const id = d.dataset.dev!;
+      d.addEventListener('pointerenter', () => light(id));
+      d.addEventListener('pointerleave', () => light(pinned));
+      d.addEventListener('focus', () => light(id));
+      d.addEventListener('blur', () => light(pinned));
+      d.addEventListener('click', () => {
+        pinned = pinned === id ? null : id;
+        devEls.forEach((o) => o.setAttribute('aria-pressed', String(o.dataset.dev === pinned)));
+        light(pinned ?? id);
+      });
+    });
+
+    // A packet travels from one Mac to another: directly between peers, or
+    // through the Coordinator.
+    const travel = (k: string, label: string, from: string, to: string, onArrive: () => void) => {
+      const w = stage.clientWidth, h = stage.clientHeight;
+      if (reducedMotion() || getComputedStyle(layer).display === 'none' || !w) { onArrive(); return; }
+      const route = root.dataset.mode === 'coordinator' ? [pos(from), pos('hub'), pos(to)] : [pos(from), pos(to)];
+      const pk = document.createElement('span');
+      pk.className = `on-pk is-${k}`;
+      pk.textContent = label;
+      layer.appendChild(pk);
+      const dur = route.length === 3 ? 1700 : 1300, t0 = performance.now();
+      const frame = (now: number) => {
+        const k1 = Math.min(1, (now - t0) / dur), e = k1 < 0.5 ? 2 * k1 * k1 : 1 - (-2 * k1 + 2) ** 2 / 2;
+        const seg = route.length - 1, u = Math.min(seg - 1e-6, e * seg), i = Math.floor(u), f = u - i;
+        const [ax, ay] = route[i]!, [bx, by] = route[i + 1]!;
+        pk.style.transform = `translate(${(ax + (bx - ax) * f) * w}px, ${(ay + (by - ay) * f) * h}px) translate(-50%, -50%)`;
+        pk.style.opacity = String(Math.min(1, k1 * 6, (1 - k1) * 6));
+        if (k1 < 1 && pk.isConnected) requestAnimationFrame(frame);
+        else { pk.remove(); if (k1 >= 1) onArrive(); }
+      };
+      requestAnimationFrame(frame);
+    };
+
+    let shared = 0;
+    const play = (i: number) => {
+      const e = events[i]!;
+      evs.forEach((el) => el.classList.remove('is-new'));
+      evs[i]!.classList.add('is-on', 'is-new');
+      hot(e.from, 1600);
+      Object.entries(e.send ?? {}).forEach(([id, t]) => status(id, t));
+      if (e.k === 'proof' || e.k === 'memory') pkCount.textContent = String(++shared);
+      e.to.forEach((to, n) => later(n * 140, () => travel(e.k, e.label, e.from, to, () => {
+        hot(to);
+        if (e.arrive?.[to]) status(to, e.arrive[to]!);
+        if (n === e.to.length - 1) Object.entries(e.arrive ?? {}).forEach(([id, t]) => { if (!e.to.includes(id)) status(id, t); });
+      })));
+    };
+
+    const reset = () => {
+      timers.splice(0).forEach(clearTimeout);
+      layer.replaceChildren();
+      devEls.forEach((d) => { d.classList.remove('is-hot'); status(d.dataset.dev!, d.querySelector<HTMLElement>('.on-doing')!.dataset.start ?? ''); });
+      evs.forEach((e) => e.classList.remove('is-on', 'is-new'));
+      shared = 0; pkCount.textContent = '0';
+    };
+    createSequence(root, events.map((_, i) => ({ t: 600 + i * 2300, run: () => play(i) })), { reset, loopAfter: 5000 });
+
+    // The dashes only flow while the figure is on screen.
+    new IntersectionObserver(([e]) => root.classList.toggle('is-live', !!e?.isIntersecting && !reducedMotion()), { threshold: 0.05 }).observe(root);
+  }
+</script>

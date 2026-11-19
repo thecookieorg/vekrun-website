@@ -1,0 +1,96 @@
+---
+/**
+ * The two ways a Teams organization connects, side by side: Connected
+ * Desktops (a peer network of the developers' Vekrun apps) and a Dedicated
+ * Coordinator (a service the customer hosts). Each has a small live topology;
+ * "Show in the network" switches the hero network to that option. Both come
+ * with the same subscription. Static without JavaScript and under reduced
+ * motion.
+ */
+import { Network, Server, ArrowUp } from '@lucide/astro';
+import { teamsDeployments } from '@/data/site';
+
+const rows: Record<string, [string, string][]> = {
+  desktops: [
+    ['Server', 'None required'],
+    ['Synchronization', 'Directly between authorized Vekrun apps'],
+    ['Governance', 'Policies and permissions travel with every signed-in app'],
+    ['Availability', 'Whenever teammates’ Macs are online'],
+    ['Best for', 'Teams that want to connect without running infrastructure'],
+  ],
+  coordinator: [
+    ['Server', 'Yours: a Rust and PostgreSQL service'],
+    ['Synchronization', 'Persistent, even while Macs are offline'],
+    ['Governance', 'Centralized policies, access and audit'],
+    ['Availability', 'Always on'],
+    ['Best for', 'Organizations that want central control and availability'],
+  ],
+};
+// Five Macs on a ring, in a 220 × 120 box.
+const ring = Array.from({ length: 5 }, (_, i) => {
+  const a = -Math.PI / 2 + (i * 2 * Math.PI) / 5;
+  return { x: Math.round(110 + 80 * Math.cos(a)), y: Math.round(62 + 46 * Math.sin(a)) };
+});
+const mesh = ring.flatMap((a, i) => ring.slice(i + 1).map((b) => [a, b] as const));
+---
+<div class="dc" data-deploy>
+  {teamsDeployments.map((d) => (
+    <article class:list={['dc-p', `is-${d.key}`]} aria-labelledby={`dc-${d.key}`}>
+      <svg class="dc-topo" viewBox="0 0 220 124" aria-hidden="true">
+        {d.key === 'desktops'
+          ? mesh.map(([a, b]) => <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />)
+          : ring.map((p) => <line x1="110" y1="62" x2={p.x} y2={p.y} />)}
+        {d.key === 'coordinator' && <rect class="dc-hub" x="92" y="48" width="36" height="28" rx="7" />}
+        {ring.map((p) => <circle class="dc-node" cx={p.x} cy={p.y} r="8" />)}
+      </svg>
+      <p class="dc-k">{d.key === 'desktops' ? <Network class="h-4 w-4" aria-hidden="true" /> : <Server class="h-4 w-4" aria-hidden="true" />}{d.key === 'desktops' ? 'Peer to peer' : 'Customer-hosted'}</p>
+      <h3 id={`dc-${d.key}`}>{d.name}</h3>
+      <p class="dc-line">{d.line}</p>
+      <dl>
+        {rows[d.key]!.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+      </dl>
+      <a href="#network" class="dc-show link-slide text-accent" data-show-mode={d.key}><ArrowUp class="h-3.5 w-3.5" aria-hidden="true" />Show it in the network</a>
+    </article>
+  ))}
+  <p class="dc-both">Both are included in every Teams subscription, at the same price. There are no separate tiers.</p>
+</div>
+
+<style>
+  .dc { display: grid; gap: 1rem; }
+  @media (min-width: 52rem) { .dc { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .dc-p { position: relative; display: flex; flex-direction: column; padding: 1.6rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); transition: border-color 300ms var(--ease-out), box-shadow 300ms var(--ease-out), transform 400ms var(--ease-out); }
+  .dc-p:hover, .dc-p:focus-within { border-color: var(--border-interactive); box-shadow: var(--glow-accent), 0 18px 48px -24px color-mix(in srgb, var(--accent) 35%, transparent); transform: translateY(-3px); }
+  .dc-topo { display: block; width: 100%; max-width: 15rem; height: auto; margin-bottom: 1.25rem; overflow: visible; }
+  .dc-topo line { stroke: var(--border-strong); stroke-width: 1.2; stroke-dasharray: 2 5; transition: stroke 300ms; }
+  .is-coordinator .dc-topo line { stroke: var(--border-interactive); stroke-width: 1.5; }
+  .dc-p:hover .dc-topo line, .dc-p:focus-within .dc-topo line { stroke: var(--accent-text); }
+  .dc-node { fill: var(--background); stroke: var(--accent-text); stroke-width: 1.5; }
+  .dc-hub { fill: var(--accent); }
+  :global(.dc.is-live) .dc-topo line { animation: dc-flow 1.4s linear infinite; }
+  @keyframes dc-flow { to { stroke-dashoffset: -14; } }
+  .dc-k { margin: 0; display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; font-weight: 600; color: var(--accent-text); }
+  .dc-p h3 { margin: 0.4rem 0 0; font-size: 1.5rem; font-weight: 640; letter-spacing: -0.025em; color: var(--foreground); }
+  .dc-line { margin: 0.5rem 0 0; font-size: 0.97rem; line-height: 1.55; color: var(--foreground-secondary); }
+  .dc-p dl { margin: 1.25rem 0 0; display: grid; }
+  .dc-p dl > div { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: 0.75rem; padding: 0.7rem 0; border-top: 1px solid var(--border); }
+  .dc-p dt { font-size: 0.85rem; font-weight: 560; color: var(--foreground-secondary); }
+  .dc-p dd { margin: 0; font-size: 0.9rem; line-height: 1.45; color: var(--foreground); }
+  @media (max-width: 26rem) { .dc-p dl > div { grid-template-columns: minmax(0, 1fr); gap: 0.15rem; } }
+  .dc-show { margin-top: auto; padding-top: 1.1rem; align-self: flex-start; display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.9rem; font-weight: 560; }
+  .dc-both { grid-column: 1 / -1; margin: 0.5rem 0 0; font-size: 0.95rem; color: var(--foreground-secondary); }
+  @media (prefers-reduced-motion: reduce) {
+    .dc-p, .dc-topo line { transition: none; }
+    .dc-p:hover, .dc-p:focus-within { transform: none; }
+    :global(.dc.is-live) .dc-topo line { animation: none; }
+  }
+</style>
+
+<script>
+  import { reducedMotion } from '@/scripts/sequence';
+  for (const root of document.querySelectorAll<HTMLElement>('[data-deploy]')) {
+    root.querySelectorAll<HTMLAnchorElement>('[data-show-mode]').forEach((a) => a.addEventListener('click', () => {
+      document.dispatchEvent(new CustomEvent('orgnet:mode', { detail: a.dataset.showMode }));
+    }));
+    new IntersectionObserver(([e]) => root.classList.toggle('is-live', !!e?.isIntersecting && !reducedMotion()), { threshold: 0.1 }).observe(root);
+  }
+</script>

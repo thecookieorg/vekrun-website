@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { existsSync } from 'node:fs';
-import { footerColumns, primaryNav, primaryCta, personalCta, pricingCta, productSections, productSubAnchors, howSections, site, plans, teamsPricing, teamsMonthly, teamsInterestMailto, earlyAccessMailto } from '@/data/site';
+import { footerColumns, primaryNav, primaryCta, personalCta, pricingCta, productSections, productSubAnchors, howSections, site, plans, teamsPricing, teamsMonthly, teamsDeployments, teamsInterestMailto, earlyAccessMailto } from '@/data/site';
 import { comparisons, projectExamples } from '@/data/capabilities';
 import { toolGroups, platforms, allTools, stackRows, toolById, modelIds, agentIds, hostingProviders } from '@/data/integrations';
 import { redirects } from '../../astro.config.mjs';
@@ -22,21 +22,21 @@ describe('plans and pricing', () => {
   it('makes Free $0 forever for individuals and Teams a planned team plan', () => {
     const [free, teams] = plans;
     expect(free).toMatchObject({ price: '$0', priceNote: 'forever', planned: false, audience: 'For individual engineers' });
-    expect(teams).toMatchObject({ price: '$199', priceNote: 'per month, includes 10 engineers', planned: true });
+    expect(teams).toMatchObject({ price: '$199', priceNote: 'per month, includes 5 developers', planned: true });
     expect(JSON.stringify(plans)).not.toMatch(/Planned/);
-    expect(teams!.priceAlt).toBe('USD. $10 per month for each additional engineer.');
+    expect(teams!.priceAlt).toBe('USD. $29 per month for each additional developer.');
   });
   it('keeps the full individual engineering platform in Free', () => {
     const f = plans[0]!.features.join(' ');
     for (const k of ['Factory', 'Coordinator', 'Council', 'Competitive Engineering', 'Work Items', 'Git', 'Engineering Memory', 'Architecture Explorer', 'Time Machine', 'Change Impact Intelligence', 'Proof Packs', 'Workflow Templates', 'Live Share', 'CLI', 'MCP']) expect(f).toContain(k);
   });
-  it('leads Teams with Shared Engineering Memory, includes SSO and stays self-hosted', () => {
+  it('leads Teams with connected Factories, includes SSO and both deployment options', () => {
     const teams = plans[1]!;
-    expect(teams.features[0]).toBe('Shared Engineering Memory across engineers and repositories');
+    expect(teams.features[0]).toBe('Connected AI Factories across every developer');
     expect(teams.lead).toBe('Everything in Free, plus:');
     const t = [teams.summary, ...teams.features].join(' ');
-    expect(t).toMatch(/self-hosted/);
-    for (const k of ['SSO', 'role-based access', 'Work Items', 'policies', 'worker pools', 'your servers', 'installations', 'verification', 'Git']) expect(t).toContain(k);
+    expect(teams.summary).toMatch(/^Your engineering organization, working as one\./);
+    for (const k of ['coordination', 'handoffs', 'dependencies', 'Proof Packs', 'safeguards', 'Shared Engineering Memory', 'organizational intelligence', 'SSO', 'role-based access', 'Connected Desktops', 'Dedicated Coordinator', 'worker pools', 'Git']) expect(t).toContain(k);
     expect(teams.more).toEqual({ label: 'Explore Vekrun Teams', href: '/teams/' });
   });
   it('includes Work Anywhere in Free today, at no Vekrun cost, and lists nothing as coming', () => {
@@ -44,13 +44,18 @@ describe('plans and pricing', () => {
     for (const p of plans) expect([p.summary, p.audience, p.priceNote, p.lead ?? '', ...p.features].join(' '), p.name).not.toMatch(/coming|planned/i);
     expect(JSON.stringify(plans[0])).not.toMatch(/per minute|per worker|limit/i);
   });
-  it('prices Teams at $199 for up to 10 engineers and $10 for each one after', () => {
-    expect(teamsPricing).toEqual({ base: 199, included: 10, perExtra: 10, currency: 'USD' });
-    for (const [n, price] of [[1, 199], [5, 199], [10, 199], [11, 209], [12, 219], [20, 299], [30, 399], [100, 1099]] as const) expect(teamsMonthly(n), `${n} engineers`).toBe(price);
+  it('prices Teams at $199 including 5 developers and $29 for each additional developer', () => {
+    expect(teamsPricing).toEqual({ base: 199, included: 5, perExtra: 29, currency: 'USD' });
+    for (const [n, price] of [[1, 199], [3, 199], [5, 199], [6, 228], [7, 257], [10, 344], [20, 634], [50, 1504]] as const) expect(teamsMonthly(n), `${n} developers`).toBe(price);
   });
-  it('never charges for fewer than one engineer or fractional engineers', () => {
+  it('never charges for fewer than one developer or fractional developers', () => {
     expect(teamsMonthly(0)).toBe(199);
-    expect(teamsMonthly(10.9)).toBe(199);
+    expect(teamsMonthly(5.9)).toBe(199);
+  });
+  it('includes both deployment options in one Teams subscription', () => {
+    expect(teamsDeployments.map((d) => d.name)).toEqual(['Connected Desktops', 'Dedicated Coordinator']);
+    expect(teamsDeployments[0]!.line).toMatch(/No server required.*peer network/);
+    expect(teamsDeployments[1]!.line).toMatch(/Rust and PostgreSQL.*persistent synchronization, centralized governance and always-on availability/);
   });
   it('publishes no Cloud or Enterprise tier, usage fees or purchase paths', () => {
     const all = JSON.stringify(plans);
@@ -74,8 +79,8 @@ describe('email paths', () => {
     const body = decodeURIComponent(teamsInterestMailto.split('body=')[1]!);
     expect(body).toMatch(/Email me about Teams availability/);
     expect(body).toMatch(/unsubscribe/);
-    expect(body).toMatch(/Number of engineers:/);
-    expect(body).toMatch(/our own servers/);
+    expect(body).toMatch(/Number of developers:/);
+    expect(body).toMatch(/Connected Desktops, Dedicated Coordinator/);
   });
 });
 
