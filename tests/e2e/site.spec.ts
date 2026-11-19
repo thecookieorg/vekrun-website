@@ -72,7 +72,7 @@ test.describe('homepage', () => {
       'Your models. Your infrastructure. Your rules.',
     ]);
     await expect(page.locator('main > section')).toHaveCount(5);
-    await expect(page.locator('#team-memory').getByRole('heading', { level: 3 })).toHaveText('Your team shares a codebase. Now it can share an engineering brain.');
+    await expect(page.locator('#team-memory').getByRole('heading', { level: 3 })).toHaveText('Your engineering organization, working as one.');
     await expect(page.locator('#team-memory').getByRole('link', { name: 'Explore Vekrun Teams' })).toHaveAttribute('href', '/teams/');
     await expect(page.locator('main')).not.toContainText(/What’s next for Vekrun|coming to Vekrun Free|Work Anywhere is coming/i);
     // Provider catalogues live on Integrations. The only logos here are the stack strip under the hero.
@@ -92,7 +92,7 @@ test.describe('homepage', () => {
     await expect(sec.locator('.plan').first().getByRole('link', { name: 'Request early access' })).toHaveAttribute('href', '/download/');
     await expect(sec.locator('.plan.is-teams').getByRole('link', { name: 'Explore Teams' })).toHaveAttribute('href', '/teams/');
     await expect(sec.locator('.plan.is-teams').getByRole('link', { name: 'Register interest' })).toHaveAttribute('href', /^mailto:support@vekrunapp\.com\?subject=Vekrun%20Teams%20interest/);
-    await expect(sec).toContainText('$199 a month for up to 10 engineers, plus $10 for each one after that');
+    await expect(sec).toContainText('$199 a month includes 5 developers, plus $29 for each additional developer');
     await expect(sec).toContainText('Works in the repositories you already have');
     await expect(page.locator('[data-teams-calc]')).toHaveCount(0);
     await expect(page.locator('main')).not.toContainText(/partner(ed|ship)? with xAI|endorsed by xAI/i);
@@ -269,7 +269,7 @@ test.describe('product models and history', () => {
 });
 
 test.describe('pricing', () => {
-  test('has two plans: Free for individuals and Teams, self-hosted, with no checkout', async ({ page }) => {
+  test('has two plans: Free for individuals and Teams with both deployment options, with no checkout', async ({ page }) => {
     await page.goto('/pricing/');
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og\/pricing\.png$/);
     await expect(page.locator('.plan h3')).toHaveText(['Free', 'Teams']);
@@ -279,36 +279,36 @@ test.describe('pricing', () => {
     await expect(free).toContainText('Free on your machine');
     for (const k of ['Competitive Engineering', 'Change Impact Intelligence', 'CLI and MCP']) await expect(free).toContainText(k);
     await expect(free.getByRole('link', { name: 'Request early access' })).toHaveAttribute('href', '/download/');
-    await expect(teams.locator('.plan-price')).toHaveText(/\$199\s*per month, includes 10 engineers/);
-    await expect(teams).toContainText('USD. $10 per month for each additional engineer.');
-    await expect(teams).toContainText('self-hosted');
+    await expect(teams.locator('.plan-price')).toHaveText(/\$199\s*per month, includes 5 developers/);
+    await expect(teams).toContainText('USD. $29 per month for each additional developer.');
+    await expect(teams).toContainText('Connected Desktops or a Dedicated Coordinator, both included');
     await expect(teams.getByRole('link', { name: 'Register Teams interest' })).toHaveAttribute('href', /^mailto:support@vekrunapp\.com\?subject=Vekrun%20Teams%20interest&body=/);
     await expect(page.locator('main')).toContainText('Vekrun charges no usage fees');
-    await expect(teams.locator('li').first()).toHaveText(/Shared Engineering Memory/);
+    await expect(teams.locator('li').first()).toHaveText(/Connected AI Factories/);
     await expect(teams.getByRole('link', { name: 'Explore Vekrun Teams' })).toHaveAttribute('href', '/teams/');
     await expect(free).toContainText('Work Anywhere: run the Factory on your own VPS');
     await expect(page.locator('main')).not.toContainText(/coming to Vekrun Free|Coming to Free|\(coming soon\)/i);
     await expect(page.locator('main')).not.toContainText(/unlimited|SOC 2|end-to-end encrypt|compliance certif|SSO (add-on|is an extra)/i);
   });
 
-  test('the Teams calculator charges $199 up to 10 engineers and $10 for each one after', async ({ page }) => {
+  test('the Teams calculator charges $199 including 5 developers and $29 for each additional developer', async ({ page }) => {
     await page.goto('/pricing/#teams');
     const calc = page.locator('[data-teams-calc]');
-    const input = calc.getByLabel('Engineers on your team');
+    const input = calc.getByLabel('Developers on your team');
     const total = calc.locator('[data-total]');
-    await expect(input).toHaveValue('10');
+    await expect(input).toHaveValue('5');
     await expect(total).toHaveText('$199');
-    await calc.getByRole('button', { name: 'One more engineer' }).click();
-    await expect(input).toHaveValue('11');
-    await expect(total).toHaveText('$209');
-    await expect(calc).toContainText('$199 for the first 10 engineers, plus 1 × $10.');
-    for (const [n, price] of [['5', '$199'], ['10', '$199'], ['20', '$299'], ['30', '$399'], ['1', '$199']] as const) {
+    await calc.getByRole('button', { name: 'One more developer' }).click();
+    await expect(input).toHaveValue('6');
+    await expect(total).toHaveText('$228');
+    await expect(calc).toContainText('$199 for the first 5 developers, plus 1 × $29.');
+    for (const [n, price] of [['3', '$199'], ['5', '$199'], ['10', '$344'], ['20', '$634'], ['1', '$199']] as const) {
       await input.fill(n);
-      await expect(total, `${n} engineers`).toHaveText(price);
+      await expect(total, `${n} developers`).toHaveText(price);
     }
-    await calc.getByRole('button', { name: 'One fewer engineer' }).click();
+    await calc.getByRole('button', { name: 'One fewer developer' }).click();
     await expect(input).toHaveValue('1');
-    await expect(calc.getByRole('list', { name: 'Example monthly prices' }).getByRole('listitem')).toHaveText([/5 engineers\s*\$199/, /10 engineers\s*\$199/, /11 engineers\s*\$209/, /20 engineers\s*\$299/, /30 engineers\s*\$399/]);
+    await expect(calc.getByRole('list', { name: 'Example monthly prices' }).getByRole('listitem')).toHaveText([/5 developers\s*\$199/, /6 developers\s*\$228/, /10 developers\s*\$344/, /20 developers\s*\$634/]);
   });
 
   test('the calculator reads correctly without JavaScript', async ({ browser }) => {
@@ -316,22 +316,22 @@ test.describe('pricing', () => {
     const page = await ctx.newPage();
     await page.goto('/pricing/');
     await expect(page.locator('[data-teams-calc] [data-total]')).toHaveText('$199');
-    await expect(page.locator('[data-teams-calc]')).toContainText('11 engineers');
+    await expect(page.locator('[data-teams-calc]')).toContainText('6 developers');
     await ctx.close();
   });
 
   test('Teams interest is a real email with consent and an unsubscribe path', async ({ page }) => {
     await page.goto('/pricing/');
     const sec = page.locator('#teams');
-    await expect(sec.getByRole('heading', { level: 2 })).toHaveText('Vekrun Teams: one engineering brain for your whole team.');
-    await expect(sec.getByRole('heading', { level: 3 }).first()).toHaveText('Shared Engineering Memory');
+    await expect(sec.getByRole('heading', { level: 2 })).toHaveText('Vekrun Teams: your engineering organization, working as one.');
+    await expect(sec.getByRole('heading', { level: 3 }).first()).toHaveText('Connected AI Factories');
     await expect(sec.getByRole('link', { name: 'Explore Vekrun Teams' })).toHaveAttribute('href', '/teams/');
     await expect(sec).toContainText('not a Vekrun-hosted compute subscription');
     const href = (await sec.locator('[data-teams-interest]').getAttribute('href'))!;
     expect(href).toMatch(/^mailto:support@vekrunapp\.com\?subject=Vekrun%20Teams%20interest&body=/);
     const body = decodeURIComponent(href.split('body=')[1]!);
     expect(body).toContain('Email me about Teams availability');
-    expect(body).toContain('Number of engineers:');
+    expect(body).toContain('Number of developers:');
     await expect(sec).toContainText('reply “unsubscribe” to be removed');
     await expect(sec.getByRole('link', { name: 'Privacy' })).toHaveAttribute('href', '/privacy/');
     await expect(page.locator('form')).toHaveCount(0);
@@ -341,40 +341,41 @@ test.describe('pricing', () => {
     await page.goto('/pricing/');
     const table = page.getByRole('table');
     await expect(table.locator('thead th')).toHaveText(['Compared', 'Free', 'Teams']);
-    await expect(table.locator('tbody tr')).toHaveCount(12);
-    await expect(table.locator('tbody tr').nth(1)).toContainText('Personal Engineering Memory');
+    await expect(table.locator('tbody tr')).toHaveCount(14);
+    await expect(table.locator('tbody tr').nth(3)).toContainText('Personal Engineering Memory');
+    await expect(table.getByRole('row', { name: /Proof Packs/ })).toContainText('Shared, verified Proof Packs');
     await expect(table.getByRole('row', { name: /Remote execution/ })).toContainText('Work Anywhere: run the Factory on your own VPS');
     await expect(table.getByRole('row', { name: /How to start/ })).toContainText('Register Teams interest');
     await expect(table.getByRole('row', { name: /Sign-in and access/ })).toContainText('SSO');
-    await expect(table.getByRole('row', { name: /Where it runs/ })).toContainText('servers you control');
-    await expect(table.getByRole('row', { name: /Price/ })).toContainText('$199 per month for up to 10 engineers, then $10 each');
+    await expect(table.getByRole('row', { name: /Where it runs/ })).toContainText('Connected Desktops, or a Dedicated Coordinator on your server: both included');
+    await expect(table.getByRole('row', { name: /Price/ })).toContainText('$199 per month including 5 developers, then $29 for each additional developer');
   });
 
   test('the FAQ answers the agreed questions and matches its structured data', async ({ page }) => {
     await page.goto('/pricing/');
     await expect(page.locator('details.faq-i summary')).toHaveText([
       'Is Vekrun Free really free?', 'What’s included in Teams?', 'How does pricing change when the team grows?',
-      'Does Teams include cloud infrastructure?', 'Who pays for AI model usage and remote workers?', 'Do I need Teams to run Vekrun on my own server?', 'Is SSO an extra cost?',
+      'Are Connected Desktops and the Dedicated Coordinator priced separately?', 'Does Teams include cloud infrastructure?', 'Who pays for AI model usage and remote workers?', 'Do I need Teams to run Vekrun on my own server?', 'Is SSO an extra cost?',
       'Can an individual use Vekrun without Teams?', 'Do we need a separate Enterprise plan?',
     ]);
     const grow = page.locator('details.faq-i').nth(2);
     await grow.locator('summary').click();
     await expect(grow).toHaveAttribute('open', '');
-    await expect(grow).toContainText('a team of 5 pays the same as a team of 10');
-    await expect(grow).toContainText('11 engineers is $209, 20 is $299 and 30 is $399');
-    await expect(page.locator('details.faq-i').nth(5)).toContainText('included in Vekrun Free');
+    await expect(grow).toContainText('a team of 3 pays the same as a team of 5');
+    await expect(grow).toContainText('6 developers is $228, 10 is $344 and 20 is $634');
+    await expect(page.locator('details.faq-i').nth(6)).toContainText('included in Vekrun Free');
     const ld = await page.locator('script[type="application/ld+json"]').evaluateAll((els) => els.map((e) => JSON.parse(e.textContent ?? '{}')));
     const faqLd = ld.find((d) => d['@type'] === 'FAQPage');
     expect(faqLd.mainEntity.length).toBe(await page.locator('details.faq-i').count());
     const app = ld.find((d) => d['@type'] === 'SoftwareApplication');
     expect(app.offers).toEqual([{ '@type': 'Offer', name: 'Vekrun Free', price: '0', priceCurrency: 'USD' }]);
-    expect(await page.locator('meta[name="description"]').getAttribute('content')).toMatch(/Vekrun Teams is self-hosted: \$199 USD per month for up to 10 engineers, plus \$10 per additional engineer\./);
+    expect(await page.locator('meta[name="description"]').getAttribute('content')).toMatch(/Vekrun Teams is \$199 USD per month including 5 developers, plus \$29 per additional developer, with both deployment options included\./);
   });
 
   test('the homepage summarizes both plans and links to Teams', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('#pricing .plan h3')).toHaveText(['Free', 'Teams']);
-    await expect(page.locator('#pricing')).toContainText('$199 a month for up to 10 engineers');
+    await expect(page.locator('#pricing')).toContainText('$199 a month includes 5 developers');
     for (const path of ['/', '/download/', '/product/', '/contact/', '/pricing/']) {
       await page.goto(path);
       await expect(page.locator('main a[href="/teams/"]').first(), path).toBeVisible();
@@ -423,30 +424,61 @@ test.describe('how it works', () => {
 });
 
 test.describe('teams', () => {
-  test('leads with Shared Engineering Memory, links interest and pricing, and answers the questions', async ({ page }) => {
+  test('leads with the organization, shows both deployment options, prices Teams clearly and answers the questions', async ({ page }) => {
     await page.goto('/teams/');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Your team shares a codebase. Now it can share an engineering brain.');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Your engineering organization, working as one.');
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og\/teams\.png$/);
     const hero = page.locator('main').locator('section').first();
     await expect(hero.getByRole('link', { name: 'Register Teams interest' })).toHaveAttribute('href', /^mailto:support@vekrunapp\.com\?subject=Vekrun%20Teams%20interest/);
-    await expect(hero.getByRole('link', { name: 'Explore how Teams works' })).toHaveAttribute('href', '#how');
-    await expect(page.locator('main h2').first()).toHaveText('The knowledge your team creates shouldn’t disappear when a conversation ends.');
-    for (const h of ['Your engineering intelligence. Your infrastructure. Your rules.', 'Your engineers. Your identities. Your access rules.']) await expect(page.getByRole('heading', { name: h })).toBeVisible();
-    await expect(page.locator('#capabilities .caps > li')).toHaveCount(8);
+    await expect(hero.getByRole('link', { name: 'See Teams pricing' })).toHaveAttribute('href', '#pricing');
+    await expect(hero).toContainText('$199 a month includes 5 developers, then $29 for each additional developer.');
+    await expect(page.locator('main h2').first()).toHaveText('Much more than shared memory.');
+    await expect(page.locator('#platform .pillars > li h3')).toHaveText(['Connected AI Factories', 'Cross-developer coordination', 'Shared verified Proof Packs', 'Engineering safeguards', 'Dependencies and handoffs', 'Organizational intelligence']);
+    const deploy = page.locator('#deploy');
+    await expect(deploy.getByRole('heading', { level: 2 })).toHaveText('Two ways to connect. One subscription.');
+    await expect(deploy.getByRole('heading', { level: 3 })).toHaveText(['Connected Desktops', 'Dedicated Coordinator']);
+    await expect(deploy).toContainText('No server required.');
+    await expect(deploy).toContainText('A Rust and PostgreSQL service you host');
+    await expect(deploy).toContainText('Both are included in every Teams subscription, at the same price.');
+    for (const h of ['Every lesson becomes organizational intelligence.', 'Your engineers. Your identities. Your access rules.', 'One pool of workers. Many developers.']) await expect(page.getByRole('heading', { name: h })).toBeVisible();
     await expect(page.locator('#shared-memory .better > li')).toHaveCount(4);
-    await expect(page.locator('main .scatter, main .bento')).toHaveCount(0);
-    const caps = page.locator('#capabilities');
-    for (const k of ['Shared Engineering Memory', 'Team coordination', 'Autonomous Factory workers', 'Organization policies', 'Shared Architecture Intelligence', 'PR intelligence', 'SSO and access control', 'Engineering insights']) await expect(caps).toContainText(k, { ignoreCase: true });
     await expect(page.locator('#sso')).toContainText('Microsoft Entra ID, Google Workspace, Okta');
-    await expect(page.locator('main')).not.toContainText(/design target|future requirement|part of the direction|Coming to Vekrun Teams/);
     await expect(page.locator('#sso')).toContainText('SSO is part of Teams, not an add-on.');
-    await expect(page.locator('#pricing')).toContainText('$199');
-    await expect(page.locator('#pricing').getByRole('link', { name: 'Compare plans and calculate your price' })).toHaveAttribute('href', '/pricing/#teams');
-    await expect(page.locator('#pricing [data-teams-calc]')).toHaveCount(0);
-    await expect(page.locator('main')).not.toContainText(/SOC 2|end-to-end encrypt|guarantee(d|s)? (security|correct)/i);
+    const pricing = page.locator('#pricing');
+    await expect(pricing.locator('.tp-price')).toHaveText(/\$199\s*USD per month/);
+    await expect(pricing.locator('.tp-inc')).toHaveText('Includes 5 developers');
+    await expect(pricing.locator('.tp-extra')).toHaveText('+$29 per month for each additional developer');
+    await expect(pricing).toContainText('Connected Desktops and Dedicated Coordinator, both included');
+    await expect(pricing.locator('[data-teams-calc] [data-total]')).toHaveText('$199');
+    await expect(pricing.getByRole('link', { name: 'Compare Teams with Vekrun Free' })).toHaveAttribute('href', '/pricing/#teams');
+    await expect(page.locator('main')).not.toContainText(/SOC 2|end-to-end encrypt|guarantee(d|s)? (security|correct)|self-hosted/i);
     await expect(page.locator('details.faq-i')).toHaveCount(8);
     const ld = await page.locator('script[type="application/ld+json"]').evaluateAll((els) => els.map((e) => JSON.parse(e.textContent ?? '{}')));
     expect(ld.find((d) => d['@type'] === 'FAQPage').mainEntity.length).toBe(8);
+    await expect(page.getByRole('heading', { name: 'Bring your whole engineering organization.' })).toBeVisible();
+  });
+
+  test('the organization network switches deployment options, highlights a developer and settles under reduced motion', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/teams/');
+    const net = page.locator('[data-orgnet]');
+    await expect(net).toHaveAttribute('data-demo', 'done');
+    await expect(net).toHaveAttribute('data-mode', 'desktops');
+    await expect(net.getByRole('list', { name: 'Team activity' }).getByRole('listitem')).toHaveCount(6);
+    for (const k of ['Proof Pack 9c41a7e', 'handed WI-214 to Kenji', 'safeguard', 'payments-sdk 4.2', 'organization knowledge', 'sequenced']) await expect(net).toContainText(k);
+    await expect(net.locator('[data-dev]')).toHaveCount(6);
+    await expect(net.locator('[data-pk-count]')).toHaveText('2');
+    await net.getByRole('button', { name: 'Dedicated Coordinator' }).click();
+    await expect(net).toHaveAttribute('data-mode', 'coordinator');
+    await expect(net.getByRole('button', { name: 'Dedicated Coordinator' })).toHaveAttribute('aria-pressed', 'true');
+    await expect(net.locator('[data-mode-say]')).toContainText('always on');
+    const ana = net.getByRole('button', { name: 'Highlight Ana’s connections' });
+    await ana.click();
+    await expect(ana).toHaveAttribute('aria-pressed', 'true');
+    if ((page.viewportSize()?.width ?? 0) >= 960) await expect(net.locator('.on-spokes line.is-hl')).toHaveCount(1);
+    await page.locator('#deploy [data-show-mode="desktops"]').click();
+    await expect(net).toHaveAttribute('data-mode', 'desktops');
+    if ((page.viewportSize()?.width ?? 0) >= 960) await expect(net.locator('.on-mesh line.is-hl')).toHaveCount(5);
   });
 
   test('the shared memory story steps through three engineers and keeps restricted and superseded records out of context', async ({ page }) => {
@@ -482,8 +514,6 @@ test.describe('teams', () => {
     await expect(sso).toHaveAttribute('data-revoked', '');
     await expect(sso.locator('[data-audit]')).toContainText('revoked');
     await expect(page.locator('[data-pool]')).toHaveAttribute('data-step', '3');
-    await expect(page.locator('[data-selfhost]')).not.toHaveAttribute('data-live', '');
-    await expect(page.locator('[data-selfhost] .is-hidden')).toHaveCount(0);
   });
 });
 
@@ -540,7 +570,7 @@ test.describe('live share and privacy', () => {
     await page.goto('/privacy/');
     await expect(page.locator('main')).not.toContainText('passes through no Vekrun server');
     await expect(page.locator('#live-share')).toHaveText('Live Share');
-    for (const t of ['What stays local.', 'What the gateway relays.', 'What the gateway keeps.', 'Teams interest', 'unsubscribe', 'No cookies, analytics', 'not on Vekrun servers']) await expect(page.locator('main')).toContainText(t);
+    for (const t of ['What stays local.', 'What the gateway relays.', 'What the gateway keeps.', 'Teams interest', 'unsubscribe', 'No cookies, analytics', 'Never on Vekrun servers']) await expect(page.locator('main')).toContainText(t);
     await page.goto('/security/');
     await expect(page.locator('#live-share')).toHaveText('Live Share goes through our gateway');
   });

@@ -18,7 +18,7 @@ export const site = {
   trust: ['Local-first', 'Download local AI models', 'Model-independent', 'Works with your stack', 'Free for individuals'],
   licence: {
     model: 'Proprietary',
-    summary: 'Vekrun is proprietary software. Vekrun Free costs nothing for individual developers. Vekrun Teams is the self-hosted plan for engineering teams.',
+    summary: 'Vekrun is proprietary software. Vekrun Free costs nothing for individual developers. Vekrun Teams connects an engineering organization, on desktops or a server it controls.',
   },
   /**
    * Release facts. These must stay true: flip `downloadAvailable` only when a
@@ -56,8 +56,8 @@ export const teamsInterestMailto = mailto(
   [
     'I’m interested in Vekrun Teams. Email me about Teams availability. I can unsubscribe by replying "unsubscribe".',
     '',
-    'Number of engineers:',
-    'Where we would run Teams (our own servers, private cloud, other):',
+    'Number of developers:',
+    'How we would connect (Connected Desktops, Dedicated Coordinator, not sure):',
     'What we want Teams for most:',
   ].join('\n'),
 );
@@ -83,24 +83,41 @@ export type Plan = {
 };
 
 /**
- * Teams pricing. Flat monthly price for up to `included` engineers, then a
- * fixed amount per engineer beyond that. No usage fees of any kind: customers
- * run and pay for their own infrastructure and model usage.
+ * Teams pricing. Flat monthly price for up to `included` developers, then a
+ * fixed amount per developer beyond that. One subscription covers both
+ * deployment options. No usage fees of any kind: customers run and pay for
+ * their own infrastructure and model usage.
  */
-export const teamsPricing = { base: 199, included: 10, perExtra: 10, currency: 'USD' } as const;
+export const teamsPricing = { base: 199, included: 5, perExtra: 29, currency: 'USD' } as const;
 
-/** Monthly Teams price in USD for a team of `engineers` (at least 1). */
-export const teamsMonthly = (engineers: number): number => {
-  const n = Math.max(1, Math.floor(engineers));
+/** Monthly Teams price in USD for a team of `developers` (at least 1). */
+export const teamsMonthly = (developers: number): number => {
+  const n = Math.max(1, Math.floor(developers));
   return teamsPricing.base + Math.max(0, n - teamsPricing.included) * teamsPricing.perExtra;
 };
 
 export const usd = (n: number) => `$${n.toLocaleString('en-US')}`;
 
 /**
- * Two plans. Free is the individual engineering platform, as it exists today.
- * Teams adds shared coordination on infrastructure the customer controls; it
- * is planned, with a fixed price, and there is no checkout.
+ * The two ways a Teams organization connects. Both come with every Teams
+ * subscription at the same price; neither is a separate tier.
+ */
+export const teamsDeployments = [
+  {
+    key: 'desktops',
+    name: 'Connected Desktops',
+    line: 'No server required. Authorized Vekrun apps form a peer network and synchronize shared engineering intelligence directly between developers’ Macs.',
+  },
+  {
+    key: 'coordinator',
+    name: 'Dedicated Coordinator',
+    line: 'A Rust and PostgreSQL service you host, for persistent synchronization, centralized governance and always-on availability.',
+  },
+] as const;
+
+/**
+ * Two plans. Free is the individual engineering platform. Teams connects an
+ * engineering organization, with a fixed price and no checkout.
  */
 export const plans: Plan[] = [
   {
@@ -132,22 +149,22 @@ export const plans: Plan[] = [
     key: 'teams',
     name: 'Teams',
     price: usd(teamsPricing.base),
-    priceNote: `per month, includes ${teamsPricing.included} engineers`,
-    priceAlt: `USD. ${usd(teamsPricing.perExtra)} per month for each additional engineer.`,
-    audience: 'For engineering teams',
-    summary: 'Shared Engineering Memory for the whole team, with SSO, coordination and governance, self-hosted on infrastructure you control.',
+    priceNote: `per month, includes ${teamsPricing.included} developers`,
+    priceAlt: `USD. ${usd(teamsPricing.perExtra)} per month for each additional developer.`,
+    audience: 'For engineering organizations',
+    summary: 'Your engineering organization, working as one. Connected Desktops or a Dedicated Coordinator, both included.',
     planned: true,
     lead: 'Everything in Free, plus:',
     features: [
-      'Shared Engineering Memory across engineers and repositories',
+      'Connected AI Factories across every developer',
+      'Cross-developer coordination, handoffs and dependencies',
+      'Shared, verified Proof Packs',
+      'Engineering safeguards and organization policies',
+      'Shared Engineering Memory and organizational intelligence',
       'SSO and role-based access control',
-      'Team-wide coordination and Work Items',
-      'Organization policies and approvals',
-      'Coordinator and shared worker pools on your servers',
-      'Organization policies for worker access',
-      'Shared Architecture Intelligence',
-      'Collaboration across engineers’ installations',
-      'PR intelligence and engineering insights for delivery and verification',
+      'Connected Desktops: no server required',
+      'Dedicated Coordinator on your own server',
+      'Shared worker pools on your servers',
       'Works with your Git and engineering workflows',
     ],
     cta: { label: 'Register Teams interest', href: teamsInterestMailto },

@@ -16,10 +16,16 @@ Show the product instead of describing it. Avoid "revolutionize", "seamlessly",
 - `site.contact`: set the general and security addresses when they exist; the
   Contact and Security pages render them automatically.
 - `plans`: Free and Teams, nothing else. Teams pricing comes from
-  `teamsPricing` and `teamsMonthly` ($199 per month for up to 10 engineers,
-  $10 per month for each engineer beyond 10). There is no checkout; purchase
-  controls must not be added before one exists. There is no Cloud or
-  Enterprise tier.
+  `teamsPricing` and `teamsMonthly` ($199 per month including 5 developers,
+  $29 per month for each additional developer). One Teams subscription
+  includes both deployment options in `teamsDeployments`: Connected Desktops
+  (no server, a peer network of the developers' Vekrun apps) and a Dedicated
+  Coordinator (a customer-hosted Rust and PostgreSQL service). Never price them
+  separately or call Teams "self-hosted" only. Teams is positioned as "Your
+  engineering organization, working as one", far more than shared memory.
+  Never write "per developer" (an e2e test bans it); say "for each additional
+  developer". There is no checkout; purchase controls must not be added before
+  one exists. There is no Cloud or Enterprise tier.
 - `teamsInterestMailto`: the Teams interest email to the support inbox.
 - `primaryNav`, `footerColumns`: Product, Teams, Pricing, Integrations; How It
   Works and Before & After live in the footer and in contextual links, with

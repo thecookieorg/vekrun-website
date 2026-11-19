@@ -1,29 +1,29 @@
 ---
 /**
- * Teams price for a chosen number of engineers. The markup holds the result
- * for 10 engineers, so it reads correctly without JavaScript; the script only
+ * Teams price for a chosen number of developers. The markup holds the result
+ * for the included developers, so it reads correctly without JavaScript; the script only
  * recalculates. The arithmetic mirrors `teamsMonthly` in `src/data/site.ts`.
  */
 import { Minus, Plus } from '@lucide/astro';
 import { teamsPricing, teamsMonthly, usd } from '@/data/site';
 const start = teamsPricing.included;
-const examples = [5, 10, 11, 20, 30];
+const examples = [5, 6, 10, 20];
 ---
 <div class="tc" data-teams-calc data-base={teamsPricing.base} data-included={teamsPricing.included} data-extra={teamsPricing.perExtra}>
   <div class="tc-in">
-    <label for="tc-n" class="tc-l">Engineers on your team</label>
+    <label for="tc-n" class="tc-l">Developers on your team</label>
     <div class="tc-step">
-      <button type="button" class="tc-b" data-step="-1" aria-label="One fewer engineer"><Minus class="h-4 w-4" aria-hidden="true" /></button>
+      <button type="button" class="tc-b" data-step="-1" aria-label="One fewer developer"><Minus class="h-4 w-4" aria-hidden="true" /></button>
       <input id="tc-n" type="number" inputmode="numeric" min="1" max="999" step="1" value={start} data-n />
-      <button type="button" class="tc-b" data-step="1" aria-label="One more engineer"><Plus class="h-4 w-4" aria-hidden="true" /></button>
+      <button type="button" class="tc-b" data-step="1" aria-label="One more developer"><Plus class="h-4 w-4" aria-hidden="true" /></button>
     </div>
   </div>
   <div class="tc-out" aria-live="polite">
     <p class="tc-price"><b data-total>{usd(teamsMonthly(start))}</b><span>USD per month</span></p>
-    <p class="tc-why" data-why>Includes up to {teamsPricing.included} engineers.</p>
+    <p class="tc-why" data-why>Includes up to {teamsPricing.included} developers.</p>
   </div>
   <ul class="tc-ex" aria-label="Example monthly prices">
-    {examples.map((n) => <li><span>{n} engineers</span><b>{usd(teamsMonthly(n))}</b></li>)}
+    {examples.map((n) => <li><span>{n} developers</span><b>{usd(teamsMonthly(n))}</b></li>)}
   </ul>
 </div>
 
@@ -40,8 +40,8 @@ const examples = [5, 10, 11, 20, 30];
       const over = Math.max(0, n - included);
       total.textContent = fmt(base + over * extra);
       why.textContent = over
-        ? `${fmt(base)} for the first ${included} engineers, plus ${over} × ${fmt(extra)}.`
-        : `Includes up to ${included} engineers.`;
+        ? `${fmt(base)} for the first ${included} developers, plus ${over} × ${fmt(extra)}.`
+        : `Includes up to ${included} developers.`;
     };
     input.addEventListener('input', render);
     input.addEventListener('change', () => { input.value = String(clamp(input.valueAsNumber)); render(); });
