@@ -21,7 +21,7 @@ describe('plans and pricing', () => {
   });
   it('makes Free $0 forever for individuals and Teams a planned team plan', () => {
     const [free, teams] = plans;
-    expect(free).toMatchObject({ price: '$0', priceNote: 'forever', planned: false, audience: 'For individual engineers' });
+    expect(free).toMatchObject({ price: '$0', priceNote: 'forever', planned: false, audience: 'For individual developers' });
     expect(teams).toMatchObject({ price: '$199', priceNote: 'per month, includes 5 developers', planned: true });
     expect(JSON.stringify(plans)).not.toMatch(/Planned/);
     expect(teams!.priceAlt).toBe('USD. $29 per month for each additional developer.');

@@ -104,3 +104,8 @@ Concept visuals in `src/components/` use demonstration data. They carry no
 
 Add a line to `redirects` in `astro.config.mjs` whenever a page moves. Targets
 must be live pages, never another redirect; the unit tests enforce this.
+
+## Wording
+
+Call the people who use Vekrun "developers", never "engineers". "Engineering"
+stays where it names the work (AI engineering team, Engineering Memory).
